@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm'; // Ensure TypeOrmModule is imported
 import { ApplicationService } from './application.service';
 import { ApplicationController } from './application.controller';
+import { Application } from './entities/application.entity'; // Your entity
 
 @Module({
-  controllers: [ApplicationController],
+  imports: [
+    TypeOrmModule.forFeature([Application]), // Add your entity here
+  ],
   providers: [ApplicationService],
+  controllers: [ApplicationController],
 })
 export class ApplicationModule {}

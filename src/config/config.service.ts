@@ -1,28 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JobPostingModule } from 'src/job-posting/job-posting.module';  // Import the JobPostingModule
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';  // Import the JobPosting entity
 
-@Injectable()
-export class ConfigService {
-  getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
-      type: process.env.DATABASE_TYPE as any,
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT, 10),
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false, // Set to false for production
-      timezone: 'UTC',
-      autoLoadEntities: true,
-      extra: {
-        idleTimeoutMillis: 30000,
-        poolSize: 10000,
-      },
-
-      logger: 'simple-console',
-      // logging:true,
-    };
-  }
-
-}
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',  // Or your preferred database type
+      host: 'localhost',
+      port: 5432,
+      username: 'user',
+      password: 'password',
+      database: 'jobportal',  // Replace with your actual database name
+      entities: [JobPosting],  // Include your entities here
+      synchronize: true,  // Set to false in production
+    }),
+    JobPostingModule,  // Import the JobPostingModule here
+  ],
+})
+export class AppModule {}
