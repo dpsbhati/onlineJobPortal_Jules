@@ -22,14 +22,17 @@ export class JobPostingService {
   }
 
   async findOne(id: number): Promise<JobPosting> {
-    return await this.jobPostingRepository.findOne(id);
+    return await this.jobPostingRepository.findOne({
+      where: { id }
+    });
   }
 
     async update(
     id: number,
     updateJobPostingDto: UpdateJobPostingDto,
   ): Promise<JobPosting> {
-    const jobPosting = await this.jobPostingRepository.findOne(id);
+    const jobPosting = await this.jobPostingRepository.findOne({
+      where: { id }});
     if (!jobPosting) {
       throw new Error('Job posting not found');
     }
