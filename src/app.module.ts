@@ -28,10 +28,9 @@ import { Application } from 'src/application/entities/application.entity';
         port: configService.get<number>('DB_PORT', 3307),
         username: configService.get<string>('DB_USERNAME', 'root'),
         password: configService.get<string>('DB_PASSWORD', 'root'),
-        database: configService.get<string>('DB_NAME', 'jobportal'),
+        database: configService.get<string>('DB_NAME', 'job_portal'),
         entities: [JobPosting, Application],
         synchronize: true, // Set to false in production
-        logging: true
       }),
       inject: [ConfigService],
     }),
