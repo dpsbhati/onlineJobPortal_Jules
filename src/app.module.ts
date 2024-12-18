@@ -24,11 +24,11 @@ import { Application } from 'src/application/entities/application.entity';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get<string>('DB_HOST', '127.0.0.1'),
-        port: configService.get<number>('DB_PORT', 3307),
-        username: configService.get<string>('DB_USERNAME', 'root'),
-        password: configService.get<string>('DB_PASSWORD', 'root'),
-        database: configService.get<string>('DB_NAME', 'job_portal'),
+        host: configService.get<string>('DB_HOST', '103.195.4.8'),
+        port: configService.get<number>('DB_PORT', 3306),
+        username: configService.get<string>('DB_USERNAME', 'admin_onlinejobportal'),
+        password: configService.get<string>('DB_PASSWORD', 'esh@len$1'),
+        database: configService.get<string>('DB_NAME', 'admin_onlinejobportal'),
         entities: [JobPosting, Application],
         synchronize: true, // Set to false in production
       }),

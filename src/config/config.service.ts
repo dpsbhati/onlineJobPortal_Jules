@@ -7,16 +7,16 @@ import { Application } from 'src/application/entities/application.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql', // Or your preferred database type
-      host: '127.0.0.1',
-      port: 3307,
-      username: 'root',
-      password: 'roost',
-      database: 'jobportal', // Replace with your actual database name
-      entities: [JobPosting,Application], // Include your entities here
-      synchronize: true, // Set to false in production
+      type: 'mysql',
+      host: '103.195.4.8',
+      port: 3306,
+      username: 'admin_onlinejobportal',
+      password: 'esh@len$1',
+      database: 'admin_onlinejobportal',
+      entities: [JobPosting, Application],
+      synchronize: true,
     }),
-    JobPostingModule, // Import the JobPostingModule here
+    JobPostingModule,
   ],
 })
 export class AppModule {}
