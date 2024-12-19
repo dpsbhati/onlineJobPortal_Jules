@@ -4,7 +4,7 @@ import { JobPostingService } from './job-posting.service';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 
-@ApiTags('job-posting') // Swagger group name
+@ApiTags('Job-postings') 
 @Controller('job-posting')
 export class JobPostingController {
   constructor(private readonly jobPostingService: JobPostingService) {}
