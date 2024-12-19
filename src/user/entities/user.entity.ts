@@ -31,7 +31,7 @@ export class User {
   token: string;
 
   @ApiProperty()
-  @Column()
+  @Column() 
   lastName: string;
 
   @Exclude()
