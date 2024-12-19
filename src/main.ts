@@ -18,19 +18,10 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders:
       'Content-Type, Authorization,Custom-Header',
-  }); 
- 
+  });
+
   app.setGlobalPrefix('api');
   app.use('/api/', express.static(join(__dirname, 'uploads')));
-
-   const config = new DocumentBuilder()
-    .setTitle('API Documentation')
-    .setDescription('The onlinejobportal API description')
-    .setVersion('1.0')
-    .addBearerAuth() 
-    .build();
-
-     //use validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -40,6 +31,16 @@ async function bootstrap() {
       exceptionFactory: ValidationFilter,
     }),
   );
+  
+  const config = new DocumentBuilder()
+    .setTitle('Online Job Portal API Documentation')
+    .setDescription('The onlinejobportal API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    // .addTag('Online Job Portal')
+    .build();
+
+  //use validation pipe
 
   const document = SwaggerModule.createDocument(app, config);
 
