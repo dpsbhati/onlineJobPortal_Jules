@@ -45,7 +45,7 @@ export class EmailService {
     const content = `
       <p>Dear ${applicantName},</p>
       <p>Thank you for applying for the position of ${jobTitle}. We have received your application and our team will review it shortly.</p>
-      <p>We appreciate your interest in joining our maritime community and will be in touch with updates regarding your application.</p>
+      <p>We appreciate your in joining our maritime community and will be in touch with updates regarding your application.</p>
       <p>Best regards,<br>The Navilands Team</p>
     `;
 
@@ -56,7 +56,6 @@ export class EmailService {
       html: content,
     });
   }
-
   private getStatusUpdateSubject(status: ApplicationStatus, jobTitle: string): string {
     switch (status) {
       case ApplicationStatus.UNDER_REVIEW:

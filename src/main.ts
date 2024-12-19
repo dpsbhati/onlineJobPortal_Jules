@@ -12,7 +12,6 @@ async function bootstrap() {
 
   // const isProd = process.env.NODE_ENV === 'production';
 
-
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
