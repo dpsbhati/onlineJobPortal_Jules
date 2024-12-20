@@ -17,7 +17,7 @@ export class LoggerMiddleware implements NestMiddleware {
             });
             console.log(req.originalUrl);
             console.log(accessModules);
-            if (!accessModules.includes('SomeModuleName')) {
+            if (!accessModules.includes('employer')) {
                 // let unauthorizedUrls = [
                 //     '/api/invoices/pagination',
                 //     '/api/invoices/create-or-update',
