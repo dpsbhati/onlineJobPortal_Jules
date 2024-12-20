@@ -6,17 +6,19 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  PrimaryColumn,
+  Generated,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from 'src/user/enums/user-role.enums';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
-export class users {
+export class Users {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn({ type: 'uuid' })
+  @Generated('uuid')
+  id: string;
 
   @ApiProperty()
   @Column({ unique: true })
@@ -31,16 +33,14 @@ export class users {
   token: string;
 
   @ApiProperty()
-  @Column() 
+  @Column()
   lastName: string;
 
   @Exclude()
   @Column()
   password: string;
 
-  @ApiProperty({ enum: UserRole })
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.APPLICANT })
-  role_id: UserRole;
+
 
   @ApiProperty()
   @Column({ default: false })
