@@ -8,12 +8,14 @@ import { UserRole } from 'src/user/enums/user-role.enums';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from 'src/auth/dto/login.dto';
+import { MailService } from 'src/utils/mail.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(users)
     private userRepository: Repository<users>,
+    private readonly mailService: MailService
   ) {}
 
   // Create a new user
@@ -26,7 +28,14 @@ export class UserService {
 
     const user = this.userRepository.create(createUserDto);
     await user.hashPassword(); // Automatically hashes the password before saving
+    await this.mailService.sendEmail(
+      "sarfaraz.f9460@gmail.com",
+      'Welcome to Our Platform',
+      'welcome',
+      { createUserDto },
+    );
 
+  
     return this.userRepository.save(user);
   }
 
