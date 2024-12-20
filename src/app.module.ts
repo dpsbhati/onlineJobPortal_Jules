@@ -8,6 +8,9 @@ import { JobPostingModule } from './job-posting/job-posting.module';
 import { ApplicationModule } from './application/application.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { Application } from './application/entities/application.entity';
+import { JobPosting } from './job-posting/entities/job-posting.entity';
+import { users } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -18,12 +21,12 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        // entities: [JobPosting, Application],
+        host: configService.get<string>('DB_HOST', '103.195.4.8'),
+        port: configService.get<number>('DB_PORT', 3306),
+        username: configService.get<string>('DB_USERNAME', 'admin_onlinejobportal'),
+        password: configService.get<string>('DB_PASSWORD', 'esh@len$1'),
+        database: configService.get<string>('DB_NAME', 'admin_onlinejobportal'),
+        // entities: [JobPosting, Application,users],
         synchronize: true, // Set to false in production
       }),
       inject: [ConfigService],

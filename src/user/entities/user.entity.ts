@@ -13,7 +13,7 @@ import { UserRole } from 'src/user/enums/user-role.enums';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
-export class User {
+export class users {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;

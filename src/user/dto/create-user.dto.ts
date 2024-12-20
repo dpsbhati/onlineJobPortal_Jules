@@ -1,16 +1,14 @@
-import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
-
-// UserRole enum with three roles: ADMIN, APPLICANT, EMPLOYER
-export enum UserRole {
-  ADMIN = 'admin',
-  APPLICANT = 'applicant',
-  EMPLOYER = 'employer',
-}
+import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean } from 'class-validator';
+import { UserRole } from '../enums/user-role.enums';  // Adjust the import path as necessary
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  firstName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -23,13 +21,13 @@ export class CreateUserDto {
 
   @IsEnum(UserRole)
   @IsOptional()
-  role: UserRole = UserRole.APPLICANT; // Default role is APPLICANT
+  role_id: UserRole = UserRole.APPLICANT; // Default role is APPLICANT
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  phone?: string; // Optional field for phone number
+  isEmailVerified?: boolean = false;
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  address?: string; // Optional field for user address
+  isActive?: boolean = true;
 }
