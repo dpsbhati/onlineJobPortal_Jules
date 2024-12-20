@@ -3,11 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from 'src/user/enums/user-role.enums';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { LoginDto } from 'src/auth/dto/login.dto';
 
 @Injectable()
 export class UserService {
@@ -31,5 +26,4 @@ export class UserService {
   async findAll() {
     return this.userRepository.find();
   }
-
 }
