@@ -8,6 +8,7 @@ import { JobPostingModule } from './job-posting/job-posting.module';
 import { ApplicationModule } from './application/application.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { MailModule } from './utils/mail.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
       isGlobal: true, // Ensures ConfigService is available globally
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule,MailModule],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get<string>('DB_HOST'),
