@@ -19,4 +19,4 @@ import { Application } from 'src/application/entities/application.entity';
     JobPostingModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
