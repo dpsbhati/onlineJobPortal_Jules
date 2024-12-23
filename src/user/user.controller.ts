@@ -20,7 +20,9 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+  ) { }
 
   @Post('createupdate')
   @UseGuards(RolesGuard)
@@ -34,6 +36,18 @@ export class UserController {
   @ApiOperation({ summary: 'Get all users' })
   findAll() {
     return this.userService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Find a user by ID' })
+  async findOneById(@Param('id') id: string) {
+    return this.userService.findOne('id', id);
+  }
+
+  @Get(':email')
+  @ApiOperation({ summary: 'Find a user by email' })
+  async findOneByEmail(@Param('email') email: string) {
+    return this.userService.findOne('email', email);
   }
 
   @Delete(':id')
