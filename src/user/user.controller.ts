@@ -1,23 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
-@ApiTags('User') 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create')
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
-  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @Post('createupdate')
+  @ApiOperation({ summary: 'Create&Update a new user' })
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return this.userService.createUpdate(createUserDto);
   }
-  
 
   @Get('get-all')
   @ApiOperation({ summary: 'Get all users' })
@@ -25,5 +32,38 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a user by ID' })
+  async delete(@Param('id') id: string) {
+    return this.userService.delete(id);
+  }
+
+  @Post('paginate')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Retrieve paginated list of users' })
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    example: 1,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: true,
+    example: 10,
+    description: 'Number of records per page',
+  })
+  async findAllWithPagination(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return this.userService.Pagination(page, limit);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body('email') email: string, @Body('password') password: string) {
+    return this.userService.login(email, password);
+  }
+
 }
