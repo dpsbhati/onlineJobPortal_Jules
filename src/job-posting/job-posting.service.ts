@@ -18,34 +18,50 @@ export class JobPostingService {
   //   return await this.jobPostingRepository.save(jobPosting);
   // }
 
-  async createOrUpdate(createJobPostingDto: CreateJobPostingDto) {
+  // async createOrUpdate(createJobPostingDto: CreateJobPostingDto) {
+  //   try {
+  //     const { id, ...jobDetails } = createJobPostingDto;
+
+  //     // UPDATE
+  //     if (createJobPostingDto.id) {
+  //       const jobPosting = await this.jobPostingRepository.findOne({
+  //         where: { id: createJobPostingDto.id, is_deleted: false }
+  //       });
+
+  //       if (!jobPosting) return WriteResponse(404, false, 'Job posting not found');
+
+  //       await this.jobPostingRepository.update(createJobPostingDto.id, createJobPostingDto);
+
+  //       const updatedJobPosting = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
+
+  //       return WriteResponse(200, updatedJobPosting, 'Job posting updated successfully');
+  //     }
+
+  //     // CREATE
+
+  //     const newJobPosting = this.jobPostingRepository.create({ is_deleted: false, ...createJobPostingDto });
+  //     await this.jobPostingRepository.save(newJobPosting);
+  //     const jobPostById = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
+  //     return WriteResponse(200, jobPostById, 'Job posting created successfully');
+  //   } catch (error) {
+  //     console.error('Error in createOrUpdate job posting:', error);
+  //     return WriteResponse(500, false, 'Failed to create or update job posting');
+  //   }
+  // }
+
+  async createOrUpdate(jobDto: CreateJobPostingDto) {
     try {
-      const { id, ...jobDetails } = createJobPostingDto;
+      const jobPosting = jobDto.id ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } }) : null;
 
-      // UPDATE
-      if (createJobPostingDto.id) {
-        const jobPosting = await this.jobPostingRepository.findOne({
-          where: { id: createJobPostingDto.id, is_deleted: false }
-        });
-
-        if (!jobPosting) return WriteResponse(404, false, 'Job posting not found');
-
-        await this.jobPostingRepository.update(createJobPostingDto.id, createJobPostingDto);
-
-        const updatedJobPosting = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
-
-        return WriteResponse(200, updatedJobPosting, 'Job posting updated successfully');
+      if (jobDto.id && !jobPosting) {
+        return WriteResponse(404, {}, `User with ID ${jobDto.id} not found.`);
       }
 
-      // CREATE
 
-      const newJobPosting = this.jobPostingRepository.create({ is_deleted: false, ...createJobPostingDto });
-      await this.jobPostingRepository.save(newJobPosting);
-      const jobPostById = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
-      return WriteResponse(200, jobPostById, 'Job posting created successfully');
+      const savedUser = await this.jobPostingRepository.save(jobDto);
+      return WriteResponse(200, savedUser, jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.');
     } catch (error) {
-      console.error('Error in createOrUpdate job posting:', error);
-      return WriteResponse(500, false, 'Failed to create or update job posting');
+      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
     }
   }
 
@@ -68,20 +84,34 @@ export class JobPostingService {
     return WriteResponse(404, false, 'No job postings found.');
   }
 
-  async findOne(id: string): Promise<any> {
+  // async findOne(id: string): Promise<any> {
+  //   try {
+  //     const stage = await this.jobPostingRepository.findOne({
+  //       where: {
+  //         id: id,
+  //         is_deleted: false,
+  //       }
+  //     });
+  //     return stage
+  //       ? WriteResponse(200, stage, `Job Posting Found successfully`)
+  //       : WriteResponse(404, null, `Job Posting not found`)
+  //   }
+  //   catch (error) {
+  //     return WriteResponse(500, error, `Something went wrong.`);
+  //   }
+  // }
+
+  async findOne(key: string, value: any) {
     try {
-      const stage = await this.jobPostingRepository.findOne({
-        where: {
-          id: id,
-          is_deleted: false,
-        }
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { [key]: value, is_deleted: false },
       });
-      return stage
-        ? WriteResponse(200, stage, `Job Posting Found successfully`)
-        : WriteResponse(404, null, `Job Posting not found`)
-    }
-    catch (error) {
-      return WriteResponse(500, error, `Something went wrong.`);
+      if (!jobPosting) {
+        return WriteResponse(404, {}, `Job posting with ${key} ${value} not found.`);
+      }
+      return WriteResponse(200, jobPosting, 'Job posting retrieved successfully.');
+    } catch (error) {
+      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
     }
   }
 
@@ -92,10 +122,6 @@ export class JobPostingService {
     }
 
     const result = await this.jobPostingRepository.update(id, { is_deleted: true });
-
-    if (result.affected === 0) {
-      return WriteResponse(404, false, 'Job posting not found.');
-    }
 
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
