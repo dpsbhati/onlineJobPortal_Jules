@@ -40,8 +40,6 @@ export class Users {
   @Column()
   password: string;
 
-
-
   @ApiProperty()
   @Column({ default: false })
   isEmailVerified: boolean;
@@ -58,6 +56,13 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  // @Column({ type: 'timestamp', nullable: true })
+  // resetPasswordExpires: Date;
+
+  
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
@@ -66,7 +71,7 @@ export class Users {
     }
   }
 
-  async validatePassword(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password);
+  async validateResetToken(token: string) {
+    // return this.resetPasswordToken === token && new Date();
   }
 }
