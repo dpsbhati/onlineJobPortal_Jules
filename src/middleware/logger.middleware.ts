@@ -17,10 +17,10 @@ export class LoggerMiddleware implements NestMiddleware {
             });
             console.log(req.originalUrl);
             console.log(accessModules);
-            if (!accessModules.includes('employer')) {
+            if (!accessModules.includes('user')) {
                 // let unauthorizedUrls = [
                 //     '/api/invoices/pagination',
-                //     '/api/invoices/create-or-update',
+                //     '/api/invoices/create-or-update', 
                 //     '/api/billing/pagination',
                 //     '/api/billing/create-or-update',
                 //     '/api/purchase-orders/pagination',

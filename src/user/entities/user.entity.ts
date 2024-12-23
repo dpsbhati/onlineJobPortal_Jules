@@ -56,8 +56,8 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: true })
-  resetPasswordToken: string;
+  // @Column({ nullable: true })
+  // resetPasswordToken: string;
 
   // @Column({ type: 'timestamp', nullable: true })
   // resetPasswordExpires: Date;
