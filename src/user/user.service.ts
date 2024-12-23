@@ -5,8 +5,7 @@ import { Users } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import * as crypto from 'crypto';
-import * as bcrypt from 'bcrypt';
+
 
 
 
@@ -15,141 +14,104 @@ export class UserService {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
-  ) {}
+  ) { }
 
-  async createUpdate(
-    id: string | null,userDto: CreateUserDto | UpdateUserDto, ) {
+  async createUpdate(userDto: CreateUserDto) {
     try {
-      if (id) {
-        const user = await this.userRepository.findOne({ where: { id } });
-        if (!user) {
-          return WriteResponse(
-            HttpStatus.NOT_FOUND,
-            {},
-            `User with ID ${id} not found.`,
-          );
-        }
-        Object.assign(user, userDto);
-        const updatedUser = await this.userRepository.save(user);
-        return WriteResponse(
-          HttpStatus.OK,
-          updatedUser,
-          'User updated successfully.',
-        );
-      } else {
-        const existingUser = await this.userRepository.findOne({
-          where: { email: userDto.email },
-        });
+      const user = userDto.id ? await this.userRepository.findOne({ where: { id: userDto.id, is_deleted: false } }) : null;
 
-        if (existingUser) {
-          return WriteResponse(
-            HttpStatus.CONFLICT,
-            {},
-            `User with email ${userDto.email} already exists.`,
-          );
-        }
-
-        const newUser = this.userRepository.create(userDto as CreateUserDto);
-        const savedUser = await this.userRepository.save(newUser);
-        return WriteResponse(
-          HttpStatus.CREATED,
-          savedUser,
-          'User created successfully.',
-        );
+      if (userDto.id && !user) {
+        return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
+
+      if (!userDto.id) {
+        const existingUser = await this.userRepository.findOne({
+          where: { email: userDto.email, is_deleted: false },
+        });
+        if (existingUser) {
+          return WriteResponse(409, {}, `User with email ${userDto.email} already exists.`);
+        }
+      }
+
+      const savedUser = await this.userRepository.save(user || this.userRepository.create(userDto as CreateUserDto));
+      return WriteResponse(200, savedUser, user ? 'User updated successfully.' : 'User created successfully.');
     } catch (error) {
-      return WriteResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {},
-        error.message || 'An unexpected error occurred.',
-      );
+      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
     }
   }
-  
+
+  async findOne(key: string, value: any) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { [key]: value, is_deleted: false }
+      });
+      if (!user) {
+        return WriteResponse(404, {}, `User with ${key} ${value} not found.`);
+      }
+      return WriteResponse(200, user, 'User retrieved successfully.');
+    } catch (error) {
+      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
+    }
+  }
+
+
   async findAll() {
     try {
       const users = await this.userRepository.find();
       if (users.length === 0) {
-        return WriteResponse(HttpStatus.NOT_FOUND, [], 'No users found.');
+        return WriteResponse(404, [], 'No users found.');
       }
       return WriteResponse(
-        HttpStatus.OK,
+        200,
         users,
         'Users retrieved successfully.',
       );
     } catch (error) {
       return WriteResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        500,
         [],
         error.message || 'An unexpected error occurred.',
       );
     }
   }
-  
+
   async delete(id: string) {
     try {
       const user = await this.userRepository.findOne({ where: { id } });
       if (!user) {
-        return WriteResponse(HttpStatus.NOT_FOUND, {}, `User with ID ${id} not found.`);
+        return WriteResponse(404, {}, `User with ID ${id} not found.`);
       }
-      
+
       await this.userRepository.delete(id);
-      return WriteResponse(HttpStatus.OK, {}, `User with ID ${id} deleted successfully.`);
+      return WriteResponse(200, {}, `User with ID ${id} deleted successfully.`);
     } catch (error) {
       return WriteResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        500,
         {},
         error.message || 'An unexpected error occurred.',
       );
     }
   }
-  
+
   async Pagination(page: number, limit: number) {
     try {
-      const offset = (page - 1) * limit; 
+      const offset = (page - 1) * limit;
       const [list, count] = await this.userRepository.findAndCount({
         skip: offset,
         take: limit,
       });
-      
+
       if (list.length === 0) {
-        return paginateResponse([], 0, count); 
+        return paginateResponse([], 0, count);
       }
-      
+
       return paginateResponse(list, count, count);
     } catch (error) {
       return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        statusCode: 500,
         message: error.message || 'An unexpected error occurred.',
       };
     }
-  }
-
-
-  async forgotPassword(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      return WriteResponse(
-        HttpStatus.NOT_FOUND,
-        {},
-        `User with email ${email} not found.`,
-      );
-    }
-
-    const resetToken = this.generateResetToken();
-    user.resetPasswordToken = resetToken;
-    await this.userRepository.save(user);
-
-    return WriteResponse(
-      HttpStatus.OK,
-      { resetToken },
-      'Reset token generated successfully.',
-    );
-  }
-
-  private generateResetToken(): string {
-    return crypto.randomBytes(32).toString('hex');
   }
 
   async login(email: string, password: string) {
@@ -157,35 +119,11 @@ export class UserService {
 
     if (!user) {
       return WriteResponse(
-        HttpStatus.NOT_FOUND,
+        404,
         {},
         `Invalid email or password.`,
       );
     }
 
-    const isPasswordValid = await crypto.(password, user.password);
-    if (!isPasswordValid) {
-      return WriteResponse(
-        HttpStatus.UNAUTHORIZED,
-        {},
-        `Invalid email or password.`,
-      );
-    }
-
-    const token = this.generateJwtToken(user);
-    return WriteResponse(
-      HttpStatus.OK,
-      { token, user },
-      'Login successful.',
-    );
   }
-
-  private generateJwtToken(user: Users): string {
-    const payload = { id: user.id, email: user.email };
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
-    const expiresIn = '1h'; // Token expiration time
-
-    return jwt.sign(payload, secret, { expiresIn });
-  }
-  
 }

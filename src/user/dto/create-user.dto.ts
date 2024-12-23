@@ -3,6 +3,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../enums/user-role.enums'; // Adjust the import path as necessary
 
 export class CreateUserDto {
+  @ApiPropertyOptional({
+    example: 'unique-user-id',
+    description: 'The unique identifier of the user for updates.',
+  })
+  id?: string; // Optional for updates
   @ApiProperty({
     example: 'John',
     description: 'The first name of the user.',

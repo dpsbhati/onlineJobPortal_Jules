@@ -23,7 +23,7 @@ export class UserController {
   @Post('createupdate')
   @ApiOperation({ summary: 'Create&Update a new user' })
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.createUpdate(null, createUserDto);
+    return this.userService.createUpdate(createUserDto);
   }
 
   @Get('get-all')
@@ -58,13 +58,6 @@ export class UserController {
     @Query('limit') limit: number,
   ) {
     return this.userService.Pagination(page, limit);
-  }
-
-  @Post('forgot-password')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Generate a reset password token' })
-  async forgotPassword(@Body('email') email: string) {
-    return this.userService.forgotPassword(email);
   }
 
   @Post('login')

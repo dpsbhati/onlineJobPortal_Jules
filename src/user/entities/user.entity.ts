@@ -46,7 +46,7 @@ export class Users {
 
   @ApiProperty()
   @Column({ default: true })
-  isActive: boolean;
+  is_deleted: boolean;
 
   @ApiProperty()
   @CreateDateColumn()
