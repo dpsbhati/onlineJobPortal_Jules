@@ -25,8 +25,8 @@ export class JobPostingController {
   @Get('get-by-id/:id')
   @ApiOperation({ summary: 'Retrieve a job posting by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the job posting', type: String })
-  findOne(@Param('id') id: string) {
-    return this.jobPostingService.findOne(id);
+  findOneById(@Param('id') id: string) {
+    return this.jobPostingService.findOne('id', id);
   }
 
   // @Patch(':id')
