@@ -54,7 +54,7 @@ export class JobPostingService {
       const jobPosting = jobDto.id ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } }) : null;
 
       if (jobDto.id && !jobPosting) {
-        return WriteResponse(404, {}, `User with ID ${jobDto.id} not found.`);
+        return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
 
 

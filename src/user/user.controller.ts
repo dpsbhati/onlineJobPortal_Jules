@@ -14,7 +14,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('User')
@@ -71,6 +71,15 @@ export class UserController {
   @Post('login')
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiBody({
+    description: 'Payload for user login',
+    schema: {
+      example: {
+        email: 'john.doe@example.com',
+        password: 'securePassword123',
+      },
+    },
+  })
   async login(@Body('email') email: string, @Body('password') password: string) {
     return this.userService.login(email, password);
   }
@@ -81,4 +90,6 @@ export class UserController {
   async findOne(@Query('key') key: string, @Query('value') value: any) {
     return this.userService.findOne(key, value);
   }
+
+  
 }
