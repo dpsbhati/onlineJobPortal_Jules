@@ -119,6 +119,14 @@ export class UserController {
   }
 
   @Post('forget-password')
+  @ApiBody({
+    description: 'Payload for forgot password',
+    schema: {
+      example: {
+        email: 'john.doe@example.com',
+      },
+    },
+  })
   async forgetPassword(
     // @Body('token') token: string,
     @Body() forgetPasswordDto: forgetPasswordDto,
