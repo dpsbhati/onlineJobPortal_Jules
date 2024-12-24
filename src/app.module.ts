@@ -31,7 +31,7 @@ import { AuthService } from './auth/auth.service';
       }),
       inject: [ConfigService],
     }),
-    AuthService,
+    // AuthService,
     UserModule,
     JobPostingModule,
     ApplicationModule,

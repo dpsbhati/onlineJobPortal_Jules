@@ -8,17 +8,5 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('user-login')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Authenticate user and get access token' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Login successful' })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid credentials' })
-  async userLogin(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(loginDto);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Login successful',
-      data: result,
-    };
-  }
+ 
 }
