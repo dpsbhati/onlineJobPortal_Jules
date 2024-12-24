@@ -56,8 +56,6 @@ export class JobPostingService {
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
-
-
       const savedUser = await this.jobPostingRepository.save(jobDto);
       return WriteResponse(200, savedUser, jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.');
     } catch (error) {
@@ -65,16 +63,10 @@ export class JobPostingService {
     }
   }
 
-
-
-
-
-
-
   async findAll() {
     const jobPostings = await this.jobPostingRepository.find({
       where: { is_deleted: false },
-      order: { created_at: 'DESC' }, // Optional: Order by latest postings
+      order: { created_at: 'DESC' }, 
     });
 
     if (jobPostings.length > 0) {

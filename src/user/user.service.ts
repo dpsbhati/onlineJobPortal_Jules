@@ -212,13 +212,14 @@ export class UserService {
   async resetPassword(email: string, newPassword: string) {
     try {
       const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false }, 
+        where: { email, is_deleted: false },
       });
   
       if (!user) {
         return WriteResponse(400, false, 'User not found with the provided email.');
       }
   
+      // Update the user's password
       user.password = await bcrypt.hash(newPassword, 10);
       await this.userRepository.save(user);
   
@@ -233,6 +234,7 @@ export class UserService {
       );
     }
   }
+  
   
   
 
