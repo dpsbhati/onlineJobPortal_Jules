@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { NotifyService } from './notify.service';
+import { NotifyService } from '../services/notify.service';
 @Injectable({
   providedIn: 'root'
 })

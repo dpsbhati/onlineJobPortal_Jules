@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+
 @Component({
-  selector: 'app-login-page',
+  selector: 'app-login',
   standalone: true,
-  imports: [ ReactiveFormsModule],
-  templateUrl: './login-page.component.html',
-  styleUrl: './login-page.component.css'
+  imports: [ReactiveFormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css'
 })
-export class LoginPageComponent {
+export class LoginComponent {
   loginForm: FormGroup;
 
   constructor(private fb: FormBuilder, private router: Router) {
@@ -22,7 +22,7 @@ export class LoginPageComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-  
+
       console.log('Login successful with email:', email);
     } else {
       console.log('Login form is invalid');
@@ -32,4 +32,5 @@ export class LoginPageComponent {
   navigateToForgotPassword() {
     this.router.navigate(['/forgot-password']);
   }
+
 }

@@ -1,20 +1,20 @@
 import { Routes } from '@angular/router';
 import { JobseekerLoginComponent } from './pages/Jobseeker/jobseeker-login/jobseeker-login.component';
 import { RecruiterListComponent } from './pages/Recruiter/recruiter-list/recruiter-list.component';
-import { LoginPageComponent } from './Auth/login-page/login-page.component';
-import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
+import { LoginComponent } from './auth/login/login.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 import { RecruiterDashboardComponent } from './pages/Recruiter/recruiter-dashboard/recruiter-dashboard.component';
-import { AuthGuard } from './guards/auth.guard';
 import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboard/jobseeker-dashboard.component';
+import { AuthGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   // { path: '', redirectTo: '/RecruiterDashboardComponent', pathMatch: 'full' },
   {
     path: '',
-    component: LoginPageComponent,
+    component: LoginComponent,
   },
   {
     path: 'forgot-password',
-    component: ForgetPasswordComponent,
+    component: ForgotPasswordComponent,
   },
   {
     path: 'RecruiterDashboardComponent',
