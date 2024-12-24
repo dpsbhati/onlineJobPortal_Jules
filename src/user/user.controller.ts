@@ -14,6 +14,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { forgetPasswordDto } from './dto/create-user.dto';
 import {
   ApiBody,
   ApiOperation,
@@ -116,4 +117,20 @@ export class UserController {
   ) {
     return this.userService.resetPassword(token, newPassword);
   }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send a password reset link to the user email' })
+  @ApiBody({
+    description: 'Payload for forgot password',
+    schema: {
+      example: {
+        email: 'john.doe@example.com',
+      },
+    },
+  })
+  async forgotPassword(@Body() forgetPasswordDto: forgetPasswordDto) {
+    return this.userService.forgetPassword(forgetPasswordDto);
+  }
+
 }
