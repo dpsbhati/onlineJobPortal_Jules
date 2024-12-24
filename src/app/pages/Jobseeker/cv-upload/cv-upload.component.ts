@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ImageCompressionService } from '../../../Services/image-compression.service';
+import { ImageCompressionService } from '../../../core/services/image-compression.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormGroup, FormControl,Validators } from '@angular/forms';
 

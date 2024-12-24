@@ -5,6 +5,8 @@ import { LoginComponent } from './auth/login/login.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 import { RecruiterDashboardComponent } from './pages/Recruiter/recruiter-dashboard/recruiter-dashboard.component';
 import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboard/jobseeker-dashboard.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { CvUploadComponent } from './pages/Jobseeker/cv-upload/cv-upload.component';
 export const routes: Routes = [
   // { path: '', redirectTo: '/RecruiterDashboardComponent', pathMatch: 'full' },
   {
