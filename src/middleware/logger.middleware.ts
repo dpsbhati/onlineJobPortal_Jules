@@ -9,15 +9,12 @@ export class LoggerMiddleware implements NestMiddleware {
     private readonly logger = new Logger('HTTP');
     use(req: any, res: any, next: (error?: any) => void) {
         console.log("Middleware is Working fine");
-        if (req.headers.usermodulerole) {
-            var user_module_role = JSON.parse(req.headers.usermodulerole)
+        if (req.headers.user_role) {
+            var user_role = JSON.parse(req.headers.user_role)
             var accessModules = []
-            user_module_role.forEach((element, index) => {
-                accessModules.push(element.modules?.short_code)
-            });
             console.log(req.originalUrl);
             console.log(accessModules);
-            if (!accessModules.includes('user')) {
+            if (!user_role.includes('admin')) {
                 // let unauthorizedUrls = [
                 //     '/api/invoices/pagination',
                 //     '/api/invoices/create-or-update', 
