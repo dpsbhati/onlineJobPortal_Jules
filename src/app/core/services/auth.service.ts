@@ -8,11 +8,11 @@ export class AuthService {
   private user: { role: string } | null = null;
 
   constructor(
-   private localStorageService: LocalStoargeService
-  ) {}
+    private localStorageService: LocalStoargeService
+  ) { }
 
   login(userData: { role: string }) {
-    this.user = userData; 
+    this.user = userData;
     localStorage.setItem('user', JSON.stringify(userData));
   }
 

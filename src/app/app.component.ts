@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
-import { LocalStoargeService } from './Services/local-stoarge.service';
+import { LocalStoargeService } from './core/services/local-stoarge.service';
 
 @Component({
   selector: 'app-root',
