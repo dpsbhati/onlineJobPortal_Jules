@@ -7,6 +7,7 @@ import { ApplicationModule } from './application/application.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { MailModule } from './utils/mail.module';
+import { AuthService } from './auth/auth.service';
 
 
 @Module({
@@ -30,6 +31,7 @@ import { MailModule } from './utils/mail.module';
       }),
       inject: [ConfigService],
     }),
+    AuthService,
     UserModule,
     JobPostingModule,
     ApplicationModule,
