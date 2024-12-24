@@ -6,6 +6,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
+  
+
   async sendEmail(
     to: string,
     subject: string,

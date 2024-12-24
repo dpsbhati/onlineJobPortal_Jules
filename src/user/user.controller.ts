@@ -14,8 +14,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {forgetPasswordDto} from 'src/user/dto/create-user.dto'
-
+import { forgetPasswordDto } from './dto/create-user.dto';
 import {
   ApiBody,
   ApiOperation,
