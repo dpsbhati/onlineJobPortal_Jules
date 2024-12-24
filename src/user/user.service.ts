@@ -179,14 +179,13 @@ export class UserService {
         If you did not request a password reset, please ignore this email or contact our support team immediately.
       `;
   
-      await this.mailerService.sendEmail(
-        user.email,
-        'Password Reset Request',
-        this.mailerService,
-        message,
-      );
+     await this.mailerService.sendEmail(
+      forgetPasswordDto.email,
+      'Welcome to Our Platform',
+      { name: user.firstName, verificationUrl: resetLink } as Record<string, any>,
+      'welcome',
+    );
       await this.userRepository.save(user);
-  
       return WriteResponse(
         200,
         true,

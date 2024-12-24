@@ -9,18 +9,18 @@ import { MailService } from './mail.service';
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.example.com', // Your SMTP server
-        port: 587, // SMTP port
+        host: process.env.SMTP_HOST, // Your SMTP server
+        port: Number(process.env.SMTP_PORT), // SMTP port
         auth: {
-          user: 'your-email@example.com',
-          pass: 'your-email-password',
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
         },
       },
       defaults: {
         from: '"No Reply" <noreply@example.com>',
       },
       template: {
-        dir: join(__dirname, 'templates'), // Path to templates folder
+        dir: join(__dirname, '..', '..', 'templates'), // Path to templates folder
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

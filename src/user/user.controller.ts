@@ -118,19 +118,11 @@ export class UserController {
     return this.userService.resetPassword(token, newPassword);
   }
 
-  @Post('forgot-password')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Send a password reset link to the user email' })
-  @ApiBody({
-    description: 'Payload for forgot password',
-    schema: {
-      example: {
-        email: 'john.doe@example.com',
-      },
-    },
-  })
-  async forgotPassword(@Body() forgetPasswordDto: forgetPasswordDto) {
+  @Post('forget-password')
+  async forgetPassword(
+    // @Body('token') token: string,
+    @Body() forgetPasswordDto: forgetPasswordDto,
+  ) {
     return this.userService.forgetPassword(forgetPasswordDto);
   }
-
 }
