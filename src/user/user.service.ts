@@ -6,54 +6,70 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 
-
-
-
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
-  ) { }
+  ) {}
 
   async createUpdate(userDto: CreateUserDto) {
     try {
-      const user = userDto.id ? await this.userRepository.findOne({ where: { id: userDto.id, is_deleted: false } }) : null;
-
+      const user = userDto.id
+        ? await this.userRepository.findOne({
+            where: { id: userDto.id, is_deleted: false },
+          })
+        : null;
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
-
       if (!userDto.id) {
         const existingUser = await this.userRepository.findOne({
           where: { email: userDto.email, is_deleted: false },
         });
         if (existingUser) {
-          return WriteResponse(409, {}, `User with email ${userDto.email} already exists.`);
+          return WriteResponse(
+            409,
+            {},
+            `User with email ${userDto.email} already exists.`,
+          );
         }
       }
 
-      const savedUser = await this.userRepository.save(user || this.userRepository.create(userDto as CreateUserDto));
-      return WriteResponse(200, savedUser, user ? 'User updated successfully.' : 'User created successfully.');
+      const savedUser = await this.userRepository.save(
+        user || this.userRepository.create(userDto as CreateUserDto),
+      );
+      return WriteResponse(
+        200,
+        savedUser,
+        user ? 'User updated successfully.' : 'User created successfully.',
+      );
     } catch (error) {
-      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
     }
   }
 
   async findOne(key: string, value: any) {
     try {
       const user = await this.userRepository.findOne({
-        where: { [key]: value, is_deleted: false }
+        where: { [key]: value, is_deleted: false },
       });
       if (!user) {
         return WriteResponse(404, {}, `User with ${key} ${value} not found.`);
       }
       return WriteResponse(200, user, 'User retrieved successfully.');
     } catch (error) {
-      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
     }
   }
-
 
   async findAll() {
     try {
@@ -61,11 +77,7 @@ export class UserService {
       if (users.length === 0) {
         return WriteResponse(404, [], 'No users found.');
       }
-      return WriteResponse(
-        200,
-        users,
-        'Users retrieved successfully.',
-      );
+      return WriteResponse(200, users, 'Users retrieved successfully.');
     } catch (error) {
       return WriteResponse(
         500,
@@ -100,7 +112,6 @@ export class UserService {
         skip: offset,
         take: limit,
       });
-
       if (list.length === 0) {
         return paginateResponse([], 0, count);
       }
@@ -115,15 +126,25 @@ export class UserService {
   }
 
   async login(email: string, password: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email, is_deleted: false },
+      });
+  
+      if (!user) {
+        return WriteResponse(
+          404,
+          {},
+          'Invalid email or password.'
+        );
+      }
 
-    if (!user) {
+    } catch (error) {
       return WriteResponse(
-        404,
+        500,
         {},
-        `Invalid email or password.`,
+        error.message || 'An unexpected error occurred.'
       );
     }
-
   }
 }

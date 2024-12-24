@@ -33,23 +33,19 @@ async function bootstrap() {
   
   const config = new DocumentBuilder()
     .setTitle('Online Job Portal API Documentation')
-    .setDescription('The onlinejobportal API description')
+    .setDescription('The onlinejobportal API')
     .setVersion('1.0')
     .addBearerAuth()
     // .addTag('Online Job Portal')
     .build();
 
-  //use validation pipe
-
   const document = SwaggerModule.createDocument(app, config);
 
-  // Setup Swagger UI
+
   SwaggerModule.setup('/api/swagger', app, document, {
     customSiteTitle: 'onlinejobportal',
   });
 
-
-  // Start the server
   // await app.listen(process.env.PORT ?? 3000);
   await app.listen(process.env.PORT ?? 4000);
 }
