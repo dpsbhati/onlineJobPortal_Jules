@@ -126,10 +126,25 @@ export class UserService {
   }
 
   async login(email: string, password: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email, is_deleted: false },
+      });
+  
+      if (!user) {
+        return WriteResponse(
+          404,
+          {},
+          'Invalid email or password.'
+        );
+      }
 
-    if (!user) {
-      return WriteResponse(404, {}, `Invalid email or password.`);
+    } catch (error) {
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.'
+      );
     }
   }
 }
