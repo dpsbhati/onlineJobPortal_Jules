@@ -65,4 +65,11 @@ export class CreateUserDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean = true;
+ 
+}
+
+export class forgetPasswordDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }

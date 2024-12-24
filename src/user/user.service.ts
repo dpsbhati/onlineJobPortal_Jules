@@ -1,25 +1,33 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
+import {forgetPasswordDto} from 'src/user/dto/create-user.dto'
+import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from 'src/utils/mail.service';
+import * as bcrypt from 'bcrypt';
+
+
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
+    private readonly mailerService: MailService,
+    
   ) {}
-
+  
   async createUpdate(userDto: CreateUserDto) {
     try {
       const user = userDto.id
-        ? await this.userRepository.findOne({
-            where: { id: userDto.id, is_deleted: false },
-          })
-        : null;
+      ? await this.userRepository.findOne({
+        where: { id: userDto.id, is_deleted: false },
+      })
+      : null;
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
@@ -35,7 +43,7 @@ export class UserService {
           );
         }
       }
-
+      
       const savedUser = await this.userRepository.save(
         user || this.userRepository.create(userDto as CreateUserDto),
       );
@@ -49,6 +57,29 @@ export class UserService {
         500,
         {},
         error.message || 'An unexpected error occurred.',
+      );
+    }
+  }
+  
+  async login(email: string, password: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email, is_deleted: false },
+      });
+  
+      if (!user) {
+        return WriteResponse(
+          404,
+          {},
+          'Invalid email or password.'
+        );
+      }
+  
+    } catch (error) {
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.'
       );
     }
   }
@@ -111,11 +142,13 @@ export class UserService {
       const [list, count] = await this.userRepository.findAndCount({
         skip: offset,
         take: limit,
+        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified', ], 
       });
+  
       if (list.length === 0) {
         return paginateResponse([], 0, count);
       }
-
+  
       return paginateResponse(list, count, count);
     } catch (error) {
       return {
@@ -125,26 +158,75 @@ export class UserService {
     }
   }
 
-  async login(email: string, password: string) {
+  async forgetPassword(forgetPasswordDto: forgetPasswordDto) {
     try {
       const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false },
+        where: [{ email: forgetPasswordDto.email, is_deleted: false }],
       });
   
       if (!user) {
-        return WriteResponse(
-          404,
-          {},
-          'Invalid email or password.'
-        );
+        return WriteResponse(404, false, 'User not exists with this email');
       }
-
+  
+  
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token`;
+      const message = `
+        You are receiving this email because a request to reset your password was received for your account.
+        
+        Click the link below to reset your password:
+        ${resetLink}
+        
+        If you did not request a password reset, please ignore this email or contact our support team immediately.
+      `;
+  
+      await this.mailerService.sendEmail(
+        user.email,
+        'Password Reset Request',
+        this.mailerService,
+        message,
+      );
+      await this.userRepository.save(user);
+  
+      return WriteResponse(
+        200,
+        true,
+        'Password reset link sent to your email successfully.',
+      );
     } catch (error) {
       return WriteResponse(
         500,
-        {},
-        error.message || 'An unexpected error occurred.'
+        false,
+        error.message || 'Internal Server Error',
       );
     }
   }
+  
+  async resetPassword(email: string, newPassword: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email, is_deleted: false }, 
+      });
+  
+      if (!user) {
+        return WriteResponse(400, false, 'User not found with the provided email.');
+      }
+  
+      user.password = await bcrypt.hash(newPassword, 10);
+      await this.userRepository.save(user);
+  
+      return WriteResponse(200, {
+        message: 'Password reset successfully.',
+      });
+    } catch (error) {
+      return WriteResponse(
+        500,
+        false,
+        error.message || 'Internal Server Error',
+      );
+    }
+  }
+  
+  
+
 }
+

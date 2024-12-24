@@ -14,15 +14,19 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post('createupdate')
   @UseGuards(RolesGuard)
@@ -80,16 +84,36 @@ export class UserController {
       },
     },
   })
-  async login(@Body('email') email: string, @Body('password') password: string) {
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+  ) {
     return this.userService.login(email, password);
   }
-
   @Get('find-one')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Find a user by a key-value pair' })
+  @ApiQuery({
+    name: 'key',
+    required: true,
+    example: 'email',
+    description: 'The key to search by (e.g., email, id)',
+  })
+  @ApiQuery({
+    name: 'value',
+    required: true,
+    example: 'john.doe@example.com',
+    description: 'The value to search for',
+  })
   async findOne(@Query('key') key: string, @Query('value') value: any) {
     return this.userService.findOne(key, value);
   }
 
-  
+  @Post('reset-password')
+  async resetPassword(
+    @Body('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    return this.userService.resetPassword(token, newPassword);
+  }
 }

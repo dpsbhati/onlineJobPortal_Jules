@@ -9,9 +9,9 @@ export class MailService {
   async sendEmail(
     to: string,
     subject: string,
-    templateName: string,
     context: Record<string, any>,
-  ): Promise<void> {
+    templateName?: string,
+  ) {
     try {
       await this.mailerService.sendMail({
         to,

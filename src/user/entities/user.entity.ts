@@ -56,6 +56,8 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
+ 
+
   // @Column({ nullable: true })
   // resetPasswordToken: string;
 

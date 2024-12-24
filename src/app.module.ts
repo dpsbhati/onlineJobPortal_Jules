@@ -8,6 +8,7 @@ import { UploadsModule } from './uploads/uploads.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { MailModule } from './utils/mail.module';
 import { AuthService } from './auth/auth.service';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
@@ -30,6 +31,13 @@ import { AuthService } from './auth/auth.service';
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
+    }),
+
+    
+    JwtModule.register({
+      global: true,
+      secret: "OnlineJobPortal",
+      signOptions: { expiresIn: '7d' },
     }),
     // AuthService,
     UserModule,
