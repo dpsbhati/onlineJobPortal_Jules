@@ -6,6 +6,7 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
 import { RecruiterDashboardComponent } from './pages/Recruiter/recruiter-dashboard/recruiter-dashboard.component';
 import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboard/jobseeker-dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { CvUploadComponent } from './pages/Jobseeker/cv-upload/cv-upload.component';
 export const routes: Routes = [
   // { path: '', redirectTo: '/RecruiterDashboardComponent', pathMatch: 'full' },
   {
@@ -27,5 +28,9 @@ export const routes: Routes = [
     component: JobseekerDashboardComponent,
     canActivate: [AuthGuard],
     data: { role: 'JobSeeker' },
+  },
+  {
+    path: 'cv-upload',
+    component: CvUploadComponent,
   },
 ];
