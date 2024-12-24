@@ -10,7 +10,7 @@ export class MailService {
     to: string,
     subject: string,
     context: Record<string, any>,
-    templateName?: string,
+    templateName?: string
   ) {
     try {
       await this.mailerService.sendMail({

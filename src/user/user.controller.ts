@@ -14,6 +14,8 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {forgetPasswordDto} from 'src/user/dto/create-user.dto'
+
 import {
   ApiBody,
   ApiOperation,
@@ -115,5 +117,13 @@ export class UserController {
     @Body('newPassword') newPassword: string,
   ) {
     return this.userService.resetPassword(token, newPassword);
+  }
+
+  @Post('forget-password')
+  async forgetPassword(
+    // @Body('token') token: string,
+    @Body() forgetPasswordDto: forgetPasswordDto,
+  ) {
+    return this.userService.forgetPassword(forgetPasswordDto);
   }
 }
