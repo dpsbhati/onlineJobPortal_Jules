@@ -11,6 +11,8 @@ import { MailService } from './mail.service';
       transport: {
         host: process.env.SMTP_HOST, // Your SMTP server
         port: Number(process.env.SMTP_PORT), // SMTP port
+        secure: false, // Use TLS
+
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
