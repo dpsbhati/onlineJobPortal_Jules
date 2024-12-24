@@ -73,3 +73,10 @@ export class forgetPasswordDto {
   @IsNotEmpty()
   email: string;
 }
+export class LoginDTO {
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password: string;
+}

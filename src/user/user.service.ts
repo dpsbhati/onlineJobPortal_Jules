@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import {forgetPasswordDto} from 'src/user/dto/create-user.dto'
@@ -61,27 +61,29 @@ export class UserService {
     }
   }
   
-  async login(email: string, password: string) {
-    try {
-      const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false },
-      });
-  
-      if (!user) {
-        return WriteResponse(
-          404,
-          {},
-          'Invalid email or password.'
-        );
-      }
-  
-    } catch (error) {
-      return WriteResponse(
-        500,
-        {},
-        error.message || 'An unexpected error occurred.'
-      );
+  async LogIn(email: string, password: string): Promise<any> {
+    const User = await this.userRepository.findOne({
+      where: { email, is_deleted: false },
+    });
+    if (!User) return null;
+    const passwordValid = await bcrypt.compare(password, User.password);
+    if (!passwordValid) {
+      return passwordValid;
     }
+    if (!User) {
+      return false;
+    }
+
+    if (User && passwordValid && User?.isEmailVerified == true) {
+      // return User;
+      // await this.logsService.create({
+      //   users_id: User.id,
+      //   log_detail: GenericActions['Logged-in'],
+      //   createdBy: User.id,
+      // });
+      return User;
+    }
+    return { User };
   }
 
   async findOne(key: string, value: any) {

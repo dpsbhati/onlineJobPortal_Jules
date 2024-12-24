@@ -30,7 +30,7 @@ export class Users {
 
   @ApiProperty()
   @Column()
-  token: string;
+  refreshToken: string;
 
   @ApiProperty()
   @Column()
@@ -47,6 +47,7 @@ export class Users {
   @ApiProperty()
   @Column({ default: true })
   is_deleted: boolean;
+
 
   @ApiProperty()
   @CreateDateColumn()

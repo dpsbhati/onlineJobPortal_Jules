@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { forgetPasswordDto } from './dto/create-user.dto';
 import {
@@ -23,11 +23,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { WriteResponse } from 'src/shared/response';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService,
+    private jwtService: JwtService,
+
+  ) {}
 
   @Post('createupdate')
   @UseGuards(RolesGuard)
@@ -85,12 +90,32 @@ export class UserController {
       },
     },
   })
-  async login(
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ) {
-    return this.userService.login(email, password);
+  async LogIn(@Body() data: LoginDTO) {
+    let User = await this.userService.LogIn(
+      data.email,
+      data.password,
+    );
+    if (!User) {
+      return WriteResponse(401, data, 'Invalid credentials.');
+    }else if(User && !User.isEmailVerified){
+      return WriteResponse(401, data, 'Your email is not verified, Please verify your email');
+    }
+    const payload = { id: User.id };
+    const token = await this.jwtService.signAsync(payload);
+    // const user = await this.userService.findByUserId(User.id);
+    // const userModuleRole = await this.UserService.userPerm(user.data.id)
+    delete User.password;
+    return WriteResponse(
+      200,
+      {
+        token: token,
+        user: User,
+      },
+      'Login successfully.',
+    );
   }
+
+
   @Get('find-one')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Find a user by a key-value pair' })
