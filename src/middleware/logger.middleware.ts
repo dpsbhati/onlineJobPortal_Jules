@@ -14,27 +14,27 @@ export class LoggerMiddleware implements NestMiddleware {
             var accessModules = []
             console.log(req.originalUrl);
             console.log(accessModules);
-            if (!user_role.includes('admin')) {
-                // let unauthorizedUrls = [
-                //     '/api/invoices/pagination',
-                //     '/api/invoices/create-or-update', 
-                //     '/api/billing/pagination',
-                //     '/api/billing/create-or-update',
-                //     '/api/purchase-orders/pagination',
-                //     '/api/purchase-orders/create-or-update',
-                //     '/api/items/pagination',
-                //     '/api/items/create-or-update'
-                // ];
-                let unauthorizedUrls = [];
+            // if (!user_role.includes('admin')) {
+            //     // let unauthorizedUrls = [
+            //     //     '/api/invoices/pagination',
+            //     //     '/api/invoices/create-or-update', 
+            //     //     '/api/billing/pagination',
+            //     //     '/api/billing/create-or-update',
+            //     //     '/api/purchase-orders/pagination',
+            //     //     '/api/purchase-orders/create-or-update',
+            //     //     '/api/items/pagination',
+            //     //     '/api/items/create-or-update'
+            //     // ];
+            //     let unauthorizedUrls = [];
 
-                if (unauthorizedUrls.some(url => url === req.originalUrl)) {
-                    res.send({
-                        "statusCode": 401,
-                        "message": "Unauthorized",
-                        "data": false
-                    });
-                }
-            }
+            //     if (unauthorizedUrls.some(url => url === req.originalUrl)) {
+            //         res.send({
+            //             "statusCode": 401,
+            //             "message": "Unauthorized",
+            //             "data": false
+            //         });
+            //     }
+            // }
         }
         next();
     }

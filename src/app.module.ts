@@ -32,14 +32,6 @@ import { JwtModule } from '@nestjs/jwt';
       }),
       inject: [ConfigService],
     }),
-
-    
-    JwtModule.register({
-      global: true,
-      secret: "OnlineJobPortal",
-      signOptions: { expiresIn: '7d' },
-    }),
-    // AuthService,
     UserModule,
     JobPostingModule,
     ApplicationModule,

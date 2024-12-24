@@ -20,6 +20,13 @@ export class UserService {
     private readonly mailerService: MailService,
     
   ) {}
+
+  async validateUserById(userId: any) {
+    console.log(userId)
+    return this.userRepository.findOne({
+      where: { id: userId },
+    });
+  }
   
   async createUpdate(userDto: CreateUserDto) {
     try {
