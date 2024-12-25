@@ -1,31 +1,37 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { LocalStoargeService } from './local-stoarge.service';
 
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private user: { role: string } | null = null;
+  private currentUserSubject: BehaviorSubject<{ role: string } | null>;
+  public currentUser: Observable<{ role: string } | null>;
 
-  constructor(
-    private localStorageService: LocalStoargeService
-  ) { }
+  constructor(private localStorageService: LocalStoargeService) {
+    const storedUser = this.localStorageService.GetItem('user');
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    this.currentUserSubject = new BehaviorSubject<{ role: string } | null>(user);
+    this.currentUser = this.currentUserSubject.asObservable();
+  }
 
   login(userData: { role: string }) {
-    this.user = userData;
     localStorage.setItem('user', JSON.stringify(userData));
+    this.currentUserSubject.next(userData);
   }
 
   logout() {
-    this.user = null;
     localStorage.removeItem('user');
+    this.currentUserSubject.next(null);
   }
 
-  getUser() {
-    if (!this.user) {
-      const storedUser = this.localStorageService.GetItem('user');
-      this.user = storedUser ? JSON.parse(storedUser) : null;
-    }
-    return this.user;
+  get currentUserValue(): { role: string } | null {
+    return this.currentUserSubject.value;
+  }
+
+  getUser(): { role: string } | null {
+    return this.currentUserValue;
   }
 }
