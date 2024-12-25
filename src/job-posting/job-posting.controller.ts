@@ -1,48 +1,48 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { JobPostingService } from './job-posting.service';
-import { CreateJobPostingDto } from './dto/create-job-posting.dto';
+import { CreateJobPostingDto, FindAllJobPostingsQueryDto, FindOneJobPostingQueryDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Job-postings')
 @Controller('job-posting')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
+@ApiTags('Job-postings')
 export class JobPostingController {
-  constructor(private readonly jobPostingService: JobPostingService) { }
+  constructor(private readonly jobPostingService: JobPostingService) {}
+
   @Post('create-or-update')
-  @ApiOperation({ summary: 'Create or update a job posting' })
-  async createOrUpdate(@Body() createJobPostingDto: CreateJobPostingDto) {
-    const response = await this.jobPostingService.createOrUpdate(createJobPostingDto);
-    return response; // Directly return the response from the service
+  @ApiOperation({ summary: 'Create or Update a Job Posting with optional file upload' })
+  async createOrUpdate(
+    @Body() jobDto: CreateJobPostingDto,) 
+    {
+    return this.jobPostingService.createOrUpdate(jobDto);
   }
 
-
-  @Get('get-list')
-  @ApiOperation({ summary: 'Retrieve all job postings' })
-  findAll() {
-    return this.jobPostingService.findAll();
+  @Get('find-all')
+  @ApiOperation({ summary: 'Find all job postings with optional filters, sorting, and pagination' })
+  async findAll(@Query() query: FindAllJobPostingsQueryDto) {
+    return this.jobPostingService.findAll(query);
   }
-
-  @Get('get-by-id/:id')
-  @ApiOperation({ summary: 'Retrieve a job posting by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the job posting', type: String })
-  findOneById(@Param('id') id: string) {
-    return this.jobPostingService.findOne('id', id);
-  }
-
-  // @Patch(':id')
-  // @ApiOperation({ summary: 'Update a job posting by ID' })
-  // @ApiParam({ name: 'id', description: 'The ID of the job posting', type: String })
-  // update(@Param('id') id: string, @Body() updateJobPostingDto: UpdateJobPostingDto) {
-  //   return this.jobPostingService.update(+id, updateJobPostingDto);
-  // }
 
   @Delete('delete/:id')
   @ApiOperation({ summary: 'Delete a job posting by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the job posting', type: String })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.jobPostingService.remove(id);
   }
+
+
+  @Get('find-one')
+  @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
+  async findOne(@Query() query: FindOneJobPostingQueryDto) {
+    return this.jobPostingService.findOne(query.key, query.value);
+  }
+
+  
 }
+
+
+

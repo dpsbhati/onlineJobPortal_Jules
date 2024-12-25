@@ -1,11 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class CreateJobPostingDto {
-  @ApiProperty()
-  id: UUID;
+  @ApiProperty({ example: 'job-id-1', description: 'Unique identifier for the job posting (optional)' })
+  @IsOptional()
+  @IsString()
+  id: string;
 
   @ApiProperty({ description: 'The job type', example: 'Full-time' })
   @IsString()
@@ -16,11 +18,13 @@ export class CreateJobPostingDto {
   @ApiProperty({ description: 'The qualifications required', example: 'Bachelor\'s Degree in Computer Science' })
   @IsString()
   @IsOptional()
+  @MaxLength(255, { message: 'Qualifications cannot exceed 255 characters' })
   qualifications: string;
 
   @ApiProperty({ description: 'Skills required for the job', example: 'JavaScript, TypeScript' })
   @IsString()
   @IsOptional()
+  @MaxLength(255, { message: 'Skills required cannot exceed 255 characters' })
   skills_required: string;
 
   @ApiProperty({ description: 'The title of the job posting', example: 'Software Engineer' })
@@ -50,6 +54,7 @@ export class CreateJobPostingDto {
   @ApiProperty({ description: 'A short description of the job', example: 'Exciting opportunity in software development.' })
   @IsString()
   @IsOptional()
+  @MaxLength(255, { message: 'Short description cannot exceed 255 characters' })
   short_description: string;
 
   @ApiProperty({ description: 'A detailed description of the job', example: 'You will work on full-stack development projects...' })
@@ -69,12 +74,6 @@ export class CreateJobPostingDto {
   @MaxLength(100, { message: 'Employer name cannot exceed 100 characters' })
   employer: string;
 
-  @ApiProperty({ description: 'The rank for the job', example: 'Senior' })
-  @IsString()
-  @IsOptional()
-  @MaxLength(50, { message: 'Rank cannot exceed 50 characters' })
-  rank: string;
-
   @ApiProperty({ description: 'Required experience', example: '3-5 years' })
   @IsString()
   @IsOptional()
@@ -93,26 +92,10 @@ export class CreateJobPostingDto {
   @IsOptional()
   end_salary: number;
 
-  @ApiProperty({ description: 'The exact salary', example: 75000 })
-  @IsNumber()
-  @Min(0, { message: 'Salary must be at least 0' })
-  @IsOptional()
-  salary: number;
-
   @ApiProperty({ description: 'The country code of the job location', example: 91 })
   @IsNumber()
   @IsOptional()
   country_code: number;
-
-  @ApiProperty({ description: 'The state code of the job location', example: 27 })
-  @IsNumber()
-  @IsOptional()
-  state_code: number;
-
-  @ApiProperty({ description: 'The city code of the job location', example: 110001 })
-  @IsNumber()
-  @IsOptional()
-  city: number;
 
   @ApiProperty({ description: 'The job location address', example: '123 Main Street, City Name' })
   @IsString()
@@ -120,22 +103,58 @@ export class CreateJobPostingDto {
   @MaxLength(255, { message: 'Address cannot exceed 255 characters' })
   address: string;
 
-  // @ApiProperty({ description: 'Whether the job posting is deleted', default: false })
-  is_deleted: boolean = false;
-
-  @ApiProperty({ description: 'The ID of the user who created the posting', example: '123e4567-e89b-12d3-a456-426614174000' })
-  @IsString()
-  @IsOptional()
-  created_by: string;
-
-  @ApiProperty({ description: 'The ID of the user who last updated the posting', example: '123e4567-e89b-12d3-a456-426614174001' })
-  @IsString()
-  @IsOptional()
-  updated_by: string;
-
   @ApiProperty({ description: 'The type of work', example: 'Remote, On-site' })
   @IsString()
   @IsOptional()
+  @MaxLength(50, { message: 'Work type cannot exceed 50 characters' })
   work_type: string;
 
+  @ApiProperty({ description: 'The file path for related documents or images', example: '/uploads/jobs/job-id-1/file.pdf' })
+  file_path: string; 
+}
+
+export class FindAllJobPostingsQueryDto {
+  @ApiPropertyOptional({ description: 'Page number for pagination', example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Page must be a valid number' })
+  page: number;
+
+  @ApiPropertyOptional({ description: 'Number of records per page', example: 10 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Limit must be a valid number' })
+  limit: number;
+
+  @ApiPropertyOptional({ description: 'Search keyword for job title or employer', example: 'Engineer' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255, { message: 'Search keyword cannot exceed 255 characters' })
+  search: string;
+
+  @ApiPropertyOptional({ description: 'Field to sort by', example: 'title' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50, { message: 'Sort field cannot exceed 50 characters' })
+  sortField: string;
+
+  @ApiPropertyOptional({ description: 'Sort order (ASC or DESC)', example: 'DESC' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(4, { message: 'Sort order must be ASC or DESC' })
+  sortOrder: string;
+}
+
+export class FindOneJobPostingQueryDto {
+  @ApiProperty({ description: 'The key to search by (e.g., id, title)', example: 'id' })
+  @IsString()
+  @IsNotEmpty({ message: 'Key is required' })
+  @MaxLength(50, { message: 'Key cannot exceed 50 characters' })
+  key: string;
+
+  @ApiProperty({ description: 'The value to search for', example: 'job-id-1' })
+  @IsString()
+  @IsNotEmpty({ message: 'Value is required' })
+  @MaxLength(255, { message: 'Value cannot exceed 255 characters' })
+  value: string;
 }
