@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -51,30 +51,82 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto) {
     try {
-      const jobPosting = jobDto.id ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } }) : null;
-
+        const jobPosting = jobDto.id
+        ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } })
+        : null;
+  
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
-      const savedUser = await this.jobPostingRepository.save(jobDto);
-      return WriteResponse(200, savedUser, jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.');
+  
+      
+      const duplicateCheck = await this.jobPostingRepository.findOne({
+        where: {
+          title: jobDto.title, 
+          is_deleted: false,
+          ...(jobDto.id ? { id: Not(jobDto.id) } : {}), 
+        },
+      });
+  
+      if (duplicateCheck) {
+        return WriteResponse(
+          409,
+          {},
+          `Job posting with title "${jobDto.title}" already exists.`,
+        );
+      }
+  
+      const updatedJobPosting = {
+        ...jobPosting,
+        ...jobDto,
+      };
+  
+      
+      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+  
+      return WriteResponse(
+        200,
+        savedJobPosting,
+        jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.',
+      );
+    } catch (error) {
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+  }
+  
+  async findAll(queryParams: any) {
+    try {
+      const { page = 1, limit = 10, search, sortField = 'created_at', sortOrder = 'DESC' } = queryParams;
+  
+      const skip = (page - 1) * limit;
+  
+      const queryBuilder = this.jobPostingRepository.createQueryBuilder('job');
+  
+      queryBuilder.where('job.is_deleted = :is_deleted', { is_deleted: false });
+      if (search) {
+        queryBuilder.andWhere(
+          '(job.title LIKE :search OR job.employer LIKE :search OR job.short_description LIKE :search)',
+          { search: `%${search}%` },
+        );
+      }
+      queryBuilder.orderBy(`job.${sortField}`, sortOrder.toUpperCase());
+      queryBuilder.skip(skip).take(limit);
+      const [jobPostings, total] = await queryBuilder.getManyAndCount();  
+      if (jobPostings.length > 0) {
+        return WriteResponse(200, {
+          jobs: jobPostings,
+          total,
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+        });
+      }
+  
+      return WriteResponse(404, false, 'No job postings found.');
     } catch (error) {
       return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
     }
   }
-
-  async findAll() {
-    const jobPostings = await this.jobPostingRepository.find({
-      where: { is_deleted: false },
-      order: { created_at: 'DESC' }, 
-    });
-
-    if (jobPostings.length > 0) {
-      return WriteResponse(200, jobPostings);
-    }
-
-    return WriteResponse(404, false, 'No job postings found.');
-  }
+  
 
   // async findOne(id: string): Promise<any> {
   //   try {
@@ -106,8 +158,7 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
     }
   }
-
-
+  
   async remove(id: string) {
     if (!id) {
       return WriteResponse(400, false, 'Job posting ID is required.');
@@ -117,6 +168,5 @@ export class JobPostingService {
 
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
-
 
 }

@@ -81,7 +81,6 @@ export class UserController {
   ) {
     return this.userService.Pagination(page, limit);
   }
-
   @Post('login')
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
@@ -164,7 +163,6 @@ export class UserController {
       resetPasswordDto.newPassword,
     );
   }
-
   @Post('forget-password')
   @ApiBody({
     description: 'Payload for forgot password',

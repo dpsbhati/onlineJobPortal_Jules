@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('job_postings')
 export class JobPosting {
+  
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -83,4 +84,7 @@ export class JobPosting {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ type: 'varchar', length: 250, nullable: true })
+  file: string;
 }
