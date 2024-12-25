@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ImageUploadService {
-  private readonly allowedImageFormats = ['jpeg', 'png', 'webp'];
+  private readonly allowedImageFormats = ['image/jpeg', 'image/png', 'image/webp'];
 
   constructor() {}
 
