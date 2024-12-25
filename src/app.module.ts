@@ -9,6 +9,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { MailModule } from './utils/mail.module';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
+import { UserProfileModule } from './user-profile/user-profile.module';
 
 
 @Module({
@@ -43,7 +44,8 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     JobPostingModule,
     ApplicationModule,
-    UploadsModule
+    UploadsModule,
+    UserProfileModule
   ],
 })
 export class AppModule implements NestModule {

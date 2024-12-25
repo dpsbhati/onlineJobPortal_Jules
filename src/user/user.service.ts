@@ -5,7 +5,7 @@ import { Users } from './entities/user.entity';
 import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import {forgetPasswordDto} from 'src/user/dto/create-user.dto'
+import { forgetPasswordDto } from 'src/user/dto/create-user.dto'
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from 'src/utils/mail.service';
 import * as bcrypt from 'bcrypt';
@@ -18,16 +18,16 @@ export class UserService {
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
     private readonly mailerService: MailService,
-    
-  ) {}
-  
+
+  ) { }
+
   async createUpdate(userDto: CreateUserDto) {
     try {
       const user = userDto.id
-      ? await this.userRepository.findOne({
-        where: { id: userDto.id, is_deleted: false },
-      })
-      : null;
+        ? await this.userRepository.findOne({
+          where: { id: userDto.id, is_deleted: false },
+        })
+        : null;
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
@@ -43,7 +43,7 @@ export class UserService {
           );
         }
       }
-      
+
       const savedUser = await this.userRepository.save(
         user || this.userRepository.create(userDto as CreateUserDto),
       );
@@ -60,7 +60,7 @@ export class UserService {
       );
     }
   }
-  
+
   async LogIn(email: string, password: string): Promise<any> {
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
@@ -144,13 +144,13 @@ export class UserService {
       const [list, count] = await this.userRepository.findAndCount({
         skip: offset,
         take: limit,
-        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified', ], 
+        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified',],
       });
-  
+
       if (list.length === 0) {
         return paginateResponse([], 0, count);
       }
-  
+
       return paginateResponse(list, count, count);
     } catch (error) {
       return {
@@ -165,12 +165,12 @@ export class UserService {
       const user = await this.userRepository.findOne({
         where: [{ email: forgetPasswordDto.email, is_deleted: false }],
       });
-  
+
       if (!user) {
         return WriteResponse(404, false, 'User not exists with this email');
       }
-  
-  
+
+
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token`;
       const message = `
         You are receiving this email because a request to reset your password was received for your account.
@@ -180,13 +180,13 @@ export class UserService {
         
         If you did not request a password reset, please ignore this email or contact our support team immediately.
       `;
-  
-     await this.mailerService.sendEmail(
-      forgetPasswordDto.email,
-      'Welcome to Our Platform',
-      { name: user.firstName, verificationUrl: resetLink } as Record<string, any>,
-      'welcome',
-    );
+
+      await this.mailerService.sendEmail(
+        forgetPasswordDto.email,
+        'Welcome to Our Platform',
+        { name: user.firstName, verificationUrl: resetLink } as Record<string, any>,
+        'welcome',
+      );
       await this.userRepository.save(user);
       return WriteResponse(
         200,
@@ -201,20 +201,20 @@ export class UserService {
       );
     }
   }
-  
+
   async resetPassword(email: string, newPassword: string) {
     try {
       const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false }, 
+        where: { email, is_deleted: false },
       });
-  
+
       if (!user) {
         return WriteResponse(400, false, 'User not found with the provided email.');
       }
-  
+
       user.password = await bcrypt.hash(newPassword, 10);
       await this.userRepository.save(user);
-  
+
       return WriteResponse(200, {
         message: 'Password reset successfully.',
       });
@@ -226,8 +226,8 @@ export class UserService {
       );
     }
   }
-  
-  
+
+
 
 }
 
