@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { MoreThan, Not, Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,8 +18,8 @@ export class UserService {
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
     private readonly mailerService: MailService,
-    
-  ) {}
+
+  ) { }
 
   async validateUserById(userId: any) {
     console.log(userId)
@@ -27,7 +27,7 @@ export class UserService {
       where: { id: userId },
     });
   }
-  
+
   async createUpdate(userDto: CreateUserDto) {
     try {
       const user = userDto.id
@@ -38,7 +38,19 @@ export class UserService {
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
-      if (!userDto.id) {
+      if (userDto.id) {
+        // Check if the email already exists for another user
+        const existingUser = await this.userRepository.findOne({
+          where: { email: userDto.email, is_deleted: false, id: Not(userDto.id) },
+        });
+        if (existingUser) {
+          return WriteResponse(
+            409,
+            {},
+            `User with email ${userDto.email} already exists.`,
+          );
+        }
+      } else {
         const existingUser = await this.userRepository.findOne({
           where: { email: userDto.email, is_deleted: false },
         });
@@ -51,9 +63,9 @@ export class UserService {
         }
       }
 
-      const savedUser = await this.userRepository.save(
-        user || this.userRepository.create(userDto as CreateUserDto),
-      );
+      // Create a new object excluding role and password
+      const { role, password, ...userData } = userDto;
+      const savedUser = await this.userRepository.save({ ...user, ...userData });
       return WriteResponse(
         200,
         {
@@ -105,6 +117,7 @@ export class UserService {
       if (!user) {
         return WriteResponse(404, {}, `User with ${key} ${value} not found.`);
       }
+      delete user.password;
       return WriteResponse(200, user, 'User retrieved successfully.');
     } catch (error) {
       return WriteResponse(
@@ -121,6 +134,9 @@ export class UserService {
       if (users.length === 0) {
         return WriteResponse(404, [], 'No users found.');
       }
+      users.map((element) => {
+        delete element.password;
+      })
       return WriteResponse(200, users, 'Users retrieved successfully.');
     } catch (error) {
       return WriteResponse(
@@ -139,7 +155,7 @@ export class UserService {
       }
 
       await this.userRepository.delete(id);
-      return WriteResponse(200, {}, `User with ID ${id} deleted successfully.`);
+      return WriteResponse(200, {id}, `User with ID ${id} deleted successfully.`);
     } catch (error) {
       return WriteResponse(
         500,
@@ -222,7 +238,7 @@ export class UserService {
       if (!user) {
         return WriteResponse(400, false, 'User not found with the provided email.');
       }
-  
+
       // Update the user's password
       user.password = await bcrypt.hash(newPassword, 10);
       await this.userRepository.save(user);
@@ -238,9 +254,9 @@ export class UserService {
       );
     }
   }
-  
-  
-  
+
+
+
 
 }
 

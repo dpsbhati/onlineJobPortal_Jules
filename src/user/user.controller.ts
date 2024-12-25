@@ -38,7 +38,7 @@ export class UserController {
     private jwtService: JwtService,
   ) {}
 
-  @Post('createupdate')
+  @Post('create-update')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Create&Update a new user' })
   create(@Body() createUserDto: CreateUserDto) {
@@ -52,19 +52,19 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
+  @Get('get-by-id/:id')
   @ApiOperation({ summary: 'Find a user by ID' })
   async findOneById(@Param('id') id: string) {
     return this.userService.findOne('id', id);
   }
 
-  @Get(':email')
+  @Get('email/:email')
   @ApiOperation({ summary: 'Find a user by email' })
   async findOneByEmail(@Param('email') email: string) {
     return this.userService.findOne('email', email);
   }
 
-  @Delete(':id')
+  @Delete('delete-by-id/:id')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Delete a user by ID' })
   async delete(@Param('id') id: string) {
@@ -117,25 +117,6 @@ export class UserController {
       },
       'Login successfully.',
     );
-  }
-
-  @Get('find-one')
-  @UseGuards(RolesGuard)
-  @ApiOperation({ summary: 'Find a user by a key-value pair' })
-  @ApiQuery({
-    name: 'key',
-    required: true,
-    example: 'email',
-    description: 'The key to search by (e.g., email, id)',
-  })
-  @ApiQuery({
-    name: 'value',
-    required: true,
-    example: 'john.doe@example.com',
-    description: 'The value to search for',
-  })
-  async findOne(@Query('key') key: string, @Query('value') value: any) {
-    return this.userService.findOne(key, value);
   }
 
   @Post('reset-password')
