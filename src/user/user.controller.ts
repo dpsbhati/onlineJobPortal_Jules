@@ -12,7 +12,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
+import {
+  CreateUserDto,
+  LoginDTO,
+  ResetPasswordDto,
+} from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { forgetPasswordDto } from './dto/create-user.dto';
 import {
@@ -29,9 +33,9 @@ import { JwtService } from '@nestjs/jwt';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService,
+  constructor(
+    private readonly userService: UserService,
     private jwtService: JwtService,
-
   ) {}
 
   @Post('createupdate')
@@ -91,14 +95,15 @@ export class UserController {
     },
   })
   async LogIn(@Body() data: LoginDTO) {
-    let User = await this.userService.LogIn(
-      data.email,
-      data.password,
-    );
+    let User = await this.userService.LogIn(data.email, data.password);
     if (!User) {
       return WriteResponse(401, data, 'Invalid credentials.');
-    }else if(User && !User.isEmailVerified){
-      return WriteResponse(401, data, 'Your email is not verified, Please verify your email');
+    } else if (User && !User.isEmailVerified) {
+      return WriteResponse(
+        401,
+        data,
+        'Your email is not verified, Please verify your email',
+      );
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
@@ -114,7 +119,6 @@ export class UserController {
       'Login successfully.',
     );
   }
-
 
   @Get('find-one')
   @UseGuards(RolesGuard)
@@ -136,11 +140,29 @@ export class UserController {
   }
 
   @Post('reset-password')
-  async resetPassword(
-    @Body('token') token: string,
-    @Body('newPassword') newPassword: string,
-  ) {
-    return this.userService.resetPassword(token, newPassword);
+  @ApiBody({
+    description: 'Provide the email and the new password to reset the user password.',
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'john.doe@gmail.com',
+          description: 'The email of the user whose password is being reset.',
+        },
+        newPassword: {
+          type: 'string',
+          example: 'securePassword123',
+          description: 'The new password for the user (minimum 6 characters).',
+        },
+      },
+    },
+  })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.userService.resetPassword(
+      resetPasswordDto.email,
+      resetPasswordDto.newPassword,
+    );
   }
 
   @Post('forget-password')

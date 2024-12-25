@@ -33,14 +33,6 @@ import { UserProfileModule } from './user-profile/user-profile.module';
       }),
       inject: [ConfigService],
     }),
-
-    
-    JwtModule.register({
-      global: true,
-      secret: "OnlineJobPortal",
-      signOptions: { expiresIn: '7d' },
-    }),
-    // AuthService,
     UserModule,
     JobPostingModule,
     ApplicationModule,

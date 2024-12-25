@@ -9,12 +9,12 @@ export class EmailService {
 
   constructor(private configService: ConfigService) {
     this.transporter = nodemailer.createTransport({
-      host: this.configService.get<string>('SMTP_HOST'),
-      port: this.configService.get<number>('SMTP_PORT'),
-      secure: true,
+      host: 'localhost',
+      port: 587,
+      secure: false,
       auth: {
-        user: this.configService.get<string>('SMTP_USER'),
-        pass: this.configService.get<string>('SMTP_PASS'),
+        user: 'sarfaraz.f9460@gmail.com',
+        pass: 'wciirazzhwdhppaw',
       },
     });
   }
@@ -26,7 +26,11 @@ export class EmailService {
     status: ApplicationStatus,
   ): Promise<void> {
     const subject = this.getStatusUpdateSubject(status, jobTitle);
-    const content = this.getStatusUpdateContent(status, applicantName, jobTitle);
+    const content = this.getStatusUpdateContent(
+      status,
+      applicantName,
+      jobTitle,
+    );
 
     await this.transporter.sendMail({
       from: this.configService.get<string>('SMTP_FROM'),
@@ -56,7 +60,10 @@ export class EmailService {
       html: content,
     });
   }
-  private getStatusUpdateSubject(status: ApplicationStatus, jobTitle: string): string {
+  private getStatusUpdateSubject(
+    status: ApplicationStatus,
+    jobTitle: string,
+  ): string {
     switch (status) {
       case ApplicationStatus.UNDER_REVIEW:
         return `Your application for ${jobTitle} is under review`;

@@ -18,9 +18,16 @@ export class UserService {
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
     private readonly mailerService: MailService,
+    
+  ) {}
 
-  ) { }
-
+  async validateUserById(userId: any) {
+    console.log(userId)
+    return this.userRepository.findOne({
+      where: { id: userId },
+    });
+  }
+  
   async createUpdate(userDto: CreateUserDto) {
     try {
       const user = userDto.id
@@ -211,7 +218,8 @@ export class UserService {
       if (!user) {
         return WriteResponse(400, false, 'User not found with the provided email.');
       }
-
+  
+      // Update the user's password
       user.password = await bcrypt.hash(newPassword, 10);
       await this.userRepository.save(user);
 
@@ -226,8 +234,9 @@ export class UserService {
       );
     }
   }
-
-
+  
+  
+  
 
 }
 
