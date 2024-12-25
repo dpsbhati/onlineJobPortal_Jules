@@ -46,6 +46,13 @@ export class Users {
 
   @ApiProperty()
   @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ type: "enum", enum: ["admin", "applicant", "employer"], nullable: true })
+  role: string;
+
+  @ApiProperty()
+  @Column({ default: true })
   is_deleted: boolean;
 
 
@@ -57,7 +64,7 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
- 
+
 
   // @Column({ nullable: true })
   // resetPasswordToken: string;
@@ -65,7 +72,7 @@ export class Users {
   // @Column({ type: 'timestamp', nullable: true })
   // resetPasswordExpires: Date;
 
-  
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {

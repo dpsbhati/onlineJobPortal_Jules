@@ -1,12 +1,14 @@
-import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../enums/user-role.enums'; // Adjust the import path as necessary
 
 export class CreateUserDto {
   @ApiPropertyOptional({
     example: 'unique-user-id',
-    description: 'The unique identifier of the user for updates.',
+    description: 'The unique identifier of the user for updates. Must be a valid UUID if provided.',
   })
+  @IsOptional()
+  @IsUUID()
   id?: string; // Optional for updates
   @ApiProperty({
     example: 'John',
@@ -48,23 +50,7 @@ export class CreateUserDto {
   })
   @IsEnum(UserRole)
   @IsOptional()
-  role_id: UserRole = UserRole.APPLICANT;
-
-  @ApiPropertyOptional({
-    example: false,
-    description: 'Indicates whether the user\'s email is verified. Default is false.',
-  })
-  @IsBoolean()
-  @IsOptional()
-  isEmailVerified?: boolean = false;
-
-  @ApiPropertyOptional({
-    example: true,
-    description: 'Indicates whether the user is active. Default is true.',
-  })
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean = true;
+  role: UserRole = UserRole.APPLICANT;
  
 }
 

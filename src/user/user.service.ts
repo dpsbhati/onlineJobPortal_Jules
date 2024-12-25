@@ -56,7 +56,11 @@ export class UserService {
       );
       return WriteResponse(
         200,
-        savedUser,
+        {
+          email: savedUser.email,
+          firstName: savedUser.firstName,
+          lastName: savedUser.lastName,
+        },
         user ? 'User updated successfully.' : 'User created successfully.',
       );
     } catch (error) {
