@@ -6,6 +6,9 @@ import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { WriteResponse } from 'src/shared/response';
 import { LinkedInService } from 'src/linkedin/linkedin.service';
+import { FacebookService } from 'src/facebook/facebook.service';
+import { CronJob } from 'cron';
+
 
 @Injectable()
 export class JobPostingService {
@@ -13,8 +16,11 @@ export class JobPostingService {
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
-
+    private readonly facebookService: FacebookService,
   ) { }
+
+  private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
+
 
   // async create(createJobPostingDto: CreateJobPostingDto): Promise<JobPosting> {
   //   const jobPosting = this.jobPostingRepository.create(createJobPostingDto);
@@ -67,7 +73,6 @@ export class JobPostingService {
           ...(jobDto.id ? { id: Not(jobDto.id) } : {}), 
         },
       });
-  
       if (duplicateCheck) {
         return WriteResponse(
           409,

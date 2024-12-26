@@ -13,6 +13,7 @@ import { UserProfileModule } from './user-profile/user-profile.module';
 import { LinkedinModule } from './linkedin/linkedin.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JobScheduler } from './linkedin/linkedin.service';
+import { FacebookModule } from './facebook/facebook.module';
 
 
 @Module({
@@ -43,6 +44,7 @@ import { JobScheduler } from './linkedin/linkedin.service';
     UploadsModule,
     UserProfileModule,
     LinkedinModule,
+    FacebookModule,
     
   ],
   providers: [JobScheduler],
