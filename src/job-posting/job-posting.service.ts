@@ -5,12 +5,15 @@ import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { WriteResponse } from 'src/shared/response';
+import { LinkedInService } from 'src/linkedin/linkedin.service';
 
 @Injectable()
 export class JobPostingService {
   constructor(
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
+    private readonly linkedInService: LinkedInService,
+
   ) { }
 
   // async create(createJobPostingDto: CreateJobPostingDto): Promise<JobPosting> {
@@ -54,7 +57,6 @@ export class JobPostingService {
         const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } })
         : null;
-  
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
@@ -99,9 +101,7 @@ export class JobPostingService {
       const { page = 1, limit = 10, search, sortField = 'created_at', sortOrder = 'DESC' } = queryParams;
   
       const skip = (page - 1) * limit;
-  
       const queryBuilder = this.jobPostingRepository.createQueryBuilder('job');
-  
       queryBuilder.where('job.is_deleted = :is_deleted', { is_deleted: false });
       if (search) {
         queryBuilder.andWhere(
@@ -120,7 +120,6 @@ export class JobPostingService {
           totalPages: Math.ceil(total / limit),
         });
       }
-  
       return WriteResponse(404, false, 'No job postings found.');
     } catch (error) {
       return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');

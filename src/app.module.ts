@@ -10,12 +10,17 @@ import { MailModule } from './utils/mail.module';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { LinkedinModule } from './linkedin/linkedin.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { JobScheduler } from './linkedin/linkedin.service';
 
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
-      isGlobal: true, // Ensures ConfigService is available globally
+      isGlobal: true, 
+      // Ensures ConfigService is available globally
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, MailModule],
@@ -37,7 +42,9 @@ import { UserProfileModule } from './user-profile/user-profile.module';
     JobPostingModule,
     ApplicationModule,
     UploadsModule,
-    UserProfileModule
+    UserProfileModule,
+    LinkedinModule,
+    JobScheduler
   ],
 })
 export class AppModule implements NestModule {
