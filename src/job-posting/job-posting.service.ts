@@ -60,8 +60,6 @@ export class JobPostingService {
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
-  
-      
       const duplicateCheck = await this.jobPostingRepository.findOne({
         where: {
           title: jobDto.title, 

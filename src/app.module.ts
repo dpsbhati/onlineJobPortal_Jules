@@ -17,7 +17,6 @@ import { JobScheduler } from './linkedin/linkedin.service';
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true, 
       // Ensures ConfigService is available globally
@@ -44,8 +43,10 @@ import { JobScheduler } from './linkedin/linkedin.service';
     UploadsModule,
     UserProfileModule,
     LinkedinModule,
-    JobScheduler
+    
   ],
+  providers: [JobScheduler],
+
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

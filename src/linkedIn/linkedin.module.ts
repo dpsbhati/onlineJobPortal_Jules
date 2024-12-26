@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { LinkedinService } from './linkedin.service';
+import { LinkedInService } from './linkedin.service';
 import { LinkedinController } from './linkedin.controller';
 
 @Module({
   controllers: [LinkedinController],
-  providers: [LinkedinService],
+  providers: [LinkedInService],
+  exports: [LinkedInService], 
+
 })
 export class LinkedinModule {}
