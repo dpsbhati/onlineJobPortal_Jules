@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, Min } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class CreateJobPostingDto {
   @ApiProperty({ example: 'job-id-1', description: 'Unique identifier for the job posting (optional)' })
   @IsOptional()
-  @IsString()
-  id: string;
+  @IsUUID()
+  id?: string; // Optional for updates
 
   @ApiProperty({ description: 'The job type', example: 'Full-time' })
   @IsString()

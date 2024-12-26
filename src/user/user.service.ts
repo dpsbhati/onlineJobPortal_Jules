@@ -130,13 +130,13 @@ export class UserService {
 
   async findAll() {
     try {
-      const users = await this.userRepository.find();
+      const users = await this.userRepository.find({ where: { is_deleted: false } });
       if (users.length === 0) {
         return WriteResponse(404, [], 'No users found.');
       }
       users.map((element) => {
         delete element.password;
-      })
+      });
       return WriteResponse(200, users, 'Users retrieved successfully.');
     } catch (error) {
       return WriteResponse(
@@ -154,8 +154,10 @@ export class UserService {
         return WriteResponse(404, {}, `User with ID ${id} not found.`);
       }
 
-      await this.userRepository.delete(id);
-      return WriteResponse(200, {id}, `User with ID ${id} deleted successfully.`);
+      // Set is_deleted to true instead of deleting the user
+      user.is_deleted = true;
+      await this.userRepository.save(user);
+      return WriteResponse(200, { id }, `User with ID ${id} marked as deleted successfully.`);
     } catch (error) {
       return WriteResponse(
         500,
@@ -169,9 +171,10 @@ export class UserService {
     try {
       const offset = (page - 1) * limit;
       const [list, count] = await this.userRepository.findAndCount({
+        where: { is_deleted: false },
         skip: offset,
         take: limit,
-        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified',],
+        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified'],
       });
 
       if (list.length === 0) {
@@ -254,9 +257,4 @@ export class UserService {
       );
     }
   }
-
-
-
-
 }
-

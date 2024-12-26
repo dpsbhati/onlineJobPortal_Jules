@@ -14,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class JobPostingController {
   constructor(private readonly jobPostingService: JobPostingService) {}
 
-  @Post('create-or-update')
+  @Post('create-update')
   @ApiOperation({ summary: 'Create or Update a Job Posting with optional file upload' })
   async createOrUpdate(
     @Body() jobDto: CreateJobPostingDto,) 
