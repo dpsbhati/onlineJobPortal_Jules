@@ -107,6 +107,24 @@ export class AuthService {
     return this._httpClient.post('api/auth/unlock-session', credentials);
   }
 
+  registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: string }): Observable<any> {
+    return this.genericService.Post('user/create-update', user).pipe(
+      catchError((error) => {
+        console.error('Error in registerUser:', error);
+        return throwError(() => new Error('Failed to register user.'));
+      })
+    );
+  }
+  verifyEmail(payload: { token: string }): Observable<any> {
+    return this.genericService.Post('user/verify-email', payload).pipe(
+      catchError((error) => {
+        console.error('Error in verifyEmail:', error);
+        return throwError(() => new Error('Failed to verify email.'));
+      })
+    );
+  }
+  
+
   /**
    * Check the authentication status
    */

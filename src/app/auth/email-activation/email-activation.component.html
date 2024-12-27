@@ -1,0 +1,20 @@
+<!-- email-activation.component.html -->
+<div class="email-activation-container">
+    <h2>Email Activation</h2>
+  
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <p>{{ successMessage }}</p>
+    </div>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <p>{{ errorMessage }}</p>
+    </div>
+  
+    <!-- Loading State -->
+    <div *ngIf="!successMessage && !errorMessage" class="loading">
+      <p>Processing your email activation...</p>
+    </div>
+  </div>
+  

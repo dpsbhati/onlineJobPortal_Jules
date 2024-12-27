@@ -68,4 +68,7 @@ export class LoginComponent implements OnInit {
   navigateToResetPassword(): void {
     this._router.navigate(['auth/reset-password']);
   }
+  navigateToNewuserRegistartion(): void {
+    this._router.navigate(['auth/new-user-registration']);
+  }
 }
