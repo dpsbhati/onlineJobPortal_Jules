@@ -1,5 +1,4 @@
 export const environment = {
-    production: false,
-    baseUrl: 'http://localhost:4200', 
-  };
-  
+  production: false,
+  baseUrl: 'https://onlinejobportal.microlent.com/api/',  // Use the live API for local development
+};

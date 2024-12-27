@@ -8,15 +8,18 @@ import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboa
 import { AuthGuard } from './core/guards/auth.guard';
 import { CvUploadComponent } from './pages/Jobseeker/cv-upload/cv-upload.component';
 export const routes: Routes = [
-  // { path: '', redirectTo: '/RecruiterDashboardComponent', pathMatch: 'full' },
   {
     path: '',
-    component: LoginComponent,
+    redirectTo: 'auth/login', // Redirect to the login page
+    pathMatch: 'full', // Ensure it only matches the empty path
   },
   {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent,
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
   },
+  // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
+  // { path: '**', component: Page404Component },
+
   {
     path: 'RecruiterDashboardComponent',
     component: RecruiterDashboardComponent,

@@ -1,16 +1,16 @@
-<div class="login-container">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div>
-            <label for="email">Email:</label>
-            <input id="email" type="email" formControlName="email" />
-        </div>
+<form [formGroup]="loginForm" (ngSubmit)="signIn()">
+    <div>
+        <label for="email">Email:</label>
+        <input id="email" type="email" formControlName="email" />
+    </div>
 
-        <div>
-            <label for="password">Password:</label>
-            <input id="password" type="password" formControlName="password" />
-            <button type="button" (click)="navigateToForgotPassword()">Forgot Password?</button>
-        </div>
+    <div>
+        <label for="password">Password:</label>
+        <input id="password" type="password" formControlName="password" />
+        <button type="button" (click)="navigateToForgotPassword()">Forgot Password?</button>
+        <button type="button" (click)="navigateToResetPassword()">Reset Password?</button>
 
-        <button type="submit">Login</button>
-    </form>
-</div>
+    </div>
+
+    <button type="submit">Login</button>
+</form>

@@ -2,23 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environment';
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GenericService {
-
-
   apiUrl: string = environment.baseUrl;
-  constructor(
-    private httpClient: HttpClient
-  ) { }
+
+  constructor(private httpClient: HttpClient) { }
 
   public Get<T>(url: string): Observable<T> {
     return this.httpClient.get<T>(this.apiUrl + url);
   }
 
-  public Post<T>(url: string, Data: any, option?: any): Observable<T> {
-    return this.httpClient.post<T>(this.apiUrl + url, Data);
+  public Post<T>(url: string, data: any, option?: any): Observable<T> {
+    return this.httpClient.post<T>(this.apiUrl + url, data);
   }
 
 

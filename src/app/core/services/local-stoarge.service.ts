@@ -1,22 +1,28 @@
+// local-storage.service.ts
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class LocalStoargeService {
-  lToken: any;
+export class LocalStorageService {
   constructor() { }
 
-  public GetItem(key: string) {
-    return localStorage.getItem(key);
+  public GetItem(key: string): string | null {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+    return null;
   }
 
   public SetItem(key: string, data: string): void {
-    localStorage.setItem(key, data);
-    this.lToken = data;
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, data);
+    }
   }
 
-  public RemoveItem(key: string) {
-    localStorage.removeItem(key);
+  public RemoveItem(key: string): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(key);
+    }
   }
 }
