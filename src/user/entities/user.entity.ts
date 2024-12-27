@@ -15,24 +15,19 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('users')
 export class Users {
-  @ApiProperty()
   @PrimaryColumn({ type: 'uuid' })
   @Generated('uuid')
   id: string;
 
-  @ApiProperty()
   @Column({ unique: true })
   email: string;
 
-  @ApiProperty()
   @Column()
   firstName: string;
 
-  @ApiProperty()
   @Column()
   refreshToken: string;
 
-  @ApiProperty()
   @Column()
   lastName: string;
 
@@ -40,27 +35,22 @@ export class Users {
   @Column()
   password: string;
 
-  @ApiProperty()
   @Column({ default: false })
   isEmailVerified: boolean;
 
-  @ApiProperty()
   @Column({ default: true })
   isActive: boolean;
 
   @Column({ type: "enum", enum: ["admin", "applicant", "employer"], nullable: true })
   role: string;
 
-  @ApiProperty()
   @Column({ default: true })
   is_deleted: boolean;
 
 
-  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
-  @ApiProperty()
   @UpdateDateColumn()
   updatedAt: Date;
 

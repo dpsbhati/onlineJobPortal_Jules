@@ -41,7 +41,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
-  password: string;
+  password?: string; // Add this line
 
   @ApiPropertyOptional({
     example: UserRole.APPLICANT,
