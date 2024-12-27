@@ -151,14 +151,13 @@ export class UserService {
       return false;
     }
 
-    if (User && passwordValid && User?.isEmailVerified == true) {
-      // return User;
-      // await this.logsService.create({
-      //   users_id: User.id,
-      //   log_detail: GenericActions['Logged-in'],
-      //   createdBy: User.id,
-      // });
-      return User;
+    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+      return WriteResponse(403, {}, 'User account is not active.');
+    }
+
+    // Check if the user's email is verified
+    if (!User.isEmailVerified) { // Check if the email is verified
+      return WriteResponse(403, {}, 'User email is not verified.');
     }
     return { User };
   }
@@ -255,7 +254,7 @@ export class UserService {
       }
 
       const verificationToken = this.generateVerificationToken(user.id);
-      const resetLink = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${verificationToken}`;
 
       // const message = `
       //   You are receiving this email because a request to reset your password was received for your account.
@@ -269,7 +268,7 @@ export class UserService {
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Welcome to Our Platform',
-        { name: user.firstName, verificationUrl: resetLink } as Record<string, any>,
+        { name: user.firstName, resetLink: resetLink } as Record<string, any>,
         'forgetpassword',
       );
       await this.userRepository.save(user);
@@ -287,14 +286,17 @@ export class UserService {
     }
   }
 
-  async resetPassword(email: string, newPassword: string) {
+  async resetPassword(newPassword: string, token: string,) {
     try {
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.id;
+
       const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false },
+        where: { id: userId, is_deleted: false },
       });
 
       if (!user) {
-        return WriteResponse(400, false, 'User not found with the provided email.');
+        return WriteResponse(400, false, 'User not found with the provided token.');
       }
 
       // Update the user's password
@@ -318,4 +320,33 @@ export class UserService {
     const token = this.jwtService.sign({ id: userId }, { expiresIn: '10m' }); // Token expires in 10 minutes
     return token;
   }
+
+  async verifyEmail(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token); // Decode the token
+      const userId = decoded.id; // Extract user ID from the token
+
+      const user = await this.userRepository.findOne({
+        where: { id: userId, is_deleted: false },
+      });
+
+      if (!user) {
+        return WriteResponse(404, {}, 'User not found.');
+      }
+
+      // Update the user's email verification status
+      user.isEmailVerified = true;
+      await this.userRepository.save(user);
+
+      return WriteResponse(200, {}, 'Email verified successfully.');
+    } catch (error) {
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
+    }
+  }
+
+
 }

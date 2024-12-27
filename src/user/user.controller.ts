@@ -36,7 +36,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   @Post('create-update')
   @UseGuards(RolesGuard)
@@ -52,16 +52,34 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Post('email')
+  @ApiOperation({ summary: 'Find a user by email' })
+  @ApiBody({
+    description: 'Payload for finding a user by email',
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'john.doe@example.com',
+          description: 'The email of the user to find.',
+        },
+      },
+    },
+  })
+  async findOneByEmail(@Body('email') email: string) {
+    try {
+      return this.userService.findOne('email', email);
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
   @Get('get-by-id/:id')
   @ApiOperation({ summary: 'Find a user by ID' })
   async findOneById(@Param('id') id: string) {
     return this.userService.findOne('id', id);
-  }
-
-  @Get('email/:email')
-  @ApiOperation({ summary: 'Find a user by email' })
-  async findOneByEmail(@Param('email') email: string) {
-    return this.userService.findOne('email', email);
   }
 
   @Delete('delete-by-id/:id')
@@ -121,27 +139,27 @@ export class UserController {
 
   @Post('reset-password')
   @ApiBody({
-    description: 'Provide the email and the new password to reset the user password.',
+    description: 'Provide the new password and token to reset the user password.',
     schema: {
       type: 'object',
       properties: {
-        email: {
-          type: 'string',
-          example: 'john.doe@gmail.com',
-          description: 'The email of the user whose password is being reset.',
-        },
         newPassword: {
           type: 'string',
           example: 'securePassword123',
           description: 'The new password for the user (minimum 6 characters).',
+        },
+        token: {
+          type: 'string',
+          example: 'your-reset-token',
+          description: 'The token for password reset verification.',
         },
       },
     },
   })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.userService.resetPassword(
-      resetPasswordDto.email,
       resetPasswordDto.newPassword,
+      resetPasswordDto.token,
     );
   }
   @Post('forget-password')
@@ -158,5 +176,23 @@ export class UserController {
     @Body() forgetPasswordDto: forgetPasswordDto,
   ) {
     return this.userService.forgetPassword(forgetPasswordDto);
+  }
+
+  @Post('verify-email')
+  @ApiBody({
+    description: 'Payload for verifying email using a token',
+    schema: {
+      type: 'object',
+      properties: {
+        token: {
+          type: 'string',
+          example: 'your-verification-token',
+          description: 'The token sent to the user’s email for verification.',
+        },
+      },
+    },
+  })
+  async verifyEmail(@Body('token') token: string) {
+    return this.userService.verifyEmail(token);
   }
 }

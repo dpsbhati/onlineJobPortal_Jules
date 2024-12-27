@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean, IsUUID, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../enums/user-role.enums'; // Adjust the import path as necessary
 
@@ -35,13 +35,16 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    example: 'securePassword123',
-    description: 'The password of the user (minimum length of 6 characters).',
+    example: 'securePassword123!',
+    description: 'The password of the user (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
   })
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
-  password?: string; // Add this line
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
+    message: 'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+  })
+  password?: string; // Updated validation
 
   @ApiPropertyOptional({
     example: UserRole.APPLICANT,
@@ -68,14 +71,15 @@ export class LoginDTO {
 }
 
 export class ResetPasswordDto {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+  token: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(6, {
-    message: 'New password must be at least 6 characters long.',
+    message: 'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers.',
+  })
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
+    message: 'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
   })
   newPassword: string;
 }
