@@ -75,7 +75,7 @@ export class AuthService {
    *
    * @param password
    */
-  resetPassword(payload: { email: string, newPassword: string }): Observable<any> {
+  resetPassword(payload: { newPassword: string }): Observable<any> {
     return this.genericService.Post(`user/reset-password`, payload); // Adjust the URL as necessary
   }
 

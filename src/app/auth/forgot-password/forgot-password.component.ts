@@ -29,47 +29,28 @@ export class ForgotPasswordComponent {
   }
 
   sendResetLink(): void {
-    // Return if the form is invalid
     if (this.forgotPasswordForm.invalid) {
       return;
     }
-
-    // Disable the form
+  
     this.forgotPasswordForm.disable();
-
-    // Hide the alert
     this.showAlert = false;
-
-    // Forgot password
+  
     this._authService.forgotPassword(this.forgotPasswordForm.get('email')?.value)
-      .pipe(
-        finalize(() => {
-          // Re-enable the form
-          this.forgotPasswordForm.enable();
-
-          // Reset the form
-          this.forgotPasswordForm.reset();
-
-          // Show the alert
-          this.showAlert = true;
-        }),
-      )
+      .pipe(finalize(() => {
+        this.forgotPasswordForm.enable();
+        this.forgotPasswordForm.reset();
+        this.showAlert = true;
+      }))
       .subscribe(
         (response) => {
-          // Set the alert
-          this.alert = {
-            type: 'success',
-            message: 'Password reset sent! You\'ll receive an email if you are registered on our system.',
-          };
+          this.alert = { type: 'success', message: 'Reset link sent to your email.' };
         },
         (error) => {
-          // Set the alert
-          this.alert = {
-            type: 'error',
-            message: 'Email does not found! Are you sure you are already a member?',
-          };
-        },
+          this.alert = { type: 'error', message: 'Email not found!' };
+        }
       );
   }
+  
 }
 

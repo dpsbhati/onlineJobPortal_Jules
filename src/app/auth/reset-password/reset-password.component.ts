@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { finalize } from 'rxjs';
 
@@ -12,86 +13,69 @@ import { finalize } from 'rxjs';
   styleUrl: './reset-password.component.css'
 })
 export class ResetPasswordComponent {
-  resetPasswordForm!: UntypedFormGroup;
+  resetPasswordForm!: FormGroup;
+  token: string = '';
+  isSubmitting: boolean = false;
+  alert: { type: string; message: string } | null = null;
   showAlert: boolean = false;
-  alert: any;
-  isSubmitting: any
+
   constructor(
-    private _authService: AuthService,
-    private _formBuilder: UntypedFormBuilder,
-  ) {
-  }
+    private _route: ActivatedRoute,
+    private _formBuilder: FormBuilder,
+    private _authService: AuthService
+  ) { }
+
   ngOnInit(): void {
-    // Create the form
+    // Extract token from query parameters
+    this.token = this._route.snapshot.queryParamMap.get('token') || '';
+
+    if (!this.token) {
+      this.alert = { type: 'error', message: 'Invalid or missing reset token.' };
+      return;
+    }
+
+    // Initialize the form
     this.resetPasswordForm = this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirm: ['', Validators.required],
     });
   }
 
   resetPassword(): void {
-    console.log('resetPassword method called');
-
-    // Return if the form is invalid
     if (this.resetPasswordForm.invalid) {
-      console.log('Form is invalid');
+      this.alert = { type: 'error', message: 'Please fill in all required fields correctly.' };
       return;
     }
 
-    // Check if passwords match
-    if (this.resetPasswordForm.get('password')?.value !== this.resetPasswordForm.get('passwordConfirm')?.value) {
-      this.alert = {
-        type: 'error',
-        message: 'Passwords do not match.',
-      };
+    const password = this.resetPasswordForm.get('password')?.value;
+    const confirmPassword = this.resetPasswordForm.get('passwordConfirm')?.value;
+
+    if (password !== confirmPassword) {
+      this.alert = { type: 'error', message: 'Passwords do not match.' };
       return;
     }
 
-    // Disable the form
-    this.resetPasswordForm.disable();
     this.isSubmitting = true;
-    console.log('Form is valid, sending reset request...');
 
-    // Hide the alert
-    this.showAlert = false;
-
-    // Get email and new password from the form
     const payload = {
-      email: this.resetPasswordForm.get('email')?.value,
-      newPassword: this.resetPasswordForm.get('password')?.value, // Ensure 'newPassword' is used
+      token: this.token,
+      newPassword: password,
     };
 
-    console.log('Payload:', payload); // Check the payload being sent
-
-    // Send the request to the server
-    this._authService.resetPassword(payload)
-      .pipe(
-        finalize(() => {
-          // Re-enable the form
-          this.resetPasswordForm.enable();
-          this.resetPasswordForm.reset();
-          this.isSubmitting = false;
-          this.showAlert = true;
-        }),
-      )
+    this._authService
+      .resetPassword(payload)
+      .pipe(finalize(() => (this.isSubmitting = false)))
       .subscribe(
-        (response) => {
-          console.log('API call successful', response);
-          this.alert = {
-            type: 'success',
-            message: 'Your password has been reset.',
-          };
+        () => {
+          this.alert = { type: 'success', message: 'Password reset successfully.' };
+          this.resetPasswordForm.reset();
         },
         (error) => {
-          console.error('API call failed', error);
-          this.alert = {
-            type: 'error',
-            message: 'Something went wrong, please try again.',
-          };
+          this.alert = { type: 'error', message: error?.error?.message || 'Failed to reset password. Please try again.' };
         }
       );
   }
+
 
 
 }

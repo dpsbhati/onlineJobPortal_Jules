@@ -66,6 +66,6 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToResetPassword(): void {
-    this._router.navigate(['auth/reset-password']);
+    this._router.navigate(['reset-password']);
   }
 }

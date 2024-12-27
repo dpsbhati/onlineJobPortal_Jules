@@ -7,12 +7,18 @@ import { RecruiterDashboardComponent } from './pages/Recruiter/recruiter-dashboa
 import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboard/jobseeker-dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { CvUploadComponent } from './pages/Jobseeker/cv-upload/cv-upload.component';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'auth/login', // Redirect to the login page
     pathMatch: 'full', // Ensure it only matches the empty path
   },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
+  },
+
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
