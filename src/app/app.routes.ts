@@ -8,6 +8,7 @@ import { JobseekerDashboardComponent } from './pages/Jobseeker/jobseeker-dashboa
 import { AuthGuard } from './core/guards/auth.guard';
 import { CvUploadComponent } from './pages/Jobseeker/cv-upload/cv-upload.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
+import { EmailActivationComponent } from './auth/email-activation/email-activation.component';
 export const routes: Routes = [
   {
     path: '',
@@ -25,6 +26,16 @@ export const routes: Routes = [
   },
   // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   // { path: '**', component: Page404Component },
+  {
+    path: 'auth',
+    children: [
+      {
+        path: 'email-activation',
+        component: EmailActivationComponent,
+      },
+      // Other auth routes...
+    ],
+  },
 
   {
     path: 'RecruiterDashboardComponent',
