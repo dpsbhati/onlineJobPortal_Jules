@@ -138,7 +138,9 @@ export class UserService {
     }
   }
 
-  async LogIn(email: string, password: string): Promise<any> {
+  async LogIn(email: string, password: string) {
+    console.log('LogIn function called with email:', email);
+  
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
@@ -155,13 +157,14 @@ export class UserService {
     if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
-
-    // Check if the user's email is verified
-    if (!User.isEmailVerified) { // Check if the email is verified
+  
+    if (!User.isEmailVerified) {
+      console.log('User email is not verified for email:', email);
       return WriteResponse(403, {}, 'User email is not verified.');
     }
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
+  
 
   async findOne(key: string, value: any) {
     try {

@@ -36,7 +36,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   @Post('create-update')
   @UseGuards(RolesGuard)
@@ -99,9 +99,11 @@ export class UserController {
   ) {
     return this.userService.Pagination(page, limit);
   }
+
   @Post('login')
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
+  @UseGuards(RolesGuard)
+  @ApiOperation({ summary: 'Authenticate a user and return access token' })
   @ApiBody({
     description: 'Payload for user login',
     schema: {
@@ -117,7 +119,8 @@ export class UserController {
 
   @Post('reset-password')
   @ApiBody({
-    description: 'Provide the new password and token to reset the user password.',
+    description:
+      'Provide the new password and token to reset the user password.',
     schema: {
       type: 'object',
       properties: {
