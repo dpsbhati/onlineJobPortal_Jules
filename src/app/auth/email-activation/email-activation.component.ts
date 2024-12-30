@@ -46,14 +46,13 @@ export class EmailActivationComponent {
           }, 2000);
         } else {
           this.errorMessage = 'Email verification failed. Please try again.';
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 2000);
-        }
-      },
-      (error) => {
-        this.errorMessage = 'An error occurred during email verification.';
+        //   setTimeout(() => {
+        //     this.router.navigate(['/auth/login']);
+        //   }, 2000);
+        // }
       }
+    },
+
     );
   }
 }

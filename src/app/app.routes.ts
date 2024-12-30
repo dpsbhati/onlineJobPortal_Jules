@@ -26,14 +26,11 @@ export const routes: Routes = [
   },
   // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   // { path: '**', component: Page404Component },
+  // {
   {
-    path: 'auth',
+    path: 'email-activation',
     children: [
-      {
-        path: 'email-activation',
-        component: EmailActivationComponent,
-      },
-      // Other auth routes...
+      { path: 'email-activation', component: EmailActivationComponent },
     ],
   },
 
