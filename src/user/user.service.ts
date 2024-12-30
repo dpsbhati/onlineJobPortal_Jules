@@ -9,6 +9,7 @@ import { forgetPasswordDto } from 'src/user/dto/create-user.dto'
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from 'src/utils/mail.service';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 
 
@@ -18,7 +19,7 @@ export class UserService {
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
     private readonly mailerService: MailService,
-
+    private jwtService: JwtService,
   ) { }
 
   async validateUserById(userId: any) {
@@ -30,6 +31,11 @@ export class UserService {
 
   async createUpdate(userDto: CreateUserDto) {
     try {
+      // Hash the password at the start if provided
+      if (userDto.password) {
+        userDto.password = await bcrypt.hash(userDto.password, 10);
+      }
+
       const user = userDto.id
         ? await this.userRepository.findOne({
           where: { id: userDto.id, is_deleted: false },
@@ -63,9 +69,57 @@ export class UserService {
         }
       }
 
-      // Create a new object excluding role and password
-      const { role, password, ...userData } = userDto;
+      const TEMP_EMAIL_DOMAINS = [
+        'tempmail.com',
+        '10minutemail.com',
+        'guerrillamail.com',
+        'mailinator.com',
+        'yopmail.com',
+        'burnermail.io',
+        'trashmail.com',
+        'throwawaymail.com',
+        'emailondeck.com',
+        'getnada.com',
+        'maildrop.cc',
+        'anonaddy.com',
+        'dispostable.com',
+        'fakemailgenerator.com',
+        'mohmal.com',
+        'mytemp.email',
+        'tempinbox.com',
+        'inboxkitten.com',
+        'spamgourmet.com',
+        'throwawaymail.com',
+      ]; // Add more as needed
+
+      // Function to check if the email is temporary
+      function isTemporaryEmail(email: string): boolean {
+        const domain = email.split('@')[1];
+        return TEMP_EMAIL_DOMAINS.includes(domain);
+      }
+
+      if (isTemporaryEmail(userDto.email)) {
+        return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
+      }
+
+      // Create a new object excluding role
+      const { role, ...userData } = userDto; // Exclude password here
       const savedUser = await this.userRepository.save({ ...user, ...userData });
+
+      if (!userDto.id) { // Only send email if creating a new user
+        // Generate verification token
+        const verificationToken = this.generateVerificationToken(savedUser.id);
+        const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
+
+        // Send verification email
+        await this.mailerService.sendEmail(
+          savedUser.email,
+          'Verify Your Email Address',
+          { name: savedUser.firstName, verificationUrl } as Record<string, any>,
+          'verify' // Assuming this is the template name
+        );
+      }
+
       return WriteResponse(
         200,
         {
@@ -73,7 +127,7 @@ export class UserService {
           firstName: savedUser.firstName,
           lastName: savedUser.lastName,
         },
-        user ? 'User updated successfully.' : 'User created successfully.',
+        user ? 'User updated successfully.' : 'User created successfully. Please verify your email.',
       );
     } catch (error) {
       return WriteResponse(
@@ -97,14 +151,13 @@ export class UserService {
       return false;
     }
 
-    if (User && passwordValid && User?.isEmailVerified == true) {
-      // return User;
-      // await this.logsService.create({
-      //   users_id: User.id,
-      //   log_detail: GenericActions['Logged-in'],
-      //   createdBy: User.id,
-      // });
-      return User;
+    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+      return WriteResponse(403, {}, 'User account is not active.');
+    }
+
+    // Check if the user's email is verified
+    if (!User.isEmailVerified) { // Check if the email is verified
+      return WriteResponse(403, {}, 'User email is not verified.');
     }
     return { User };
   }
@@ -200,22 +253,23 @@ export class UserService {
         return WriteResponse(404, false, 'User not exists with this email');
       }
 
+      const verificationToken = this.generateVerificationToken(user.id);
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${verificationToken}`;
 
-      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token`;
-      const message = `
-        You are receiving this email because a request to reset your password was received for your account.
-        
-        Click the link below to reset your password:
-        ${resetLink}
-        
-        If you did not request a password reset, please ignore this email or contact our support team immediately.
-      `;
+      // const message = `
+      //   You are receiving this email because a request to reset your password was received for your account.
+
+      //   Click the link below to reset your password:
+      //   ${resetLink}
+
+      //   If you did not request a password reset, please ignore this email or contact our support team immediately.
+      // `;
 
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Welcome to Our Platform',
-        { name: user.firstName, verificationUrl: resetLink } as Record<string, any>,
-        'welcome',
+        { name: user.firstName, resetLink: resetLink } as Record<string, any>,
+        'forgetpassword',
       );
       await this.userRepository.save(user);
       return WriteResponse(
@@ -232,14 +286,17 @@ export class UserService {
     }
   }
 
-  async resetPassword(email: string, newPassword: string) {
+  async resetPassword(newPassword: string, token: string,) {
     try {
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.id;
+
       const user = await this.userRepository.findOne({
-        where: { email, is_deleted: false },
+        where: { id: userId, is_deleted: false },
       });
 
       if (!user) {
-        return WriteResponse(400, false, 'User not found with the provided email.');
+        return WriteResponse(400, false, 'User not found with the provided token.');
       }
 
       // Update the user's password
@@ -257,4 +314,39 @@ export class UserService {
       );
     }
   }
+
+  generateVerificationToken(userId: string): string {
+    // const secretKey = process.env.JWT_SECRET; // Ensure you have a secret key in your environment variables
+    const token = this.jwtService.sign({ id: userId }, { expiresIn: '10m' }); // Token expires in 10 minutes
+    return token;
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token); // Decode the token
+      const userId = decoded.id; // Extract user ID from the token
+
+      const user = await this.userRepository.findOne({
+        where: { id: userId, is_deleted: false },
+      });
+
+      if (!user) {
+        return WriteResponse(404, {}, 'User not found.');
+      }
+
+      // Update the user's email verification status
+      user.isEmailVerified = true;
+      await this.userRepository.save(user);
+
+      return WriteResponse(200, {}, 'Email verified successfully.');
+    } catch (error) {
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
+    }
+  }
+
+
 }

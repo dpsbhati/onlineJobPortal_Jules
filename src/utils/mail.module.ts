@@ -20,8 +20,8 @@ import { MailService } from './mail.service';
         from: '"No Reply" <noreply@example.com>',
       },
       template: {
-        dir: join(__dirname, '..', '..', 'api', 'templates'), // Path to templates folder
-        // dir: join(__dirname, '..', '..', 'templates'), // Path to templates folder
+        // dir: join(__dirname, '..', '..', 'api', 'templates'), // Path to templates folder
+        dir: join(__dirname, '..', '..', 'templates'), // Path to templates folder
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
