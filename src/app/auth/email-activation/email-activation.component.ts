@@ -37,7 +37,7 @@ export class EmailActivationComponent {
   verifyEmail(token: string): void {
     this.authService.verifyEmail({ token }).subscribe(
       (response: any) => {
-        debugger
+      
         if (response.statusCode === 200) {
 
           this.successMessage = 'Email verified successfully!';
