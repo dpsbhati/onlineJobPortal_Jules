@@ -144,16 +144,16 @@ export class UserService {
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
-    const payload = { id: User.id };
-    const token = await this.jwtService.signAsync(payload);
-    console.log(User);
-    if (!User) return null;
+    if(!User){
+      return WriteResponse(403, {}, 'Invalid Credentials.');
+    }
     const passwordValid = await bcrypt.compare(password, User.password);
-    console.log(passwordValid);
-
     if (!passwordValid) {
       return WriteResponse(403, {}, 'Invalid password.');
     }
+    const payload = { id: User.id };
+    const token = await this.jwtService.signAsync(payload);
+    console.log(User);
     if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
@@ -162,6 +162,7 @@ export class UserService {
       console.log('User email is not verified for email:', email);
       return WriteResponse(403, {}, 'User email is not verified.');
     }
+    delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
   
