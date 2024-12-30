@@ -36,7 +36,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   @Post('create-update')
   @UseGuards(RolesGuard)
@@ -99,9 +99,11 @@ export class UserController {
   ) {
     return this.userService.Pagination(page, limit);
   }
+
   @Post('login')
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
+  @UseGuards(RolesGuard)
+  @ApiOperation({ summary: 'Authenticate a user and return access token' })
   @ApiBody({
     description: 'Payload for user login',
     schema: {
@@ -112,34 +114,13 @@ export class UserController {
     },
   })
   async LogIn(@Body() data: LoginDTO) {
-    let User = await this.userService.LogIn(data.email, data.password);
-    if (!User) {
-      return WriteResponse(401, data, 'Invalid credentials.');
-    } else if (User && !User.isEmailVerified) {
-      return WriteResponse(
-        401,
-        data,
-        'Your email is not verified, Please verify your email',
-      );
-    }
-    const payload = { id: User.id };
-    const token = await this.jwtService.signAsync(payload);
-    // const user = await this.userService.findByUserId(User.id);
-    // const userModuleRole = await this.UserService.userPerm(user.data.id)
-    delete User.password;
-    return WriteResponse(
-      200,
-      {
-        token: token,
-        user: User,
-      },
-      'Login successfully.',
-    );
+    return this.userService.LogIn(data.email, data.password);
   }
 
   @Post('reset-password')
   @ApiBody({
-    description: 'Provide the new password and token to reset the user password.',
+    description:
+      'Provide the new password and token to reset the user password.',
     schema: {
       type: 'object',
       properties: {

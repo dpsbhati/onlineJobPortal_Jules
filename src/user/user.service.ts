@@ -138,29 +138,50 @@ export class UserService {
     }
   }
 
-  async LogIn(email: string, password: string): Promise<any> {
+  async LogIn(email: string, password: string) {
+    console.log('LogIn function called with email:', email);
+  
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
-    if (!User) return null;
-    const passwordValid = await bcrypt.compare(password, User.password);
-    if (!passwordValid) {
-      return passwordValid;
-    }
+    console.log('User fetched from database:', User); 
     if (!User) {
-      return false;
+      console.log('No user found with the provided email');
+      return WriteResponse(404, {}, 'Invalid email or password.');
     }
-
-    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+  
+    const passwordValid = await bcrypt.compare(password, User.password);
+    console.log('Password validation result:', passwordValid); 
+  
+    if (!passwordValid) {
+      console.log('Invalid password for email:', email);
+      return WriteResponse(401, {}, 'Invalid email or password.');
+    }
+  
+    if (!User.isActive) {
+      console.log('User account is inactive for email:', email);
       return WriteResponse(403, {}, 'User account is not active.');
     }
-
-    // Check if the user's email is verified
-    if (!User.isEmailVerified) { // Check if the email is verified
+  
+    if (!User.isEmailVerified) {
+      console.log('User email is not verified for email:', email);
       return WriteResponse(403, {}, 'User email is not verified.');
     }
-    return { User };
+  
+    console.log('User successfully logged in:', User); 
+    return {
+      statusCode: 200,
+      message: 'Login successful',
+      data: {
+        id: User.id,
+        email: User.email,
+        role: User.role,
+        firstName: User.firstName,
+        lastName: User.lastName,
+      },
+    };
   }
+  
 
   async findOne(key: string, value: any) {
     try {
