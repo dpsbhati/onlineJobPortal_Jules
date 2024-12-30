@@ -109,7 +109,7 @@ export class UserService {
       if (!userDto.id) { // Only send email if creating a new user
         // Generate verification token
         const verificationToken = this.generateVerificationToken(savedUser.id);
-        const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
+        const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
 
         // Send verification email
         await this.mailerService.sendEmail(
@@ -142,15 +142,16 @@ export class UserService {
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
+    const payload = { id: User.id };
+    const token = await this.jwtService.signAsync(payload);
+    console.log(User);
     if (!User) return null;
     const passwordValid = await bcrypt.compare(password, User.password);
-    if (!passwordValid) {
-      return passwordValid;
-    }
-    if (!User) {
-      return false;
-    }
+    console.log(passwordValid);
 
+    if (!passwordValid) {
+      return WriteResponse(403, {}, 'Invalid password.');
+    }
     if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
@@ -159,7 +160,7 @@ export class UserService {
     if (!User.isEmailVerified) { // Check if the email is verified
       return WriteResponse(403, {}, 'User email is not verified.');
     }
-    return { User };
+    return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
 
   async findOne(key: string, value: any) {

@@ -35,6 +35,7 @@ export class UserProfileService {
     return this.userProfileRepository.save(profile);
   }
 
+  
   async remove(id: string, user_id: string) {
     const profile = await this.findOne(id, user_id);
     profile.is_deleted = true;

@@ -15,6 +15,7 @@ export class LinkedInService {
       const response = await axios.post(url, content, {
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
+          
           'Content-Type': 'application/json',
         },
       });

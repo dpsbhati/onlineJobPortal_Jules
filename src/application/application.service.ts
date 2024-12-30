@@ -12,37 +12,55 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<Application>,
   ) {}
 
-  async create(createApplicationDto: CreateApplicationDto): Promise<Application> {
-    const newApplication = this.applicationRepository.create(createApplicationDto);
-    return await this.applicationRepository.save(newApplication);
-  }
+  async applyForJob(createApplicationDto: CreateApplicationDto) {
+    const { job_id, user_id } = createApplicationDto;
 
-  async findAll(): Promise<Application[]> {
-    return await this.applicationRepository.find({
-      relations: ['user_id', 'job_id'], 
+    const existingApplication = await this.applicationRepository.findOne({
+      where: { job_id, user_id, is_deleted: false },
     });
-  }
 
-  async findOne(id: string): Promise<Application> {
-    const application = await this.applicationRepository.findOne({
-      where: { id },
-      relations: ['user_id', 'job_id'],
-    });
-    if (!application) {
-      throw new NotFoundException(`Application with ID ${id} not found`);
+    if (existingApplication) {
+      throw new Error('You have already applied for this job.');
     }
+
+    const application = this.applicationRepository.create({
+      ...createApplicationDto,
+      status: 'Pending',
+    });
+
+    return await this.applicationRepository.save(application);
+  }
+
+  async findAll() {
+    return await this.applicationRepository.find({
+      where: { is_deleted: false },
+      relations: ['job_id', 'user_id'],
+      order: { applied_at: 'DESC' },
+    });
+  }
+
+  async findOne(id: string) {
+    const application = await this.applicationRepository.findOne({
+      where: { id, is_deleted: false },
+      relations: ['job_id', 'user_id'],
+    });
+
+    if (!application) {
+      throw new NotFoundException(`Application with ID ${id} not found.`);
+    }
+
     return application;
   }
 
-  async update(id: string, updateApplicationDto: UpdateApplicationDto): Promise<Application> {
+  async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     const application = await this.findOne(id);
     Object.assign(application, updateApplicationDto);
     return await this.applicationRepository.save(application);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string) {
     const application = await this.findOne(id);
     application.is_deleted = true;
-    await this.applicationRepository.save(application);
+    return await this.applicationRepository.save(application);
   }
 }

@@ -7,11 +7,11 @@ export class Application {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    // @ManyToOne(() => JobPosting, (job) => job.id)
-    // job_id: JobPosting;
+    @Column({})
+    job_id:string
 
-    // @ManyToOne(() => User, (user) => user.id)
-    // user_id: User;
+    @Column({})
+    user_id:string
 
     @Column({ type: "enum", enum: ["Pending", "Shortlisted", "Rejected", "Hired"], nullable: true })
     status: string;
@@ -22,7 +22,6 @@ export class Application {
     @Column({ type: "varchar", length: 255, nullable: true })
     comments: string;
 
-    
     @Column({ type: "varchar", length: 255, nullable: true })
     cv_path: string;
 
@@ -43,10 +42,11 @@ export class Application {
 
     @Column({ type: "tinyint", default: 0 })
     is_deleted: boolean;
+    
+    @Column({})
+    created_by: string
 
-    // @ManyToOne(() => User, (user) => user.id)
-    // created_by: User;
+    @Column({})
+    updated_by:string
 
-    // @ManyToOne(() => User, (user) => user.id)
-    // updated_by: User;
 }

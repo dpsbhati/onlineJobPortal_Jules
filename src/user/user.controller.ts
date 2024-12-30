@@ -112,29 +112,7 @@ export class UserController {
     },
   })
   async LogIn(@Body() data: LoginDTO) {
-    let User = await this.userService.LogIn(data.email, data.password);
-    if (!User) {
-      return WriteResponse(401, data, 'Invalid credentials.');
-    } else if (User && !User.isEmailVerified) {
-      return WriteResponse(
-        401,
-        data,
-        'Your email is not verified, Please verify your email',
-      );
-    }
-    const payload = { id: User.id };
-    const token = await this.jwtService.signAsync(payload);
-    // const user = await this.userService.findByUserId(User.id);
-    // const userModuleRole = await this.UserService.userPerm(user.data.id)
-    delete User.password;
-    return WriteResponse(
-      200,
-      {
-        token: token,
-        user: User,
-      },
-      'Login successfully.',
-    );
+    return this.userService.LogIn(data.email, data.password);
   }
 
   @Post('reset-password')
