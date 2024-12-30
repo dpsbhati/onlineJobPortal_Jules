@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, IsEnum, IsUUID } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateApplicationDto {
   @ApiProperty({
@@ -18,55 +18,40 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   user_id: string;
 
-  @ApiProperty({
-    description: 'The status of the application. Defaults to "Pending" if not provided.',
-    enum: ['Pending', 'Shortlisted', 'Rejected', 'Hired'],
-    example: 'Pending',
-    required: false,
-  })
-  @IsEnum(['Pending', 'Shortlisted', 'Rejected', 'Hired'])
-  @IsOptional()
-  status?: string;
-
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'A brief description of the application (optional).',
-    required: false,
     example: 'Motivated candidate with strong skills in software development.',
   })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Any additional comments or remarks (optional).',
-    required: false,
     example: 'Applicant is open to relocation.',
   })
   @IsString()
   @IsOptional()
   comments?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The file path to the candidate\'s CV (optional).',
-    required: false,
     example: '/uploads/cv/johndoe_cv.pdf',
   })
   @IsString()
   @IsOptional()
   cv_path?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Additional information provided by the applicant (optional).',
-    required: false,
     example: 'Looking for a flexible work schedule.',
   })
   @IsString()
   @IsOptional()
   additional_info?: string;
-  
-  @ApiProperty({
+
+  @ApiPropertyOptional({
     description: 'Previous work experiences shared by the applicant (optional).',
-    required: false,
     example: 'Worked as a senior software developer at XYZ Corp.',
   })
   @IsString()
