@@ -92,7 +92,6 @@ export class UserService {
         'throwawaymail.com',
       ]; // Add more as needed
 
-      // Function to check if the email is temporary
       function isTemporaryEmail(email: string): boolean {
         const domain = email.split('@')[1];
         return TEMP_EMAIL_DOMAINS.includes(domain);
