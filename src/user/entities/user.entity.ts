@@ -41,12 +41,15 @@ export class Users {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ type: "enum", enum: ["admin", "applicant", "employer"], nullable: true })
+  @Column({
+    type: 'enum',
+    enum: ['admin', 'applicant', 'employer'],
+    nullable: true,
+  })
   role: string;
 
   @Column({ default: true })
   is_deleted: boolean;
-
 
   @CreateDateColumn()
   createdAt: Date;
@@ -54,14 +57,11 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
-
-
   // @Column({ nullable: true })
   // resetPasswordToken: string;
 
   // @Column({ type: 'timestamp', nullable: true })
   // resetPasswordExpires: Date;
-
 
   @BeforeInsert()
   @BeforeUpdate()

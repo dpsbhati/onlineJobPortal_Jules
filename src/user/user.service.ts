@@ -141,29 +141,49 @@ export class UserService {
   async LogIn(email: string, password: string) {
     console.log('LogIn function called with email:', email);
   
+    // Fetch the user
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
-    const payload = { id: User.id };
-    const token = await this.jwtService.signAsync(payload);
-    console.log(User);
-    if (!User) return null;
+  
+    if (!User) {
+      console.log(`User not found for email: ${email}`);
+      return WriteResponse(404, {}, 'User not found.');
+    }
+  
+    console.log(`User found: ${JSON.stringify(User)}`);
+  
+    // Verify password
     const passwordValid = await bcrypt.compare(password, User.password);
-    console.log(passwordValid);
-
     if (!passwordValid) {
+      console.log(`Invalid password for user: ${email}`);
       return WriteResponse(403, {}, 'Invalid password.');
     }
-    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+  
+    console.log(`Password is valid for user: ${email}`);
+  
+    // Check if account is active
+    if (!User.isActive) {
+      console.log(`User account is inactive: ${email}`);
       return WriteResponse(403, {}, 'User account is not active.');
     }
   
+    // Check if email is verified
     if (!User.isEmailVerified) {
-      console.log('User email is not verified for email:', email);
+      console.log(`User email is not verified for email: ${email}`);
       return WriteResponse(403, {}, 'User email is not verified.');
     }
-    return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
+  
+    // Generate token
+    const payload = { id: User.id }; // Safe to access User.id now
+    const token = await this.jwtService.signAsync(payload);
+  
+    console.log(`Login successful, token generated for user: ${email}`);
+  
+    // Return response with token and user details
+    return WriteResponse(200, { user: User, token }, 'Login successful.');
   }
+  
   
 
   async findOne(key: string, value: any) {

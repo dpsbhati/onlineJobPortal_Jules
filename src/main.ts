@@ -6,7 +6,6 @@ import { join } from 'path';
 import { ValidationFilter } from './exception/validation-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -15,8 +14,7 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders:
-      'Content-Type, Authorization,Custom-Header',
+    allowedHeaders: 'Content-Type, Authorization,Custom-Header',
   });
 
   app.setGlobalPrefix('api');
@@ -30,7 +28,7 @@ async function bootstrap() {
       exceptionFactory: ValidationFilter,
     }),
   );
-  
+
   const config = new DocumentBuilder()
     .setTitle('Online Job Portal API Documentation')
     .setDescription('The onlinejobportal API')
@@ -41,11 +39,10 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-
   SwaggerModule.setup('/api/swagger', app, document, {
     customSiteTitle: 'onlinejobportal',
   });
 
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
