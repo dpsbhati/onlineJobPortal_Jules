@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
     this._authService.login(this.loginForm.value).subscribe({
       next: (result) => {
         if (result.statusCode === 200) {
-          // this.notify.showSuccess('Login successful!');
+          this.notify.showSuccess(result.message);
 
           // Redirect to dashboard
           setTimeout(() => {
