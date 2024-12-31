@@ -21,6 +21,7 @@
     "@angular/platform-server": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@angular/ssr": "^18.2.12",
+    "@dchtools/ngx-loading-v18": "^1.0.5",
     "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.5.1",
     "compress.js": "^2.1.2",
