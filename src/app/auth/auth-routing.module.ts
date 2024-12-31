@@ -28,6 +28,7 @@ const routes: Routes = [
     path: 'email-activation',
     component: EmailActivationComponent,
   }
+  
 
 ];
 

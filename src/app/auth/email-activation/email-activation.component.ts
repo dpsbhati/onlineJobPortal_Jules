@@ -37,7 +37,7 @@ export class EmailActivationComponent {
   verifyEmail(token: string): void {
     this.authService.verifyEmail({ token }).subscribe(
       (response: any) => {
-        debugger
+      
         if (response.statusCode === 200) {
 
           this.successMessage = 'Email verified successfully!';
@@ -46,14 +46,13 @@ export class EmailActivationComponent {
           }, 2000);
         } else {
           this.errorMessage = 'Email verification failed. Please try again.';
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 2000);
-        }
-      },
-      (error) => {
-        this.errorMessage = 'An error occurred during email verification.';
+        //   setTimeout(() => {
+        //     this.router.navigate(['/auth/login']);
+        //   }, 2000);
+        // }
       }
+    },
+
     );
   }
 }
