@@ -12,7 +12,7 @@ import { finalize } from 'rxjs';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.css'
+  styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent {
   resetPasswordForm!: FormGroup;
@@ -26,8 +26,8 @@ export class ResetPasswordComponent {
     private _formBuilder: FormBuilder,
     private _authService: AuthService,
     private _notifyService: NotifyService,
-    private _spinner : NgxSpinnerService,
-    private _router : Router
+    private _spinner: NgxSpinnerService,
+    private _router: Router
   ) { }
 
   ngOnInit(): void {
@@ -39,11 +39,24 @@ export class ResetPasswordComponent {
       return;
     }
 
-    // Initialize the form
+    // Initialize the form with password matching validation
     this.resetPasswordForm = this._formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
-      passwordConfirm: ['', Validators.required],
+      passwordConfirm: ['', Validators.required]
+    }, {
+      validator: this.passwordMatchValidator
     });
+  }
+
+  // Custom validator to check password matching
+  private passwordMatchValidator(group: FormGroup) {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('passwordConfirm')?.value;
+
+    if (password && confirmPassword) {
+      return password === confirmPassword ? null : { passwordMismatch: true };
+    }
+    return null;
   }
 
   resetPassword(): void {
@@ -52,13 +65,18 @@ export class ResetPasswordComponent {
       // Check for specific validation errors
       if (this.resetPasswordForm.hasError('passwordMismatch')) {
         this._notifyService.showWarning('Passwords do not match. Please ensure both passwords are the same.');
+        return;
       } else if (this.resetPasswordForm.get('password')?.hasError('required')) {
         this._notifyService.showWarning('Password is required.');
+        return;
       } else if (this.resetPasswordForm.get('password')?.hasError('minlength')) {
         this._notifyService.showWarning('Password must be at least 8 characters long.');
-      } else {
-        this._notifyService.showWarning('Please fill in all required fields correctly.');
+        return;
+      } else if (this.resetPasswordForm.get('passwordConfirm')?.hasError('required')) {
+        this._notifyService.showWarning('Confirm Password is required.');
+        return;
       }
+      this._notifyService.showWarning('Please fill in all required fields correctly.');
       return;
     }
 
@@ -96,8 +114,5 @@ export class ResetPasswordComponent {
           this._notifyService.showError(error.error?.message || 'An unexpected error occurred');
         }
       });
-
-
-    }
+  }
 }
-

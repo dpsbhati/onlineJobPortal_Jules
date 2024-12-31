@@ -20,8 +20,8 @@ export class ForgotPasswordComponent {
   alert: any;
   constructor(private _formBuilder: FormBuilder,
     private _authService: AuthService,
-    private _notifyService : NotifyService,
-    private _spinner : NgxSpinnerService
+    private _notifyService: NotifyService,
+    private _spinner: NgxSpinnerService
   ) {
   }
 
@@ -36,10 +36,10 @@ export class ForgotPasswordComponent {
   //   if (this.forgotPasswordForm.invalid) {
   //     return;
   //   }
-  
+
   //   this.forgotPasswordForm.disable();
   //   this.showAlert = false;
-  
+
   //   this._authService.forgotPassword(this.forgotPasswordForm.get('email')?.value)
   //     .pipe(finalize(() => {
   //       this.forgotPasswordForm.enable();
@@ -83,9 +83,9 @@ export class ForgotPasswordComponent {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            this._notifyService.showSuccess('Reset link sent successfully. Please check your email.');
+            this._notifyService.showSuccess(response.message);
           } else {
-            this._notifyService.showError('Failed to send reset link. Please try again.');
+            this._notifyService.showError(response.message);
           }
         },
         error: (error) => {
@@ -94,6 +94,6 @@ export class ForgotPasswordComponent {
         }
       });
   }
-  
+
 }
 
