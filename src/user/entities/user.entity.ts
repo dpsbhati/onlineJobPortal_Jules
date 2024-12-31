@@ -31,7 +31,7 @@ export class Users {
   @Column()
   lastName: string;
 
-  @Exclude()
+  // @Exclude()
   @Column()
   password: string;
 
