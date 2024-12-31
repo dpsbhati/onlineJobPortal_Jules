@@ -15,27 +15,27 @@ export class ApplicationController {
     return this.applicationService.applyForJob(createApplicationDto);
   }
 
-  @Get()
+  @Get("get-all")
   @ApiOperation({ summary: 'Retrieve all applications' })
   findAll() {
     return this.applicationService.findAll();
   }
 
-  @Get(':id')
+  @Get('get-one')
   @ApiOperation({ summary: 'Retrieve a specific application by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the application to retrieve', example: 'uuid' })
   findOne(@Param('id') id: string) {
     return this.applicationService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post('update')
   @ApiOperation({ summary: 'Update a specific application by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the application to update', example: 'uuid' })
   update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
     return this.applicationService.update(id, updateApplicationDto);
   }
 
-  @Delete(':id')
+  @Delete('delete')
   @ApiOperation({ summary: 'Soft delete a specific application by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the application to delete', example: 'uuid' })
   remove(@Param('id') id: string) {

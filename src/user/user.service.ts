@@ -110,12 +110,11 @@ export class UserService {
         const verificationToken = this.generateVerificationToken(savedUser.id);
         const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
 
-        // Send verification email
         await this.mailerService.sendEmail(
           savedUser.email,
           'Verify Your Email Address',
           { name: savedUser.firstName, verificationUrl } as Record<string, any>,
-          'verify' // Assuming this is the template name
+          'verify' // Assuming this is the template name  
         );
       }
 

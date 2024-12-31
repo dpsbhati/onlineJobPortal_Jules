@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JobPostingModule } from 'src/job-posting/job-posting.module'; // Import the JobPostingModule
 import { JobPosting } from 'src/job-posting/entities/job-posting.entity'; // Import the JobPosting entity
-import { Application } from 'src/application/entities/application.entity';
+import { applications } from 'src/application/entities/application.entity';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { Application } from 'src/application/entities/application.entity';
       username: 'admin_onlinejobportal',
       password: 'esh@len$1',
       database: 'admin_onlinejobportal',
-      entities: [JobPosting, Application],
+      entities: [JobPosting, applications],
       synchronize: true,
     }),
     JobPostingModule,
