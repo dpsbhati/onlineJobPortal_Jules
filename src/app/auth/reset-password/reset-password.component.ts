@@ -58,7 +58,7 @@ export class ResetPasswordComponent {
 
 
   resetPassword(): void {
-    // Validate form
+    // Validate the form before proceeding
     if (this.resetPasswordForm.invalid) {
       // Check for specific validation errors
       if (this.resetPasswordForm.hasError('passwordMismatch')) {
@@ -78,7 +78,7 @@ export class ResetPasswordComponent {
       return;
     }
 
-    // Stop if custom validation fails
+    // Explicitly stop if custom validator detects a mismatch
     if (this.resetPasswordForm.errors?.['passwordMismatch']) {
       this._notifyService.showWarning('Passwords do not match. Please correct them.');
       return;
@@ -87,7 +87,7 @@ export class ResetPasswordComponent {
     // Show spinner
     this._spinner.show();
 
-    // Disable form to prevent multiple submissions
+    // Disable the form to prevent multiple submissions
     this.resetPasswordForm.disable();
 
     const password = this.resetPasswordForm.get('password')?.value;
@@ -119,5 +119,4 @@ export class ResetPasswordComponent {
         }
       });
   }
-
-}
+}  
