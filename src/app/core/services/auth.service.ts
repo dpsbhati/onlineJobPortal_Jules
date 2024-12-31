@@ -108,12 +108,13 @@ export class AuthService {
   }
 
   registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: string }): Observable<any> {
-    return this.genericService.Post('user/create-update', user).pipe(
-      catchError((error) => {
-        console.error('Error in registerUser:', error);
-        return throwError(() => new Error('Failed to register user.'));
-      })
-    );
+    return this.genericService.Post('user/create-update', user)
+    // .pipe(
+    //   catchError((error) => {
+    //     console.error('Error in registerUser:', error);
+    //     return throwError(() => new Error('Failed to register user.'));
+    //   })
+    // );
   }
   verifyEmail(payload: { token: string }): Observable<any> {
     return this.genericService.Post('user/verify-email', payload).pipe(

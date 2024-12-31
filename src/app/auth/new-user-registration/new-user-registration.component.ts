@@ -16,7 +16,7 @@ export class NewUserRegistrationComponent {
   loading: boolean = false;
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private notify: NotifyService) {
     this.registrationForm = new FormGroup({
       firstName: new FormControl('', [Validators.required, Validators.minLength(2)]),
       lastName: new FormControl('', [Validators.required, Validators.minLength(2)]),
@@ -39,6 +39,7 @@ export class NewUserRegistrationComponent {
       console.log(res);
       if(res.statusCode == 200 || res.statusCode == 201) {
         this.router.navigate(['auth/login']);
+        this.notify.showSuccess( res.message);
         this.loading = false;
        
       }
