@@ -145,26 +145,18 @@ export class UserService {
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
-  
-    if (!User) {
-      console.log(`User not found for email: ${email}`);
-      return WriteResponse(404, {}, 'User not found.');
+    if(!User){
+      return WriteResponse(403, {}, 'Invalid Credentials.');
     }
-  
-    console.log(`User found: ${JSON.stringify(User)}`);
-  
-    // Verify password
     const passwordValid = await bcrypt.compare(password, User.password);
     if (!passwordValid) {
       console.log(`Invalid password for user: ${email}`);
       return WriteResponse(403, {}, 'Invalid password.');
     }
-  
-    console.log(`Password is valid for user: ${email}`);
-  
-    // Check if account is active
-    if (!User.isActive) {
-      console.log(`User account is inactive: ${email}`);
+    const payload = { id: User.id };
+    const token = await this.jwtService.signAsync(payload);
+    console.log(User);
+    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
   
@@ -173,15 +165,8 @@ export class UserService {
       console.log(`User email is not verified for email: ${email}`);
       return WriteResponse(403, {}, 'User email is not verified.');
     }
-  
-    // Generate token
-    const payload = { id: User.id }; // Safe to access User.id now
-    const token = await this.jwtService.signAsync(payload);
-  
-    console.log(`Login successful, token generated for user: ${email}`);
-  
-    // Return response with token and user details
-    return WriteResponse(200, { user: User, token }, 'Login successful.');
+    delete User.password;
+    return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
   
   
