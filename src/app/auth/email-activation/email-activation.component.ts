@@ -24,7 +24,7 @@ export class EmailActivationComponent {
     // Get the token from the URL
   
     this.activatedRoute.queryParams.subscribe(params => {
-      console.log('Query Params:', params); 
+      // console.log('Query Params:', params); 
       this.token = params['token']; 
       if (this.token) {
         this.verifyEmail(this.token);
