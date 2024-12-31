@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { NotifyService } from '@app/core/services/notify.service';
@@ -44,7 +44,7 @@ export class ResetPasswordComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirm: ['', Validators.required]
     }, {
-      validator: this.passwordMatchValidator
+      validators: this.passwordMatchValidator
     });
   }
 
@@ -53,11 +53,9 @@ export class ResetPasswordComponent {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('passwordConfirm')?.value;
 
-    if (password && confirmPassword) {
-      return password === confirmPassword ? null : { passwordMismatch: true };
-    }
-    return null;
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
+
 
   resetPassword(): void {
     // Validate form
@@ -77,6 +75,12 @@ export class ResetPasswordComponent {
         return;
       }
       this._notifyService.showWarning('Please fill in all required fields correctly.');
+      return;
+    }
+
+    // Stop if custom validation fails
+    if (this.resetPasswordForm.errors?.['passwordMismatch']) {
+      this._notifyService.showWarning('Passwords do not match. Please correct them.');
       return;
     }
 
@@ -115,4 +119,5 @@ export class ResetPasswordComponent {
         }
       });
   }
+
 }
