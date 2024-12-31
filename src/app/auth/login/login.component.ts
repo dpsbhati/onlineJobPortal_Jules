@@ -3,6 +3,8 @@ import { Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthService } from "@app/core/services/auth.service";
+import { NotifyService } from "@app/core/services/notify.service";
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-login',
@@ -13,51 +15,68 @@ import { AuthService } from "@app/core/services/auth.service";
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  private _formBuilder = inject(FormBuilder);
-  private _router = inject(Router);
-  private _activatedRoute = inject(ActivatedRoute);
-  private _authService = inject(AuthService);
 
+
+  constructor(
+    private _formBuilder: FormBuilder,
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private _authService: AuthService,
+    private spinner: NgxSpinnerService,
+    private notify: NotifyService
+  ) { }
   ngOnInit(): void {
     this.loginForm = this._formBuilder.group({
-      email: ['john.doe@example.com', [Validators.required, Validators.email]],
-      password: ['securePassword123', [Validators.required, Validators.minLength(6)]]
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required, Validators.minLength(6)]]
     });
   }
 
 
   signIn(): void {
-    console.log('signIn method called');
+    // Validate form before proceeding
     if (this.loginForm.invalid) {
-      console.log('Form is invalid');
+      this.notify.showWarning('Please fill in all required fields correctly.');
       return;
     }
 
+    // Show loading spinner
+    this.spinner.show();
+
+    // Disable form to prevent multiple submissions
     this.loginForm.disable();
-    console.log('Form is valid, attempting login');
 
-    this._authService.login(this.loginForm.value).subscribe(
-      (response) => {
-        console.log('Login successful', response);
-        const redirectURL =
-          this._activatedRoute.snapshot.queryParamMap.get('redirectURL') ||
-          '/signed-in-redirect';
-        this._router.navigateByUrl(redirectURL);
-      },
-      (error) => {
-        console.error('Login failed', error);
-        this.loginForm.enable();
+    // Attempt login
+    this._authService.login(this.loginForm.value).subscribe({
+      next: (result) => {
+        if (result.statusCode === 200) {
+          // this.notify.showSuccess('Login successful!');
 
-        // Display user-friendly error message
-        if (error.status === 401) {
-          alert('Invalid credentials. Please try again.');
-        } else if (error.status === 0) {
-          alert('Network error. Please check your internet connection.');
+          // Redirect to dashboard
+          setTimeout(() => {
+            this._router.navigateByUrl('/dashboard');
+          }, 1000);
         } else {
-          alert('An unexpected error occurred. Please try again later.');
+          // Handle other status codes
+          this.notify.showError(result.message);
+          this.loginForm.enable();
         }
-      }
-    );
+      },
+      // error: (error) => {
+      //   // Re-enable form
+      //   this.loginForm.enable();
+
+      //   // Handle different error scenarios
+      //   if (error.status === 401) {
+      //     this.notify.showError('Invalid email or password. Please try again.');
+      //   } else if (error.status === 0) {
+      //     this.notify.showError('Network error. Please check your internet connection.');
+      //   } else {
+      //     this.notify.showError('An unexpected error occurred. Please try again later.');
+      //   }
+      // },
+     
+    });
   }
 
 
@@ -65,9 +84,9 @@ export class LoginComponent implements OnInit {
     this._router.navigate(['auth/forgot-password']);
   }
 
-  navigateToResetPassword(): void {
-    this._router.navigate(['reset-password']);
-  }
+  // navigateToResetPassword(): void {
+  //   this._router.navigate(['reset-password']);
+  // }
   navigateToNewuserRegistartion(): void {
     this._router.navigate(['auth/new-user-registration']);
   }

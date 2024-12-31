@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
+import { NotifyService } from '@app/core/services/notify.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -22,7 +24,10 @@ export class ResetPasswordComponent {
   constructor(
     private _route: ActivatedRoute,
     private _formBuilder: FormBuilder,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _notifyService: NotifyService,
+    private _spinner : NgxSpinnerService,
+    private _router : Router
   ) { }
 
   ngOnInit(): void {
@@ -42,41 +47,57 @@ export class ResetPasswordComponent {
   }
 
   resetPassword(): void {
+    // Validate form
     if (this.resetPasswordForm.invalid) {
-      this.alert = { type: 'error', message: 'Please fill in all required fields correctly.' };
+      // Check for specific validation errors
+      if (this.resetPasswordForm.hasError('passwordMismatch')) {
+        this._notifyService.showWarning('Passwords do not match. Please ensure both passwords are the same.');
+      } else if (this.resetPasswordForm.get('password')?.hasError('required')) {
+        this._notifyService.showWarning('Password is required.');
+      } else if (this.resetPasswordForm.get('password')?.hasError('minlength')) {
+        this._notifyService.showWarning('Password must be at least 8 characters long.');
+      } else {
+        this._notifyService.showWarning('Please fill in all required fields correctly.');
+      }
       return;
     }
+
+    // Show spinner
+    this._spinner.show();
+
+    // Disable form to prevent multiple submissions
+    this.resetPasswordForm.disable();
 
     const password = this.resetPasswordForm.get('password')?.value;
-    const confirmPassword = this.resetPasswordForm.get('passwordConfirm')?.value;
-
-    if (password !== confirmPassword) {
-      this.alert = { type: 'error', message: 'Passwords do not match.' };
-      return;
-    }
-
-    this.isSubmitting = true;
 
     const payload = {
       token: this.token,
       newPassword: password,
     };
 
-    this._authService
-      .resetPassword(payload)
-      .pipe(finalize(() => (this.isSubmitting = false)))
-      .subscribe(
-        () => {
-          this.alert = { type: 'success', message: 'Password reset successfully.' };
-          this.resetPasswordForm.reset();
+    this._authService.resetPassword(payload)
+      .pipe(
+        finalize(() => {
+          this._spinner.hide();
+          this.resetPasswordForm.enable();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response.statusCode === 200) {
+            this._notifyService.showSuccess('Password reset successful. Please login.');
+            this._router.navigate(['/auth/login']);
+          } else {
+            this._notifyService.showError(response.message || 'Failed to reset password. Please try again.');
+          }
         },
-        (error) => {
-          this.alert = { type: 'error', message: error?.error?.message || 'Failed to reset password. Please try again.' };
+        error: (error) => {
+          console.error('Reset Password Error:', error);
+          this._notifyService.showError(error.error?.message || 'An unexpected error occurred');
         }
-      );
-  }
+      });
 
 
-
+    }
 }
 
