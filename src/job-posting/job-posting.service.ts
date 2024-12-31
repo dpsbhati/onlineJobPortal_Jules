@@ -9,7 +9,6 @@ import { LinkedInService } from 'src/linkedin/linkedin.service';
 import { FacebookService } from 'src/facebook/facebook.service';
 import { CronJob } from 'cron';
 
-
 @Injectable()
 export class JobPostingService {
   constructor(
@@ -17,10 +16,9 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) { }
+  ) {}
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
-
 
   // async create(createJobPostingDto: CreateJobPostingDto): Promise<JobPosting> {
   //   const jobPosting = this.jobPostingRepository.create(createJobPostingDto);
@@ -60,49 +58,59 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto) {
     try {
-        const jobPosting = jobDto.id
-        ? await this.jobPostingRepository.findOne({ where: { id: jobDto.id, is_deleted: false } })
+      const jobPosting = jobDto.id
+        ? await this.jobPostingRepository.findOne({
+            where: { id: jobDto.id, is_deleted: false },
+          })
         : null;
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
       }
       const duplicateCheck = await this.jobPostingRepository.findOne({
         where: {
-          title: jobDto.title, 
+          title: jobDto.title,
           is_deleted: false,
-          ...(jobDto.id ? { id: Not(jobDto.id) } : {}), 
+          ...(jobDto.id ? { id: Not(jobDto.id) } : {}),
         },
       });
-      if (duplicateCheck) {
-        return WriteResponse(
-          409,
-          {},
-          `Job posting with title "${jobDto.title}" already exists.`,
-        );
-      }
-  
+      // if (duplicateCheck) {
+      //   return WriteResponse(
+      //     409,
+      //     {},
+      //     `Job posting with title "${jobDto.title}" already exists.`,
+      //   );
+      // }
+
       const updatedJobPosting = {
         ...jobPosting,
         ...jobDto,
       };
-  
-      
-      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
-  
+
+      const savedJobPosting =
+        await this.jobPostingRepository.save(updatedJobPosting);
+
       return WriteResponse(
         200,
         savedJobPosting,
-        jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.',
+        jobPosting
+          ? 'Job Posting updated successfully.'
+          : 'Job Posting created successfully.',
       );
     } catch (error) {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
+
   async findAll(queryParams: any) {
     try {
-      const { page = 1, limit = 10, search, sortField = 'created_at', sortOrder = 'DESC' } = queryParams;
-  
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        sortField = 'created_at',
+        sortOrder = 'DESC',
+      } = queryParams;
+
       const skip = (page - 1) * limit;
       const queryBuilder = this.jobPostingRepository.createQueryBuilder('job');
       queryBuilder.where('job.is_deleted = :is_deleted', { is_deleted: false });
@@ -114,7 +122,7 @@ export class JobPostingService {
       }
       queryBuilder.orderBy(`job.${sortField}`, sortOrder.toUpperCase());
       queryBuilder.skip(skip).take(limit);
-      const [jobPostings, total] = await queryBuilder.getManyAndCount();  
+      const [jobPostings, total] = await queryBuilder.getManyAndCount();
       if (jobPostings.length > 0) {
         return WriteResponse(200, {
           jobs: jobPostings,
@@ -125,10 +133,13 @@ export class JobPostingService {
       }
       return WriteResponse(404, false, 'No job postings found.');
     } catch (error) {
-      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
     }
   }
-  
 
   // async findOne(id: string): Promise<any> {
   //   try {
@@ -147,28 +158,67 @@ export class JobPostingService {
   //   }
   // }
 
-  async findOne(key: string, value: any) {
+  async findOne(key: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
-        where: { [key]: value, is_deleted: false },
+        where: { is_deleted: false },
       });
       if (!jobPosting) {
-        return WriteResponse(404, {}, `Job posting with ${key} ${value} not found.`);
+        return WriteResponse(404, {}, `Job posting with ${key} not found.`);
       }
-      return WriteResponse(200, jobPosting, 'Job posting retrieved successfully.');
+      return WriteResponse(
+        200,
+        jobPosting,
+        'Job posting retrieved successfully.',
+      );
     } catch (error) {
-      return WriteResponse(500, {}, error.message || 'An unexpected error occurred.');
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
     }
   }
-  
+
   async remove(id: string) {
     if (!id) {
       return WriteResponse(400, false, 'Job posting ID is required.');
     }
 
-    const result = await this.jobPostingRepository.update(id, { is_deleted: true });
+    const result = await this.jobPostingRepository.update(id, {
+      is_deleted: true,
+    });
 
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
 
+  async toggleJobStatus(id: string, isActive: boolean) {
+    try {
+      // Ensure the job posting exists
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { id, is_deleted: false },
+      });
+  
+      if (!jobPosting) {
+        return WriteResponse(404, {}, `Job posting with ID ${id} not found.`);
+      }
+  
+      // Update the status of the job posting
+      jobPosting.isActive = isActive;
+      await this.jobPostingRepository.save(jobPosting);
+  
+      return WriteResponse(
+        200,
+        jobPosting,
+        `Job posting has been ${isActive ? 'activated' : 'deactivated'} successfully.`,
+      );
+    } catch (error) {
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred.',
+      );
+    }
+  }
+  
 }

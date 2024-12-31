@@ -38,11 +38,26 @@ export class JobPostingController {
   @Get('find-one')
   @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
   async findOne(@Query() query: FindOneJobPostingQueryDto) {
-    return this.jobPostingService.findOne(query.key, query.value);
+    return this.jobPostingService.findOne(query.key,);
   }
 
-  
+  @Post(':id/status')
+  @ApiOperation({
+    summary: 'Toggle the active/inactive status of a job posting.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the job posting to update.',
+    example: 'job-id-123',
+  })
+  async toggleJobStatus(
+    @Param('id') id: string,
+    @Body('isActive') isActive: boolean,
+  ) {
+    return this.jobPostingService.toggleJobStatus(id, isActive);
+  }
 }
+
 
 
 

@@ -87,4 +87,6 @@ export class JobPosting {
 
   @Column({ type: 'varchar', length: 250, nullable: true })
   file: string;
-}
+
+  @Column({ default: true })
+  isActive: boolean;}
