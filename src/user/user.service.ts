@@ -153,7 +153,6 @@ export class UserService {
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
-    console.log(User);
     if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
@@ -306,9 +305,8 @@ export class UserService {
         return WriteResponse(400, false, 'User not found with the provided token.');
       }
 
-      // Update the user's password
-      user.password = await bcrypt.hash(newPassword, 10);
-      await this.userRepository.save(user);
+      // Update the user's password using update instead of save
+      await this.userRepository.update(userId, { password: await bcrypt.hash(newPassword, 10) });
 
       return WriteResponse(200, {
         message: 'Password reset successfully.',
@@ -342,8 +340,7 @@ export class UserService {
       }
 
       // Update the user's email verification status
-      user.isEmailVerified = true;
-      await this.userRepository.save(user);
+      await this.userRepository.update(userId, { isEmailVerified: true });
 
       return WriteResponse(200, {}, 'Email verified successfully.');
     } catch (error) {
