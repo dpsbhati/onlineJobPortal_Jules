@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { NotifyService } from '../../core/services/notify.service';
 import { CommonModule, NgIf } from '@angular/common';
 @Component({
   selector: 'app-new-user-registration',
   standalone: true,
-  imports: [ReactiveFormsModule,
+  imports: [
+    ReactiveFormsModule,
     NgIf,
     CommonModule,
     FormsModule,
@@ -29,11 +29,11 @@ export class NewUserRegistrationComponent {
     this.registrationForm = new FormGroup({
       firstName: new FormControl('', [
         Validators.required,
-        Validators.minLength(2),
+        Validators.minLength(2), Validators.pattern('^[a-zA-Z]+$')
       ]),
       lastName: new FormControl('', [
         Validators.required,
-        Validators.minLength(2),
+        Validators.minLength(2), Validators.pattern('^[a-zA-Z]+$')
       ]),
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
