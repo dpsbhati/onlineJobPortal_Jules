@@ -1,122 +1,101 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, NgIf } from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { FuseValidators } from '@app/core/helpers/validators';
 import { AuthService } from '@app/core/services/auth.service';
-import { NotifyService } from '@app/core/services/notify.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize } from 'rxjs';
 
+import { finalize } from 'rxjs';
+export type FuseAlertType = 'success' | 'error' | 'info' | 'warning';
 @Component({
   selector: 'app-reset-password',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './reset-password.component.html',
-  styleUrls: ['./reset-password.component.css']
+  encapsulation: ViewEncapsulation.None,
+  // animations: fuseAnimations,
+  standalone: true,
+  imports: [
+    NgIf,
+    // FuseAlertComponent,
+    CommonModule,
+    ReactiveFormsModule,
+    // RouterLink
+  ],
 })
-export class ResetPasswordComponent {
-  resetPasswordForm!: FormGroup;
-  token: string = '';
-  isSubmitting: boolean = false;
-  alert: { type: string; message: string } | null = null;
+export class ResetPasswordComponent implements OnInit {
+  isSubmitting = false;
+  @ViewChild('resetPasswordNgForm') resetPasswordNgForm!: NgForm;
+
+  alert: { type: FuseAlertType; message: string } = {
+    type: 'success',
+    message: '',
+  };
+
+  resetPasswordForm!: UntypedFormGroup;
   showAlert: boolean = false;
 
+  /**
+   * Constructor
+   */
   constructor(
-    private _route: ActivatedRoute,
-    private _formBuilder: FormBuilder,
     private _authService: AuthService,
-    private _notifyService: NotifyService,
-    private _spinner: NgxSpinnerService,
-    private _router: Router
+    private _formBuilder: UntypedFormBuilder,
   ) { }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Lifecycle hooks
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * On init
+   */
   ngOnInit(): void {
-    // Extract token from query parameters
-    this.token = this._route.snapshot.queryParamMap.get('token') || '';
-
-    if (!this.token) {
-      this.alert = { type: 'error', message: 'Invalid or missing reset token.' };
-      return;
-    }
-
-    // Initialize the form with password matching validation
+    // Create the form
     this.resetPasswordForm = this._formBuilder.group({
       password: ['', [Validators.required, Validators.minLength(8)]],
-      passwordConfirm: ['', Validators.required]
-    }, {
-      validators: this.passwordMatchValidator
-    });
+      passwordConfirm: ['', Validators.required],
+    },
+      {
+        validators: FuseValidators.mustMatch('password', 'passwordConfirm'),
+      },
+    );
   }
 
-  // Custom validator to check password matching
-  private passwordMatchValidator(group: FormGroup) {
-    const password = group.get('password')?.value;
-    const confirmPassword = group.get('passwordConfirm')?.value;
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public methods
+  // -----------------------------------------------------------------------------------------------------
 
-    return password === confirmPassword ? null : { passwordMismatch: true };
-  }
-
-
+  /**
+   * Reset password
+   */
   resetPassword(): void {
-    // Validate the form before proceeding
     if (this.resetPasswordForm.invalid) {
-      // Check for specific validation errors
-      if (this.resetPasswordForm.hasError('passwordMismatch')) {
-        this._notifyService.showWarning('Passwords do not match. Please ensure both passwords are the same.');
-        return;
-      } else if (this.resetPasswordForm.get('password')?.hasError('required')) {
-        this._notifyService.showWarning('Password is required.');
-        return;
-      } else if (this.resetPasswordForm.get('password')?.hasError('minlength')) {
-        this._notifyService.showWarning('Password must be at least 8 characters long.');
-        return;
-      } else if (this.resetPasswordForm.get('passwordConfirm')?.hasError('required')) {
-        this._notifyService.showWarning('Confirm Password is required.');
-        return;
-      }
-      this._notifyService.showWarning('Please fill in all required fields correctly.');
+      this.resetPasswordForm.markAllAsTouched();
       return;
     }
 
-    // Explicitly stop if custom validator detects a mismatch
-    if (this.resetPasswordForm.errors?.['passwordMismatch']) {
-      this._notifyService.showWarning('Passwords do not match. Please correct them.');
-      return;
-    }
-
-    // Show spinner
-    this._spinner.show();
-
-    // Disable the form to prevent multiple submissions
+    this.isSubmitting = true;
     this.resetPasswordForm.disable();
+    this.showAlert = false;
 
     const password = this.resetPasswordForm.get('password')?.value;
 
-    const payload = {
-      token: this.token,
-      newPassword: password,
-    };
-
-    this._authService.resetPassword(payload)
+    this._authService.resetPassword(password)
       .pipe(
         finalize(() => {
-          this._spinner.hide();
+          this.isSubmitting = false;
           this.resetPasswordForm.enable();
+          this.resetPasswordNgForm.resetForm();
+          this.showAlert = true;
         })
       )
-      .subscribe({
-        next: (response) => {
-          if (response.statusCode === 200) {
-            this._notifyService.showSuccess('Password reset successful. Please login.');
-            this._router.navigate(['/auth/login']);
-          } else {
-            this._notifyService.showError(response.message || 'Failed to reset password. Please try again.');
-          }
+      .subscribe(
+        () => {
+          this.alert = { type: 'success', message: 'Your password has been reset.' };
         },
-        error: (error) => {
-          console.error('Reset Password Error:', error);
-          this._notifyService.showError(error.error?.message || 'An unexpected error occurred');
+        (error) => {
+          this.alert = { type: 'error', message: error?.message || 'An error occurred. Please try again.' };
         }
-      });
+      );
   }
-}  
+
+}
