@@ -40,9 +40,9 @@ export class UserService {
     //     return this._generic.Get<any>(`role/getAll`);
     // }
 
-    // EditUserDetials(data: any): Observable<any> {
-    //     return this._generic.Post<any>(`user/editUser`, data);
-    // }
+    SaveUserProfile(data: any): Observable<any> {
+        return this._generic.Post<any>(`user-profile`, data);
+    }
 
     // updateProfileImage(id: any, data: any): Observable<any> {
     //     return this._generic.Post<any>(`user/${id}/profile-image`, data);

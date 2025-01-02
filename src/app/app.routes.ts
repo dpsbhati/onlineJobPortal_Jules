@@ -5,44 +5,48 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { CreateJobPostingComponent } from './pages/admin/create-job-posting/create-job-posting.component';
 
 export const routes: Routes = [
-    {
-      path: '',
-      redirectTo: 'auth/login', // Redirect to the login page
-      pathMatch: 'full', // Ensure it only matches the empty path
-    },
-    {
-      path: 'reset-password',
-      component: ResetPasswordComponent
-    },
-  
-    {
-      path: 'auth',
-      loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
-    },
-    // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
-    // { path: '**', component: Page404Component },
-    // {
-    {
-      path: 'email-activation',
-      children: [
-        { path: 'email-activation', component: EmailActivationComponent },
-      ],
-    },
-  
-    {
-      path: 'create-job-posting',
-      component: CreateJobPostingComponent,
-     
-    },
-  
-    // {
-    //   path: 'jobseeker',
-    //   component: JobseekerDashboardComponent,
-    //   canActivate: [AuthGuard],
-    //   data: { role: 'JobSeeker' },
-    // },
-    // {
-    //   path: 'cv-upload',
-    //   component: CvUploadComponent,
-    // },
+  {
+    path: '',
+    redirectTo: 'auth/login', // Redirect to the login page
+    pathMatch: 'full', // Ensure it only matches the empty path
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
+  },
+
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
+  },
+  {
+    path: '',
+    loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule),
+  },
+  // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
+  // { path: '**', component: Page404Component },
+  // {
+  {
+    path: 'email-activation',
+    children: [
+      { path: 'email-activation', component: EmailActivationComponent },
+    ],
+  },
+
+  {
+    path: 'create-job-posting',
+    component: CreateJobPostingComponent,
+
+  },
+
+  // {
+  //   path: 'jobseeker',
+  //   component: JobseekerDashboardComponent,
+  //   canActivate: [AuthGuard],
+  //   data: { role: 'JobSeeker' },
+  // },
+  // {
+  //   path: 'cv-upload',
+  //   component: CvUploadComponent,
+  // },
 ];
