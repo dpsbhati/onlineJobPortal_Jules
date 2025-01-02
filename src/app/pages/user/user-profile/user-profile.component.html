@@ -1,85 +1,134 @@
-<div class="user-profile-container">
-    <h2>User Profile</h2>
-
-    <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
-        <!-- User ID -->
-        <div class="form-group">
-            <label for="user_id">User ID</label>
-            <input type="text" id="user_id" formControlName="user_id" />
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
         </div>
+        <div class="card-body">
+            <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <!-- First Name -->
+                    <div class="col-md-6">
+                        <label for="first_name" class="form-label">First Name</label>
+                        <input id="first_name" formControlName="first_name" type="text" class="form-control"
+                            placeholder="Enter first name" />
+                    </div>
 
-        <!-- First Name -->
-        <div class="form-group">
-            <label for="first_name">First Name</label>
-            <input type="text" id="first_name" formControlName="first_name" />
-            <!-- <div *ngIf="f.first_name.touched && f.first_name.invalid">
-                <small *ngIf="f.first_name.errors?.required">First Name is required.</small>
-                <small *ngIf="f.first_name.errors?.minlength">
-                    Must be at least 2 characters.
-                </small>
-            </div> -->
+                    <!-- Last Name -->
+                    <div class="col-md-6">
+                        <label for="last_name" class="form-label">Last Name</label>
+                        <input id="last_name" formControlName="last_name" type="text" class="form-control"
+                            placeholder="Enter last name" />
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="col-md-6">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input id="dob" formControlName="dob" type="date" class="form-control" />
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="col-md-6">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select id="gender" formControlName="gender" class="form-select">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input id="email" formControlName="email" type="email" class="form-control"
+                            placeholder="Enter email" />
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="col-md-6">
+                        <label for="mobile" class="form-label">Mobile</label>
+                        <input id="mobile" formControlName="mobile" type="number" class="form-control"
+                            placeholder="Enter mobile number" />
+                    </div>
+
+                    <!-- Key Skills -->
+                    <div class="col-md-12">
+                        <label for="key_skills" class="form-label">Key Skills</label>
+                        <input id="key_skills" formControlName="key_skills" type="text" class="form-control"
+                            placeholder="Enter key skills" />
+                    </div>
+
+                    <!-- Work Experiences -->
+                    <div class="col-md-12">
+                        <label for="work_experiences" class="form-label">Work Experiences</label>
+                        <input id="work_experiences" formControlName="work_experiences" class="form-control"
+                            placeholder="Enter work experiences" />
+                    </div>
+
+                    <!-- Current Company -->
+                    <div class="col-md-6">
+                        <label for="current_company" class="form-label">Current Company</label>
+                        <input id="current_company" formControlName="current_company" type="text" class="form-control"
+                            placeholder="Enter current company" />
+                    </div>
+
+                    <!-- Current Salary -->
+                    <div class="col-md-6">
+                        <label for="current_salary" class="form-label">Current Salary</label>
+                        <input id="current_salary" formControlName="current_salary" type="number" class="form-control"
+                            placeholder="Enter current salary" />
+                    </div>
+
+                    <!-- Expected Salary -->
+                    <div class="col-md-6">
+                        <label for="expected_salary" class="form-label">Expected Salary</label>
+                        <input id="expected_salary" formControlName="expected_salary" type="number" class="form-control"
+                            placeholder="Enter expected salary" />
+                    </div>
+
+                    <!-- Preferred Location -->
+                    <div class="col-md-6">
+                        <label for="preferred_location" class="form-label">Preferred Location</label>
+                        <input id="preferred_location" formControlName="preferred_location" type="text"
+                            class="form-control" placeholder="Enter preferred location" />
+                    </div>
+
+                    <!-- Preferred Job Role -->
+                    <div class="col-md-6">
+                        <label for="preferred_job_role" class="form-label">Preferred Job Role</label>
+                        <input id="preferred_job_role" formControlName="preferred_job_role" type="text"
+                            class="form-control" placeholder="Enter preferred job role" />
+                    </div>
+
+                    <!-- Preferred Shift -->
+                    <div class="col-md-6">
+                        <label for="preferred_shift" class="form-label">Preferred Shift</label>
+                        <input id="preferred_shift" formControlName="preferred_shift" type="text" class="form-control"
+                            placeholder="Enter preferred shift" />
+                    </div>
+
+                    <!-- Languages Known -->
+                    <div class="col-md-12">
+                        <label for="languages_known" class="form-label">Languages Known</label>
+                        <input id="languages_known" formControlName="languages_known" type="text" class="form-control"
+                            placeholder="Enter languages known" />
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="col-md-12">
+                        <label for="file" class="form-label">File</label>
+                        <input id="file" type="file" class="form-control" (change)="onFileSelected($event, 'file')" />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-md-12 text-center">
+                        <button type="submit" class="btn btn-success px-5">
+                            {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
+                        </button>
+                    </div>
+                </div>
+
+            </form>
         </div>
-
-        <!-- Last Name -->
-        <div class="form-group">
-            <label for="last_name">Last Name</label>
-            <input type="text" id="last_name" formControlName="last_name" />
-            <!-- <div *ngIf="f.last_name.touched && f.last_name.invalid">
-                <small *ngIf="f.last_name.errors?.required">Last Name is required.</small>
-                <small *ngIf="f.last_name.errors?.minlength">
-                    Must be at least 2 characters.
-                </small>
-            </div> -->
-        </div>
-
-        <!-- Date of Birth -->
-        <div class="form-group">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" formControlName="dob" />
-            <!-- <div *ngIf="f.dob.touched && f.dob.invalid">
-                <small *ngIf="f.dob.errors?.required">Date of Birth is required.</small>
-            </div> -->
-        </div>
-
-        <!-- Gender -->
-        <div class="form-group">
-            <label for="gender">Gender</label>
-            <select id="gender" formControlName="gender">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-            </select>
-            <!-- <div *ngIf="f.gender.touched && f.gender.invalid">
-                <small *ngIf="f.gender.errors?.required">Gender is required.</small>
-            </div> -->
-        </div>
-
-        <!-- Email -->
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" formControlName="email" />
-            <!-- <div *ngIf="f.email.touched && f.email.invalid">
-                <small *ngIf="f.email.errors?.required">Email is required.</small>
-                <small *ngIf="f.email.errors?.email">Enter a valid email address.</small>
-            </div> -->
-        </div>
-
-        <!-- Mobile -->
-        <div class="form-group">
-            <label for="mobile">Mobile</label>
-            <input type="tel" id="mobile" formControlName="mobile" />
-            <!-- <div *ngIf="f.mobile.touched && f.mobile.invalid">
-                <small *ngIf="f.mobile.errors?.required">Mobile number is required.</small>
-                <small *ngIf="f.mobile.errors?.pattern">
-                    Enter a valid mobile number (10-15 digits).
-                </small>
-            </div> -->
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btn-save" [disabled]="isSubmitting">
-            {{ isSubmitting ? 'Saving...' : 'Save' }}
-        </button>
-
-    </form>
+    </div>
 </div>

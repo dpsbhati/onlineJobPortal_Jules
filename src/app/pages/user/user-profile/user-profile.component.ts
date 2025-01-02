@@ -1,78 +1,109 @@
-import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../../core/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // Add ReactiveFormsModule here
+  imports: [ReactiveFormsModule, NgIf],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
   userProfileForm!: FormGroup;
-  isSubmitting = false;
   isEditMode = false;
 
-  constructor(private formBuilder: FormBuilder,
-    private userService: UserService,
-    private route: ActivatedRoute
-  ) {
-    // Initialize the form with controls and validation in the constructor
+  constructor(private userService: UserService, private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.initializeForm();
+    this.populateUserId();
+    this.checkEditMode();
+  }
+
+  initializeForm(): void {
     this.userProfileForm = new FormGroup({
-      id: new FormControl(null), // Optional
-      user_id: new FormControl('', Validators.required), // Required
-      first_name: new FormControl('', Validators.required), // Required
-      last_name: new FormControl('', Validators.required), // Required
-      dob: new FormControl('', Validators.required), // Required
-      gender: new FormControl('', Validators.required), // Required
-      email: new FormControl('', [Validators.required, Validators.email]), // Required + Email validation
-      mobile: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{10,15}$')]), // Required + Pattern validation
-      file_path: new FormControl(null) // Optional
+      id: new FormControl(null),
+      user_id: new FormControl(''),
+      first_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
+      last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
+      dob: new FormControl('', Validators.required),
+      gender: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      mobile: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{10,15}$')]),
+      key_skills: new FormControl(''),
+      work_experiences: new FormControl(''),
+      current_company: new FormControl('', [Validators.pattern('^[a-zA-Z0-9 ]*$')]),
+      current_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
+      expected_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
+      preferred_location: new FormControl('', [Validators.pattern('^[a-zA-Z0-9 ]+$')]),
+      preferred_job_role: new FormControl(''),
+      preferred_shift: new FormControl(''),
+      languages_known: new FormControl(''),
+      file: new FormControl(null),
     });
   }
 
-  ngOnInit(): void {
-    const userID = this.route.snapshot.paramMap.get('id');
-    this.isEditMode = !!userID;
-
-    if (this.isEditMode) {
-      this.userProfileForm.patchValue({ id: userID }); // Populate id for edit mode
+  populateUserId(): void {
+    const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (loggedInUser?.id) {
+      this.userProfileForm.patchValue({ user_id: loggedInUser.id });
+    } else {
+      console.error('User ID not found in localStorage or is invalid.');
     }
   }
 
+  checkEditMode(): void {
+    const userID = this.route.snapshot.paramMap.get('id');
+    this.isEditMode = !!userID;
+    if (this.isEditMode && userID) {
+      this.userService.getUserById(userID).subscribe((data) => this.userProfileForm.patchValue(data));
+    }
+  }
 
+  onFileSelected(event: Event, controlName: string): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      this.userProfileForm.patchValue({ [controlName]: file });
+    }
+  }
 
   onSubmit(): void {
     if (this.userProfileForm.invalid) {
-      alert('Please fill in all required fields.');
+      console.log('Invalid fields:', this.getInvalidFields());
+      alert('Please fill in all required fields correctly.');
       return;
     }
 
-    const payload = { ...this.userProfileForm.getRawValue() };
+    // Directly use the form values
+    const payload = { ...this.userProfileForm.value };
 
-    if (!this.isEditMode) {
-      delete payload.id; // Remove id for create mode
+    // Handle create or edit mode
+    if (this.isEditMode) {
+      this.userService.getUserById(payload).subscribe(
+        () => alert('User profile updated successfully!'),
+        (error) => console.error('Error updating profile:', error)
+      );
+    } else {
+      this.userService.SaveUserProfile(payload).subscribe(
+        () => alert('User profile created successfully!'),
+        (error) => console.error('Error creating profile:', error)
+      );
     }
+  }
 
-    this.isSubmitting = true;
-
-    this.userService.SaveUserProfile(payload).subscribe(
-      () => {
-        this.isSubmitting = false;
-        alert(this.isEditMode ? 'User profile updated successfully!' : 'User profile created successfully!');
-      },
-      (error) => {
-        this.isSubmitting = false;
-        console.error('Error saving profile:', error);
-        alert('An error occurred while saving the profile.');
+  // Helper to log invalid fields
+  getInvalidFields(): any {
+    const invalidFields: any = {};
+    Object.keys(this.userProfileForm.controls).forEach((key) => {
+      const control = this.userProfileForm.get(key);
+      if (control && control.invalid) {
+        invalidFields[key] = control.errors;
       }
-    );
+    });
+    return invalidFields;
   }
-  // Helper function to get form controls
-  get f() {
-    return this.userProfileForm.controls;
-  }
+
 }
