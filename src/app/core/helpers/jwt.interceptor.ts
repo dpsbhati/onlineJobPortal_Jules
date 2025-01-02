@@ -24,7 +24,7 @@ export const JwtInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): 
     
         // Clone the request object
         let newReq = req.clone();
-        debugger;
+        // debugger;
     
         // Request
         //

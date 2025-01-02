@@ -12,10 +12,22 @@ import { GenericService } from './generic.service';
 export class AdminService {
 
   constructor(private genericService: GenericService) { }
-  
+
   createOrUpdateJobPosting(payload: any): Observable<any> {
     return this.genericService.Post(`job-posting/create-update`, payload); 
   }
+  // uploadFile(payload: any): Observable<any> {
+  //   return this.genericService.Post(`uploads/files`, payload);
+  // }
+  uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
+    const formData = new FormData();
+    formData.append('folderName', payload.folderName);
+    formData.append('file', payload.file);
+    formData.append('userId', payload.userId);
+  
+    return this.genericService.Post('uploads/files', formData);
+  }
+  
 
   // getJobPostingById(id: string): Observable<any> {
   //   return this.genericService.get(`${this.baseUrl}/${id}`);
