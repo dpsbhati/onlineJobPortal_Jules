@@ -27,7 +27,7 @@ export class UserProfile {
   @Column({})
   user_id: string;
 
-  @Column({ type: 'date' })
+  @Column()
   dob: Date;
 
   @Column({ type: 'varchar' })

@@ -1,5 +1,12 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Matches,
+} from 'class-validator';
 
 export class CreateApplicationDto {
   @ApiProperty({
@@ -24,6 +31,7 @@ export class CreateApplicationDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(250, { message: 'Description cannot exceed 500 characters' })
   description?: string;
 
   @ApiPropertyOptional({
@@ -32,14 +40,18 @@ export class CreateApplicationDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(255, { message: 'Comments cannot exceed 255 characters' })
   comments?: string;
 
   @ApiPropertyOptional({
-    description: 'The file path to the candidate\'s CV (optional).',
+    description: "The file path to the candidate's CV (optional).",
     example: '/uploads/cv/johndoe_cv.pdf',
   })
   @IsString()
   @IsOptional()
+  @Matches(/^\/uploads\/cv\/.+\.pdf$/, {
+    message: 'CV path must be a valid file path ending with .pdf',
+  })
   cv_path?: string;
 
   @ApiPropertyOptional({
@@ -48,13 +60,20 @@ export class CreateApplicationDto {
   })
   @IsString()
   @IsOptional()
+  @MaxLength(500, {
+    message: 'Additional information cannot exceed 500 characters',
+  })
   additional_info?: string;
 
   @ApiPropertyOptional({
-    description: 'Previous work experiences shared by the applicant (optional).',
+    description:
+      'Previous work experiences shared by the applicant (optional).',
     example: 'Worked as a senior software developer at XYZ Corp.',
   })
   @IsString()
   @IsOptional()
+  @MaxLength(1000, {
+    message: 'Work experiences cannot exceed 1000 characters',
+  })
   work_experiences?: string;
 }

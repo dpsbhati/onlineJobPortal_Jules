@@ -5,6 +5,7 @@ import { UserProfile } from './entities/user-profile.entity';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
+import * as moment from 'moment';
 
 @Injectable()
 export class UserProfileService {
@@ -13,11 +14,26 @@ export class UserProfileService {
     private readonly userProfileRepository: Repository<UserProfile>,
   ) {}
 
-  // Create a new user profile
   async create(createUserProfileDto: CreateUserProfileDto) {
     try {
+      const isValidDob = moment(
+        createUserProfileDto.dob,
+        moment.ISO_8601,
+        true,
+      ).isValid();
+      if (!isValidDob) {
+        return WriteResponse(
+          400,
+          {},
+          'Invalid datetime format for dob. Expected ISO 8601 format.',
+        );
+      }
+
+      const formattedDob = moment(createUserProfileDto.dob).toISOString();
+
       const newProfile = this.userProfileRepository.create({
         ...createUserProfileDto,
+        dob: formattedDob, 
         created_by: createUserProfileDto.user_id,
         updated_by: createUserProfileDto.user_id,
       });
@@ -38,7 +54,6 @@ export class UserProfileService {
     }
   }
 
-  // Retrieve all user profiles
   async findAll() {
     try {
       const profiles = await this.userProfileRepository.find({
@@ -50,7 +65,11 @@ export class UserProfileService {
         return WriteResponse(404, [], 'No user profiles found.');
       }
 
-      return WriteResponse(200, profiles, 'User profiles retrieved successfully.');
+      return WriteResponse(
+        200,
+        profiles,
+        'User profiles retrieved successfully.',
+      );
     } catch (error) {
       return WriteResponse(
         500,
@@ -60,7 +79,6 @@ export class UserProfileService {
     }
   }
 
-  // Retrieve a single user profile by ID
   async findOne(id: string) {
     try {
       const profile = await this.userProfileRepository.findOne({
@@ -68,11 +86,7 @@ export class UserProfileService {
       });
 
       if (!profile) {
-        return WriteResponse(
-          404,
-          {},
-          `User Profile with ID ${id} not found.`,
-        );
+        return WriteResponse(404, {}, `User Profile with ID ${id} not found.`);
       }
 
       return WriteResponse(
@@ -93,12 +107,14 @@ export class UserProfileService {
     try {
       const profile = await this.findOne(id);
       if (profile.statusCode === 404) {
-        return profile; 
+        return profile;
       }
 
       Object.assign(profile.data, updateUserProfileDto);
 
-      const updatedProfile = await this.userProfileRepository.save(profile.data);
+      const updatedProfile = await this.userProfileRepository.save(
+        profile.data,
+      );
 
       return WriteResponse(
         200,
@@ -118,18 +134,14 @@ export class UserProfileService {
     try {
       const profile = await this.findOne(id);
       if (profile.statusCode === 404) {
-        return profile; 
+        return profile;
       }
 
       profile.data.is_deleted = true;
 
       await this.userProfileRepository.save(profile.data);
 
-      return WriteResponse(
-        200,
-        {},
-        'User profile deleted successfully.',
-      );
+      return WriteResponse(200, {}, 'User profile deleted successfully.');
     } catch (error) {
       return WriteResponse(
         500,

@@ -8,7 +8,12 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UserProfileService } from './user-profile.service';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
@@ -22,26 +27,26 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 
-  @Post()
+  @Post('create-newuser-profile')
   @ApiOperation({ summary: 'Create a new user profile' })
   async create(@Body() createUserProfileDto: CreateUserProfileDto) {
     return this.userProfileService.create(createUserProfileDto);
   }
 
-  @Get()
+  @Get('get-all')
   @ApiOperation({ summary: 'Retrieve all user profiles' })
   async findAll() {
     return this.userProfileService.findAll();
   }
 
-  @Get(':id')
+  @Get('get-one')
   @ApiOperation({ summary: 'Retrieve a user profile by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the user profile' })
   async findOne(@Param('id') id: string) {
     return this.userProfileService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post('update-userprofile')
   @ApiOperation({ summary: 'Update a user profile' })
   @ApiParam({ name: 'id', description: 'The ID of the user profile' })
   async update(
