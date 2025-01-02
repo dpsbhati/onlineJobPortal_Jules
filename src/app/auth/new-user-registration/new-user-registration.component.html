@@ -4,10 +4,10 @@
       <div>
         <label for="firstName">First Name</label>
         <input id="firstName" formControlName="firstName" type="text" />
-        <!-- <div ngIf="registrationForm.get('firstName')?.touched && registrationForm.get('firstName')?.invalid">
-          <small ngIf="registrationForm.get('firstName')?.errors?.['required']">First Name is required.</small>
-          <small ngIf="registrationForm.get('firstName')?.errors?.['minlength']">First Name must be at least 2 characters.</small>
-        </div> -->
+        <div *ngIf="registrationForm.get('firstName')?.touched && registrationForm.get('firstName')?.invalid">
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['required']">First Name is required.</small>
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['minlength']">First Name must be at least 2 characters.</small>
+        </div>
       </div>
   
       <div>
@@ -48,7 +48,7 @@
       <button type="submit" [disabled]="loading || registrationForm.invalid">Register</button>
     </form>
   
-    <div ngIf="errorMessage" class="error-message">
+    <div *ngIf="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
   </div>

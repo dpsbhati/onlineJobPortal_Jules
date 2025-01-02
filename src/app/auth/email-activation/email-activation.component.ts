@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { AuthService } from '@app/core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
+
 @Component({
   selector: 'app-email-activation',
   standalone: true,

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "jobApplication": {
+    "onlinejobportal": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/job-application",
+            "outputPath": "dist/onlinejobportal",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -27,16 +27,11 @@
               }
             ],
             "styles": [
-              "src/styles.css",
+             "src/styles.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/ngx-spinner/animations/ball-scale-ripple.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -63,13 +58,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environment/environment.ts",
-                  "with": "src/environment/environment.prod.ts"
-                }
-              ]
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -78,10 +67,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "jobApplication:build:production"
+              "buildTarget": "onlinejobportal:build:production"
             },
             "development": {
-              "buildTarget": "jobApplication:build:development"
+              "buildTarget": "onlinejobportal:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -104,17 +93,12 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
-              "node_modules/ngx-spinner/animations/ball-scale-ripple.css"
+              "src/styles.css"
             ],
             "scripts": []
           }
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "3077fe9e-ef95-4eb8-857f-f92b709dbd35"
   }
 }

@@ -2,10 +2,11 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthService } from "@app/core/services/auth.service";
-import { NotifyService } from "@app/core/services/notify.service";
+
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs/operators';
+import { AuthService } from "../../core/services/auth.service";
+import { NotifyService } from "../../core/services/notify.service";
 
 @Component({
   selector: 'app-login',
@@ -55,6 +56,7 @@ export class LoginComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
+          console.log(response);
           if (response.statusCode === 200) {
             this.notify.showSuccess('Login successful!');
             this._router.navigateByUrl('/dashboard'); // Redirect to dashboard
@@ -63,6 +65,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (error) => {
+          console.log(error);
           this.notify.showError('Login failed.');
         }
       });
@@ -73,6 +76,6 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToNewuserRegistartion(): void {
-    this._router.navigate(['auth/new-user-registration']);
+    this._router.navigate(['/auth/new-user-registration']);
   }
 }

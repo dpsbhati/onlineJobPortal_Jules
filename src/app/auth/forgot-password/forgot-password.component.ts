@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
-import { AuthService } from '@app/core/services/auth.service';
-import { NotifyService } from '@app/core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import { NotifyService } from '../../core/services/notify.service';
 
 @Component({
   selector: 'app-forgot-password',

@@ -1,11 +1,9 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { FuseValidators } from '@app/core/helpers/validators';
-import { AuthService } from '@app/core/services/auth.service';
-
+import { NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import { FuseValidators } from '../../core/helpers/validators';
 export type FuseAlertType = 'success' | 'error' | 'info' | 'warning';
 @Component({
   selector: 'app-reset-password',
@@ -87,15 +85,14 @@ export class ResetPasswordComponent implements OnInit {
           this.resetPasswordNgForm.resetForm();
           this.showAlert = true;
         })
-      )
-      .subscribe(
-        () => {
+      ).subscribe({
+        next: ()=> {
           this.alert = { type: 'success', message: 'Your password has been reset.' };
         },
-        (error) => {
+        error: (error) => {
           this.alert = { type: 'error', message: error?.message || 'An error occurred. Please try again.' };
         }
-      );
+  });
   }
 
 }
