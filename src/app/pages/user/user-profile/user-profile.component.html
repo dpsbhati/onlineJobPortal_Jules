@@ -1,0 +1,85 @@
+<div class="user-profile-container">
+    <h2>User Profile</h2>
+
+    <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
+        <!-- User ID -->
+        <div class="form-group">
+            <label for="user_id">User ID</label>
+            <input type="text" id="user_id" formControlName="user_id" />
+        </div>
+
+        <!-- First Name -->
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" formControlName="first_name" />
+            <!-- <div *ngIf="f.first_name.touched && f.first_name.invalid">
+                <small *ngIf="f.first_name.errors?.required">First Name is required.</small>
+                <small *ngIf="f.first_name.errors?.minlength">
+                    Must be at least 2 characters.
+                </small>
+            </div> -->
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" formControlName="last_name" />
+            <!-- <div *ngIf="f.last_name.touched && f.last_name.invalid">
+                <small *ngIf="f.last_name.errors?.required">Last Name is required.</small>
+                <small *ngIf="f.last_name.errors?.minlength">
+                    Must be at least 2 characters.
+                </small>
+            </div> -->
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" formControlName="dob" />
+            <!-- <div *ngIf="f.dob.touched && f.dob.invalid">
+                <small *ngIf="f.dob.errors?.required">Date of Birth is required.</small>
+            </div> -->
+        </div>
+
+        <!-- Gender -->
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" formControlName="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+            <!-- <div *ngIf="f.gender.touched && f.gender.invalid">
+                <small *ngIf="f.gender.errors?.required">Gender is required.</small>
+            </div> -->
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email" />
+            <!-- <div *ngIf="f.email.touched && f.email.invalid">
+                <small *ngIf="f.email.errors?.required">Email is required.</small>
+                <small *ngIf="f.email.errors?.email">Enter a valid email address.</small>
+            </div> -->
+        </div>
+
+        <!-- Mobile -->
+        <div class="form-group">
+            <label for="mobile">Mobile</label>
+            <input type="tel" id="mobile" formControlName="mobile" />
+            <!-- <div *ngIf="f.mobile.touched && f.mobile.invalid">
+                <small *ngIf="f.mobile.errors?.required">Mobile number is required.</small>
+                <small *ngIf="f.mobile.errors?.pattern">
+                    Enter a valid mobile number (10-15 digits).
+                </small>
+            </div> -->
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-save" [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Saving...' : 'Save' }}
+        </button>
+
+    </form>
+</div>
