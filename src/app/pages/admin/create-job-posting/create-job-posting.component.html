@@ -1,0 +1,109 @@
+<div class="container">
+    <h2>{{ isEditMode ? 'Edit Job Posting' : 'Create Job Posting' }}</h2>
+    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Job Title</label>
+        <input id="title" formControlName="title" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="job_type">Job Type</label>
+        <input id="job_type" formControlName="job_type" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="qualifications">Qualifications</label>
+        <input id="qualifications" formControlName="qualifications" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="skills_required">Skills Required</label>
+        <input id="skills_required" formControlName="skills_required" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="date_published">Date Published</label>
+        <input id="date_published" formControlName="date_published" type="date" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="deadline">Deadline</label>
+        <input id="deadline" formControlName="deadline" type="date" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="short_description">Short Description</label>
+        <textarea id="short_description" formControlName="short_description" class="form-control"></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="full_description">Full Description</label>
+        <textarea id="full_description" formControlName="full_description" class="form-control"></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="assignment_duration">Assignment Duration</label>
+        <input id="assignment_duration" formControlName="assignment_duration" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="employer">Employer</label>
+        <input id="employer" formControlName="employer" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="required_experience">Required Experience</label>
+        <input id="required_experience" formControlName="required_experience" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="start_salary">Start Salary</label>
+        <input id="start_salary" formControlName="start_salary" type="number" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="end_salary">End Salary</label>
+        <input id="end_salary" formControlName="end_salary" type="number" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="country_code">Country Code</label>
+        <input id="country_code" formControlName="country_code" type="number" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" formControlName="address" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="work_type">Work Type</label>
+        <input id="work_type" formControlName="work_type" type="text" class="form-control" />
+      </div>
+  
+      <div class="form-group">
+        <label for="file_path">Job Description File</label>
+        <input
+          id="file_path"
+          type="file"
+          class="form-control"
+          (change)="onFileSelected($event, 'file_path')"
+        />
+      </div>
+  
+      <div class="form-group">
+        <label for="featured_image">Featured Image</label>
+        <input
+          id="featured_image"
+          type="file"
+          class="form-control"
+          (change)="onFileSelected($event, 'featured_image')"
+        />
+      </div>
+  
+      <button type="submit" class="btn btn-primary">
+        {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+      </button>
+    </form>
+  </div>
+  

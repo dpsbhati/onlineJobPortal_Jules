@@ -56,10 +56,14 @@ export class LoginComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          console.log(response);
+          // console.log(response);
           if (response.statusCode === 200) {
+            this._authService.accessToken = response.data.token;
+            localStorage.setItem("user", JSON.stringify(response.data.User));
             this.notify.showSuccess('Login successful!');
-            this._router.navigateByUrl('/dashboard'); // Redirect to dashboard
+            // this._router.navigateByUrl('/dashboard');
+            this._router.navigate(['auth/create-job-posting'])
+            // this._router.navigateByUrl('/create-job-posting'); // Redirect to dashboard
           } else {
             this.notify.showError(response.message);
           }

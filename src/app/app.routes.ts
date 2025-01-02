@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { EmailActivationComponent } from './auth/email-activation/email-activation.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { CreateJobPostingComponent } from './pages/admin/create-job-posting/create-job-posting.component';
 
 export const routes: Routes = [
     {
@@ -28,6 +29,11 @@ export const routes: Routes = [
       ],
     },
   
+    {
+      path: 'create-job-posting',
+      component: CreateJobPostingComponent,
+     
+    },
   
     // {
     //   path: 'jobseeker',

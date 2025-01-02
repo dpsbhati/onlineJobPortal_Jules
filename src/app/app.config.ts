@@ -8,6 +8,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { loadingInterceptor } from './core/helpers/loading.interceptor';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
+import { provideAuth } from './core/helpers/auth.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +16,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(),
     provideHttpClient(),
-    provideHttpClient(withInterceptors([loadingInterceptor])),
+    provideAuth(),
+    //provideHttpClient(withInterceptors([loadingInterceptor])),
     importProvidersFrom([BrowserAnimationsModule]),
     provideAnimations(), // Add this for Toastr animations
     provideToastr({
