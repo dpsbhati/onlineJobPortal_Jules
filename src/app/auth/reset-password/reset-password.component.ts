@@ -86,13 +86,13 @@ export class ResetPasswordComponent implements OnInit {
           this.showAlert = true;
         })
       ).subscribe({
-        next: ()=> {
+        next: () => {
           this.alert = { type: 'success', message: 'Your password has been reset.' };
         },
         error: (error) => {
           this.alert = { type: 'error', message: error?.message || 'An error occurred. Please try again.' };
         }
-  });
+      });
   }
 
 }
