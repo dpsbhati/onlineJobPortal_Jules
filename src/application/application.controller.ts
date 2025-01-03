@@ -35,7 +35,7 @@ export class ApplicationController {
     return this.applicationService.update(id, updateApplicationDto);
   }
 
-  @Delete('delete')
+  @Post('delete')
   @ApiOperation({ summary: 'Soft delete a specific application by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the application to delete', example: 'uuid' })
   remove(@Param('id') id: string) {

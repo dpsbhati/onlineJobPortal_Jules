@@ -10,6 +10,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from 'src/utils/mail.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { IPagination } from 'src/shared/paginationEum';
 
 
 
@@ -229,26 +230,59 @@ export class UserService {
     }
   }
 
-  async Pagination(page: number, limit: number) {
+  async paginate(pagination: IPagination) {
     try {
-      const offset = (page - 1) * limit;
-      const [list, count] = await this.userRepository.findAndCount({
-        where: { is_deleted: false },
-        skip: offset,
-        take: limit,
-        select: ['id', 'email', 'firstName', 'lastName', 'isEmailVerified'],
-      });
+      const { curPage, perPage, whereClause } = pagination;
 
-      if (list.length === 0) {
-        return paginateResponse([], 0, count);
+      // Default whereClause to filter out deleted users
+      let lwhereClause = 'is_deleted = false'; // Ensure deleted users are not fetched
+
+      // Fields to search
+      const fieldsToSearch = [
+        'email',
+        'firstName',
+        'lastName',
+        'isActive',
+        'role'
+      ];
+
+      // Process whereClause
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`; // Removed 'job.' prefix
+          }
+        });
+
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((ser) => `${ser} LIKE '%${allValues}%'`) // Removed 'job.' prefix
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
+        }
       }
+      const skip = (curPage - 1) * perPage;
+      const [list, count] = await this.userRepository
+        .createQueryBuilder('user') // Changed alias to 'user'
+        .where(lwhereClause)
+        .orderBy('createdAt', 'DESC') // Order by created_at DESC
+        .skip(skip)
+        .take(perPage)
+        .getManyAndCount();
 
-      return paginateResponse(list, count, count);
+      const enrichedUserList = await Promise.all(
+        list.map(async (user) => {
+          const { password, ...enrichedUser } = user; // Exclude password
+          return enrichedUser;
+        }),
+      );
+
+      return paginateResponse(enrichedUserList, count, curPage);
     } catch (error) {
-      return {
-        statusCode: 500,
-        message: error.message || 'An unexpected error occurred.',
-      };
+      console.error('User Pagination Error --> ', error);
+      return WriteResponse(500, error, `Something went wrong.`);
     }
   }
 
@@ -263,7 +297,7 @@ export class UserService {
       }
 
       const verificationToken = this.generateVerificationToken(user.id);
-      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${verificationToken}`;
+      const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${verificationToken}`;
 
       // const message = `
       //   You are receiving this email because a request to reset your password was received for your account.

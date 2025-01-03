@@ -17,7 +17,7 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) {}
+  ) { }
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
@@ -61,8 +61,8 @@ export class JobPostingService {
     try {
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-            where: { id: jobDto.id, is_deleted: false },
-          })
+          where: { id: jobDto.id, is_deleted: false },
+        })
         : null;
       if (jobDto.id && !jobPosting) {
         return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
@@ -105,10 +105,10 @@ export class JobPostingService {
   async paginateJobPostings(pagination: IPagination) {
     try {
       const { curPage, perPage, whereClause } = pagination;
-  
+
       // Default whereClause to filter out deleted job postings
       let lwhereClause = 'job.is_deleted = 0';
-  
+
       // Fields to search
       const fieldsToSearch = [
         'title',
@@ -117,8 +117,23 @@ export class JobPostingService {
         'employer',
         'job_type',
         'work_type',
+        'qualifications',
+        'skills_required',
+        'date_published',
+        'deadline',
+        'assignment_duration',
+        'rank',
+        'required_experience',
+        'start_salary',
+        'end_salary',
+        'salary',
+        'country_code',
+        'state_code',
+        'city',
+        'address',
+        'isActive'
       ];
-  
+
       // Process whereClause
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
@@ -127,7 +142,7 @@ export class JobPostingService {
             lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
           }
         });
-  
+
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
           const searches = fieldsToSearch
@@ -144,7 +159,7 @@ export class JobPostingService {
         .take(perPage)
         .orderBy('job.created_at', 'DESC')
         .getManyAndCount();
-  
+
       const enrichedJobList = await Promise.all(
         list.map(async (job) => {
           const enrichedJob = {
@@ -153,14 +168,14 @@ export class JobPostingService {
           return enrichedJob;
         }),
       );
-  
+
       return paginateResponse(enrichedJobList, count, curPage,);
     } catch (error) {
       console.error('Job Postings Pagination Error --> ', error);
       return WriteResponse(500, error, `Something went wrong.`);
     }
   }
-  
+
 
 
 
@@ -170,11 +185,11 @@ export class JobPostingService {
         where: { is_deleted: false },
         order: { created_at: 'DESC' },
       });
-  
+
       if (jobPostings.length > 0) {
         return WriteResponse(200, jobPostings, 'Job postings retrieved successfully.');
       }
-  
+
       return WriteResponse(404, [], 'No job postings found.');
     } catch (error) {
       return WriteResponse(
@@ -184,8 +199,8 @@ export class JobPostingService {
       );
     }
   }
-  
-  
+
+
 
   // async findOne(id: string): Promise<any> {
   //   try {
@@ -244,15 +259,15 @@ export class JobPostingService {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { id, is_deleted: false },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(404, {}, `Job posting with ID ${id} not found.`);
       }
-  
+
       // Update the status of the job posting
       jobPosting.isActive = isActive;
       await this.jobPostingRepository.save(jobPosting);
-  
+
       return WriteResponse(
         200,
         jobPosting,
@@ -266,5 +281,5 @@ export class JobPostingService {
       );
     }
   }
-  
+
 }

@@ -72,7 +72,7 @@ export class UserProfileController {
     return this.userProfileService.update(id, updateUserProfileDto);
   }
 
-  @Delete(':id')
+  @Post(':id')
   @ApiOperation({ summary: 'Soft delete a user profile' })
   @ApiParam({ name: 'id', description: 'The ID of the user profile' })
   async remove(@Param('id') id: string) {

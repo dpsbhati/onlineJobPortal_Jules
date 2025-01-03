@@ -29,6 +29,7 @@ import {
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { WriteResponse } from 'src/shared/response';
 import { JwtService } from '@nestjs/jwt';
+import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 
 @ApiTags('User')
 @Controller('user')
@@ -89,15 +90,15 @@ export class UserController {
     return this.userService.delete(id);
   }
 
-  @Post('paginate')
-  @UseGuards(RolesGuard)
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Retrieve paginated list of users' })
-  async findAllWithPagination(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-    return this.userService.Pagination(page, limit);
+  @Post('pagination')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+  pagination(@Body() pagination: IPagination) {
+    return this.userService.paginate(pagination);
   }
 
   @Post('login')

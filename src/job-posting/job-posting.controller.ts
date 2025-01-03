@@ -23,7 +23,7 @@ export class JobPostingController {
     return this.jobPostingService.createOrUpdate(jobDto);
   }
 
-  @Post('TaskPagination')
+  @Post('pagination')
   @ApiBody({
     schema: {
       type: 'object',
@@ -41,7 +41,7 @@ export class JobPostingController {
     return await this.jobPostingService.findAll();
   }
 
-  @Delete('delete/:id')
+  @Post('delete/:id')
   @ApiOperation({ summary: 'Delete a job posting by ID' })
   async remove(@Param('id') id: string) {
     return this.jobPostingService.remove(id);
