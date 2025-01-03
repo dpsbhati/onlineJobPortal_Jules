@@ -4,7 +4,7 @@ import { NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Vali
 import { finalize } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { FuseValidators } from '../../core/helpers/validators';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotifyService } from '../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 export type FuseAlertType = 'success' | 'error' | 'info' | 'warning';
@@ -43,7 +43,8 @@ export class ResetPasswordComponent implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private _route: ActivatedRoute,
     private _notify: NotifyService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private router: Router
   ) { }
 
   // -----------------------------------------------------------------------------------------------------
@@ -109,8 +110,6 @@ export class ResetPasswordComponent implements OnInit {
   //     });
   // }
   resetPassword(): void {
-    console.log(this.resetPasswordForm.invalid, this.resetPasswordForm);
-
     if (this.resetPasswordForm.invalid) {
       this.resetPasswordForm.markAllAsTouched();
       return;
@@ -144,7 +143,8 @@ export class ResetPasswordComponent implements OnInit {
       ).subscribe({
         next: (res: any) => {
           if (res.statusCode == 200) {
-            this._notify.showSuccess(res.message)
+            this._notify.showSuccess(res.data.message)
+            this.router.navigate(["/auth/login"]);
           } else {
             this._notify.showWarning(res.message);
           }

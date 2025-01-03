@@ -31,33 +31,25 @@ export class UserProfileComponent implements OnInit {
     this.initializeForm();
     this.populateUserId();
     // this.checkEditMode();
-    this.route.params.subscribe((params) => {
-      this.isEditMode = false;
-      this.userId = params['id'];
-      this.getUserDetailsById(this.userId);
-    });
+    // this.route.params.subscribe((params) => {
+    //   this.isEditMode = false;
+    //   this.userId = params['id'];
+    //   this.getUserDetailsById(this.userId);
+    // });
   }
 
   initializeForm(): void {
     this.userProfileForm = new FormGroup({
-      id: new FormControl(null),
-      user_id: new FormControl(''),
       first_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
       last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
       dob: new FormControl('', Validators.required),
       gender: new FormControl('', Validators.required),
-      email: new FormControl('', [Validators.required, Validators.email]),
       mobile: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{10,15}$')]),
       key_skills: new FormControl(''),
       work_experiences: new FormControl(''),
       current_company: new FormControl('', [Validators.pattern('^[a-zA-Z0-9 ]*$')]),
       current_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
       expected_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
-      preferred_location: new FormControl('', [Validators.pattern('^[a-zA-Z0-9 ]+$')]),
-      preferred_job_role: new FormControl(''),
-      preferred_shift: new FormControl(''),
-      languages_known: new FormControl(''),
-      file: new FormControl(null),
     });
   }
 

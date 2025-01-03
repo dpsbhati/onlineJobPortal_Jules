@@ -3,13 +3,6 @@
         <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
     </div>
     <div>
-        <!-- Success and Error Messages -->
-        <div *ngIf="successMessage" style="color: green; margin-bottom: 15px;">
-            {{ successMessage }}
-        </div>
-        <div *ngIf="errorMessage" style="color: red; margin-bottom: 15px;">
-            {{ errorMessage }}
-        </div>
 
         <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
             <div>
@@ -36,16 +29,10 @@
                     <label for="gender">Gender</label>
                     <select id="gender" formControlName="gender">
                         <option value="">Select Gender</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHERS">Other</option>
                     </select>
-                </div>
-
-                <!-- Email -->
-                <div>
-                    <label for="email">Email</label>
-                    <input id="email" formControlName="email" type="email" placeholder="Enter email" />
                 </div>
 
                 <!-- Mobile -->
@@ -84,43 +71,11 @@
                 <!-- Expected Salary -->
                 <div>
                     <label for="expected_salary">Expected Salary</label>
-                    <input id="expected_salary" formControlName="expected_salary" type="number"
+                    <input id="expected_salary" formControlName="expected_salary" type="text"
                         placeholder="Enter expected salary" />
                 </div>
 
-                <!-- Preferred Location -->
-                <div>
-                    <label for="preferred_location">Preferred Location</label>
-                    <input id="preferred_location" formControlName="preferred_location" type="text"
-                        placeholder="Enter preferred location" />
-                </div>
 
-                <!-- Preferred Job Role -->
-                <div>
-                    <label for="preferred_job_role">Preferred Job Role</label>
-                    <input id="preferred_job_role" formControlName="preferred_job_role" type="text"
-                        placeholder="Enter preferred job role" />
-                </div>
-
-                <!-- Preferred Shift -->
-                <div>
-                    <label for="preferred_shift">Preferred Shift</label>
-                    <input id="preferred_shift" formControlName="preferred_shift" type="text"
-                        placeholder="Enter preferred shift" />
-                </div>
-
-                <!-- Languages Known -->
-                <div>
-                    <label for="languages_known">Languages Known</label>
-                    <input id="languages_known" formControlName="languages_known" type="text"
-                        placeholder="Enter languages known" />
-                </div>
-
-                <!-- File Upload -->
-                <div>
-                    <label for="file">File</label>
-                    <input id="file" type="file" (change)="onFileSelected($event, 'file')" />
-                </div>
             </div>
 
             <!-- Submit Button -->
@@ -135,8 +90,6 @@
         <div>
             <button (click)="navigateToEditMode('id')">Edit Example User</button>
         </div>
-
-
 
     </div>
 </div>
