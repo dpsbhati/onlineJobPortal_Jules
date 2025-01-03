@@ -30,6 +30,11 @@ export class AdminService {
   getJobPostings(): Observable<any> {
     return this.genericService.Get(`/job-posting`);
   }
+  
+  
+  deleteJob(id: string): Observable<any> {
+    return this.genericService.DeleteRequest(`/job-posting/${id}`);
+  }
   // getJobPostings(params: {
   //   page?: number;
   //   limit?: number;

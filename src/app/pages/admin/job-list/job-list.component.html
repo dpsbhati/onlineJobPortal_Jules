@@ -1,17 +1,57 @@
-<div class="job-list">
+
+  <div class="job-list">
     <h1>Job Postings</h1>
-    <div *ngFor="let job of jobs" class="job-card">
-      <img [src]="getFeaturedImage(job.featured_image)" alt="Job Image" class="job-image" />
-      <h2>{{ job.title }}</h2>
-      <p><strong>Employer:</strong> {{ job.employer }}</p>
-      <p><strong>Job Type:</strong> {{ job.job_type }}</p>
-      <p><strong>Skills Required:</strong> {{ job.skills_required }}</p>
-      <p><strong>Qualifications:</strong> {{ job.qualifications }}</p>
-      <p><strong>Published:</strong> {{ job.date_published | date }}</p>
-      <p><strong>Deadline:</strong> {{ job.deadline | date }}</p>
-      <p><strong>Short Description:</strong> {{ job.short_description }}</p>
-      <p><strong>Salary:</strong> ${{ job.start_salary }} - ${{ job.end_salary }}</p>
-      <!-- <a [routerLink]="['/job', job.id]" class="view-details">View Details</a> -->
-    </div>
+  
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Employer</th>
+          <th>Job Type</th>
+          <!-- <th>Qualifications</th> -->
+          <!-- <th>Skills Required</th> -->
+          <th>Published Date</th>
+          <th>Deadline</th>
+          <th>Start Salary</th>
+          <th>End Salary</th>
+          <th>Work Type</th>
+          <th>Country</th>
+          <th>Actions</th>
+          <!-- <th>Address</th> -->
+          <!-- <th>Assignment Duration</th> -->
+          <!-- <th>Featured Image</th> -->
+          <!-- <th>Short Description</th> -->
+          <!-- <th>Full Description</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let job of jobs">
+          <td>{{ job.title }}</td>
+          <td>{{ job.employer }}</td>
+          <td>{{ job.job_type }}</td>
+          <!-- <td>{{ job.qualifications }}</td>
+          <td>{{ job.skills_required }}</td> -->
+          <td>{{ job.date_published | date: 'shortDate' }}</td>
+          <td>{{ job.deadline | date: 'shortDate' }}</td>
+          <td>{{ job.start_salary }}</td>
+          <td>{{ job.end_salary }}</td>
+          <td>{{ job.work_type }}</td>
+          <td>{{ job.country_code }}</td>
+          <td class="actions">
+         
+            <button (click)="editJob(job.id)" class="action-button edit-button">
+              <i class="fas fa-edit" ></i>
+            </button>
+          
+            <button (click)="deleteJob(job.id)" class="action-button delete-button">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+    
+        </tr>
+      </tbody>
+    </table>
+  
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
   
