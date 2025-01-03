@@ -37,7 +37,6 @@ export class CreateUserProfileDto {
   @IsNotEmpty({ message: 'dob cannot be empty' })
   @IsDate()
   @Type(() => Date)
-  @IsOptional()
   dob: Date;
 
   @ApiProperty({ description: 'Gender of the user' })
@@ -48,6 +47,7 @@ export class CreateUserProfileDto {
     )}`,
   })
   gender: Gender;
+
   @ApiProperty({ description: 'Email of the user' })
   @IsNotEmpty({ message: 'email of the user cannot be empty' })
   @IsEmail({}, { message: 'Please enter a valid email address.' })
@@ -58,6 +58,22 @@ export class CreateUserProfileDto {
   @IsString({ message: 'mobile must be a valid string' })
   mobile: string;
 
+  @ApiProperty({ description: 'Created by user ID' })
+  @IsOptional()
+  @IsString({ message: 'created_by must be a valid string' })
+  created_by?: string;
+
+  @ApiProperty({ description: 'Updated by user ID' })
+  @IsOptional()
+  @IsString({ message: 'updated_by must be a valid string' })
+  updated_by?: string;
+
+  @ApiProperty({ description: 'Whether the user profile is deleted' })
+  @IsOptional()
+  @IsBoolean({ message: 'is_deleted must be a boolean value' })
+  is_deleted?: boolean;
+
+  // Optional fields
   @ApiProperty({ description: 'Key skills of the user' })
   @IsOptional()
   @IsString({ message: 'key_skills must be a valid string' })
@@ -73,57 +89,8 @@ export class CreateUserProfileDto {
   @IsString({ message: 'current_company must be a valid string' })
   current_company?: string;
 
-  @ApiProperty({ description: 'Current salary of the user' })
-  @IsOptional()
-  @IsString({ message: 'current_salary must be a valid string' })
-  current_salary?: string;
-
   @ApiProperty({ description: 'Expected salary of the user' })
   @IsOptional()
   @IsString({ message: 'expected_salary must be a valid string' })
   expected_salary?: string;
-
-  @ApiProperty({ description: 'Preferred job location of the user' })
-  @IsOptional()
-  @IsString({ message: 'preferred_location must be a valid string' })
-  preferred_location?: string;
-
-  @ApiProperty({ description: 'Preferred job role of the user' })
-  @IsOptional()
-  @IsString({ message: 'preferred_job_role must be a valid string' })
-  preferred_job_role?: string;
-
-  @ApiProperty({ description: 'Preferred job shift of the user' })
-  @IsOptional()
-  @IsEnum(PreferredJobShift, {
-    message: `preferred_shift must be one of the following: ${Object.values(
-      PreferredJobShift,
-    ).join(', ')}`,
-  })
-  preferred_shift?: PreferredJobShift;
-
-  @ApiProperty({ description: 'Languages known by the user' })
-  @IsOptional()
-  @IsString({ message: 'languages_known must be a valid string' })
-  languages_known?: string;
-
-  @ApiProperty({ description: 'File path for related documents or images' })
-  @IsOptional()
-  @IsString({ message: 'file must be a valid string' })
-  file?: string;
-
-  // @ApiProperty({ description: 'Created by user ID' })
-  // @IsNotEmpty({ message: 'created_by cannot be empty' })
-  // @IsString({ message: 'created_by must be a valid string' })
-  // created_by: string;
-
-  // @ApiProperty({ description: 'Updated by user ID' })
-  // @IsNotEmpty({ message: 'updated_by cannot be empty' })
-  // @IsString({ message: 'updated_by must be a valid string' })
-  // updated_by: string;
-
-  // @ApiProperty({ description: 'Whether the user profile is deleted' })
-  // @IsOptional()
-  // @IsBoolean({ message: 'is_deleted must be a boolean value' })
-  // is_deleted?: boolean;
 }

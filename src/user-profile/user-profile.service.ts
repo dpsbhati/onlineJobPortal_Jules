@@ -14,7 +14,7 @@ export class UserProfileService {
     private readonly userProfileRepository: Repository<UserProfile>,
   ) {}
 
-  async create(createUserProfileDto: CreateUserProfileDto,user_id) {
+  async create(createUserProfileDto: CreateUserProfileDto, user_id) {
     try {
       const isValidDob = moment(
         createUserProfileDto.dob,
@@ -33,7 +33,7 @@ export class UserProfileService {
 
       const newProfile = this.userProfileRepository.create({
         ...createUserProfileDto,
-        dob: formattedDob, 
+        dob: formattedDob,
         created_by: user_id,
         updated_by: user_id,
       });
@@ -83,7 +83,7 @@ export class UserProfileService {
       const profile = await this.userProfileRepository.findOne({
         where: { user_id: userId, is_deleted: false },
       });
-  
+
       if (!profile) {
         return WriteResponse(
           404,
@@ -104,7 +104,6 @@ export class UserProfileService {
       );
     }
   }
-  
 
   async update(id: string, updateUserProfileDto: UpdateUserProfileDto) {
     try {
@@ -112,13 +111,10 @@ export class UserProfileService {
       if (profile.statusCode === 404) {
         return profile;
       }
-
       Object.assign(profile.data, updateUserProfileDto);
-
       const updatedProfile = await this.userProfileRepository.save(
         profile.data,
       );
-
       return WriteResponse(
         200,
         updatedProfile,
