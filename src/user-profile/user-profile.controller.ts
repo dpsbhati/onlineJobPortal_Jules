@@ -33,7 +33,6 @@ export class UserProfileController {
   @Post('update-user-profile')
   @ApiOperation({ summary: 'Update user profile' })
   async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
-    console.log(req.user.id,'=-=-=-=');
     const user_id = req.user.id;
     return this.userProfileService.create(createUserProfileDto, user_id);
   }

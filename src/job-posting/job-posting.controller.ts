@@ -43,7 +43,7 @@ export class JobPostingController {
   @Post('create-update')
   async createOrUpdateJobPosting(@Body() jobDto: CreateJobPostingDto,@Req() req
   ) {
-    const user_id = req.user_id;
+    const user_id = req.user.id;
     if (!user_id) {
       throw new Error('User ID is missing from the request.');
     }    
@@ -74,8 +74,8 @@ export class JobPostingController {
 
   @Get('find-one')
   @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
-  async findOne(@Query() query: FindOneJobPostingQueryDto) {
-    return this.jobPostingService.findOne(query.key);
+  async findOne(@Query() query: { key: string; value: string }) {
+    return this.jobPostingService.findOne(query.key, query.value);
   }
 
   @Post(':id/status')

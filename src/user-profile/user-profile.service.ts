@@ -15,7 +15,6 @@ export class UserProfileService {
   ) { }
 
   async create(createUserProfileDto: CreateUserProfileDto, user_id:string) {
-    console.log(user_id,"--")
     try {
       const isValidDob = moment(
         createUserProfileDto.dob,
@@ -39,7 +38,6 @@ export class UserProfileService {
         updated_by: user_id,
       });
 
-      console.log(newProfile,'new===');
 
       const updatedProfile = await this.userProfileRepository.update(
         { user_id: user_id },
