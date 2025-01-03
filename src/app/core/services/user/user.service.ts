@@ -36,6 +36,15 @@ export class UserService {
         return this.genericService.Get<any>(`user-profile/get-one/${id}`);
     }
 
+    uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
+        const formData = new FormData();
+        formData.append('folderName', payload.folderName);
+        formData.append('file', payload.file);
+        formData.append('userId', payload.userId);
+
+        return this.genericService.Post('uploads/files', formData);
+    }
+
     // getAllComapny(): Observable<any> {
     //     return this._generic.Get<any>(`company/getAllCompanies`);
     // }
