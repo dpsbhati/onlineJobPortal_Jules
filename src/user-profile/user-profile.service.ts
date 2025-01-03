@@ -14,7 +14,7 @@ export class UserProfileService {
     private readonly userProfileRepository: Repository<UserProfile>,
   ) {}
 
-  async create(createUserProfileDto: CreateUserProfileDto) {
+  async create(createUserProfileDto: CreateUserProfileDto,user_id) {
     try {
       const isValidDob = moment(
         createUserProfileDto.dob,
@@ -34,12 +34,11 @@ export class UserProfileService {
       const newProfile = this.userProfileRepository.create({
         ...createUserProfileDto,
         dob: formattedDob, 
-        created_by: createUserProfileDto.user_id,
-        updated_by: createUserProfileDto.user_id,
+        created_by: user_id,
+        updated_by: user_id,
       });
 
       const savedProfile = await this.userProfileRepository.save(newProfile);
-
       return WriteResponse(
         200,
         savedProfile,

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -29,9 +30,16 @@ export class UserProfileController {
 
   @Post('create-newuser-profile')
   @ApiOperation({ summary: 'Create a new user profile' })
-  async create(@Body() createUserProfileDto: CreateUserProfileDto) {
-    return this.userProfileService.create(createUserProfileDto);
+  async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
+    const user_id = req.user.user_id;
+    console.log(req, '+++++++++++++++');
+    return this.userProfileService.create(createUserProfileDto, user_id);
   }
+
+  // create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
+  //   const user_id = req.user.user_id; // Extract user_id from token
+  //   return this.userProfileService.create({ ...createUserProfileDto, user_id });
+  // }
 
   @Get('get-all')
   @ApiOperation({ summary: 'Retrieve all user profiles' })

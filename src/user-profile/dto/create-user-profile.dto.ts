@@ -48,7 +48,6 @@ export class CreateUserProfileDto {
     )}`,
   })
   gender: Gender;
-
   @ApiProperty({ description: 'Email of the user' })
   @IsNotEmpty({ message: 'email of the user cannot be empty' })
   @IsEmail({}, { message: 'Please enter a valid email address.' })
@@ -113,18 +112,18 @@ export class CreateUserProfileDto {
   @IsString({ message: 'file must be a valid string' })
   file?: string;
 
-  @ApiProperty({ description: 'Created by user ID' })
-  @IsNotEmpty({ message: 'created_by cannot be empty' })
-  @IsString({ message: 'created_by must be a valid string' })
-  created_by: string;
+  // @ApiProperty({ description: 'Created by user ID' })
+  // @IsNotEmpty({ message: 'created_by cannot be empty' })
+  // @IsString({ message: 'created_by must be a valid string' })
+  // created_by: string;
 
-  @ApiProperty({ description: 'Updated by user ID' })
-  @IsNotEmpty({ message: 'updated_by cannot be empty' })
-  @IsString({ message: 'updated_by must be a valid string' })
-  updated_by: string;
+  // @ApiProperty({ description: 'Updated by user ID' })
+  // @IsNotEmpty({ message: 'updated_by cannot be empty' })
+  // @IsString({ message: 'updated_by must be a valid string' })
+  // updated_by: string;
 
-  @ApiProperty({ description: 'Whether the user profile is deleted' })
-  @IsOptional()
-  @IsBoolean({ message: 'is_deleted must be a boolean value' })
-  is_deleted?: boolean;
+  // @ApiProperty({ description: 'Whether the user profile is deleted' })
+  // @IsOptional()
+  // @IsBoolean({ message: 'is_deleted must be a boolean value' })
+  // is_deleted?: boolean;
 }
