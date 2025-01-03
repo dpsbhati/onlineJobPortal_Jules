@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -40,13 +41,14 @@ export class JobPostingController {
   constructor(private readonly jobPostingService: JobPostingService) {}
 
   @Post('create-update')
-  @ApiOperation({
-    summary: 'Create or Update a Job Posting with optional file upload',
-  })
-  async createOrUpdate(@Body() jobDto: CreateJobPostingDto) {
-    return this.jobPostingService.createOrUpdate(jobDto);
+  async createOrUpdateJobPosting(@Body() jobDto: CreateJobPostingDto,@Req() req
+  ) {
+    const user_id = req.user_id;
+    if (!user_id) {
+      throw new Error('User ID is missing from the request.');
+    }    
+    return this.jobPostingService.createOrUpdate(jobDto, user_id);
   }
-
   @Post('pagination')
   @ApiBody({
     schema: {
@@ -57,7 +59,7 @@ export class JobPostingController {
   pagination(@Body() pagination: IPagination) {
     return this.jobPostingService.paginateJobPostings(pagination);
   }
-
+  
   @Get()
   @ApiOperation({ summary: 'Get all job postings' })
   async findAll() {

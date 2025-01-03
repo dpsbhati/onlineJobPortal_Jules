@@ -1,9 +1,8 @@
-import { UUID } from 'crypto';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Users } from 'src/user/entities/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('job_postings')
 export class JobPosting {
-  
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -89,4 +88,9 @@ export class JobPosting {
   file: string;
 
   @Column({ default: true })
-  isActive: boolean;}
+  isActive: boolean;
+
+  @ManyToOne(() => Users, (user) => user.id, { nullable: true })
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  user: Users;
+}

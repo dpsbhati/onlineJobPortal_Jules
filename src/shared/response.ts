@@ -22,7 +22,7 @@ export const WriteResponse = (
   }
 };
 
-export const paginateResponse = (list: any, count: number,total?:number): any => {
+export const paginateResponse = (list: any, count: number, total?: number, perPage?: number): any => {
   return {
     statusCode: list.length ? 200 : 400,
     message: list.length ? 'Success' : 'Record not found.',
