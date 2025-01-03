@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
             localStorage.setItem("user", JSON.stringify(response.data.User));
             this.notify.showSuccess('Login successful!');
             // this._router.navigateByUrl('/dashboard');
-            this._router.navigate(['auth/create-job-posting'])
+            this._router.navigate(['admin/create-job-posting'])
             // this._router.navigateByUrl('/create-job-posting'); // Redirect to dashboard
           } else {
             this.notify.showError(response.message);

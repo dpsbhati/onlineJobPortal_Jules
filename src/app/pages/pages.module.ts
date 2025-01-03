@@ -8,8 +8,7 @@ import { PagesRoutingModule } from './pages-routing.module';
   declarations: [],
   imports: [
     CommonModule,
-    PagesRoutingModule,
-    NgModule
+    PagesRoutingModule
   ]
 })
 export class PagesModule { }

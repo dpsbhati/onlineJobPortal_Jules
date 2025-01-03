@@ -1,18 +1,12 @@
 import { Routes } from '@angular/router';
-import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { EmailActivationComponent } from './auth/email-activation/email-activation.component';
 import { AuthGuard } from './core/guards/auth.guard';
-import { CreateJobPostingComponent } from './pages/admin/create-job-posting/create-job-posting.component';
-import { JobListComponent } from './pages/admin/job-list/job-list.component';
+
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'auth/login', // Redirect to the login page
     pathMatch: 'full', // Ensure it only matches the empty path
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent
   },
 
   {
@@ -22,10 +16,8 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule),
+    canActivate:[AuthGuard]
   },
-  // { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
-  // { path: '**', component: Page404Component },
-  // {
   {
     path: 'email-activation',
     children: [
@@ -33,24 +25,4 @@ export const routes: Routes = [
     ],
   },
 
-  {
-    path: 'create-job-posting',
-    component: CreateJobPostingComponent,
-
-  },
-  {
-    path:'job-list',
-    component : JobListComponent
-  }
-
-  // {
-  //   path: 'jobseeker',
-  //   component: JobseekerDashboardComponent,
-  //   canActivate: [AuthGuard],
-  //   data: { role: 'JobSeeker' },
-  // },
-  // {
-  //   path: 'cv-upload',
-  //   component: CvUploadComponent,
-  // },
 ];
