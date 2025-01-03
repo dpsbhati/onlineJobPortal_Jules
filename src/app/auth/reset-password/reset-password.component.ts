@@ -5,6 +5,8 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { FuseValidators } from '../../core/helpers/validators';
 import { ActivatedRoute } from '@angular/router';
+import { NotifyService } from '../../core/services/notify.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 export type FuseAlertType = 'success' | 'error' | 'info' | 'warning';
 @Component({
   selector: 'app-reset-password',
@@ -39,7 +41,9 @@ export class ResetPasswordComponent implements OnInit {
   constructor(
     private _authService: AuthService,
     private _formBuilder: UntypedFormBuilder,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _notify: NotifyService,
+    private spinner: NgxSpinnerService
   ) { }
 
   // -----------------------------------------------------------------------------------------------------
@@ -59,12 +63,12 @@ export class ResetPasswordComponent implements OnInit {
     }
     // Create the form
     this.resetPasswordForm = this._formBuilder.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
       passwordConfirm: ['', Validators.required],
 
     },
       {
-        validators: FuseValidators.mustMatch('password', 'passwordConfirm'),
+        validators: FuseValidators.mustMatch('newPassword', 'passwordConfirm'),
       },
     );
   }
@@ -105,6 +109,8 @@ export class ResetPasswordComponent implements OnInit {
   //     });
   // }
   resetPassword(): void {
+    console.log(this.resetPasswordForm.invalid, this.resetPasswordForm);
+
     if (this.resetPasswordForm.invalid) {
       this.resetPasswordForm.markAllAsTouched();
       return;
@@ -117,11 +123,12 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     this.isSubmitting = true;
+    this.spinner.show();
     this.resetPasswordForm.disable();
     this.showAlert = false;
 
     const payload = {
-      newPassword: this.resetPasswordForm.get('password')?.value,
+      newPassword: this.resetPasswordForm.get('newPassword')?.value,
       token: this.token, // Token from the route
     };
 
@@ -129,16 +136,22 @@ export class ResetPasswordComponent implements OnInit {
       .pipe(
         finalize(() => {
           this.isSubmitting = false;
+          this.spinner.hide();
           this.resetPasswordForm.enable();
           this.resetPasswordNgForm.resetForm();
           this.showAlert = true;
         })
       ).subscribe({
-        next: () => {
-          this.alert = { type: 'success', message: 'Your password has been reset successfully.' };
+        next: (res: any) => {
+          if (res.statusCode == 200) {
+            this._notify.showSuccess(res.message)
+          } else {
+            this._notify.showWarning(res.message);
+          }
+
         },
         error: (error) => {
-          this.alert = { type: 'error', message: error?.message || 'An error occurred. Please try again.' };
+          this._notify.showError(error?.error?.message || "Something went wrong!!");
         },
       });
   }

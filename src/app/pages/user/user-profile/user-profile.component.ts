@@ -30,7 +30,12 @@ export class UserProfileComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.populateUserId();
-    this.checkEditMode();
+    // this.checkEditMode();
+    this.route.params.subscribe((params) => {
+      this.isEditMode = false;
+      this.userId = params['id'];
+      this.getUserDetailsById(this.userId);
+    });
   }
 
   initializeForm(): void {
@@ -65,19 +70,19 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  checkEditMode(): void {
-    this.route.paramMap.subscribe((params) => {
-      this.userId = params.get('id');
-      if (this.userId) {
-        this.isEditMode = true;
-        this.getUserDetailsById(this.userId);
-      } else {
-        this.isEditMode = false;
-      }
-    });
-  }
+  // checkEditMode(): void {
+  //   this.route.paramMap.subscribe((params) => {
+  //     this.userId = params.get('id');
+  //     if (this.userId) {
+  //       this.isEditMode = true;
+  //       this.getUserDetailsById(this.userId);
+  //     } else {
+  //       this.isEditMode = false;
+  //     }
+  //   });
+  // }
 
-  getUserDetailsById(id: string): void {
+  getUserDetailsById(id: any): void {
     this.userService.getUserById(id).subscribe(
       (response) => {
         if (response && response.data) {
