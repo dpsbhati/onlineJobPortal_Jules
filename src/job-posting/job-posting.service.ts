@@ -159,7 +159,7 @@ export class JobPostingService {
         .take(perPage)
         .orderBy('job.created_at', 'DESC')
         .getManyAndCount();
-
+// 
       const enrichedJobList = await Promise.all(
         list.map(async (job) => {
           const enrichedJob = {
