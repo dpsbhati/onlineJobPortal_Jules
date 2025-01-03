@@ -82,7 +82,7 @@ export class UserController {
     return this.userService.findOne('id', id);
   }
 
-  @Delete('delete-by-id/:id')
+  @Post('delete-by-id/:id')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Delete a user by ID' })
   async delete(@Param('id') id: string) {

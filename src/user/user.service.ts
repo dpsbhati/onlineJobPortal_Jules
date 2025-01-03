@@ -218,9 +218,8 @@ export class UserService {
       }
 
       // Set is_deleted to true instead of deleting the user
-      user.is_deleted = true;
-      await this.userRepository.save(user);
-      return WriteResponse(200, { id }, `User with ID ${id} marked as deleted successfully.`);
+      await this.userRepository.update(id, { is_deleted: true });
+      return WriteResponse(200, { id }, `User deleted successfully.`);
     } catch (error) {
       return WriteResponse(
         500,
