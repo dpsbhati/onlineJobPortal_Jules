@@ -5,8 +5,12 @@ import { GenericService } from '../generic.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+
+    constructor(private genericService: GenericService) { }
+
     private _user: ReplaySubject<any> = new ReplaySubject<any>(1);
-    private _generic = inject(GenericService)
+
+
 
     /**
      * Setter & getter for user
@@ -28,9 +32,18 @@ export class UserService {
     //     return this._generic.Get<any>(`user/get-All`);
     // }
 
-    // getuserById(id: any): Observable<any> {
-    //     return this._generic.Get<any>(`user/getOne/${id}`);
-    // }
+    getUserById(id: any): Observable<any> {
+        return this.genericService.Get<any>(`user-profile/get-one/${id}`);
+    }
+
+    uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
+        const formData = new FormData();
+        formData.append('folderName', payload.folderName);
+        formData.append('file', payload.file);
+        formData.append('userId', payload.userId);
+
+        return this.genericService.Post('uploads/files', formData);
+    }
 
     // getAllComapny(): Observable<any> {
     //     return this._generic.Get<any>(`company/getAllCompanies`);
@@ -41,7 +54,7 @@ export class UserService {
     // }
 
     SaveUserProfile(data: any): Observable<any> {
-        return this._generic.Post<any>(`user-profile`, data);
+        return this.genericService.Post<any>(`user-profile/create-newuser-profile`, data);
     }
 
     // updateProfileImage(id: any, data: any): Observable<any> {
