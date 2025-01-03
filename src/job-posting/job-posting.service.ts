@@ -4,10 +4,11 @@ import { Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
-import { WriteResponse } from 'src/shared/response';
+import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { LinkedInService } from 'src/linkedin/linkedin.service';
 import { FacebookService } from 'src/facebook/facebook.service';
 import { CronJob } from 'cron';
+import { IPagination } from 'src/shared/paginationEum';
 
 @Injectable()
 export class JobPostingService {
@@ -101,37 +102,80 @@ export class JobPostingService {
     }
   }
 
-  async findAll(queryParams: any) {
+  async paginateJobPostings(pagination: IPagination) {
     try {
-      const {
-        page = 1,
-        limit = 10,
-        search,
-        sortField = 'created_at',
-        sortOrder = 'DESC',
-      } = queryParams;
-
-      const skip = (page - 1) * limit;
-      const queryBuilder = this.jobPostingRepository.createQueryBuilder('job');
-      queryBuilder.where('job.is_deleted = :is_deleted', { is_deleted: false });
-      if (search) {
-        queryBuilder.andWhere(
-          '(job.title LIKE :search OR job.employer LIKE :search OR job.short_description LIKE :search)',
-          { search: `%${search}%` },
-        );
-      }
-      queryBuilder.orderBy(`job.${sortField}`, sortOrder.toUpperCase());
-      queryBuilder.skip(skip).take(limit);
-      const [jobPostings, total] = await queryBuilder.getManyAndCount();
-      if (jobPostings.length > 0) {
-        return WriteResponse(200, {
-          jobs: jobPostings,
-          total,
-          currentPage: page,
-          totalPages: Math.ceil(total / limit),
+      const { curPage, perPage, whereClause } = pagination;
+  
+      // Default whereClause to filter out deleted job postings
+      let lwhereClause = 'job.is_deleted = 0';
+  
+      // Fields to search
+      const fieldsToSearch = [
+        'title',
+        'short_description',
+        'full_description',
+        'employer',
+        'job_type',
+        'work_type',
+      ];
+  
+      // Process whereClause
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
+          }
         });
+  
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
+        }
       }
-      return WriteResponse(404, false, 'No job postings found.');
+      const skip = (curPage - 1) * perPage;
+      const [list, count] = await this.jobPostingRepository
+        .createQueryBuilder('job')
+        .where(lwhereClause)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('job.created_at', 'DESC')
+        .getManyAndCount();
+  
+      const enrichedJobList = await Promise.all(
+        list.map(async (job) => {
+          const enrichedJob = {
+            ...job,
+          };
+          return enrichedJob;
+        }),
+      );
+  
+      return paginateResponse(enrichedJobList, count, curPage,);
+    } catch (error) {
+      console.error('Job Postings Pagination Error --> ', error);
+      return WriteResponse(500, error, `Something went wrong.`);
+    }
+  }
+  
+
+
+
+  async findAll() {
+    try {
+      const jobPostings = await this.jobPostingRepository.find({
+        where: { is_deleted: false },
+        order: { created_at: 'DESC' },
+      });
+  
+      if (jobPostings.length > 0) {
+        return WriteResponse(200, jobPostings, 'Job postings retrieved successfully.');
+      }
+  
+      return WriteResponse(404, [], 'No job postings found.');
     } catch (error) {
       return WriteResponse(
         500,
@@ -140,6 +184,8 @@ export class JobPostingService {
       );
     }
   }
+  
+  
 
   // async findOne(id: string): Promise<any> {
   //   try {

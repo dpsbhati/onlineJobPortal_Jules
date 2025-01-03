@@ -35,17 +35,20 @@ export class UserService {
       if (userDto.password) {
         userDto.password = await bcrypt.hash(userDto.password, 10);
       }
-
+  
       const user = userDto.id
         ? await this.userRepository.findOne({
-          where: { id: userDto.id, is_deleted: false },
-        })
+            where: { id: userDto.id, is_deleted: false },
+          })
         : null;
+  
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
+  
       if (userDto.id) {
-        // Check if the email already exists for another user
+        userDto.email = user.email;
+  
         const existingUser = await this.userRepository.findOne({
           where: { email: userDto.email, is_deleted: false, id: Not(userDto.id) },
         });
@@ -68,7 +71,7 @@ export class UserService {
           );
         }
       }
-
+  
       const TEMP_EMAIL_DOMAINS = [
         'tempmail.com',
         '10minutemail.com',
@@ -91,33 +94,33 @@ export class UserService {
         'spamgourmet.com',
         'throwawaymail.com',
       ]; // Add more as needed
-
+  
       function isTemporaryEmail(email: string): boolean {
         const domain = email.split('@')[1];
         return TEMP_EMAIL_DOMAINS.includes(domain);
       }
-
-      if (isTemporaryEmail(userDto.email)) {
+  
+      if (!userDto.id && isTemporaryEmail(userDto.email)) {
         return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
       }
-
+  
       // Create a new object excluding role
       const { role, ...userData } = userDto; // Exclude password here
       const savedUser = await this.userRepository.save({ ...user, ...userData });
-
-      if (!userDto.id) { // Only send email if creating a new user
-        // Generate verification token
+  
+      if (!userDto.id) {
+        // Only send email if creating a new user
         const verificationToken = this.generateVerificationToken(savedUser.id);
         const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
-
+  
         await this.mailerService.sendEmail(
           savedUser.email,
           'Verify Your Email Address',
           { name: savedUser.firstName, verificationUrl } as Record<string, any>,
-          'verify' // Assuming this is the template name  
+          'verify', // Assuming this is the template name
         );
       }
-
+  
       return WriteResponse(
         200,
         {
@@ -135,6 +138,7 @@ export class UserService {
       );
     }
   }
+  
 
   async LogIn(email: string, password: string) {
     console.log('LogIn function called with email:', email);

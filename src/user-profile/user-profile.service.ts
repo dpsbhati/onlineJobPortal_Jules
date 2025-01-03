@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProfile } from './entities/user-profile.entity';
@@ -78,16 +78,19 @@ export class UserProfileService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(userId: string) {
     try {
       const profile = await this.userProfileRepository.findOne({
-        where: { id, is_deleted: false },
+        where: { user_id: userId, is_deleted: false },
       });
-
+  
       if (!profile) {
-        return WriteResponse(404, {}, `User Profile with ID ${id} not found.`);
+        return WriteResponse(
+          404,
+          {},
+          `User Profile for the provided user ID not found.`,
+        );
       }
-
       return WriteResponse(
         200,
         profile,
@@ -101,6 +104,7 @@ export class UserProfileService {
       );
     }
   }
+  
 
   async update(id: string, updateUserProfileDto: UpdateUserProfileDto) {
     try {
