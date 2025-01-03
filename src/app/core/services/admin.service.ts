@@ -10,7 +10,7 @@ import { GenericService } from './generic.service';
   providedIn: 'root'
 })
 export class AdminService {
-
+  private readonly BASE_URL = 'https://onlinejobportal.microlent.com/api/';
   constructor(private genericService: GenericService, private http: HttpClient) { }
 
   createOrUpdateJobPosting(payload: any): Observable<any> {
@@ -31,10 +31,22 @@ export class AdminService {
     return this.genericService.Get(`/job-posting`);
   }
   
-  
-  deleteJob(id: string): Observable<any> {
-    return this.genericService.DeleteRequest(`/job-posting/${id}`);
+  getJobById(jobId: string): Observable<any> {
+    const key = 'id'; 
+    // return this.http.get<any>(`/job-posting/find-one`, { 
+    //   params: { key, value: jobId } 
+    // });
+    return this.genericService.Get<any>(`job-posting/find-one?key=id&value=${jobId}`);
+
   }
+  // deleteJob(id: string, ): Observable<any> {
+  //   return this.http.post(`${this.BASE_URL}job-posting/${id}`);
+  // }
+  deleteJob(id: string): Observable<any> {
+  return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
+}
+
+  
   // getJobPostings(params: {
   //   page?: number;
   //   limit?: number;

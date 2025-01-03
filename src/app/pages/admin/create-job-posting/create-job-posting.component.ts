@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
 import countries from '../../../core/helpers/country.json';
 import { NotifyService } from '../../../core/services/notify.service';
-import { NgFor, NgIf } from '@angular/common';
+import { formatDate, NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-create-job-posting',
   standalone: true,
@@ -45,32 +45,58 @@ export class CreateJobPostingComponent {
       country_code: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required),
       work_type: new FormControl('', Validators.required),
-      file_path: new FormControl(null),
+      // file_path: new FormControl(null),
     });
   }
 
   ngOnInit(): void {
-   
-    const jobId = this.route.snapshot.paramMap.get('id');
+    const jobId = this.route.snapshot.paramMap.get('id') as string;
     if (jobId) {
       this.isEditMode = true;
-      // this.loadJobPosting(jobId);
+      this.loadJobPosting(jobId);
     }
   }
 
-  // loadJobPosting(jobId: string): void {
-  //   this.adminService.getJobById(jobId).subscribe((data: any) => {
-  //     this.jobForm.patchValue(data);
-  //   });
-  // }
-
+  loadJobPosting(jobId: string): void {
+    this.adminService.getJobById(jobId).subscribe((response: any) => {
+      if (response.statusCode === 200 && response.data) {
+        const data = response.data;
+           console.log(data);
+        // Explicitly set the value for each control
+        this.jobForm.patchValue({
+          id: data.id || '',
+          job_type: data.job_type || '',
+          qualifications: data.qualifications || '',
+          skills_required: data.skills_required || '',
+          title: data.title || '',
+          featured_image: data.featured_image || null,
+          date_published: data.date_published || '',
+          deadline: data.deadline || '',
+          short_description: data.short_description || '',
+          full_description: data.full_description || '',
+          assignment_duration: data.assignment_duration || '',
+          employer: data.employer || '',
+          required_experience: data.required_experience || '',
+          start_salary: data.start_salary || 0,
+          end_salary: data.end_salary || 0,
+          country_code: data.country_code || '',
+          address: data.address || '',
+          work_type: data.work_type || '',
+          // file_path: data.file || null,
+        });
+      
+        
+        
+      } else {
+        console.error('Failed to retrieve job posting data', response.message);
+      }
+    });
+  }
+  
  
   onFileSelected(event: Event, controlName: string): void {
-
     const file = (event.target as HTMLInputElement).files?.[0];
-  
     if (file) {
-
       if (this.allowedImageFormats.includes(file.type)) {
         this.imageCompressionService.compressImage(file).then((compressedImageUrl: string) => {
           fetch(compressedImageUrl)
@@ -98,45 +124,71 @@ export class CreateJobPostingComponent {
               );
             });
         })
-      } else {
+      // } else {
     
-        // this.jobForm.patchValue({ [controlName]: file });
-        const folderName = 'job-postings';
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user.id;
-        this.adminService.uploadFile({ folderName, file, userId }).subscribe(
-          (response) => {
-            if(response.statusCode ===200){
-              console.log(response);
-              this.jobForm.patchValue({
-                [controlName]: response.data.path
-              });
+      //   // this.jobForm.patchValue({ [controlName]: file });
+      //   const folderName = 'job-postings';
+      //   const user = JSON.parse(localStorage.getItem('user') || '{}');
+      //   const userId = user.id;
+      //   this.adminService.uploadFile({ folderName, file, userId }).subscribe(
+      //     (response) => {
+      //       if(response.statusCode ===200){
+      //         console.log(response);
+      //         this.jobForm.patchValue({
+      //           [controlName]: response.data.path
+      //         });
             
-          }
-        })
+      //     }
+      //   })
       }
     }
   }
   onSubmit(): void {
-    console.log(this.countryList);
     if (this.jobForm.valid) {
       const formValues = this.jobForm.value;
       if (!formValues.id) {
         delete formValues.id;
       }
-  
-      this.adminService.createOrUpdateJobPosting(formValues).subscribe(
-        (response) => {
-          if(response.statusCode === 200){
-             this.notify.showSuccess("JOb created Successfully")
-             this.router.navigate(['auth/job-list']);
-            //  this.router.navigate(['auth/create-job-posting'])
+      if (this.isEditMode) {
+        this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+          if (response.statusCode === 200) {
+            this.notify.showSuccess('Job updated successfully');
+            this.router.navigate(['/job-list']);
           }
-        }
-      );
+        });
+      } else {
+        this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+          if (response.statusCode === 200) {
+            this.notify.showSuccess('Job created successfully');
+            this.router.navigate(['/job-list']);
+          }
+        });
+      }
     } else {
       alert('Please fill in all required fields.');
     }
   }
+  
+  // onSubmit(): void {
+  //   console.log(this.countryList);
+  //   if (this.jobForm.valid) {
+  //     const formValues = this.jobForm.value;
+  //     if (!formValues.id) {
+  //       delete formValues.id;
+  //     }
+  
+  //     this.adminService.createOrUpdateJobPosting(formValues).subscribe(
+  //       (response) => {
+  //         if(response.statusCode === 200){
+  //            this.notify.showSuccess("JOb created Successfully")
+  //            this.router.navigate(['auth/job-list']);
+  //           //  this.router.navigate(['auth/create-job-posting'])
+  //         }
+  //       }
+  //     );
+  //   } else {
+  //     alert('Please fill in all required fields.');
+  //   }
+  // }
   
 }

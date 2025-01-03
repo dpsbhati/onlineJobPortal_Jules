@@ -13,6 +13,10 @@ const routes: Routes = [
     path: 'create-job-posting',
     component: CreateJobPostingComponent,
   },
+  {
+    path: 'create-job-posting/:id',
+    component: CreateJobPostingComponent,
+  },
   {path : 'job-list',
     component : JobListComponent
   }

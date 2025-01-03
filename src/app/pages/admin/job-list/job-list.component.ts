@@ -40,22 +40,16 @@ export class JobListComponent {
   }
   editJob(jobId: string) {
     
-    this.router.navigate(['admin/create-job-posting', jobId]);
+    this.router.navigate(['/create-job-posting', jobId]);
   }
 
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
-      console.log('Delete job with ID:', jobId);
-   
       this.adminService.deleteJob(jobId).subscribe(
-        (response) => {
+        (response :any) => {
           console.log('Job deleted:', response);
-          // this.jobs = this.jobs.filter(job => job.id !== jobId);
+          this.jobs = this.jobs.filter(job => job.id !== jobId);
         },
-        (error) => {
-          this.errorMessage = 'Failed to delete the job.';
-          console.error(error);
-        }
       );
     }
 }
