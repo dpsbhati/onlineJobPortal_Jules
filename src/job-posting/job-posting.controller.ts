@@ -1,7 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { JobPostingService } from './job-posting.service';
-import { CreateJobPostingDto, FindAllJobPostingsQueryDto, FindOneJobPostingQueryDto } from './dto/create-job-posting.dto';
+import {
+  CreateJobPostingDto,
+  FindAllJobPostingsQueryDto,
+  FindOneJobPostingQueryDto,
+} from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -16,14 +40,14 @@ export class JobPostingController {
   constructor(private readonly jobPostingService: JobPostingService) {}
 
   @Post('create-update')
-  @ApiOperation({ summary: 'Create or Update a Job Posting with optional file upload' })
-  async createOrUpdate(
-    @Body() jobDto: CreateJobPostingDto,) 
-    {
+  @ApiOperation({
+    summary: 'Create or Update a Job Posting with optional file upload',
+  })
+  async createOrUpdate(@Body() jobDto: CreateJobPostingDto) {
     return this.jobPostingService.createOrUpdate(jobDto);
   }
 
-  @Post('TaskPagination')
+  @Post('paginate-JobPostings')
   @ApiBody({
     schema: {
       type: 'object',
@@ -33,7 +57,6 @@ export class JobPostingController {
   pagination(@Body() pagination: IPagination) {
     return this.jobPostingService.paginateJobPostings(pagination);
   }
-
 
   @Get()
   @ApiOperation({ summary: 'Get all job postings' })
@@ -47,11 +70,10 @@ export class JobPostingController {
     return this.jobPostingService.remove(id);
   }
 
-
   @Get('find-one')
   @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
   async findOne(@Query() query: FindOneJobPostingQueryDto) {
-    return this.jobPostingService.findOne(query.key,);
+    return this.jobPostingService.findOne(query.key);
   }
 
   @Post(':id/status')
@@ -70,7 +92,3 @@ export class JobPostingController {
     return this.jobPostingService.toggleJobStatus(id, isActive);
   }
 }
-
-
-
-
