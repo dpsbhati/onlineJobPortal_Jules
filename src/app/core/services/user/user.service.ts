@@ -54,7 +54,7 @@ export class UserService {
     // }
 
     SaveUserProfile(data: any): Observable<any> {
-        return this.genericService.Post<any>(`user-profile/create-newuser-profile`, data);
+        return this.genericService.Post<any>(`user-profile/update-user-profile`, data);
     }
 
     // updateProfileImage(id: any, data: any): Observable<any> {

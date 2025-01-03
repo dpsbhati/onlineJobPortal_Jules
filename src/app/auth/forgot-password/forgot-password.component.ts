@@ -90,7 +90,7 @@ export class ForgotPasswordComponent {
         },
         error: (error) => {
           console.error('Forgot Password Error:', error);
-          this._notifyService.showError(error.error?.message || 'An unexpected error occurred');
+          this._notifyService.showError(error.error?.message || 'Enter a valid email');
         }
       });
   }
