@@ -11,7 +11,7 @@ export class GenericService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public Get<T>(url: string): Observable<T> {
+  public Get<T>(url: string, params?: { page?: number; limit?: number; search?: string; sortField?: string; sortOrder?: string; }): Observable<T> {
     return this.httpClient.get<T>(this.apiUrl + url);
   }
 

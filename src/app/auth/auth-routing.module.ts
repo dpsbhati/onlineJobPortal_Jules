@@ -6,6 +6,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { NewUserRegistrationComponent } from './new-user-registration/new-user-registration.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { CreateJobPostingComponent } from '../pages/admin/create-job-posting/create-job-posting.component';
+import { JobListComponent } from '../pages/admin/job-list/job-list.component';
 const routes: Routes = [
   {
     path: 'login',
@@ -31,6 +32,9 @@ const routes: Routes = [
   {
     path: 'create-job-posting',
     component: CreateJobPostingComponent,
+  },
+  {path : 'job-list',
+    component : JobListComponent
   }
   
 

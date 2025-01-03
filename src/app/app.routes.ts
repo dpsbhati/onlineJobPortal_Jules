@@ -3,7 +3,7 @@ import { ResetPasswordComponent } from './auth/reset-password/reset-password.com
 import { EmailActivationComponent } from './auth/email-activation/email-activation.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { CreateJobPostingComponent } from './pages/admin/create-job-posting/create-job-posting.component';
-
+import { JobListComponent } from './pages/admin/job-list/job-list.component';
 export const routes: Routes = [
   {
     path: '',
@@ -38,6 +38,10 @@ export const routes: Routes = [
     component: CreateJobPostingComponent,
 
   },
+  {
+    path:'job-list',
+    component : JobListComponent
+  }
 
   // {
   //   path: 'jobseeker',

@@ -11,14 +11,12 @@ import { GenericService } from './generic.service';
 })
 export class AdminService {
 
-  constructor(private genericService: GenericService) { }
+  constructor(private genericService: GenericService, private http: HttpClient) { }
 
   createOrUpdateJobPosting(payload: any): Observable<any> {
     return this.genericService.Post(`job-posting/create-update`, payload); 
   }
-  // uploadFile(payload: any): Observable<any> {
-  //   return this.genericService.Post(`uploads/files`, payload);
-  // }
+  
   uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
     const formData = new FormData();
     formData.append('folderName', payload.folderName);
@@ -27,9 +25,18 @@ export class AdminService {
   
     return this.genericService.Post('uploads/files', formData);
   }
-  
+ 
 
-  // getJobPostingById(id: string): Observable<any> {
-  //   return this.genericService.get(`${this.baseUrl}/${id}`);
+  getJobPostings(): Observable<any> {
+    return this.genericService.Get(`/job-posting`);
+  }
+  // getJobPostings(params: {
+  //   page?: number;
+  //   limit?: number;
+  //   search?: string;
+  //   sortField?: string;
+  //   sortOrder?: string;
+  // }): Observable<any> {
+  //   return this.genericService.Get('job-posting/find-all', params);
   // }
 }

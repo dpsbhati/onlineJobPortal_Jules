@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
 import countries from '../../../core/helpers/country.json';
 import { NotifyService } from '../../../core/services/notify.service';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-create-job-posting',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor],
+  imports: [ReactiveFormsModule, NgFor, NgIf],
   templateUrl: './create-job-posting.component.html',
   styleUrl: './create-job-posting.component.css'
 })
@@ -22,6 +22,7 @@ export class CreateJobPostingComponent {
   constructor(
     private adminService: AdminService,
     private route: ActivatedRoute,
+    private router : Router,
     private imageCompressionService :ImageCompressionService,
     private notify :NotifyService
   ) {
@@ -128,6 +129,8 @@ export class CreateJobPostingComponent {
         (response) => {
           if(response.statusCode === 200){
              this.notify.showSuccess("JOb created Successfully")
+             this.router.navigate(['auth/job-list']);
+            //  this.router.navigate(['auth/create-job-posting'])
           }
         }
       );

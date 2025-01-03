@@ -4,66 +4,105 @@
     <div class="form-group">
       <label for="title">Job Title</label>
       <input id="title" formControlName="title" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched" class="text-danger">
+        Job title is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="job_type">Job Type</label>
       <input id="job_type" formControlName="job_type" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched" class="text-danger">
+        Job Type is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="qualifications">Qualifications</label>
       <input id="qualifications" formControlName="qualifications" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('qualifications')?.invalid && jobForm.get('qualifications')?.touched" class="text-danger">
+        Qualifications is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="skills_required">Skills Required</label>
       <input id="skills_required" formControlName="skills_required" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('skills_required')?.invalid && jobForm.get('skills_required')?.touched" class="text-danger">
+        skill is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="date_published">Date Published</label>
       <input id="date_published" formControlName="date_published" type="date" class="form-control" />
+      <div *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched" class="text-danger">
+        Date published is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="deadline">Deadline</label>
       <input id="deadline" formControlName="deadline" type="date" class="form-control" />
+      <div *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched" class="text-danger">
+        Deadline is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="short_description">Short Description</label>
       <textarea id="short_description" formControlName="short_description" class="form-control"></textarea>
+      <div *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched" class="text-danger">
+        short description is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="full_description">Full Description</label>
       <textarea id="full_description" formControlName="full_description" class="form-control"></textarea>
+      <div *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched" class="text-danger">
+        full description is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="assignment_duration">Assignment Duration</label>
       <input id="assignment_duration" formControlName="assignment_duration" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched" class="text-danger">
+        Assignment duration is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="employer">Employer</label>
       <input id="employer" formControlName="employer" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched" class="text-danger">
+        Employer is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="required_experience">Required Experience</label>
       <input id="required_experience" formControlName="required_experience" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched" class="text-danger">
+       Experience is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="start_salary">Start Salary</label>
       <input id="start_salary" formControlName="start_salary" type="number" class="form-control" />
+      <div *ngIf="jobForm.get('start_salary')?.invalid && jobForm.get('start_salary')?.touched" class="text-danger">
+        Start salary is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="end_salary">End Salary</label>
       <input id="end_salary" formControlName="end_salary" type="number" class="form-control" />
+      <div *ngIf="jobForm.get('end_salary')?.invalid && jobForm.get('end_salary')?.touched" class="text-danger">
+        End Salary is required.
+      </div>
     </div>
 
     <div class="form-group">
@@ -74,16 +113,25 @@
             {{ country.name }} ({{ country.code }})
           </option>
         </select>
+        <div *ngIf="jobForm.get('country_code')?.invalid && jobForm.get('country_code')?.touched" class="text-danger">
+          Country Code is required.
+        </div>
       </div>
       
     <div class="form-group">
       <label for="address">Address</label>
       <input id="address" formControlName="address" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched" class="text-danger">
+        Address is required.
+      </div>
     </div>
 
     <div class="form-group">
       <label for="work_type">Work Type</label>
       <input id="work_type" formControlName="work_type" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('work_type')?.invalid && jobForm.get('work_type')?.touched" class="text-danger">
+        Work type is required.
+      </div>
     </div>
 
     <div class="form-group">
@@ -94,6 +142,9 @@
         class="form-control"
         (change)="onFileSelected($event, 'file_path')"
       />
+      <div *ngIf="jobForm.get('file_path')?.invalid && jobForm.get('file_path')?.touched" class="text-danger">
+        File Path is required.
+      </div>
     </div>
 
     <div class="form-group">
@@ -104,6 +155,9 @@
         class="form-control"
         (change)="onFileSelected($event, 'featured_image')"
       />
+      <div *ngIf="jobForm.get('featured_image')?.invalid && jobForm.get('featured_image')?.touched" class="text-danger">
+        Featured image is required.
+      </div>
     </div>
 
     <button type="submit" class="btn btn-primary">
