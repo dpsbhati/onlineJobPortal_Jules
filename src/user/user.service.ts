@@ -11,6 +11,7 @@ import { MailService } from 'src/utils/mail.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { IPagination } from 'src/shared/paginationEum';
+import { UserProfile } from '../user-profile/entities/user-profile.entity';
 
 
 
@@ -19,6 +20,8 @@ export class UserService {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
+    @InjectRepository(UserProfile)
+    private userProfileRepository: Repository<UserProfile>,
     private readonly mailerService: MailService,
     private jwtService: JwtService,
   ) { }
@@ -36,20 +39,20 @@ export class UserService {
       if (userDto.password) {
         userDto.password = await bcrypt.hash(userDto.password, 10);
       }
-  
+
       const user = userDto.id
         ? await this.userRepository.findOne({
-            where: { id: userDto.id, is_deleted: false },
-          })
+          where: { id: userDto.id, is_deleted: false },
+        })
         : null;
-  
+
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
-  
+
       if (userDto.id) {
         userDto.email = user.email;
-  
+
         const existingUser = await this.userRepository.findOne({
           where: { email: userDto.email, is_deleted: false, id: Not(userDto.id) },
         });
@@ -72,7 +75,7 @@ export class UserService {
           );
         }
       }
-  
+
       const TEMP_EMAIL_DOMAINS = [
         'tempmail.com',
         '10minutemail.com',
@@ -95,39 +98,51 @@ export class UserService {
         'spamgourmet.com',
         'throwawaymail.com',
       ]; // Add more as needed
-  
+
       function isTemporaryEmail(email: string): boolean {
         const domain = email.split('@')[1];
         return TEMP_EMAIL_DOMAINS.includes(domain);
       }
-  
+
       if (!userDto.id && isTemporaryEmail(userDto.email)) {
         return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
       }
-  
+
       // Create a new object excluding role
       const { role, ...userData } = userDto; // Exclude password here
       const savedUser = await this.userRepository.save({ ...user, ...userData });
-  
+
+      // Insert data into user profile immediately after user creation
+      if (!userDto.id) {
+        await this.userProfileRepository.save({
+          user_id: savedUser.id,
+          first_name: userDto.firstName,
+          last_name: userDto.lastName,
+          // Add other profile fields as necessary
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+
       if (!userDto.id) {
         // Only send email if creating a new user
         const verificationToken = this.generateVerificationToken(savedUser.id);
         const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
-  
+
         await this.mailerService.sendEmail(
           savedUser.email,
           'Verify Your Email Address',
-          { name: savedUser.firstName, verificationUrl } as Record<string, any>,
+          { name: userDto.firstName, verificationUrl } as Record<string, any>,
           'verify', // Assuming this is the template name
         );
       }
-  
+
       return WriteResponse(
         200,
         {
           email: savedUser.email,
-          firstName: savedUser.firstName,
-          lastName: savedUser.lastName,
+          firstName: userDto.firstName,
+          lastName: userDto.lastName,
         },
         user ? 'User updated successfully.' : 'User created successfully. Please verify your email.',
       );
@@ -139,16 +154,16 @@ export class UserService {
       );
     }
   }
-  
+
 
   async LogIn(email: string, password: string) {
     console.log('LogIn function called with email:', email);
-  
+
     // Fetch the user
     const User = await this.userRepository.findOne({
       where: { email, is_deleted: false },
     });
-    if(!User){
+    if (!User) {
       return WriteResponse(403, {}, 'Invalid Credentials.');
     }
     const passwordValid = await bcrypt.compare(password, User.password);
@@ -161,7 +176,7 @@ export class UserService {
     if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
-  
+
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
@@ -170,8 +185,8 @@ export class UserService {
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
-  
-  
+
+
 
   async findOne(key: string, value: any) {
     try {
@@ -240,8 +255,6 @@ export class UserService {
       // Fields to search
       const fieldsToSearch = [
         'email',
-        'firstName',
-        'lastName',
         'isActive',
         'role'
       ];
@@ -311,7 +324,7 @@ export class UserService {
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Welcome to Our Platform',
-        { name: user.firstName, resetLink: resetLink } as Record<string, any>,
+        { name: user.email, resetLink: resetLink } as Record<string, any>,
         'forgetpassword',
       );
       await this.userRepository.save(user);
@@ -375,7 +388,6 @@ export class UserService {
       if (!user) {
         return WriteResponse(404, {}, 'User not found.');
       }
-
       // Update the user's email verification status
       await this.userRepository.update(userId, { isEmailVerified: true });
 
@@ -388,6 +400,4 @@ export class UserService {
       );
     }
   }
-
-
 }

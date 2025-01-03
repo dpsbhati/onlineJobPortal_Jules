@@ -12,9 +12,10 @@ export class UserProfileService {
   constructor(
     @InjectRepository(UserProfile)
     private readonly userProfileRepository: Repository<UserProfile>,
-  ) {}
+  ) { }
 
-  async create(createUserProfileDto: CreateUserProfileDto, user_id) {
+  async create(createUserProfileDto: CreateUserProfileDto, user_id:string) {
+    console.log(user_id,"--")
     try {
       const isValidDob = moment(
         createUserProfileDto.dob,
@@ -38,11 +39,16 @@ export class UserProfileService {
         updated_by: user_id,
       });
 
-      const savedProfile = await this.userProfileRepository.save(newProfile);
+      console.log(newProfile,'new===');
+
+      const updatedProfile = await this.userProfileRepository.update(
+        { user_id: user_id },
+        newProfile 
+      );
       return WriteResponse(
         200,
-        savedProfile,
-        'User profile created successfully.',
+        createUserProfileDto,
+        'User profile updated successfully.',
       );
     } catch (error) {
       return WriteResponse(

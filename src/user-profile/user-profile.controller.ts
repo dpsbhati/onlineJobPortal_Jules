@@ -30,18 +30,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 
-  // @Post('create-newuser-profile')
-  // @ApiOperation({ summary: 'Create a new user profile' })
-  // async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
-  //   const user_id = req.user_id;
-  //   console.log(user_id, '+++++++++++++++');
-  //   return this.userProfileService.create(createUserProfileDto, user_id);
-  // }
+  @Post('update-user-profile')
+  @ApiOperation({ summary: 'Update user profile' })
+  async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
+    console.log(req.user.id,'=-=-=-=');
+    const user_id = req.user.id;
+    return this.userProfileService.create(createUserProfileDto, user_id);
+  }
 
-  // create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
-  //   const user_id = req.user.user_id; // Extract user_id from token
-  //   return this.userProfileService.create({ ...createUserProfileDto, user_id });
-  // }
 
   @Get('get-all')
   @ApiOperation({ summary: 'Retrieve all user profiles' })
