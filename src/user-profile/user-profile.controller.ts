@@ -8,12 +8,14 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiParam,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { UserProfileService } from './user-profile.service';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
@@ -31,8 +33,8 @@ export class UserProfileController {
   @Post('create-newuser-profile')
   @ApiOperation({ summary: 'Create a new user profile' })
   async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
-    const user_id = req.user.user_id;
-    console.log(req, '+++++++++++++++');
+    const user_id = req.user_id;
+    console.log(user_id, '+++++++++++++++');
     return this.userProfileService.create(createUserProfileDto, user_id);
   }
 
@@ -48,11 +50,17 @@ export class UserProfileController {
   }
 
   @Get('get-one')
-  @ApiOperation({ summary: 'Retrieve a user profile by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the user profile' })
-  async findOne(@Param('id') id: string) {
-    return this.userProfileService.findOne(id);
+  @ApiOperation({ summary: 'Retrieve a user profile by user ID' })
+  @ApiQuery({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'The ID of the user profile',
+  })
+  async findOne(@Query('id') userId: string) {
+    return this.userProfileService.findOne(userId);
   }
+
 
   @Post('update-userprofile')
   @ApiOperation({ summary: 'Update a user profile' })

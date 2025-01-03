@@ -5,6 +5,7 @@ import { CreateJobPostingDto, FindAllJobPostingsQueryDto, FindOneJobPostingQuery
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 
 @ApiTags('Job-postings')
 @Controller('job-posting')
@@ -22,10 +23,22 @@ export class JobPostingController {
     return this.jobPostingService.createOrUpdate(jobDto);
   }
 
-  @Get('find-all')
-  @ApiOperation({ summary: 'Find all job postings with optional filters, sorting, and pagination' })
-  async findAll(@Query() query: FindAllJobPostingsQueryDto) {
-    return this.jobPostingService.findAll(query);
+  @Post('TaskPagination')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+  pagination(@Body() pagination: IPagination) {
+    return this.jobPostingService.paginateJobPostings(pagination);
+  }
+
+
+  @Get()
+  @ApiOperation({ summary: 'Get all job postings' })
+  async findAll() {
+    return await this.jobPostingService.findAll();
   }
 
   @Delete('delete/:id')
