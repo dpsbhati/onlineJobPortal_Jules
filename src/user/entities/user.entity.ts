@@ -22,14 +22,10 @@ export class Users {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  firstName: string;
 
   @Column()
   refreshToken: string;
 
-  @Column()
-  lastName: string;
 
   // @Exclude()
   @Column()

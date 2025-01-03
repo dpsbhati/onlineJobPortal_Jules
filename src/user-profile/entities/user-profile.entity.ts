@@ -30,11 +30,9 @@ export class UserProfile {
   @Column()
   dob: Date;
 
-  @Column({ type: 'varchar' })
-  mobile: string;
+  @Column({ type: 'int' })
+  mobile: number;
 
-  @Column({ type: 'varchar' })
-  email: string;
 
   @Column({ type: 'varchar' })
   first_name: string;

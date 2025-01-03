@@ -8,20 +8,12 @@ import {
   IsUUID,
   IsDate,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 import { Gender, PreferredJobShift } from '../entities/user-profile.entity';
 import { Type } from 'class-transformer';
 
 export class CreateUserProfileDto {
-  @ApiProperty({ description: 'Unique identifier for the user profile' })
-  @IsOptional()
-  @IsUUID(4, { message: 'id of the user should be a valid UUID' })
-  id: string;
-
-  @ApiProperty({ description: 'Id of the user' })
-  @IsNotEmpty({ message: 'user_id cannot be empty or null' })
-  @IsUUID(4, { message: 'user_id must be a valid UUID' })
-  user_id: string;
 
   @ApiProperty({ description: 'First name of the user' })
   @IsNotEmpty({ message: 'first_name cannot be empty' })
@@ -48,30 +40,12 @@ export class CreateUserProfileDto {
   })
   gender: Gender;
 
-  @ApiProperty({ description: 'Email of the user' })
-  @IsNotEmpty({ message: 'email of the user cannot be empty' })
-  @IsEmail({}, { message: 'Please enter a valid email address.' })
-  email: string;
 
   @ApiProperty({ description: 'Mobile number of the user' })
   @IsNotEmpty({ message: 'Mobile number cannot be empty' })
-  @IsString({ message: 'mobile must be a valid string' })
-  mobile: string;
+  @IsNumber()
+  mobile: number;
 
-  @ApiProperty({ description: 'Created by user ID' })
-  @IsOptional()
-  @IsString({ message: 'created_by must be a valid string' })
-  created_by?: string;
-
-  @ApiProperty({ description: 'Updated by user ID' })
-  @IsOptional()
-  @IsString({ message: 'updated_by must be a valid string' })
-  updated_by?: string;
-
-  @ApiProperty({ description: 'Whether the user profile is deleted' })
-  @IsOptional()
-  @IsBoolean({ message: 'is_deleted must be a boolean value' })
-  is_deleted?: boolean;
 
   // Optional fields
   @ApiProperty({ description: 'Key skills of the user' })
