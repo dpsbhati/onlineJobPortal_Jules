@@ -1,95 +1,91 @@
 <div class="container mt-5">
-    <div>
+    <div class="text-center mb-4">
         <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
     </div>
-    <div>
-
-        <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
-            <div>
-                <!-- First Name -->
-                <div>
-                    <label for="first_name">First Name</label>
-                    <input id="first_name" formControlName="first_name" type="text" placeholder="Enter first name" />
-                </div>
-
-                <!-- Last Name -->
-                <div>
-                    <label for="last_name">Last Name</label>
-                    <input id="last_name" formControlName="last_name" type="text" placeholder="Enter last name" />
-                </div>
-
-                <!-- Date of Birth -->
-                <div>
-                    <label for="dob">Date of Birth</label>
-                    <input id="dob" formControlName="dob" type="date" />
-                </div>
-
-                <!-- Gender -->
-                <div>
-                    <label for="gender">Gender</label>
-                    <select id="gender" formControlName="gender">
-                        <option value="">Select Gender</option>
-                        <option value="MALE">Male</option>
-                        <option value="FEMALE">Female</option>
-                        <option value="OTHERS">Other</option>
-                    </select>
-                </div>
-
-                <!-- Mobile -->
-                <div>
-                    <label for="mobile">Mobile</label>
-                    <input id="mobile" formControlName="mobile" type="number" placeholder="Enter mobile number" />
-                </div>
-
-                <!-- Key Skills -->
-                <div>
-                    <label for="key_skills">Key Skills</label>
-                    <input id="key_skills" formControlName="key_skills" type="text" placeholder="Enter key skills" />
-                </div>
-
-                <!-- Work Experiences -->
-                <div>
-                    <label for="work_experiences">Work Experiences</label>
-                    <input id="work_experiences" formControlName="work_experiences"
-                        placeholder="Enter work experiences" />
-                </div>
-
-                <!-- Current Company -->
-                <div>
-                    <label for="current_company">Current Company</label>
-                    <input id="current_company" formControlName="current_company" type="text"
-                        placeholder="Enter current company" />
-                </div>
-
-                <!-- Current Salary -->
-                <div>
-                    <label for="current_salary">Current Salary</label>
-                    <input id="current_salary" formControlName="current_salary" type="number"
-                        placeholder="Enter current salary" />
-                </div>
-
-                <!-- Expected Salary -->
-                <div>
-                    <label for="expected_salary">Expected Salary</label>
-                    <input id="expected_salary" formControlName="expected_salary" type="text"
-                        placeholder="Enter expected salary" />
-                </div>
-
-
-            </div>
-
-            <!-- Submit Button -->
-            <div style="margin-top: 20px;">
-                <button type="submit">
-                    {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
-                </button>
-            </div>
-        </form>
-
-        <!-- Edit Button for Testing Edit Mode -->
-        <div>
-            <button (click)="navigateToEditMode('id')">Edit Example User</button>
+    <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="form-container">
+        <!-- First Name -->
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input id="first_name" class="form-control" formControlName="first_name" type="text"
+                placeholder="Enter first name" />
         </div>
 
-    </div>
+        <!-- Last Name -->
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input id="last_name" class="form-control" formControlName="last_name" type="text"
+                placeholder="Enter last name" />
+        </div>
+
+        <!-- Date of Birth -->
+        <div class="form-group">
+            <label for="dob">Date of Birth</label>
+            <input id="dob" class="form-control" formControlName="dob" type="date" />
+        </div>
+
+        <!-- Gender -->
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" class="form-select" formControlName="gender">
+                <option value="">Select Gender</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHERS">Other</option>
+            </select>
+        </div>
+
+        <!-- Mobile -->
+        <div class="form-group">
+            <label for="mobile">Mobile</label>
+            <input id="mobile" class="form-control" formControlName="mobile" type="number"
+                placeholder="Enter mobile number" />
+        </div>
+
+        <!-- Key Skills -->
+        <div class="form-group">
+            <label for="key_skills">Key Skills</label>
+            <input id="key_skills" class="form-control" formControlName="key_skills" type="text"
+                placeholder="Enter key skills" />
+        </div>
+
+        <!-- Work Experiences -->
+        <div class="form-group">
+            <label for="work_experiences">Work Experiences</label>
+            <input id="work_experiences" class="form-control" formControlName="work_experiences"
+                placeholder="Enter work experiences" />
+        </div>
+
+        <!-- Current Company -->
+        <div class="form-group">
+            <label for="current_company">Current Company</label>
+            <input id="current_company" class="form-control" formControlName="current_company" type="text"
+                placeholder="Enter current company" />
+        </div>
+
+        <!-- Current Salary -->
+        <div class="form-group">
+            <label for="current_salary">Current Salary</label>
+            <input id="current_salary" class="form-control" formControlName="current_salary" type="number"
+                placeholder="Enter current salary" min="0" />
+        </div>
+
+        <!-- Expected Salary -->
+        <div class="form-group">
+            <label for="expected_salary">Expected Salary</label>
+            <input id="expected_salary" class="form-control" formControlName="expected_salary" type="text"
+                placeholder="Enter expected salary" />
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">
+                {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
+            </button>
+        </div>
+    </form>
+
+    <!-- Edit Button -->
+    <!-- <div class="text-center mt-3">
+        <button (click)="navigateToEditMode('id')" class="btn btn-secondary">Edit Example User</button>
+    </div> -->
 </div>

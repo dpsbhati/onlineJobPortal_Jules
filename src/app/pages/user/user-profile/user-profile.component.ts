@@ -9,7 +9,7 @@ import { ImageCompressionService } from '../../../core/services/image-compressio
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
@@ -29,7 +29,6 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.populateUserId();
     // this.checkEditMode();
     // this.route.params.subscribe((params) => {
     //   this.isEditMode = false;
@@ -53,14 +52,14 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  populateUserId(): void {
-    const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (loggedInUser?.id) {
-      this.userProfileForm.patchValue({ user_id: loggedInUser.id });
-    } else {
-      console.error('User ID not found in localStorage or is invalid.');
-    }
-  }
+  // populateUserId(): void {
+  //   const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
+  //   if (loggedInUser?.id) {
+  //     this.userProfileForm.patchValue({ user_id: loggedInUser.id });
+  //   } else {
+  //     console.error('User ID not found in localStorage or is invalid.');
+  //   }
+  // }
 
   // checkEditMode(): void {
   //   this.route.paramMap.subscribe((params) => {
@@ -74,22 +73,22 @@ export class UserProfileComponent implements OnInit {
   //   });
   // }
 
-  getUserDetailsById(id: any): void {
-    this.userService.getUserById(id).subscribe(
-      (response) => {
-        if (response && response.data) {
-          this.userProfileForm.patchValue(response.data);
-          this.successMessage = 'Edit mode activated. Data loaded successfully.';
-        } else {
-          this.errorMessage = 'Failed to load user data.';
-        }
-      },
-      (error) => {
-        console.error('Error loading user data:', error);
-        this.errorMessage = error.error?.message || 'Failed to load user data.';
-      }
-    );
-  }
+  // getUserDetailsById(id: any): void {
+  //   this.userService.getUserById(id).subscribe(
+  //     (response) => {
+  //       if (response && response.data) {
+  //         this.userProfileForm.patchValue(response.data);
+  //         this.successMessage = 'Edit mode activated. Data loaded successfully.';
+  //       } else {
+  //         this.errorMessage = 'Failed to load user data.';
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error loading user data:', error);
+  //       this.errorMessage = error.error?.message || 'Failed to load user data.';
+  //     }
+  //   );
+  // }
   onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0];
 
