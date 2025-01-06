@@ -1,3 +1,7 @@
+<div>
+    <button (click)="navigate()" class="button">Back</button>
+  </div>
+  
 <div class="container mt-5">
     <div class="text-center mb-4">
         <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
@@ -5,7 +9,7 @@
     <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="form-container">
         <!-- First Name -->
         <div class="form-group">
-            <label for="first_name">First Name</label>
+            <label for="first_name" class="req">First Name</label>
             <input id="first_name" class="form-control" formControlName="first_name" type="text"
                 placeholder="Enter first name" />
                 <div *ngIf="userProfileForm.get('first_name')?.touched && userProfileForm.get('first_name')?.invalid">
@@ -20,7 +24,7 @@
 
         <!-- Last Name -->
         <div class="form-group">
-            <label for="last_name">Last Name</label>
+            <label for="last_name" class="req">Last Name</label>
             <input id="last_name" class="form-control" formControlName="last_name" type="text"
                 placeholder="Enter last name" />
                 <div *ngIf="userProfileForm.get('last_name')?.touched && userProfileForm.get('last_name')?.invalid">
@@ -35,7 +39,7 @@
 
         <!-- Date of Birth -->
         <div class="form-group">
-            <label for="dob">Date of Birth</label>
+            <label for="dob" class="req">Date of Birth</label>
             <input id="dob" class="form-control" formControlName="dob" type="date" />
             <div *ngIf="userProfileForm.get('dob')?.touched && userProfileForm.get('dob')?.invalid">
                 <small *ngIf="userProfileForm.get('dob')?.errors?.['required']" class="text-danger">
@@ -46,7 +50,7 @@
 
         <!-- Gender -->
         <div class="form-group">
-            <label for="gender">Gender</label>
+            <label for="gender" class="req">Gender</label>
             <select id="gender" class="form-select" formControlName="gender">
                 <option value="">Select Gender</option>
                 <option value="MALE">Male</option>
@@ -62,7 +66,7 @@
 
         <!-- Mobile -->
         <div class="form-group">
-            <label for="mobile">Mobile</label>
+            <label for="mobile" class="req">Mobile</label>
             <input id="mobile" class="form-control" formControlName="mobile" type="number"
                 placeholder="Enter mobile number" />
                 <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">

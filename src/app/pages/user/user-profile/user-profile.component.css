@@ -79,3 +79,10 @@
 .text-center {
     margin-top: 15px;
 }
+
+.req::after {
+    content: '*';
+    color: red;
+    margin-left: 0.25rem;
+  }
+  
