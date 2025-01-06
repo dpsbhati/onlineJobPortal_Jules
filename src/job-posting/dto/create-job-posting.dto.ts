@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -9,8 +10,25 @@ import {
   IsUUID,
   MaxLength,
   Min,
+  Validate,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
 } from 'class-validator';
 
+
+@ValidatorConstraint({ name: 'IsImageFormat', async: false })
+@Injectable()
+export class IsImageFormat implements ValidatorConstraintInterface {
+  validate(value: string, args: ValidationArguments) {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    return allowedExtensions.some((ext) => value.toLowerCase().endsWith(ext));
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `featured_image must be a valid image file (e.g., .jpg, .jpeg, .png, .gif, .webp)`;
+  }
+}
 export class CreateJobPostingDto {
   @ApiProperty({
     description: 'Unique identifier for the job posting (optional for creation, required for updates)',
@@ -35,6 +53,8 @@ export class CreateJobPostingDto {
   })
   @IsNotEmpty({ message: 'featured_image is required' })
   @IsString({ message: 'featured_image must be a valid string' })
+  @MaxLength(255, { message: 'Featured image URL cannot exceed 255 characters' })
+  @Validate(IsImageFormat, { message: 'featured_image must be a valid image file (e.g., .jpg, .jpeg, .png, .gif, .webp)' })
   featured_image: string;
 
   @ApiProperty({
@@ -135,3 +155,4 @@ export class CreateJobPostingDto {
   @MaxLength(50, { message: 'Required experience cannot exceed 50 characters' })
   required_experience: string;
 }
+
