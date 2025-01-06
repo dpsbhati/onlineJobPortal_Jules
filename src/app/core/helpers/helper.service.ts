@@ -30,9 +30,9 @@ export class HelperService {
       Object.keys(filterObj).forEach((key: any) => {
         if (filterObj[key] != "" && filterObj[key]) {
           PostFilter.push({
-            propertyName: key,
+            key:key,
             value: filterObj[key],
-            queryOperator: 1,
+            operator:"="
           });
         }
       });

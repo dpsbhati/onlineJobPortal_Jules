@@ -1,6 +1,38 @@
 <div class="job-list">
   <h1>Job Postings</h1>
 
+   <!-- Filters Section -->
+   <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="filters.all"
+      (keyup.enter)="onSearch()"
+      placeholder="Search"
+      class="search-input"
+    />
+    <button type="button" class="btn btn-primary" (click)="onSearch()">
+      Search
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="clearSearch()">
+      Clear
+    </button>
+
+    <!-- <select [(ngModel)]="selectedJobType" class="filter-select">
+      <option value="">All Job Types</option>
+      <option *ngFor="let type of jobTypes" [value]="type">{{ type }}</option>
+    </select> -->
+
+    <!-- <select [(ngModel)]="selectedWorkType" class="filter-select">
+      <option value="">All Work Types</option>
+      <option *ngFor="let work of workTypes" [value]="work">{{ work }}</option>
+    </select> -->
+
+    <!-- <select [(ngModel)]="selectedCountry" class="filter-select">
+      <option value="">All Countries</option>
+      <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+    </select> -->
+  </div>
+
   <table>
     <thead>
       <tr>
@@ -51,5 +83,5 @@
     </tbody>
   </table>
 
-  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  <p *ngIf="!jobPostingList.length" class="error">{{ errorMessage || 'No records found' }}</p>
 </div>

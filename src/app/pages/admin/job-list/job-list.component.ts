@@ -16,10 +16,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class JobListComponent {
   jobs: any[] = []; // To store job data
-  errorMessage: string = ''; // To store error messages
+  errorMessage: string = '';
   pageConfig: any = {
     curPage: 1,
-    perPage: 25,
+    perPage: 10,
     sortBy: "created_on",
     direction: "desc",
     whereClause: [],
@@ -93,10 +93,31 @@ export class JobListComponent {
         }
       },
       error: (err: any) => {
+        this.spinner.hide();
         this.notify.showError(err?.error?.message || "Something went wrong!!");
         this.jobPostingList = [];
         this.total = 0;
       }
     })
   }
+
+   // Handle search action
+   onSearch(): void {
+    this.pageConfig.curPage = 1; // Reset to the first page
+    this.onPagination(); // Trigger the pagination API
+  }
+
+   // Clear the search field and trigger API
+   clearSearch(): void {
+    this.filters.all = '';
+    this.onSearch();
+  }
+
+   // Trigger API if input becomes empty
+   onInputChange(value: string): void {
+    if (!value.trim()) {
+      this.clearSearch();
+    }
+  }
+
 }

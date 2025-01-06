@@ -66,6 +66,36 @@
   table tbody td {
     font-size: 13px;
   }
+
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .search-input {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .filter-select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 150px;
+  }
+  
+  .filters select,
+  .filters input {
+    flex-shrink: 0;
+  }
   
   @media (max-width: 768px) {
     .job-list {
