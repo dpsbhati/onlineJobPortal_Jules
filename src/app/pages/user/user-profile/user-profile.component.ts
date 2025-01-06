@@ -6,6 +6,7 @@ import { NgIf } from '@angular/common';
 import { AdminService } from '../../../core/services/admin.service';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
 import { NotifyService } from '../../../core/services/notify.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-user-profile',
@@ -26,7 +27,8 @@ export class UserProfileComponent implements OnInit {
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
-    private notify : NotifyService
+    private notify : NotifyService,
+    private spinner : NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -205,40 +207,44 @@ export class UserProfileComponent implements OnInit {
 
   onSubmit(): void {
     if (this.userProfileForm.invalid) {
-      console.log('Invalid fields:', this.getInvalidFields());
-      this.notify.showWarning("Please fill all required fields correctly.");
+      // Get the first invalid field and its corresponding error message
+      // const firstInvalidField = this.getInvalidFields()[0];
+      // const errorMessage = this.getValidationMessage(firstInvalidField);
+      this.notify.showWarning( 'Please fill all required fields correctly.');
       return;
     }
   
     const payload = { ...this.userProfileForm.value };
   
-    if (this.isEditMode) {
-      // Update user profile
-      this.userService.SaveUserProfile(payload).subscribe(
-        (response) => {
-          this.notify.showSuccess("User profile updated successfully!");
-          this.router.navigate(['/job-list'])
-        },
-        (error) => {
-          console.error('Error updating profile:', error);
-          this.notify.showError("Failed to update user profile. Please try again.");
-        }
-      );
-    } else {
-      // Create new user profile
-      this.userService.SaveUserProfile(payload).subscribe(
-        (response) => {
-          this.notify.showSuccess(response.message);
-          // if (response && response.data && response.data.id) {
-          //   this.navigateToEditMode(response.data.id);
-          // }
-        },
-        (error) => {
-          console.error('Error creating profile:', error);
-          this.notify.showError("Failed to create user profile. Please try again.");
-        }
-      );
-    }
+    // Update user profile
+    this.userService.SaveUserProfile(payload).subscribe(
+      (response) => {
+        this.notify.showSuccess(response.message);
+        this.router.navigate(['/job-list']);
+      },
+      (error) => {
+        console.error('Error updating profile:', error);
+        this.notify.showError(error.message);
+      }
+    );
+  }
+  
+  
+  getValidationMessage(fieldName: string): string {
+    const errorMessages: { [key: string]: string } = {
+      first_name: 'First Name is required.',
+      last_name: 'Last Name is required.',
+      dob: 'Date of Birth is required.',
+      gender: 'Gender is required.',
+      mobile: 'Mobile Number is required and must be a valid 10-digit number.',
+      key_skills: 'Key Skills are required.',
+      work_experiences: 'Work Experiences are required.',
+      current_company: 'Current Company is required.',
+      current_salary: 'Current Salary must be a valid number.',
+      expected_salary: 'Expected Salary must be a valid number.',
+    };
+  
+    return errorMessages[fieldName] || 'Invalid input.';
   }
   
 
@@ -258,30 +264,46 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadUserData(userId: string): void {
-    this.userService.getUserById(userId).subscribe((response: any) => {
-      if (response.statusCode === 200 && response.data) {
-        const data = response.data;
+   
+    this.spinner.show();
   
-        // Convert the `dob` field to YYYY-MM-DD format
-        const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
+    this.userService.getUserById(userId).subscribe(
+      (response: any) => {
+        // Hide the spinner after receiving the response
+        this.spinner.hide();
   
-        this.userProfileForm.patchValue({
-          first_name: data.first_name || '',
-          last_name: data.last_name || '',
-          dob: dob, // Patch the converted date here
-          gender: data.gender || '',
-          mobile: data.mobile || '',
-          key_skills: data.key_skills || '',
-          work_experiences: data.work_experiences || '',
-          current_company: data.current_company || '',
-          current_salary: data.current_salary || '',
-          expected_salary: data.expected_salary || '',
-        });
-      } else {
-        console.error('Failed to retrieve user profile data', response.message);
+        if (response.statusCode === 200 && response.data) {
+          const data = response.data;
+  
+          // Convert the `dob` field to YYYY-MM-DD format
+          const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
+  
+          this.userProfileForm.patchValue({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            dob: dob, // Patch the converted date here
+            gender: data.gender || '',
+            mobile: data.mobile || '',
+            key_skills: data.key_skills || '',
+            work_experiences: data.work_experiences || '',
+            current_company: data.current_company || '',
+            current_salary: data.current_salary || '',
+            expected_salary: data.expected_salary || '',
+          });
+        } else {
+          console.error('Failed to retrieve user profile data', response.message);
+          this.notify.showError('Failed to retrieve user profile data');
+        }
+      },
+      (error: any) => {
+        // Hide the spinner in case of error
+        this.spinner.hide();
+        console.error('Error fetching user profile data:', error.message);
+        this.notify.showError('An error occurred while fetching user profile data');
       }
-    });
+    );
   }
+  
   
   
 }
