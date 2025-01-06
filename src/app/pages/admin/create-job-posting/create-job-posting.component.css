@@ -89,3 +89,10 @@
     color: red;
   }
   
+  .img-preview {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+  }
+  
