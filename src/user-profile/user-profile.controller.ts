@@ -44,6 +44,7 @@ export class UserProfileController {
     return this.userProfileService.findAll();
   }
 
+  
   @Get('get-one')
   @ApiOperation({ summary: 'Retrieve a user profile by user ID' })
   @ApiQuery({
@@ -57,15 +58,15 @@ export class UserProfileController {
   }
 
 
-  @Post('update-userprofile')
-  @ApiOperation({ summary: 'Update a user profile' })
-  @ApiParam({ name: 'id', description: 'The ID of the user profile' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserProfileDto: UpdateUserProfileDto,
-  ) {
-    return this.userProfileService.update(id, updateUserProfileDto);
-  }
+  // @Post('update-userprofile')
+  // @ApiOperation({ summary: 'Update a user profile' })
+  // @ApiParam({ name: 'id', description: 'The ID of the user profile' })
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserProfileDto: UpdateUserProfileDto,
+  // ) {
+  //   return this.userProfileService.update(id, updateUserProfileDto);
+  // }
 
   @Post(':id')
   @ApiOperation({ summary: 'Soft delete a user profile' })
