@@ -85,3 +85,30 @@
 
   <p *ngIf="!jobPostingList.length" class="error">{{ errorMessage || 'No records found' }}</p>
 </div>
+          <td>{{ job.date_published | date: 'shortDate' }}</td>
+          <td>{{ job.deadline | date: 'shortDate' }}</td>
+          <td>{{ job.start_salary }}</td>
+          <td>{{ job.end_salary }}</td>
+          <td>{{ job.work_type }}</td>
+          <td>{{ job.country_code }}</td>
+          <td class="actions">
+         
+            <button (click)="editJob(job.id)" class="action-button edit-button">
+              <i class="fas fa-edit" ></i>
+            </button>
+          
+            <button (click)="deleteJob(job.id)" class="action-button delete-button">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+    
+        </tr>
+      </tbody>
+    </table>
+  
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
+  <div class="create-job-container">
+    <button  (click)= "navigateToCreateJob()" class="create-job-button">Create Job</button>
+  </div>
+  

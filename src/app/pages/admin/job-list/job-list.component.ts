@@ -101,6 +101,10 @@ export class JobListComponent {
     })
   }
 
+navigateToCreateJob(){
+   this.router.navigate(['/create-job-posting'])
+}
+
    // Handle search action
    onSearch(): void {
     this.pageConfig.curPage = 1; // Reset to the first page
