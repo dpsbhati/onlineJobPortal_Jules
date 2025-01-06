@@ -24,8 +24,8 @@ import {
 import { JobPostingService } from './job-posting.service';
 import {
   CreateJobPostingDto,
-  FindAllJobPostingsQueryDto,
-  FindOneJobPostingQueryDto,
+  // FindAllJobPostingsQueryDto,
+  // FindOneJobPostingQueryDto,
 } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
