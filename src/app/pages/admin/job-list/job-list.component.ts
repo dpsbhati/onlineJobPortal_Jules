@@ -16,10 +16,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class JobListComponent {
   jobs: any[] = []; // To store job data
-  errorMessage: string = ''; // To store error messages
+  errorMessage: string = '';
   pageConfig: any = {
     curPage: 1,
-    perPage: 25,
+    perPage: 10,
     sortBy: "created_on",
     direction: "desc",
     whereClause: [],
@@ -63,6 +63,11 @@ export class JobListComponent {
     this.router.navigate(['/create-job-posting', jobId]);
   }
 
+  edituser(userID: string) {
+
+    this.router.navigate(['/user-profile', userID]);
+  }
+
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
       this.adminService.deleteJob(jobId).subscribe(
@@ -96,6 +101,7 @@ export class JobListComponent {
         }
       },
       error: (err: any) => {
+        this.spinner.hide();
         this.notify.showError(err?.error?.message || "Something went wrong!!");
         this.jobPostingList = [];
         this.total = 0;
@@ -106,4 +112,45 @@ export class JobListComponent {
 navigateToCreateJob(){
    this.router.navigate(['/create-job-posting'])
 }
+
+navigateToUserProfile(): void {
+ 
+  this.router.navigate(['/user-profile']);
+}
+
+
+   // Handle search action
+   onSearch(): void {
+    this.pageConfig.curPage = 1; // Reset to the first page
+    this.onPagination(); // Trigger the pagination API
+  }
+
+   // Clear the search field and trigger API
+   clearSearch(): void {
+    this.filters.all = '';
+    this.onSearch();
+  }
+
+   // Trigger API if input becomes empty
+   onInputChange(value: string): void {
+    if (!value.trim()) {
+      this.clearSearch();
+    }
+  }
+
+  onPageChange(page: number): void {
+    if (page > 0 && page <= this.totalPages) {
+      this.pageConfig.curPage = page;
+      this.onPagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.total / this.pageConfig.perPage);
+  }
+
+  get paginationArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
 }
