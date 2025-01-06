@@ -44,6 +44,7 @@ export class UserProfileController {
     return this.userProfileService.findAll();
   }
 
+  
   @Get('get-one')
   @ApiOperation({ summary: 'Retrieve a user profile by user ID' })
   @ApiQuery({
