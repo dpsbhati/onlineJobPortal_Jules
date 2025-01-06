@@ -152,5 +152,8 @@ navigateToUserProfile(): void {
   get paginationArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
+  navigate(){
+    this.router.navigate(['auth/login']);
+  }
 
 }
