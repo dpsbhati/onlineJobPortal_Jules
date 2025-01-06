@@ -72,11 +72,14 @@ export class JobListComponent {
     if (confirm('Are you sure you want to delete this job?')) {
       this.adminService.deleteJob(jobId).subscribe(
         (response: any) => {
-          console.log('Job deleted:', response);
           this.jobs = this.jobs.filter(job => job.id !== jobId);
+          this.notify.showSuccess(response.message);
+          window.location.reload();
+         
         },
       );
     }
+    
   }
 
   onPagination(): void {
@@ -148,6 +151,9 @@ navigateToUserProfile(): void {
 
   get paginationArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+  navigate(){
+    this.router.navigate(['auth/login']);
   }
 
 }
