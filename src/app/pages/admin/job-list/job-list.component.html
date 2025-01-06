@@ -1,35 +1,34 @@
+<div class="job-list">
+  <h1>Job Postings</h1>
 
-  <div class="job-list">
-    <h1>Job Postings</h1>
-  
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Employer</th>
-          <th>Job Type</th>
-          <!-- <th>Qualifications</th> -->
-          <!-- <th>Skills Required</th> -->
-          <th>Published Date</th>
-          <th>Deadline</th>
-          <th>Start Salary</th>
-          <th>End Salary</th>
-          <th>Work Type</th>
-          <th>Country</th>
-          <th>Actions</th>
-          <!-- <th>Address</th> -->
-          <!-- <th>Assignment Duration</th> -->
-          <!-- <th>Featured Image</th> -->
-          <!-- <th>Short Description</th> -->
-          <!-- <th>Full Description</th> -->
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let job of jobs">
-          <td>{{ job.title }}</td>
-          <td>{{ job.employer }}</td>
-          <td>{{ job.job_type }}</td>
-          <!-- <td>{{ job.qualifications }}</td>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Employer</th>
+        <th>Job Type</th>
+        <!-- <th>Qualifications</th> -->
+        <!-- <th>Skills Required</th> -->
+        <th>Published Date</th>
+        <th>Deadline</th>
+        <th>Start Salary</th>
+        <th>End Salary</th>
+        <th>Work Type</th>
+        <th>Country</th>
+        <th>Actions</th>
+        <!-- <th>Address</th> -->
+        <!-- <th>Assignment Duration</th> -->
+        <!-- <th>Featured Image</th> -->
+        <!-- <th>Short Description</th> -->
+        <!-- <th>Full Description</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let job of jobPostingList">
+        <td>{{ job.title }}</td>
+        <td>{{ job.employer }}</td>
+        <td>{{ job.job_type }}</td>
+        <!-- <td>{{ job.qualifications }}</td>
           <td>{{ job.skills_required }}</td> -->
           <td>{{ job.date_published | date: 'shortDate' }}</td>
           <td>{{ job.deadline | date: 'shortDate' }}</td>
