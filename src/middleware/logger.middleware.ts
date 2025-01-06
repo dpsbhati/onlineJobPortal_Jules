@@ -8,7 +8,7 @@ import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 export class LoggerMiddleware implements NestMiddleware {
     private readonly logger = new Logger('HTTP');
     use(req: any, res: any, next: (error?: any) => void) {
-        console.log("Middleware is Working fine");
+        console.log("Middleware is Working fine =>> ", req.user);
         if (req.headers.user_role) {
             var user_role = JSON.parse(req.headers.user_role)
             var accessModules = []

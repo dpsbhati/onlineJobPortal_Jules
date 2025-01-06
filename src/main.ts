@@ -9,7 +9,9 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // const isProd = process.env.NODE_ENV === 'production';
+  const isProd = process.env.NODE_ENV === 'production';
+
+  console.log(isProd, " ENV");
 
   app.enableCors({
     origin: '*',
@@ -18,7 +20,13 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
-  app.use('/api/', express.static(join(__dirname, 'uploads')));
+  // app.use('/api/', express.static(join(__dirname, 'uploads')));
+
+  // Environment-specific static file handling
+    // app.use('/api', express.static(join(__dirname, 'upload')));
+    // app.use('/api/images', express.static(join(__dirname, 'public', 'upload')));
+    app.use('/api/public/', express.static(join(__dirname, 'public')));
+  
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
