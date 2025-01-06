@@ -108,8 +108,8 @@ export class UserService {
         return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
       }
 
-      // Create a new object excluding role
-      const { role, ...userData } = userDto; // Exclude password here
+      // Create a new object excluding role only when updating
+      const userData = userDto.id ? { ...userDto } : { role: userDto.role, ...userDto }; // Include role on create
       const savedUser = await this.userRepository.save({ ...user, ...userData });
 
       // Insert data into user profile immediately after user creation
