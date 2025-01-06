@@ -17,7 +17,7 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) { }
+  ) {}
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
@@ -59,44 +59,27 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      // Check if the job posting exists
-      const jobPosting = jobDto.id
-        ? await this.jobPostingRepository.findOne({
-          where: { id: jobDto.id, is_deleted: false },
-        })
-        : null;
-
-      if (jobDto.id && !jobPosting) {
-        return WriteResponse(404, {}, `Job with ID ${jobDto.id} not found.`);
-      }
-
-      // Check for duplicate title
-      const duplicateCheck = await this.jobPostingRepository.findOne({
-        where: {
-          title: jobDto.title,
-          is_deleted: false,
-          ...(jobDto.id ? { id: Not(jobDto.id) } : {}),
-        },
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { id: jobDto.id, is_deleted: false },
       });
 
-      if (duplicateCheck) {
+      if (jobDto.id && !jobPosting) {
         return WriteResponse(
-          409,
+          404,
           {},
-          `Job posting with title "${jobDto.title}" already exists.`,
+          `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
         );
       }
 
-      // Prepare job posting data
       const updatedJobPosting = this.jobPostingRepository.create({
-        ...jobPosting, // Existing job data (if updating)
-        ...jobDto, // New data from DTO
-        created_by: jobPosting ? jobPosting.created_by : userId, // Preserve `created_by` if updating
-        updated_by: userId, // Always set `updated_by` to the current user
+        ...jobPosting,
+        ...jobDto,
+        created_by: jobPosting ? jobPosting.created_by : userId,
+        updated_by: userId,
       });
 
-      // Save the job posting
-      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+      const savedJobPosting =
+        await this.jobPostingRepository.save(updatedJobPosting);
 
       return WriteResponse(
         200,
@@ -109,7 +92,6 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-
 
   async paginateJobPostings(pagination: IPagination) {
     try {
@@ -171,7 +153,7 @@ export class JobPostingService {
         .take(perPage)
         .orderBy('job.created_at', 'DESC')
         .getManyAndCount();
-      // 
+      //
       const enrichedJobList = await Promise.all(
         list.map(async (job) => {
           const enrichedJob = {
@@ -181,16 +163,12 @@ export class JobPostingService {
         }),
       );
 
-      return paginateResponse(enrichedJobList, count, curPage,);
+      return paginateResponse(enrichedJobList, count, curPage);
     } catch (error) {
       console.error('Job Postings Pagination Error --> ', error);
       return WriteResponse(500, error, `Something went wrong.`);
     }
   }
-
-
-
-
 
   async findAll() {
     try {
@@ -200,7 +178,11 @@ export class JobPostingService {
       });
 
       if (jobPostings.length > 0) {
-        return WriteResponse(200, jobPostings, 'Job postings retrieved successfully.');
+        return WriteResponse(
+          200,
+          jobPostings,
+          'Job postings retrieved successfully.',
+        );
       }
 
       return WriteResponse(404, [], 'No job postings found.');
@@ -212,8 +194,6 @@ export class JobPostingService {
       );
     }
   }
-
-
 
   // async findOne(id: string): Promise<any> {
   //   try {
@@ -294,5 +274,4 @@ export class JobPostingService {
       );
     }
   }
-
 }
