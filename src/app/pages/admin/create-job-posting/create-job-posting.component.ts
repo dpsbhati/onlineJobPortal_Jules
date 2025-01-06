@@ -41,7 +41,7 @@ export class CreateJobPostingComponent {
     this.jobForm = new FormGroup({
       id: new FormControl(''),
       job_type: new FormControl('', Validators.required),
-      qualifications: new FormControl('', Validators.required),
+      rank: new FormControl('', Validators.required),
       skills_required: new FormControl([], Validators.required),
       title: new FormControl('', [Validators.required , Validators.minLength(2),  Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
       featured_image: new FormControl(null),
@@ -54,9 +54,9 @@ export class CreateJobPostingComponent {
       required_experience: new FormControl('', ),
       start_salary: new FormControl('', [Validators.required, Validators.min(3), Validators.pattern(/^\d+$/)]),
       end_salary: new FormControl('', [Validators.required, Validators.min(3), Validators.pattern(/^\d+$/)]),
-      country_code: new FormControl('', Validators.required),
+      country_code: new FormControl(''),
       address: new FormControl(''),
-      work_type: new FormControl(''),
+      // work_type: new FormControl(''),
       // file_path: new FormControl(null),
     });
   }
@@ -89,7 +89,7 @@ export class CreateJobPostingComponent {
         this.jobForm.patchValue({
           id: data.id || '',
           job_type: data.job_type || '',
-          qualifications: data.qualifications || '',
+          rank: data.rank || '',
           skills_required: JSON.parse(data.skills_required || '[]'),
           // skills_required: Array.isArray(data.skills_required) ? data.skills_required : data.skills_required ? [data.skills_required] : [],
           title: data.title || '',
@@ -105,7 +105,7 @@ export class CreateJobPostingComponent {
           end_salary: data.end_salary || 0,
           country_code: data.country_code || '',
           address: data.address || '',
-          work_type: data.work_type || '',
+          // work_type: data.work_type || '',
           // file_path: data.file || null,
         });
       

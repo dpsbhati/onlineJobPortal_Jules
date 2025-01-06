@@ -24,10 +24,10 @@
     </div>
 
     <div class="form-group">
-      <label for="qualifications">Qualifications<span class="text-danger">*</span></label>
-      <input id="qualifications" formControlName="qualifications" type="text" class="form-control" />
-      <div *ngIf="jobForm.get('qualifications')?.invalid && jobForm.get('qualifications')?.touched" class="text-danger">
-        Qualifications is required.
+      <label for="rank">Rank<span class="text-danger">*</span></label>
+      <input id="rank" formControlName="rank" type="text" class="form-control" />
+      <div *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched" class="text-danger">
+        rank is required.
       </div>
     </div>
 
@@ -59,7 +59,7 @@
     
 
     <div class="form-group">
-      <label for="date_published">Date Published</label>
+      <label for="date_published">Date Published<span class="text-danger">*</span></label>
       <input id="date_published" formControlName="date_published" type="date" class="form-control" />
       <div *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched" class="text-danger">
         Date published is required.
@@ -67,7 +67,7 @@
     </div>
 
     <div class="form-group">
-      <label for="deadline">Deadline</label>
+      <label for="deadline">Deadline<span class="text-danger">*</span></label>
       <input id="deadline" formControlName="deadline" type="date" class="form-control" />
       <div *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched" class="text-danger">
         Deadline is required.
@@ -75,43 +75,43 @@
     </div>
 
     <div class="form-group">
-      <label for="short_description">Short Description</label>
+      <label for="short_description">Short Description<span class="text-danger">*</span></label>
       <textarea id="short_description" formControlName="short_description" class="form-control"></textarea>
-      <!-- <div *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched" class="text-danger">
         short description is required.
-      </div> -->
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="full_description">Full Description</label>
+      <label for="full_description">Full Description<span class="text-danger">*</span></label>
       <textarea id="full_description" formControlName="full_description" class="form-control"></textarea>
-      <!-- <div *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched" class="text-danger">
         full description is required.
-      </div> -->
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="assignment_duration">Assignment Duration</label>
+      <label for="assignment_duration">Assignment Duration<span class="text-danger">*</span></label>
       <input id="assignment_duration" formControlName="assignment_duration" type="text" class="form-control" />
-      <!-- <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched" class="text-danger">
         Assignment duration is required.
-      </div> -->
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="employer">Employer</label>
+      <label for="employer">Employer<span class="text-danger">*</span></label>
       <input id="employer" formControlName="employer" type="text" class="form-control" />
-      <!-- <div *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched" class="text-danger">
         Employer is required.
-      </div> -->
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="required_experience">Required Experience</label>
+      <label for="required_experience">Required Experience<span class="text-danger">*</span></label>
       <input id="required_experience" formControlName="required_experience" type="text" class="form-control" />
-      <!-- <div *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched" class="text-danger">
        Experience is required.
-      </div> -->
+      </div>
     </div>
 
     <div class="form-group">
@@ -143,26 +143,26 @@
             {{ country.name }} ({{ country.code }})
           </option>
         </select>
-        <div *ngIf="jobForm.get('country_code')?.invalid && jobForm.get('country_code')?.touched" class="text-danger">
+        <!-- <div *ngIf="jobForm.get('country_code')?.invalid && jobForm.get('country_code')?.touched" class="text-danger">
           Country Code is required.
-        </div>
+        </div> -->
       </div>
       
     <div class="form-group">
-      <label for="address">Address</label>
+      <label for="address">Address<span class="text-danger">*</span></label>
       <input id="address" formControlName="address" type="text" class="form-control" />
-      <!-- <div *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched" class="text-danger">
         Address is required.
-      </div> -->
+      </div>
     </div>
 
-    <div class="form-group">
+    <!-- <div class="form-group">
       <label for="work_type">Work Type</label>
       <input id="work_type" formControlName="work_type" type="text" class="form-control" />
       <div *ngIf="jobForm.get('work_type')?.invalid && jobForm.get('work_type')?.touched" class="text-danger">
         Work type is required.
       </div>
-    </div>
+    </div> -->
 
     <!-- <div class="form-group">
       <label for="file_path"> Document File</label>
