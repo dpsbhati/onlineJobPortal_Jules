@@ -1,6 +1,9 @@
 <div class="job-list">
   <h1>Job Postings</h1>
-
+  <button (click)="navigateToUserProfile()" class="btn btn-info user-profile-button">
+    User Profile
+  </button>
+  
    <!-- Filters Section -->
    <div class="filters">
     <input
@@ -84,6 +87,32 @@
   </table>
 
   <p *ngIf="!jobPostingList.length" class="error">{{ errorMessage || 'No records found' }}</p>
+
+   <!-- Pagination -->
+   <div class="pagination-container">
+    <button
+      class="pagination-button"
+      (click)="onPageChange(pageConfig.curPage - 1)"
+      [disabled]="pageConfig.curPage === 1"
+    >
+      Previous
+    </button>
+    <button
+      *ngFor="let page of paginationArray"
+      (click)="onPageChange(page)"
+      [class.active]="page === pageConfig.curPage"
+    >
+      {{ page }}
+    </button>
+    <button
+      class="pagination-button"
+      (click)="onPageChange(pageConfig.curPage + 1)"
+      [disabled]="pageConfig.curPage === totalPages"
+    >
+      Next
+    </button>
+  </div>
+
 </div>
          
   <div class="create-job-container">

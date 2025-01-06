@@ -8,6 +8,14 @@
             <label for="first_name">First Name</label>
             <input id="first_name" class="form-control" formControlName="first_name" type="text"
                 placeholder="Enter first name" />
+                <div *ngIf="userProfileForm.get('first_name')?.touched && userProfileForm.get('first_name')?.invalid">
+                    <small *ngIf="userProfileForm.get('first_name')?.errors?.['required']" class="text-danger">
+                        First name is required.
+                    </small>
+                    <small *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']" class="text-danger">
+                        First name can only contain letters, numbers, and spaces.
+                    </small>
+                </div>
         </div>
 
         <!-- Last Name -->
@@ -15,12 +23,25 @@
             <label for="last_name">Last Name</label>
             <input id="last_name" class="form-control" formControlName="last_name" type="text"
                 placeholder="Enter last name" />
+                <div *ngIf="userProfileForm.get('last_name')?.touched && userProfileForm.get('last_name')?.invalid">
+                    <small *ngIf="userProfileForm.get('last_name')?.errors?.['required']" class="text-danger">
+                        Last name is required.
+                    </small>
+                    <small *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']" class="text-danger">
+                        Last name can only contain letters, numbers, and spaces.
+                    </small>
+                </div>
         </div>
 
         <!-- Date of Birth -->
         <div class="form-group">
             <label for="dob">Date of Birth</label>
             <input id="dob" class="form-control" formControlName="dob" type="date" />
+            <div *ngIf="userProfileForm.get('dob')?.touched && userProfileForm.get('dob')?.invalid">
+                <small *ngIf="userProfileForm.get('dob')?.errors?.['required']" class="text-danger">
+                    Date of birth is required.
+                </small>
+                </div>
         </div>
 
         <!-- Gender -->
@@ -32,6 +53,11 @@
                 <option value="FEMALE">Female</option>
                 <option value="OTHERS">Other</option>
             </select>
+            <div *ngIf="userProfileForm.get('gender')?.touched && userProfileForm.get('gender')?.invalid">
+                <small *ngIf="userProfileForm.get('gender')?.errors?.['required']" class="text-danger">
+                    Gender is required.
+                </small>
+            </div>
         </div>
 
         <!-- Mobile -->
@@ -39,6 +65,14 @@
             <label for="mobile">Mobile</label>
             <input id="mobile" class="form-control" formControlName="mobile" type="number"
                 placeholder="Enter mobile number" />
+                <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">
+                    <small *ngIf="userProfileForm.get('mobile')?.errors?.['required']" class="text-danger">
+                      Mobile number is required.
+                    </small>
+                    <small *ngIf="userProfileForm.get('mobile')?.errors?.['pattern']" class="text-danger">
+                      Please enter a valid 10-digit mobile number.
+                    </small>
+                  </div>
         </div>
 
         <!-- Key Skills -->

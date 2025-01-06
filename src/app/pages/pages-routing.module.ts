@@ -5,10 +5,10 @@ import { CreateJobPostingComponent } from './admin/create-job-posting/create-job
 import { JobListComponent } from './admin/job-list/job-list.component';
 
 const routes: Routes = [
-  {
-    path: 'user-profile', component: UserProfileComponent
-  },
-  { path: 'user-profile/:id', component: UserProfileComponent },
+  // {
+  //   path: 'user-profile', component: UserProfileComponent
+  // },
+  { path: 'user-profile', component: UserProfileComponent },
   {
     path: 'create-job-posting',
     component: CreateJobPostingComponent,

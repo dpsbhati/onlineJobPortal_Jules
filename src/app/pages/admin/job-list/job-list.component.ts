@@ -63,6 +63,11 @@ export class JobListComponent {
     this.router.navigate(['/create-job-posting', jobId]);
   }
 
+  edituser(userID: string) {
+
+    this.router.navigate(['/user-profile', userID]);
+  }
+
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
       this.adminService.deleteJob(jobId).subscribe(
@@ -105,6 +110,12 @@ navigateToCreateJob(){
    this.router.navigate(['/create-job-posting'])
 }
 
+navigateToUserProfile(): void {
+ 
+  this.router.navigate(['/user-profile']);
+}
+
+
    // Handle search action
    onSearch(): void {
     this.pageConfig.curPage = 1; // Reset to the first page
@@ -122,6 +133,21 @@ navigateToCreateJob(){
     if (!value.trim()) {
       this.clearSearch();
     }
+  }
+
+  onPageChange(page: number): void {
+    if (page > 0 && page <= this.totalPages) {
+      this.pageConfig.curPage = page;
+      this.onPagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.total / this.pageConfig.perPage);
+  }
+
+  get paginationArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
 }
