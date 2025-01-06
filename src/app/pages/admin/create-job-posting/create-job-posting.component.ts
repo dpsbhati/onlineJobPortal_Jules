@@ -205,7 +205,9 @@ export class CreateJobPostingComponent {
       }
     } 
   }
-  
+  navigate(){
+    this.router.navigate(['/job-list']);
+  }
   // onSubmit(): void {
   //   console.log(this.countryList);
   //   if (this.jobForm.valid) {
