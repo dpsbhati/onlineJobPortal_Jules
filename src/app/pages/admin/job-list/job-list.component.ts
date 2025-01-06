@@ -53,4 +53,8 @@ export class JobListComponent {
       );
     }
 }
+
+navigateToCreateJob(){
+   this.router.navigate(['/create-job-posting'])
+}
 }

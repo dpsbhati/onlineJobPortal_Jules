@@ -80,4 +80,33 @@
       padding: 8px;
     }
   }
+  .create-job-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  .create-job-button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .create-job-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  .create-job-button:active {
+    background-color: #004494;
+    transform: translateY(0);
+  }
+  
   

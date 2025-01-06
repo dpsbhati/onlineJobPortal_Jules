@@ -61,8 +61,8 @@ export class LoginComponent implements OnInit {
             this._authService.accessToken = response.data.token;
             localStorage.setItem("user", JSON.stringify(response.data.User));
             this.notify.showSuccess('Login successful!');
-            // this._router.navigateByUrl('/dashboard');
-            this._router.navigate(['/create-job-posting'])
+            this._router.navigateByUrl('/job-list');
+            // this._router.navigate(['/create-job-posting'])
             // this._router.navigateByUrl('/create-job-posting'); // Redirect to dashboard
           } else {
             this.notify.showError(response.message);
