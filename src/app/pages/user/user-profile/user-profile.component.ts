@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { UserService } from '../../../core/services/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
@@ -63,13 +63,40 @@ export class UserProfileComponent implements OnInit {
         Validators.pattern('^[0-9]{10}$'), // Validate 10 digits only
       ]),
       key_skills: new FormControl(''),
-      work_experiences: new FormControl(''),
-      current_company: new FormControl('', [Validators.pattern('^[a-zA-Z0-9 ]*$')]),
-      current_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
-      expected_salary: new FormControl('', [Validators.pattern('^[0-9]+$')]),
+      work_experiences: new FormControl('', [this.twoDigitWorkExperienceValidator.bind(this)]),
+
+      current_company: new FormControl('', [Validators.pattern('^[a-zA-Z ]*$')]),
+      current_salary: new FormControl('', [this.salaryLimitValidator(1000000)]),
+      expected_salary: new FormControl('', [this.salaryLimitValidator(1000000)]),
     });
   }
 
+  salaryLimitValidator(maxLimit: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) return null; // If the field is empty, no validation error
+      if (isNaN(value) || +value > maxLimit) {
+        return { salaryLimitExceeded: `Value exceeds the allowed limit of ${maxLimit.toLocaleString()}` };
+      }
+      return null;
+    };
+  }
+
+  
+  twoDigitWorkExperienceValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+  
+    // Allow values like "22 years" or "5 years"
+    const isValid = /^(\d{1,2})(\s*[a-zA-Z]*)?$/.test(value);
+    if (!isValid) {
+      return { invalidWorkExperience: 'Each work experience must be a valid number (1 or 2 digits) followed by optional text.' };
+    }
+  
+    return null;
+  }
+  
+  
   // populateUserId(): void {
   //   const loggedInUser = JSON.parse(localStorage.getItem('user') || '{}');
   //   if (loggedInUser?.id) {
@@ -264,20 +291,14 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadUserData(userId: string): void {
-   
     this.spinner.show();
-  
     this.userService.getUserById(userId).subscribe(
       (response: any) => {
-        // Hide the spinner after receiving the response
         this.spinner.hide();
-  
         if (response.statusCode === 200 && response.data) {
-          const data = response.data;
-  
+          const data = response.data;  
           // Convert the `dob` field to YYYY-MM-DD format
-          const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
-  
+          const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;  
           this.userProfileForm.patchValue({
             first_name: data.first_name || '',
             last_name: data.last_name || '',

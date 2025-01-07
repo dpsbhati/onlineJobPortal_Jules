@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+declare var $: any;
 
 @Component({
   selector: 'app-job-list',
@@ -27,6 +28,11 @@ export class JobListComponent {
 
   filters = {
     all: "",
+    title: "",
+    job_type: "",
+    deadline: "",
+    start_salary:null,
+    end_salary:null
   }
   total: number = 0;
   jobPostingList: any[] = [];
@@ -39,6 +45,39 @@ export class JobListComponent {
   ngOnInit(): void {
     // this.fetchJobs();
     this.onPagination();
+    this.initializeDeadlinePicker();
+  }
+
+  initializeDeadlinePicker(): void {
+    $('input[name="deadlineDatePicker"]').daterangepicker(
+      {
+        singleDatePicker: true,
+        autoUpdateInput: false,
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear',
+          applyLabel: 'Apply',
+          placeholder: 'Select Deadline',
+        },
+      },
+      (selectedDate: any) => {
+        this.filters.deadline = selectedDate.format('YYYY-MM-DD');
+        this.onSearch();
+      }
+    );
+
+    $('input[name="deadlineDatePicker"]').on(
+      'cancel.daterangepicker',
+      () => {
+        this.filters.deadline = '';
+        $('input[name="deadlineDatePicker"]').val('');
+        this.onSearch();
+      }
+    );
+  }
+
+  openDatePicker(name: string): void {
+    $(`input[name="${name}"]`).trigger('click');
   }
 
   fetchJobs(): void {
@@ -90,9 +129,8 @@ export class JobListComponent {
         if (res.statusCode == 200) {
           this.spinner.hide()
           this.jobPostingList = res.data;
-          console.log('this', this.jobPostingList);
-
           this.total = res.count;
+          console.log('this', this.jobPostingList);
         }
         else {
           this.spinner.hide()
@@ -109,6 +147,12 @@ export class JobListComponent {
     })
   }
 
+  onFilterChange(): void {
+    this.pageConfig.curPage = 1; // Reset to the first page
+    this.onPagination(); // Trigger the API call
+  }
+  
+  
 navigateToCreateJob(){
    this.router.navigate(['/create-job-posting'])
 }
@@ -128,6 +172,11 @@ navigateToUserProfile(): void {
    // Clear the search field and trigger API
    clearSearch(): void {
     this.filters.all = '';
+    this.filters.title = "",
+    this.filters.job_type = "",
+    this.filters.deadline = "",
+    this.filters.start_salary = null,
+    this.filters.end_salary = null
     this.onSearch();
   }
 

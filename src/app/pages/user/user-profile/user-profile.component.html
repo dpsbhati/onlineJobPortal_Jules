@@ -86,25 +86,61 @@
                 placeholder="Enter key skills" />
         </div>
 
-        <!-- Work Experiences -->
-        <div class="form-group">
-            <label for="work_experiences">Work Experiences</label>
-            <input id="work_experiences" class="form-control" formControlName="work_experiences"
-                placeholder="Enter work experiences" />
-        </div>
+       <!-- Work Experiences -->
+<div class="form-group">
+    <label for="work_experiences">Work Experiences</label>
+    <input
+      id="work_experiences"
+      class="form-control"
+      formControlName="work_experiences"
+      placeholder="Enter work experiences"
+    />
+    <div *ngIf="userProfileForm.get('work_experiences')?.touched && userProfileForm.get('work_experiences')?.invalid">
+      <small
+        *ngIf="userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences']"
+        class="text-danger"
+      >
+        {{ userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences'] }}
+      </small>
+      <small
+        *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']"
+        class="text-danger"
+      >
+        {{ userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience'] }}
+      </small>
+    </div>
+  </div>
+  
 
         <!-- Current Company -->
         <div class="form-group">
             <label for="current_company">Current Company</label>
             <input id="current_company" class="form-control" formControlName="current_company" type="text"
                 placeholder="Enter current company" />
+                <div
+                *ngIf="
+                  userProfileForm.get('current_company')?.touched &&
+                  userProfileForm.get('current_company')?.invalid
+                "
+                class="text-danger"
+              >
+               
+                <small *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']">
+                  Current Company must contain only alphabets.
+                </small>
+              </div>
         </div>
 
         <!-- Current Salary -->
         <div class="form-group">
             <label for="current_salary">Current Salary</label>
-            <input id="current_salary" class="form-control" formControlName="current_salary" type="number"
+            <input id="current_salary" class="form-control" formControlName="current_salary" type="number" appNumberFormatter
                 placeholder="Enter current salary" min="0" />
+                <div *ngIf="userProfileForm.get('current_salary')?.touched && userProfileForm.get('current_salary')?.invalid">
+                    <small *ngIf="userProfileForm.get('current_salary')?.errors?.['salaryLimitExceeded']" class="text-danger">
+                      {{ userProfileForm.get('current_salary')?.errors?.['salaryLimitExceeded'] }}
+                    </small>
+                  </div>
         </div>
 
         <!-- Expected Salary -->
@@ -112,11 +148,16 @@
             <label for="expected_salary">Expected Salary</label>
             <input id="expected_salary" class="form-control" formControlName="expected_salary" type="text"
                 placeholder="Enter expected salary" />
+                <div *ngIf="userProfileForm.get('expected_salary')?.touched && userProfileForm.get('expected_salary')?.invalid">
+                    <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded']" class="text-danger">
+                      {{ userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded'] }}
+                    </small>
+                  </div>
         </div>
 
         <!-- Submit Button -->
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" [disabled]="userProfileForm.invalid">
                 {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
             </button>
         </div>

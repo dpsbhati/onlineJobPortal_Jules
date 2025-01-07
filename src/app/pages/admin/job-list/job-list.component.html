@@ -7,37 +7,62 @@
     User Profile
   </button>
   
-   <!-- Filters Section -->
-   <div class="filters">
+  <div class="filters-container">
+    <!-- Filters Section -->
+    <div class="filters">
+      <!-- Filter by Job Type -->
+      <select [(ngModel)]="filters.job_type" (change)="onSearch()" class="filter-select">
+        <option value="">All Job Types</option>
+        <option value="full-time">Full-Time</option>
+        <option value="part-time">Part-Time</option>
+        <option value="flexible">Flexible</option>
+      </select>
+  
+      <!-- Filter by Deadline -->
+      
+<input
+    type="text"
+    name="deadlineDatePicker"
+    class="form-control search-input"
+    placeholder="Select Deadline"
+    [(ngModel)]="filters.deadline"
+    (click)="openDatePicker('deadlineDatePicker')"
+    readonly
+  />
+  
+      <!-- Salary Range -->
+      <input
+        type="number"
+        [(ngModel)]="filters.start_salary"
+        (change)="onSearch()"
+        placeholder="Enter Start Salary"
+        class="search-input"
+       
+      />
+      <input
+        type="number"
+        [(ngModel)]="filters.end_salary"
+        (change)="onSearch()"
+        placeholder="Enter End Salary"
+        class="search-input"
+       
+      />
+    </div>
+  
+  </div>
+  
+  <!-- Search Section -->
+  <div class="search-bar">
     <input
       type="text"
       [(ngModel)]="filters.all"
-      (keyup.enter)="onSearch()"
       placeholder="Search"
       class="search-input"
     />
-    <button type="button" class="btn btn-primary" (click)="onSearch()">
-      Search
-    </button>
-    <button type="button" class="btn btn-secondary ms-2" (click)="clearSearch()">
-      Clear
-    </button>
-
-    <!-- <select [(ngModel)]="selectedJobType" class="filter-select">
-      <option value="">All Job Types</option>
-      <option *ngFor="let type of jobTypes" [value]="type">{{ type }}</option>
-    </select> -->
-
-    <!-- <select [(ngModel)]="selectedWorkType" class="filter-select">
-      <option value="">All Work Types</option>
-      <option *ngFor="let work of workTypes" [value]="work">{{ work }}</option>
-    </select> -->
-
-    <!-- <select [(ngModel)]="selectedCountry" class="filter-select">
-      <option value="">All Countries</option>
-      <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
-    </select> -->
+    <button type="button" class="btn btn-primary" (click)="onSearch()">Search</button>
+    <button type="button" class="btn btn-secondary ms-2" (click)="clearSearch()">Clear</button>
   </div>
+  
 
   <table>
     <thead>
@@ -92,7 +117,7 @@
   <p *ngIf="!jobPostingList.length" class="error">{{ errorMessage || 'No records found' }}</p>
 
    <!-- Pagination -->
-   <div class="pagination-container">
+   <div class="pagination-container" *ngIf="jobPostingList.length">
     <button
       class="pagination-button"
       (click)="onPageChange(pageConfig.curPage - 1)"
