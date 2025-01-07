@@ -203,6 +203,28 @@
         Featured image is required.
       </div>
     </div>
+    <div class="form-group">
+      <label for="social_media_type">Social Media Type<span class="text-danger">*</span></label>
+      <select id="social_media_type" formControlName="social_media_type" class="form-control">
+        <option value="" disabled>Select a platform</option>
+        <option value="facebook">Facebook</option>
+        <option value="linkedin">LinkedIn</option>
+        <option value="none">None</option>
+      </select>
+      <div *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched" class="text-danger">
+        Social Media Type is required.
+      </div>
+    </div>
+    
+    <div class="form-group" *ngIf="jobForm.get('social_media_type')?.value === 'facebook' || jobForm.get('social_media_type')?.value === 'linkedin'">
+      <label for="posted_at">Post At<span class="text-danger">*</span></label>
+      <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
+      <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
+        <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
+        <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
+      </div>
+    </div>
+    
 
     <button type="submit" class="btn btn-primary" [disabled]="!jobForm.valid">
       {{ isEditMode ? 'Update' : 'Create' }} Job Posting
