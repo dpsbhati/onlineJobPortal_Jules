@@ -100,6 +100,16 @@ export class JobPosting {
     nullable: true, 
   })
   jobpost_status: string;
+
+  @Column({
+    type:'enum',
+    enum:["facebook","linkedin"],
+    nullable:true,
+  })
+  social_media_type:string
+
+  @Column({ type: 'datetime', nullable: true })
+  posted_at: Date;
   
 
 }

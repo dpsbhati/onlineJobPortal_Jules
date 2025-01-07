@@ -23,7 +23,7 @@ import { FacebookModule } from './facebook/facebook.module';
       // Ensures ConfigService is available globally
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, MailModule],
+      imports: [ConfigModule, MailModule,ScheduleModule.forRoot()],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get<string>('DB_HOST', '103.195.4.8'),

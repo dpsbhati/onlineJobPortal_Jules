@@ -168,5 +168,28 @@ export class CreateJobPostingDto {
   @IsOptional() // Default to 'draft' if not provided
   @IsEnum(['draft', 'posted'], { message: 'jobpost_status must be either draft or posted' })
   jobpost_status?: string;
+
+
+  @ApiProperty({
+    description: 'The date and time when the job is scheduled to be posted.',
+    example: '2025-01-15T10:30:00.000Z',
+})
+@IsOptional()
+@IsDate({ message: 'posted_at must be a valid ISO date.' })
+@Type(() => Date)
+posted_at?: Date;
+
+@ApiProperty({
+    description: 'The social media platform where the job will be posted.',
+    example: 'facebook',
+    enum: ['facebook', 'linkedin'],
+})
+@IsOptional()
+@IsEnum(['facebook', 'linkedin'], {
+    message: 'social_media_type must be one of the following: facebook, linkedin',
+})
+social_media_type?: string;
+  
+
 }
 

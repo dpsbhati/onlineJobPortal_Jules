@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { LessThanOrEqual, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -9,9 +9,12 @@ import { LinkedInService } from 'src/linkedin/linkedin.service';
 import { FacebookService } from 'src/facebook/facebook.service';
 import { CronJob } from 'cron';
 import { IPagination } from 'src/shared/paginationEum';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class JobPostingService {
+  private readonly logger = new Logger(JobPostingService.name)
+
   constructor(
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
@@ -57,47 +60,115 @@ export class JobPostingService {
   //   }
   // }
 
-  async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
+  @Cron(CronExpression.EVERY_MINUTE) // Runs every minute
+  async autoPostJobs() {
     try {
-      let jobPosting: JobPosting | null = null;
-  
-      if (jobDto.id) {
-        jobPosting = await this.jobPostingRepository.findOne({
-          where: { id: jobDto.id, is_deleted: false },
-        });
-  
-        if (!jobPosting) {
-          return WriteResponse(
-            404,
-            {},
-            `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
-          );
-        }
-      }
-  
-      const updatedJobPosting = this.jobPostingRepository.create({
-        ...jobPosting, // Preserve existing data if updating
-        ...jobDto, // Merge new data
-        jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
-        created_by: jobPosting ? jobPosting.created_by : userId, // Preserve created_by for updates
-        updated_by: userId, // Always set updated_by to current user
+      const now = new Date();
+      const jobsToPost = await this.jobPostingRepository.find({
+        where: {
+          jobpost_status: 'draft',
+          is_deleted: false,
+          posted_at: LessThanOrEqual(now),
+        },
       });
-  
-      const savedJobPosting = await this.jobPostingRepository.save(
-        updatedJobPosting,
-      );
-  
-      return WriteResponse(
-        200,
-        savedJobPosting,
-        jobPosting
-          ? 'Job Posting updated successfully.'
-          : 'Job Posting created successfully.',
-      );
+
+      if (jobsToPost.length > 0) {
+        this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
+
+        for (const job of jobsToPost) {
+          job.jobpost_status = 'posted'; 
+          job.updated_at = new Date();
+          await this.jobPostingRepository.save(job);
+        }
+
+        this.logger.log(`Posted ${jobsToPost.length} jobs.`);
+      }
     } catch (error) {
-      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+      this.logger.error('Error in autoPostJobs scheduler', error);
     }
   }
+
+
+  async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
+    try {
+        console.log('Starting createOrUpdate process...');
+
+        let jobPosting: JobPosting | null = null;
+
+        // Check if the job ID exists for an update
+        if (jobDto.id) {
+            console.log(`Checking for existing job posting with ID: ${jobDto.id}`);
+            jobPosting = await this.jobPostingRepository.findOne({
+                where: { id: jobDto.id, is_deleted: false },
+            });
+
+            if (!jobPosting) {
+                console.error(
+                    `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
+                );
+                return WriteResponse(
+                    404,
+                    {},
+                    `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
+                );
+            }
+
+            console.log(`Found existing job posting with ID: ${jobDto.id}`);
+        } else {
+            console.log('No job ID provided. Creating a new job posting...');
+        }
+
+        // Validate `social_media_type`
+        const allowedSocialMediaTypes = ['facebook', 'linkedin'];
+        if (
+            jobDto.social_media_type &&
+            !allowedSocialMediaTypes.includes(jobDto.social_media_type)
+        ) {
+            console.error(
+                `Invalid social_media_type: ${jobDto.social_media_type}. Allowed values are: ${allowedSocialMediaTypes.join(', ')}.`,
+            );
+            return WriteResponse(
+                400,
+                {},
+                `Invalid social_media_type. Allowed values are: ${allowedSocialMediaTypes.join(', ')}.`,
+            );
+        }
+
+        console.log('Preparing job posting data...');
+        // Prepare job posting data
+        const updatedJobPosting = this.jobPostingRepository.create({
+            ...jobPosting, // Preserve existing data if updating
+            ...jobDto, // Merge new data
+            jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
+            posted_at: jobDto.posted_at || null, // Use provided posted_at or set to null
+            created_by: jobPosting ? jobPosting.created_by : userId, // Preserve created_by for updates
+            updated_by: userId, // Always set updated_by to current user
+        });
+
+        console.log('Saving job posting...');
+        // Save the job posting
+        const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+
+        console.log(
+            jobPosting
+                ? `Job Posting with ID ${savedJobPosting.id} updated successfully.`
+                : `Job Posting with ID ${savedJobPosting.id} created successfully.`,
+        );
+
+        return WriteResponse(
+            200,
+            savedJobPosting,
+            jobPosting
+                ? 'Job Posting updated successfully.'
+                : 'Job Posting created successfully.',
+        );
+    } catch (error) {
+        console.error('Error occurred during createOrUpdate process:', error.message);
+        return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+}
+
+
   
   
 
