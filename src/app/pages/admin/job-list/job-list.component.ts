@@ -6,12 +6,15 @@ import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { Options, LabelType } from "@angular-slider/ngx-slider";
+
 declare var $: any;
 
 @Component({
   selector: 'app-job-list',
   standalone: true,
-  imports: [FormsModule, NgFor, CommonModule],
+  imports: [FormsModule, NgFor, CommonModule, NgxSliderModule],
   templateUrl: './job-list.component.html',
   styleUrl: './job-list.component.css'
 })
@@ -25,15 +28,32 @@ export class JobListComponent {
     direction: "desc",
     whereClause: [],
   }
+  salaryRange = { min: 0, max: 1000000 }; // Default salary range
+  salarySliderOptions: any = {
+    floor: 0,
+    ceil: 1000000,
+    step: 1000,
+    translate: (value: number, label: LabelType): string => {
+      switch (label) {
+        case LabelType.Low:
+          return "<b>Min salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+        case LabelType.High:
+          return "<b>Max salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+        default:
+          return "$" + value;
+      }
+    }
+  };
 
   filters = {
     all: "",
     title: "",
     job_type: "",
     deadline: "",
-    start_salary:null,
-    end_salary:null
+    start_salary: this.salaryRange.min,
+    end_salary: this.salaryRange.max,
   }
+  
   total: number = 0;
   jobPostingList: any[] = [];
 
@@ -48,6 +68,13 @@ export class JobListComponent {
     this.initializeDeadlinePicker();
   }
 
+  onSalaryRangeChange(): void {
+    this.filters.start_salary = this.salaryRange.min;
+    this.filters.end_salary = this.salaryRange.max;
+   this.onPagination(true)
+  }
+
+  
   initializeDeadlinePicker(): void {
     $('input[name="deadlineDatePicker"]').daterangepicker(
       {
@@ -107,23 +134,48 @@ export class JobListComponent {
     this.router.navigate(['/user-profile', userID]);
   }
 
+  // deleteJob(jobId: string) {
+  //   if (confirm('Are you sure you want to delete this job?')) {
+  //     this.adminService.deleteJob(jobId).subscribe(
+  //       (response: any) => {
+  //         this.jobs = this.jobs.filter(job => job.id !== jobId);
+  //         this.notify.showSuccess(response.message);
+  //         window.location.reload();
+         
+  //       },
+  //     );
+  //   }
+    
+  // }
+
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
       this.adminService.deleteJob(jobId).subscribe(
         (response: any) => {
-          this.jobs = this.jobs.filter(job => job.id !== jobId);
           this.notify.showSuccess(response.message);
-          window.location.reload();
-         
+  
+          // Refresh job data after deletion
+          this.onPagination();
+  
+          // If the current page becomes empty after deletion, navigate to the previous page
+          if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
+            this.pageConfig.curPage -= 1;
+            this.onPagination();
+          }
         },
+        (error: any) => {
+          this.notify.showError(error?.message || "Failed to delete job.");
+        }
       );
     }
-    
   }
+  
 
-  onPagination(): void {
+  onPagination(isFilter = false): void {
     this.spinner.show();
-    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    if(isFilter){
+      this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    }    
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
@@ -175,8 +227,8 @@ navigateToUserProfile(): void {
     this.filters.title = "",
     this.filters.job_type = "",
     this.filters.deadline = "",
-    this.filters.start_salary = null,
-    this.filters.end_salary = null
+    this.filters.start_salary = this.salaryRange.min,
+    this.filters.end_salary = this.salaryRange.max
     this.onSearch();
   }
 

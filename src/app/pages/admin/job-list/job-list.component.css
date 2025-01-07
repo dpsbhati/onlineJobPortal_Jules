@@ -125,6 +125,16 @@
   .job-list {
     margin-top: 20px;
   }
+
+  .salary-range-values {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .salary-slider {
+    margin-top: 10px;
+  }
   
   @media (max-width: 768px) {
     .job-list {
@@ -171,4 +181,9 @@
     color: blue; 
    }
   
-  
+.filter-item{
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}

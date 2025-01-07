@@ -29,8 +29,20 @@
     (click)="openDatePicker('deadlineDatePicker')"
     readonly
   />
+
+     <!-- Salary Range -->
+     <div class="filter-item">
+      <ngx-slider
+        [(value)]="salaryRange.min"
+        [(highValue)]="salaryRange.max"
+        [options]="salarySliderOptions"
+        class="salary-slider"
+      ></ngx-slider>
+      <button (click)="onSalaryRangeChange()">Apply Range</button>
+    </div>
+ 
   
-      <!-- Salary Range -->
+      <!-- Salary Range
       <input
         type="number"
         [(ngModel)]="filters.start_salary"
@@ -46,7 +58,7 @@
         placeholder="Enter End Salary"
         class="search-input"
        
-      />
+      /> -->
     </div>
   
   </div>
