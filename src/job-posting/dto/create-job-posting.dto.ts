@@ -15,6 +15,7 @@ import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
+  IsIn,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'IsImageFormat', async: false })
@@ -185,9 +186,7 @@ posted_at?: Date;
     enum: ['facebook', 'linkedin'],
 })
 @IsOptional()
-@IsEnum(['facebook', 'linkedin'], {
-    message: 'social_media_type must be one of the following: facebook, linkedin',
-})
+@IsIn(['facebook', 'linkedin'], { message: 'Invalid social_media_type. Allowed values are: facebook, linkedin.' })
 social_media_type?: string;
   
 
