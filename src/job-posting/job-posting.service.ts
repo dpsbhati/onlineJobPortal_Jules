@@ -140,13 +140,12 @@ export class JobPostingService {
             ...jobPosting, // Preserve existing data if updating
             ...jobDto, // Merge new data
             jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
-            posted_at: jobDto.posted_at || null, // Use provided posted_at or set to null
-            created_by: jobPosting ? jobPosting.created_by : userId, // Preserve created_by for updates
-            updated_by: userId, // Always set updated_by to current user
+            posted_at: jobDto.posted_at || null, 
+            created_by: jobPosting ? jobPosting.created_by : userId, 
+            updated_by: userId, 
         });
 
         console.log('Saving job posting...');
-        // Save the job posting
         const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
 
         console.log(
