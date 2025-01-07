@@ -66,22 +66,46 @@ export class UserProfileComponent implements OnInit {
       work_experiences: new FormControl('', [this.twoDigitWorkExperienceValidator.bind(this)]),
 
       current_company: new FormControl('', [Validators.pattern('^[a-zA-Z ]*$')]),
-      current_salary: new FormControl('', [this.salaryLimitValidator(1000000)]),
-      expected_salary: new FormControl('', [this.salaryLimitValidator(1000000)]),
+      // current_salary: new FormControl('', [ Validators.min(3),  Validators.maxLength(7),]),
+      expected_salary: new FormControl('', [Validators.min(3),  Validators.maxLength(8),]),
     });
   }
+  
 
   salaryLimitValidator(maxLimit: number) {
     return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      if (!value) return null; // If the field is empty, no validation error
-      if (isNaN(value) || +value > maxLimit) {
+      const rawValue = control.value;
+  
+      if (!rawValue) return null; // If the field is empty, no validation error
+  
+      // Remove commas from the input for validation
+      const numericValue = parseInt(rawValue.toString().replace(/,/g, ''), 10);
+  
+      // Validate if the value is a number and within the limit
+      if (isNaN(numericValue) || numericValue > maxLimit) {
         return { salaryLimitExceeded: `Value exceeds the allowed limit of ${maxLimit.toLocaleString()}` };
       }
-      return null;
+  
+      return null; // Validation passed
     };
   }
-
+  
+  formatSalary(controlName: string): void {
+    const control = this.userProfileForm.get(controlName);
+    console.log(control)
+    if (control && control.value) {
+      // Remove commas for processing
+      const unformattedValue = control.value.toString().replace(/[^0-9]/g, '');
+  
+      // Check if it's a valid number before formatting
+      if (!isNaN(unformattedValue)) {
+        const formattedValue = parseInt(unformattedValue).toLocaleString('en-IN')
+        console.log(typeof formattedValue)
+        control.setValue(formattedValue, { emitEvent: false });
+      }
+    }
+  }
+  
   
   twoDigitWorkExperienceValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
