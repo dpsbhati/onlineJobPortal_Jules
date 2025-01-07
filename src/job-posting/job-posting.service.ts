@@ -91,12 +91,77 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
+<<<<<<< HEAD
       // Check if the job ID exists for an update
       const jobPosting = jobDto.id 
         ? await this.jobPostingRepository.findOne({
             where: { id: jobDto.id, is_deleted: false },
           })
         : null;
+=======
+        console.log('Starting createOrUpdate process...');
+
+        let jobPosting: JobPosting | null = null;
+
+        // Check if the job ID exists for an update
+        if (jobDto.id) {
+            console.log(`Checking for existing job posting with ID: ${jobDto.id}`);
+            jobPosting = await this.jobPostingRepository.findOne({
+                where: { id: jobDto.id, is_deleted: false },
+            });
+
+            if (!jobPosting) {
+                console.error(
+                    `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
+                );
+                return WriteResponse(
+                    404,
+                    {},
+                    `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
+                );
+            }
+
+            console.log(`Found existing job posting with ID: ${jobDto.id}`);
+        } else {
+            console.log('No job ID provided. Creating a new job posting...');
+        }
+
+        // Validate `social_media_type`
+        const allowedSocialMediaTypes = ['facebook', 'linkedin'];
+        if (
+            jobDto.social_media_type &&
+            !allowedSocialMediaTypes.includes(jobDto.social_media_type)
+        ) {
+            console.error(
+                `Invalid social_media_type: ${jobDto.social_media_type}. Allowed values are: ${allowedSocialMediaTypes.join(', ')}.`,
+            );
+            return WriteResponse(
+                400,
+                {},
+                `Invalid social_media_type. Allowed values are: ${allowedSocialMediaTypes.join(', ')}.`,
+            );
+        }
+
+        console.log('Preparing job posting data...');
+        // Prepare job posting data
+        const updatedJobPosting = this.jobPostingRepository.create({
+            ...jobPosting, // Preserve existing data if updating
+            ...jobDto, // Merge new data
+            jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
+            posted_at: jobDto.posted_at || null, 
+            created_by: jobPosting ? jobPosting.created_by : userId, 
+            updated_by: userId, 
+        });
+
+        console.log('Saving job posting...');
+        const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+
+        console.log(
+            jobPosting
+                ? `Job Posting with ID ${savedJobPosting.id} updated successfully.`
+                : `Job Posting with ID ${savedJobPosting.id} created successfully.`,
+        );
+>>>>>>> fb6032f8f1f825d2ec1d5ff92bfa6678ece4a5ec
 
       if (jobDto.id && !jobPosting) {
         return WriteResponse(
