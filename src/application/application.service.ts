@@ -19,8 +19,8 @@ export class ApplicationService {
     // Check if the user has already applied for this job
     const existingApplication = await this.applicationRepository.findOne({
       where: {
-        job: { id: job_id }, // Match the job relation
-        user: { id: user_id }, // Match the user relation
+        job: { id: job_id }, 
+        user: { id: user_id },
         is_deleted: false,
       },
     });
