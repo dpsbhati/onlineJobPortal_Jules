@@ -11,6 +11,7 @@ import {
   UploadedFile,
   Query,
   Req,
+  Put,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -92,5 +93,20 @@ export class JobPostingController {
     @Body('isActive') isActive: boolean,
   ) {
     return this.jobPostingService.toggleJobStatus(id, isActive);
+  }
+
+  @Put('publish/:id')
+  @ApiOperation({ summary: 'Publish a scheduled job posting' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the job to be published',
+    required: true,
+  })
+  async publishJob(
+    @Param('id') jobId: string,
+    @Req() req: Request, 
+  ) {
+    const userId = req['user_id'];
+    return this.jobPostingService.postScheduledJob(jobId, userId);
   }
 }

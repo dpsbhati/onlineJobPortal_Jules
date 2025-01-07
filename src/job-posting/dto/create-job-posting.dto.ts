@@ -3,6 +3,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDate,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -15,7 +16,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-
 
 @ValidatorConstraint({ name: 'IsImageFormat', async: false })
 @Injectable()
@@ -31,7 +31,8 @@ export class IsImageFormat implements ValidatorConstraintInterface {
 }
 export class CreateJobPostingDto {
   @ApiProperty({
-    description: 'Unique identifier for the job posting (optional for creation, required for updates)',
+    description:
+      'Unique identifier for the job posting (optional for creation, required for updates)',
     example: 'job-id-1',
   })
   @IsOptional() // Optional for creation, required for updates
@@ -53,8 +54,13 @@ export class CreateJobPostingDto {
   })
   @IsNotEmpty({ message: 'featured_image is required' })
   @IsString({ message: 'featured_image must be a valid string' })
-  @MaxLength(255, { message: 'Featured image URL cannot exceed 255 characters' })
-  @Validate(IsImageFormat, { message: 'featured_image must be a valid image file (e.g., .jpg, .jpeg, .png, .gif, .webp)' })
+  @MaxLength(255, {
+    message: 'Featured image URL cannot exceed 255 characters',
+  })
+  @Validate(IsImageFormat, {
+    message:
+      'featured_image must be a valid image file (e.g., .jpg, .jpeg, .png, .gif, .webp)',
+  })
   featured_image: string;
 
   @ApiProperty({
@@ -145,7 +151,7 @@ export class CreateJobPostingDto {
   @IsString({ message: 'rank must be a valid string' })
   @MaxLength(50, { message: 'Rank cannot exceed 50 characters' })
   rank: string;
-
+ 
   @ApiProperty({
     description: 'Required experience for the job',
     example: '3-5 years',
@@ -154,5 +160,13 @@ export class CreateJobPostingDto {
   @IsString({ message: 'required_experience must be a valid string' })
   @MaxLength(50, { message: 'Required experience cannot exceed 50 characters' })
   required_experience: string;
+
+  @ApiProperty({
+    description: 'The status of the job posting (draft or posted)',
+    example: 'draft',
+  })
+  @IsOptional() // Default to 'draft' if not provided
+  @IsEnum(['draft', 'posted'], { message: 'jobpost_status must be either draft or posted' })
+  jobpost_status?: string;
 }
 

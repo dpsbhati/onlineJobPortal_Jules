@@ -59,28 +59,34 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      const jobPosting = await this.jobPostingRepository.findOne({
-        where: { id: jobDto.id, is_deleted: false },
-      });
-
-      if (jobDto.id && !jobPosting) {
-        return WriteResponse(
-          404,
-          {},
-          `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
-        );
+      let jobPosting: JobPosting | null = null;
+  
+      if (jobDto.id) {
+        jobPosting = await this.jobPostingRepository.findOne({
+          where: { id: jobDto.id, is_deleted: false },
+        });
+  
+        if (!jobPosting) {
+          return WriteResponse(
+            404,
+            {},
+            `Job with ID ${jobDto.id} not found. Verify the ID or check if the record is marked as deleted.`,
+          );
+        }
       }
-
+  
       const updatedJobPosting = this.jobPostingRepository.create({
-        ...jobPosting,
-        ...jobDto,
-        created_by: jobPosting ? jobPosting.created_by : userId,
-        updated_by: userId,
+        ...jobPosting, // Preserve existing data if updating
+        ...jobDto, // Merge new data
+        jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
+        created_by: jobPosting ? jobPosting.created_by : userId, // Preserve created_by for updates
+        updated_by: userId, // Always set updated_by to current user
       });
-
-      const savedJobPosting =
-        await this.jobPostingRepository.save(updatedJobPosting);
-
+  
+      const savedJobPosting = await this.jobPostingRepository.save(
+        updatedJobPosting,
+      );
+  
       return WriteResponse(
         200,
         savedJobPosting,
@@ -92,6 +98,8 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
+  
+  
 
   async paginateJobPostings(pagination: IPagination) {
     try {
@@ -274,4 +282,35 @@ export class JobPostingService {
       );
     }
   }
+
+  async postScheduledJob(jobId: string, userId: string) {
+    try {
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { id: jobId, is_deleted: false, jobpost_status: 'draft' },
+      });
+  
+      if (!jobPosting) {
+        return WriteResponse(
+          404,
+          {},
+          `Job with ID ${jobId} not found or is not in draft status.`,
+        );
+      }
+  
+      jobPosting.jobpost_status = 'posted';
+      jobPosting.updated_by = userId; 
+  
+      const updatedJobPosting = await this.jobPostingRepository.save(jobPosting);
+  
+      return WriteResponse(
+        200,
+        updatedJobPosting,
+        'Job Posting successfully published.',
+      );
+    } catch (error) {
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+  }
+  
+  
 }

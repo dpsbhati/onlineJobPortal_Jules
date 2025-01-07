@@ -93,4 +93,13 @@ export class JobPosting {
   @ManyToOne(() => Users, (user) => user.id, { nullable: true })
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   user: Users;
+
+  @Column({
+    type: 'enum',
+    enum: ['draft', 'posted'], 
+    nullable: true, 
+  })
+  jobpost_status: string;
+  
+
 }
