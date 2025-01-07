@@ -62,6 +62,9 @@ export class CreateJobPostingComponent {
       end_salary: new FormControl('', [Validators.required, Validators.min(3),  Validators.maxLength(8),]),
       country_code: new FormControl('', Validators.required),
       address: new FormControl('', Validators.required),
+      social_media_type: new FormControl('', Validators.required),
+      posted_at: new FormControl(''),
+      jobpost_status: new FormControl('draft'),
       
       // work_type: new FormControl(''),
       // file_path: new FormControl(null),
@@ -81,8 +84,32 @@ export class CreateJobPostingComponent {
       const today = new Date().toISOString().split('T')[0];
       this.jobForm.get('date_published')?.setValue(today);
       this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
-    // console.log(this.todaysDate);
+   this.listenToSocialMediaType();
   }
+  listenToSocialMediaType(): void {
+    this.jobForm.get('social_media_type')?.valueChanges.subscribe((value) => {
+      const postedAtControl = this.jobForm.get('posted_at');
+      if (value === 'facebook' || value === 'linkedin') {
+        postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
+      } else {
+        postedAtControl?.clearValidators();
+        postedAtControl?.setValue(''); // Clear the value
+      }
+      postedAtControl?.updateValueAndValidity();
+    });
+  }
+  postedAtValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const selectedDate = new Date(control.value);
+      const now = new Date();
+  
+      if (control.value && selectedDate < now) {
+        return { pastDateTime: true };
+      }
+      return null;
+    };
+  }
+  
   formatSalary(controlName: string): void {
     const control = this.jobForm.get(controlName);
     if (control) {
@@ -133,12 +160,17 @@ export class CreateJobPostingComponent {
   
   
   getJobPosting(jobId: string): void {
+    this.spinner.show();
     this.adminService.getJobById(jobId).subscribe((response: any) => {
       if (response.statusCode === 200 && response.data) {
+        this.spinner.hide()
         const data = response.data;
            console.log(data);
            const formattedDatePublished = formatDate(data.date_published, 'yyyy-MM-dd', 'en-US');
            const formattedDeadline = formatDate(data.deadline, 'yyyy-MM-dd', 'en-US');
+           const formattedPostedAt = data.posted_at
+           ? new Date(data.posted_at).toISOString().slice(0, 16) 
+           : '';
 
            const formattedStartSalary = data.start_salary
            ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
@@ -165,6 +197,9 @@ export class CreateJobPostingComponent {
           end_salary: formattedEndSalary || 0,
           country_code: data.country_code || '',
           address: data.address || '',
+          social_media_type: data.social_media_type || 'facebook',
+          posted_at: formattedPostedAt,
+          jobpost_status: data.jobpost_status || 'draft',
           // work_type: data.work_type || '',
           // file_path: data.file || null,
         });
@@ -172,6 +207,7 @@ export class CreateJobPostingComponent {
         
         
       } else {
+        this.spinner.hide();
         console.error('Failed to retrieve job posting data', response.message);
       }
     });
@@ -210,6 +246,7 @@ export class CreateJobPostingComponent {
                 },
                 (error) => {
                   console.error('Error uploading file:', error);
+                  this.spinner.hide();
                 }
               );
             });
@@ -233,11 +270,15 @@ export class CreateJobPostingComponent {
   
 
       }
-      else {this.notify.showWarning("Invalid image format")}
+      else {
+        this.spinner.hide();
+        this.notify.showWarning("Invalid image format")
+      }
     }
   }
   
   onSubmit(): void {
+    // debugger
     this.spinner.show();
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
@@ -253,6 +294,7 @@ export class CreateJobPostingComponent {
       }
       formValues.skills_required = JSON.stringify(formValues.skills_required);
       if (this.isEditMode) {
+     
         this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
           if (response.statusCode === 200) {
             this.notify.showSuccess(response.message);
@@ -264,6 +306,7 @@ export class CreateJobPostingComponent {
           }
         });
       } else {
+        
         this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
           if (response.statusCode === 200) {
             this.notify.showSuccess(response.message);

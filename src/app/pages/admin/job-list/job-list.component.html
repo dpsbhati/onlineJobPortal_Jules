@@ -88,9 +88,11 @@
         <th>Deadline</th>
         <th>Start Salary</th>
         <th>End Salary</th>
-        <th>Work Type</th>
+        <th>Job Post</th>
+        <!-- <th>Work Type</th> -->
         <th>Country</th>
         <th>Actions</th>
+
         <!-- <th>Address</th> -->
         <!-- <th>Assignment Duration</th> -->
         <!-- <th>Featured Image</th> -->
@@ -109,8 +111,9 @@
         <td>{{ job.deadline | date: 'shortDate' }}</td>
         <td>{{ job.start_salary }}</td>
         <td>{{ job.end_salary }}</td>
-        <td>{{ job.work_type }}</td>
-        <td>{{ job.country_code }}</td>
+        <td>{{job.jobpost_status}}</td>
+        <!-- <td>{{ job.work_type }}</td> -->
+        <td>{{ job.country_code == '0' ? 'N/A' : job.country_code}}</td>
         <td class="actions">
 
           <button (click)="editJob(job.id)" class="action-button edit-button">
