@@ -20,7 +20,7 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) {}
+  ) { }
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
@@ -76,7 +76,7 @@ export class JobPostingService {
         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
 
         for (const job of jobsToPost) {
-          job.jobpost_status = 'posted'; 
+          job.jobpost_status = 'posted';
           job.updated_at = new Date();
           await this.jobPostingRepository.save(job);
         }
@@ -91,6 +91,14 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
+<<<<<<< HEAD
+      // Check if the job ID exists for an update
+      const jobPosting = jobDto.id 
+        ? await this.jobPostingRepository.findOne({
+            where: { id: jobDto.id, is_deleted: false },
+          })
+        : null;
+=======
         console.log('Starting createOrUpdate process...');
 
         let jobPosting: JobPosting | null = null;
@@ -153,100 +161,115 @@ export class JobPostingService {
                 ? `Job Posting with ID ${savedJobPosting.id} updated successfully.`
                 : `Job Posting with ID ${savedJobPosting.id} created successfully.`,
         );
+>>>>>>> fb6032f8f1f825d2ec1d5ff92bfa6678ece4a5ec
 
+      if (jobDto.id && !jobPosting) {
         return WriteResponse(
-            200,
-            savedJobPosting,
-            jobPosting
-                ? 'Job Posting updated successfully.'
-                : 'Job Posting created successfully.',
+          404,
+          {},
+          `Job not found. Verify the ID or check if the record is marked as deleted.`,
         );
+      }
+
+      // Prepare job posting data
+      const updatedJobPosting = this.jobPostingRepository.create({
+        ...jobPosting, // Preserve existing data if updating
+        ...jobDto, // Merge new data
+        jobpost_status: jobDto.jobpost_status || 'draft', // Default to 'draft' if not provided
+        posted_at: jobDto.posted_at || null, // Use provided posted_at or set to null
+        created_by: jobPosting?.created_by || userId, // Preserve created_by for updates
+        updated_by: userId, // Always set updated_by to current user
+      });
+
+      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+
+      return WriteResponse(
+        200,
+        savedJobPosting,
+        jobPosting ? 'Job Posting updated successfully.' : 'Job Posting created successfully.',
+      );
     } catch (error) {
-        console.error('Error occurred during createOrUpdate process:', error.message);
-        return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
-}
+  }
 
-
-  
-  
 
   async paginateJobPostings(pagination: IPagination) {
     try {
-        const { curPage = 1, perPage = 10, whereClause } = pagination;
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-        // Default whereClause to filter out deleted job postings
-        let lwhereClause = 'job.is_deleted = 0';
+      // Default whereClause to filter out deleted job postings
+      let lwhereClause = 'job.is_deleted = 0';
 
-        // Fields to search
-        const fieldsToSearch = [
-            'title',
-            'short_description',
-            'full_description',
-            'employer',
-            'job_type',
-            'work_type',
-            'qualifications',
-            'skills_required',
-            'date_published',
-            'deadline',
-            'assignment_duration',
-            'rank',
-            'required_experience',
-            'start_salary',
-            'end_salary',
-            'salary',
-            'country_code',
-            'state_code',
-            'city',
-            'address',
-            'isActive',
-        ];
+      // Fields to search
+      const fieldsToSearch = [
+        'title',
+        'short_description',
+        'full_description',
+        'employer',
+        'job_type',
+        'work_type',
+        'qualifications',
+        'skills_required',
+        'date_published',
+        'deadline',
+        'assignment_duration',
+        'rank',
+        'required_experience',
+        'start_salary',
+        'end_salary',
+        'salary',
+        'country_code',
+        'state_code',
+        'city',
+        'address',
+        'isActive',
+      ];
 
-        // Process whereClause
-        if (Array.isArray(whereClause)) {
-            fieldsToSearch.forEach((field) => {
-                const fieldValue = whereClause.find((p) => p.key === field)?.value;
-                if (fieldValue) {
-                    lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
-                }
-            });
+      // Process whereClause
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
+          }
+        });
 
-            const allValues = whereClause.find((p) => p.key === 'all')?.value;
-            if (allValues) {
-                const searches = fieldsToSearch
-                    .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
-                    .join(' OR ');
-                lwhereClause += ` AND (${searches})`;
-            }
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
         }
+      }
 
-        const skip = (curPage - 1) * perPage;
+      const skip = (curPage - 1) * perPage;
 
-        // Fetch paginated data with user details
-        const [list, totalCount] = await this.jobPostingRepository
-            .createQueryBuilder('job')
-            .where(lwhereClause)
-            .skip(skip)
-            .take(perPage)
-            .orderBy('job.created_at', 'DESC')
-            .getManyAndCount();
+      // Fetch paginated data with user details
+      const [list, totalCount] = await this.jobPostingRepository
+        .createQueryBuilder('job')
+        .where(lwhereClause)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('job.created_at', 'DESC')
+        .getManyAndCount();
 
-        const enrichedJobList = await Promise.all(
-            list.map(async (job) => {
-                const enrichedJob = {
-                    ...job,
-                };
-                return enrichedJob;
-            }),
-        );
+      const enrichedJobList = await Promise.all(
+        list.map(async (job) => {
+          const enrichedJob = {
+            ...job,
+          };
+          return enrichedJob;
+        }),
+      );
 
-        return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
+      return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
     } catch (error) {
-        console.error('Job Postings Pagination Error --> ', error);
-        return WriteResponse(500, error, `Something went wrong.`);
+      console.error('Job Postings Pagination Error --> ', error);
+      return WriteResponse(500, error, `Something went wrong.`);
     }
-}
+  }
 
 
   async findAll() {
@@ -333,7 +356,7 @@ export class JobPostingService {
       });
 
       if (!jobPosting) {
-        return WriteResponse(404, {}, `Job posting with ID ${id} not found.`);
+        return WriteResponse(404, {}, `Job posting not found.`);
       }
 
       // Update the status of the job posting
@@ -359,7 +382,7 @@ export class JobPostingService {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { id: jobId, is_deleted: false, jobpost_status: 'draft' },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(
           404,
@@ -367,12 +390,12 @@ export class JobPostingService {
           `Job with ID ${jobId} not found or is not in draft status.`,
         );
       }
-  
+
       jobPosting.jobpost_status = 'posted';
-      jobPosting.updated_by = userId; 
-  
+      jobPosting.updated_by = userId;
+
       const updatedJobPosting = await this.jobPostingRepository.save(jobPosting);
-  
+
       return WriteResponse(
         200,
         updatedJobPosting,
@@ -382,6 +405,6 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
-  
+
+
 }
