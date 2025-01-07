@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, NgSelectOption, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, NgSelectOption, FormsModule, AbstractControl } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
@@ -7,6 +7,8 @@ import countries from '../../../core/helpers/country.json';
 import { NotifyService } from '../../../core/services/notify.service';
 import { CommonModule, formatDate, NgFor, NgIf } from '@angular/common';
 import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
+import {  ValidationErrors, ValidatorFn} from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-create-job-posting',
   standalone: true,
@@ -14,6 +16,7 @@ import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent 
     NgLabelTemplateDirective,
     NgOptionTemplateDirective,
     NgSelectComponent,
+  
   ],
   templateUrl: './create-job-posting.component.html',
   styleUrl: './create-job-posting.component.css'
@@ -29,6 +32,8 @@ export class CreateJobPostingComponent {
     { id: 4, name: 'Node.js' },
     { id: 5, name: 'Python' }
   ];
+  isDatePublishedReadonly = true;
+  todaysDate = new Date();
   
   private readonly allowedImageFormats = ['image/jpeg', 'image/png', 'image/webp'];
   constructor(
@@ -36,7 +41,8 @@ export class CreateJobPostingComponent {
     private route: ActivatedRoute,
     private router : Router,
     private imageCompressionService :ImageCompressionService,
-    private notify :NotifyService
+    private notify :NotifyService,
+    private spinner : NgxSpinnerService,
   ) {
     this.jobForm = new FormGroup({
       id: new FormControl(''),
@@ -44,21 +50,25 @@ export class CreateJobPostingComponent {
       rank: new FormControl('', Validators.required),
       skills_required: new FormControl([], Validators.required),
       title: new FormControl('', [Validators.required , Validators.minLength(2),  Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
-      featured_image: new FormControl(null),
-      date_published: new FormControl('', Validators.required),
-      deadline: new FormControl('', Validators.required),
+      featured_image: new FormControl(null,Validators.required),
+      date_published: new FormControl(this.todaysDate),
+      deadline: new FormControl('', [Validators.required,]),
       short_description: new FormControl(''),
       full_description: new FormControl(''),
       assignment_duration: new FormControl(''),
       employer: new FormControl(''),
       required_experience: new FormControl('', ),
-      start_salary: new FormControl('', [Validators.required, Validators.min(3), Validators.pattern(/^\d+$/)]),
-      end_salary: new FormControl('', [Validators.required, Validators.min(3), Validators.pattern(/^\d+$/)]),
-      country_code: new FormControl(''),
-      address: new FormControl(''),
+      start_salary: new FormControl('', [Validators.required, Validators.min(3),  Validators.maxLength(7),]),
+      end_salary: new FormControl('', [Validators.required, Validators.min(3),  Validators.maxLength(8),]),
+      country_code: new FormControl('', Validators.required),
+      address: new FormControl('', Validators.required),
+      
       // work_type: new FormControl(''),
       // file_path: new FormControl(null),
-    });
+    }, 
+     { validators: this.salaryComparisonValidator }
+    );
+    
   }
   
 
@@ -68,7 +78,24 @@ export class CreateJobPostingComponent {
       this.isEditMode = true;
       this.getJobPosting(jobId);
     }
+      const today = new Date().toISOString().split('T')[0];
+      this.jobForm.get('date_published')?.setValue(today);
+      this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
+    // console.log(this.todaysDate);
   }
+  formatSalary(controlName: string): void {
+    const control = this.jobForm.get(controlName);
+    if (control) {
+      let value = control.value;
+      if (value) {
+        value = value.replace(/[^0-9]/g, '');
+        const formattedValue = new Intl.NumberFormat('en-US').format(Number(value));
+        control.setValue(formattedValue, { emitEvent: false });
+      }
+    }
+  }
+  
+  
   sanitizeFormValues(): void {
     Object.keys(this.jobForm.controls).forEach(key => {
       const control = this.jobForm.get(key);
@@ -77,6 +104,33 @@ export class CreateJobPostingComponent {
       }
     });
   }
+  deadlineValidator(date_published: Date): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const selectedDeadline = new Date(control.value);
+      const today = new Date();
+      
+      if (selectedDeadline < today || selectedDeadline < date_published) {
+        return { deadlineInvalid: true };
+      }
+      return null;
+    }
+  }
+  salaryComparisonValidator(control: AbstractControl): ValidationErrors | null {
+    const startSalaryControl = control.get('start_salary');
+    const endSalaryControl = control.get('end_salary');
+  
+    if (startSalaryControl && endSalaryControl) {
+      const startSalary = parseInt(startSalaryControl.value.replace(/,/g, '') || '0', 10);
+      const endSalary = parseInt(endSalaryControl.value.replace(/,/g, '') || '0', 10);
+  
+      if (startSalary > endSalary) {
+        return { salaryMismatch: true };
+      }
+    }
+    return null;
+  }
+  
+  
   
   getJobPosting(jobId: string): void {
     this.adminService.getJobById(jobId).subscribe((response: any) => {
@@ -85,13 +139,19 @@ export class CreateJobPostingComponent {
            console.log(data);
            const formattedDatePublished = formatDate(data.date_published, 'yyyy-MM-dd', 'en-US');
            const formattedDeadline = formatDate(data.deadline, 'yyyy-MM-dd', 'en-US');
-        // Explicitly set the value for each control
+
+           const formattedStartSalary = data.start_salary
+           ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
+           : '';
+         const formattedEndSalary = data.end_salary
+           ? new Intl.NumberFormat('en-US').format(Number(data.end_salary))
+           : '';
+    
         this.jobForm.patchValue({
           id: data.id || '',
           job_type: data.job_type || '',
           rank: data.rank || '',
           skills_required: JSON.parse(data.skills_required || '[]'),
-          // skills_required: Array.isArray(data.skills_required) ? data.skills_required : data.skills_required ? [data.skills_required] : [],
           title: data.title || '',
           featured_image: data.featured_image || null,
           date_published: formattedDatePublished || '',
@@ -101,8 +161,8 @@ export class CreateJobPostingComponent {
           assignment_duration: data.assignment_duration || '',
           employer: data.employer || '',
           required_experience: data.required_experience || '',
-          start_salary: data.start_salary || 0,
-          end_salary: data.end_salary || 0,
+          start_salary: formattedStartSalary || 0,
+          end_salary: formattedEndSalary || 0,
           country_code: data.country_code || '',
           address: data.address || '',
           // work_type: data.work_type || '',
@@ -120,6 +180,7 @@ export class CreateJobPostingComponent {
  
   onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0];
+    this.spinner.show()
     if (file) {
       if (this.allowedImageFormats.includes(file.type)) {
         this.imageCompressionService.compressImage(file).then((compressedImageUrl: string) => {
@@ -135,6 +196,7 @@ export class CreateJobPostingComponent {
               this.adminService.uploadFile({ folderName, file: compressedFile, userId }).subscribe(
                 (response) => {
                 if(response.statusCode ===200){
+                  this.spinner.hide();
                   this.notify.showSuccess(response.message);
                   this.jobForm.patchValue({
                     [controlName]: response.data.path
@@ -142,6 +204,7 @@ export class CreateJobPostingComponent {
                
                 }
                 else {
+                  this.spinner.hide();
                   this.notify.showWarning(response.message);
                 }
                 },
@@ -175,9 +238,16 @@ export class CreateJobPostingComponent {
   }
   
   onSubmit(): void {
+    this.spinner.show();
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
+      if (formValues.start_salary) {
+        formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
+      }
+      if (formValues.end_salary) {
+        formValues.end_salary = parseInt(formValues.end_salary.replace(/,/g, ''), 10);
+      }
       if (!formValues.id) {
         delete formValues.id;
       }
@@ -190,6 +260,7 @@ export class CreateJobPostingComponent {
           }
           else{
             this.notify.showWarning(response.message);
+            this.spinner.hide();
           }
         });
       } else {
@@ -200,34 +271,18 @@ export class CreateJobPostingComponent {
           }
           else{
             this.notify.showWarning(response.message);
+            this.spinner.hide();
           }
         });
       }
     } 
+    else {
+      this.spinner.hide();
+      this.notify.showWarning("Failed to update the form")
+    }
   }
   navigate(){
     this.router.navigate(['/job-list']);
   }
-  // onSubmit(): void {
-  //   console.log(this.countryList);
-  //   if (this.jobForm.valid) {
-  //     const formValues = this.jobForm.value;
-  //     if (!formValues.id) {
-  //       delete formValues.id;
-  //     }
-  
-  //     this.adminService.createOrUpdateJobPosting(formValues).subscribe(
-  //       (response) => {
-  //         if(response.statusCode === 200){
-  //            this.notify.showSuccess("JOb created Successfully")
-  //            this.router.navigate(['auth/job-list']);
-  //           //  this.router.navigate(['auth/create-job-posting'])
-  //         }
-  //       }
-  //     );
-  //   } else {
-  //     alert('Please fill in all required fields.');
-  //   }
-  // }
   
 }
