@@ -176,9 +176,9 @@ export class CreateJobPostingDto {
     example: '2025-01-15T10:30:00.000Z',
 })
 @IsOptional()
-@IsDate({ message: 'posted_at must be a valid ISO date.' })
-@Type(() => Date)
-posted_at?: Date;
+// @IsDate({ message: 'posted_at must be a valid ISO date.' })
+// @Type(() => Date)
+posted_at?: String;
 
 @ApiProperty({
     description: 'The social media platform where the job will be posted.',

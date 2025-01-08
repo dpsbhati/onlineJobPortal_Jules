@@ -108,8 +108,8 @@ export class JobPosting {
   })
   social_media_type:string
 
-  @Column({ type: 'datetime', nullable: true })
-  posted_at: Date;
+  @Column()
+  posted_at: String;
 
   @Column({
     type:'enum',

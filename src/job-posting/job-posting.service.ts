@@ -127,16 +127,51 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      // Check if the job ID exists for an update
+      // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-          where: { id: jobDto.id, is_deleted: false },
-        })
+            where: { id: jobDto.id, is_deleted: false },
+          })
         : null;
-
+  
+      // Preserve existing job_opening status if the job is being updated
+      let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
+  
+      // Only set job_opening during creation
+      if (!jobPosting && jobDto.date_published && jobDto.deadline) {
+        const now = new Date();
+        const datePublished = new Date(jobDto.date_published);
+        const deadline = new Date(jobDto.deadline);
+  
+        if (now >= datePublished && now <= deadline) {
+          job_opening = 'open';
+        } else if (now > deadline) {
+          job_opening = 'close';
+        }
+      }
+  
+      // Create or update job posting
+      const updatedJobPosting = this.jobPostingRepository.create({
+        ...jobPosting,
+        ...jobDto,
+        job_opening,
+        created_by: jobPosting ? jobPosting.created_by : userId,
+        updated_by: userId,
+      });
+  
+      const savedJobPosting = await this.jobPostingRepository.save(
+        updatedJobPosting,
+      );
+  
+      console.log(
+        jobPosting
+          ? `Updated Job Posting with ID: ${savedJobPosting.id}`
+          : `Created Job Posting with ID: ${savedJobPosting.id}`,
+      );
+  
       return WriteResponse(
         200,
-        jobPosting,
+        savedJobPosting,
         jobPosting
           ? 'Job Posting updated successfully.'
           : 'Job Posting created successfully.',
