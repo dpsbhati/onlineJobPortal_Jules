@@ -315,12 +315,10 @@ export class JobPostingService {
             }
 
             // Salary range filtering
-            const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value;
-            const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value;
+            const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value || 0;
+            const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value || 1000000000000;
 
-            if (salaryMin && salaryMax) {
-                lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
-            }
+            lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
         }
 
         const skip = (curPage - 1) * perPage;
