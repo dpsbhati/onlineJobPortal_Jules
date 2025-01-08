@@ -115,8 +115,8 @@
           <td>{{ job.skills_required }}</td> -->
         <td>{{ job.date_published | date: 'shortDate' }}</td>
         <td>{{ job.deadline | date: 'shortDate' }}</td>
-        <td>{{ job.start_salary }}</td>
-        <td>{{ job.end_salary }}</td>
+        <td>{{ job.start_salary | number }}</td>
+        <td>{{ job.end_salary | number }}</td>
         <td>{{job.jobpost_status}}</td>
         <!-- <td>{{ job.work_type }}</td> -->
         <td>{{ job.country_code == '0' ? 'N/A' : job.country_code}}</td>

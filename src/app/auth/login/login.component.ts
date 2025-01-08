@@ -100,6 +100,7 @@ export class LoginComponent implements OnInit {
   // }
 
   signIn(): void {
+    this.spinner.show();
     // Validate form before proceeding
     if (this.loginForm.invalid) {
       this.notify.showWarning('Please fill in all required fields correctly.');
@@ -115,7 +116,7 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            
+            this.spinner.hide()
             this._authService.accessToken = response.data.token;
             localStorage.setItem("user", JSON.stringify(response.data.User));
 
@@ -128,10 +129,13 @@ export class LoginComponent implements OnInit {
             this._router.navigateByUrl('/job-list');
             // this.notify.showSuccess('Login successful!');
           } else {
+            this.spinner.hide()
             this.notify.showError(response.message);
           }
         },
-        error: () => {
+        error: (error) => {
+          this.spinner.hide()
+          console.log(error);
           this.notify.showError('Login failed.');
         }
       });
