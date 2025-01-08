@@ -95,7 +95,6 @@ export class JobPostingService {
   
       const currentDateTime = new Date();
   
-      // Fetch jobs eligible to close
       const jobsToClose = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
