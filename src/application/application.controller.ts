@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
+import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Applications')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('applications')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
@@ -41,4 +45,16 @@ export class ApplicationController {
   remove(@Param('id') id: string) {
     return this.applicationService.remove(id);
   }
+
+
+  @Post('pagination')
+  @ApiBody({
+     schema: {
+       type: 'object',
+       properties: IPaginationSwagger,
+     },
+   })
+  async pagination(@Body() pagination: IPagination) {
+    return this.applicationService.paginateApplications(pagination);
+  }  
 }

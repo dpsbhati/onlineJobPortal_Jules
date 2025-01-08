@@ -50,6 +50,7 @@ export class JobPostingController {
     }    
     return this.jobPostingService.createOrUpdate(jobDto, user_id);
   }
+  
   @Post('pagination')
   @ApiBody({
     schema: {

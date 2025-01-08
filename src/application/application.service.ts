@@ -4,7 +4,8 @@ import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { applications } from './entities/application.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { WriteResponse } from 'src/shared/response';
+import { paginateResponse, WriteResponse } from 'src/shared/response';
+import { IPagination } from 'src/shared/paginationEum';
 
 @Injectable()
 export class ApplicationService {
@@ -96,4 +97,62 @@ export class ApplicationService {
     application.is_deleted = true;
     return await this.applicationRepository.save(application);
   }
+
+  async paginateApplications(pagination: IPagination) {
+    try {
+        const { curPage = 1, perPage = 10, whereClause } = pagination;
+
+        let lwhereClause = 'app.is_deleted = 0';
+
+        const fieldsToSearch = [
+            'status',
+            'description',
+            'comments',
+            'additional_info',
+            'work_experiences',
+            'user.first_name',
+            'user.last_name',
+            'job.title',
+        ];
+
+        if (Array.isArray(whereClause)) {
+            fieldsToSearch.forEach((field) => {
+                const fieldValue = whereClause.find((p) => p.key === field)?.value;
+                if (fieldValue) {
+                    lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
+                }
+            });
+
+            const allValues = whereClause.find((p) => p.key === 'all')?.value;
+            if (allValues) {
+                const searches = fieldsToSearch
+                    .map((field) => `${field} LIKE '%${allValues}%'`)
+                    .join(' OR ');
+                lwhereClause += ` AND (${searches})`;
+            }
+        }
+
+        const skip = (curPage - 1) * perPage;
+
+        const [list, totalCount] = await this.applicationRepository
+            .createQueryBuilder('app')
+            .leftJoinAndSelect('app.job', 'job')
+            .leftJoinAndSelect('app.user', 'user')
+            .where(lwhereClause)
+            .skip(skip)
+            .take(perPage)
+            .orderBy('app.created_at', 'DESC')
+            .getManyAndCount();
+
+        const enrichedApplications = list.map((application) => ({
+            ...application,
+        }));
+
+        return paginateResponse(enrichedApplications, totalCount, curPage, perPage);
+    } catch (error) {
+        console.error('Application Pagination Error --> ', error);
+        return WriteResponse(500, {}, `Something went wrong.`);
+    }
+}
+
 }
