@@ -33,7 +33,7 @@ import { FacebookModule } from './facebook/facebook.module';
         database: configService.get<string>('DB_NAME', 'admin_onlinejobportal'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false, // Set to false for production
-        // timezone: 'UTC',
+        timezone: 'UTC',
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
