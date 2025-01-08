@@ -110,6 +110,13 @@ export class JobPosting {
 
   @Column({ type: 'datetime', nullable: true })
   posted_at: Date;
+
+  @Column({
+    type:'enum',
+    enum:["hold","open","close"],
+    nullable:true,
+  })
+  job_opening:string
   
 
 }

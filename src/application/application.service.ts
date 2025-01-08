@@ -46,7 +46,6 @@ export class ApplicationService {
     return await this.applicationRepository.save(application);
   }
   
-
   async findAll() {
     try {
       const applications = await this.applicationRepository.find({

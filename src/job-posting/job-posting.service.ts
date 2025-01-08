@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Not, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -87,6 +87,42 @@ export class JobPostingService {
       this.logger.error('Error in autoPostJobs scheduler', error);
     }
   }
+
+  @Cron('*/1 * * * *') // Runs every minute
+  async closeExpiredJobs() {
+    try {
+      console.log('Running job scheduler to close expired jobs...');
+  
+      const currentDateTime = new Date();
+  
+      // Fetch jobs eligible to close
+      const jobsToClose = await this.jobPostingRepository.find({
+        where: {
+          is_deleted: false,
+          job_opening: 'open',
+          deadline: LessThanOrEqual(currentDateTime),
+        },
+      });
+  
+      if (jobsToClose.length === 0) {
+        console.log('No jobs found with expired deadlines.');
+        return;
+      }
+  
+      console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
+  
+      for (const job of jobsToClose) {
+        job.job_opening = 'close';
+        await this.jobPostingRepository.save(job);
+        console.log(`Job with ID ${job.id} marked as "close".`);
+      }
+    } catch (error) {
+      console.error('Error occurred while updating expired jobs:', error.message);
+    }
+  }
+  
+  
+  
 
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
@@ -415,6 +451,5 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-
 
 }
