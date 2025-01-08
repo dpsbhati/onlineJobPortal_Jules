@@ -31,10 +31,6 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
 
 
 export class CreateUserDto {
-  @ApiPropertyOptional({
-    example: 'unique-user-id',
-    description: 'The unique identifier of the user for updates. Must be a valid UUID if provided.',
-  })
   @IsOptional()
   @IsUUID(undefined, { message: 'id must be a valid UUID.' })
   id?: string; // Optional for updates

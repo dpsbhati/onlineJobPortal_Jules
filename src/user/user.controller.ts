@@ -39,9 +39,9 @@ export class UserController {
     private jwtService: JwtService,
   ) {}
 
-  @Post('create-update')
+  @Post('register')
   @UseGuards(RolesGuard)
-  @ApiOperation({ summary: 'Create&Update a new user' })
+  @ApiOperation({ summary: 'Register a new user' })
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUpdate(createUserDto);
   }
