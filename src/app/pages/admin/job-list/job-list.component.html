@@ -75,6 +75,7 @@
       [(ngModel)]="filters.all"
       placeholder="Search"
       class="search-input"
+      (keyup.enter)="onSearch()"
     />
     <button type="button" class="btn btn-primary" (click)="onSearch()">Search</button>
     <button type="button" class="btn btn-secondary ms-2" (click)="clearSearch()">Clear</button>

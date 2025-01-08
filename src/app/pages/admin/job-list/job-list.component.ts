@@ -38,9 +38,9 @@ export class JobListComponent {
     translate: (value: number, label: LabelType): string => {
       switch (label) {
         case LabelType.Low:
-          return "<b>Start salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+          return "<b>Min salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
         case LabelType.High:
-          return "<b>End salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+          return "<b>Max salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
         default:
           return "$" + value;
       }
@@ -52,8 +52,8 @@ export class JobListComponent {
     title: "",
     job_type: "",
     deadline: "",
-    start_salary: this.salaryRange.min,
-    end_salary: this.salaryRange.max,
+    salary_min: this.salaryRange.min,
+    salary_max: this.salaryRange.max,
   }
 
   total: number = 0;
@@ -71,8 +71,8 @@ export class JobListComponent {
   }
 
   onSalaryRangeChange(): void {
-    this.filters.start_salary = this.salaryRange.min;
-    this.filters.end_salary = this.salaryRange.max;
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
     this.onPagination()
   }
 
@@ -245,8 +245,8 @@ export class JobListComponent {
       this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
     this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
 
-    this.filters.start_salary = this.salaryRange.min;
-    this.filters.end_salary = this.salaryRange.max;
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
 
     // Reset whereClause
     this.pageConfig.whereClause = []; // Clear all filters in whereClause
@@ -281,4 +281,12 @@ export class JobListComponent {
     this.router.navigate(['auth/login']);
   }
 
+  // onSearchWithMinLength(): void {
+  //   if (this.filters.all.trim().length >= 2) {
+  //     this.onSearch(); // Trigger the API call only if 2 or more characters are entered
+  //   } else {
+  //     this.notify.showWarning('Please enter at least 2 characters to search.');
+  //   }
+  // }
+  
 }
