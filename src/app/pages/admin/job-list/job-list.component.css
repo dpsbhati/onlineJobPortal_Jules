@@ -187,3 +187,20 @@
   display: flex;
   gap: 1rem;
 }
+
+.input-icon-container {
+  position: relative;
+}
+
+.input-icon-container input {
+  padding-right: 35px; /* Adjust padding to accommodate the icon */
+}
+
+.input-icon {
+  position: absolute;
+  right: 10px; /* Adjust position to fit within the input */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555; /* Icon color */
+  pointer-events: none; /* Prevent the icon from interfering with clicks */
+}

@@ -8,6 +8,8 @@ import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options, LabelType } from "@angular-slider/ngx-slider";
+import moment from 'moment';
+
 
 declare var $: any;
 
@@ -50,10 +52,10 @@ export class JobListComponent {
     title: "",
     job_type: "",
     deadline: "",
-    start_salary: this.salaryRange.min,
-    end_salary: this.salaryRange.max,
+    salary_min: this.salaryRange.min,
+    salary_max: this.salaryRange.max,
   }
-  
+
   total: number = 0;
   jobPostingList: any[] = [];
 
@@ -69,39 +71,52 @@ export class JobListComponent {
   }
 
   onSalaryRangeChange(): void {
-    this.filters.start_salary = this.salaryRange.min;
-    this.filters.end_salary = this.salaryRange.max;
-   this.onPagination(true)
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
+    this.onPagination()
   }
 
-  
+
   initializeDeadlinePicker(): void {
-    $('input[name="deadlineDatePicker"]').daterangepicker(
+    const datePickerElement = $('input[name="deadlineDatePicker"]');
+  
+    datePickerElement.daterangepicker(
       {
         singleDatePicker: true,
-        autoUpdateInput: false,
+        autoUpdateInput: true, // Automatically update the input field
+        startDate: moment().format('YYYY-MM-DD'), // Set today's date as default
         locale: {
           format: 'YYYY-MM-DD',
           cancelLabel: 'Clear',
           applyLabel: 'Apply',
-          placeholder: 'Select Deadline',
         },
       },
       (selectedDate: any) => {
-        this.filters.deadline = selectedDate.format('YYYY-MM-DD');
-        this.onSearch();
+        const selectedDateFormatted = selectedDate.format('YYYY-MM-DD');
+        if (this.filters.deadline !== selectedDateFormatted) {
+          this.filters.deadline = selectedDateFormatted;
+          this.onSearch(); // Trigger search only if the date changes
+        }
       }
     );
-
-    $('input[name="deadlineDatePicker"]').on(
-      'cancel.daterangepicker',
-      () => {
-        this.filters.deadline = '';
-        $('input[name="deadlineDatePicker"]').val('');
-        this.onSearch();
-      }
-    );
+  
+    // Handle the 'Clear' button functionality
+    datePickerElement.on('cancel.daterangepicker', () => {
+      this.filters.deadline = '';
+      datePickerElement.val(''); // Clear the input field
+      this.onSearch(); // Trigger the search API call on clear
+    });
+  
+    // Handle the 'Apply' button functionality explicitly
+    datePickerElement.on('apply.daterangepicker', () => {
+      const selectedDateFormatted = datePickerElement.data('daterangepicker').startDate.format('YYYY-MM-DD');
+      this.filters.deadline = selectedDateFormatted;
+      this.onSearch();
+    });
   }
+  
+  
+  
 
   openDatePicker(name: string): void {
     $(`input[name="${name}"]`).trigger('click');
@@ -141,11 +156,11 @@ export class JobListComponent {
   //         this.jobs = this.jobs.filter(job => job.id !== jobId);
   //         this.notify.showSuccess(response.message);
   //         window.location.reload();
-         
+
   //       },
   //     );
   //   }
-    
+
   // }
 
   deleteJob(jobId: string) {
@@ -153,10 +168,10 @@ export class JobListComponent {
       this.adminService.deleteJob(jobId).subscribe(
         (response: any) => {
           this.notify.showSuccess(response.message);
-  
+
           // Refresh job data after deletion
           this.onPagination();
-  
+
           // If the current page becomes empty after deletion, navigate to the previous page
           if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
             this.pageConfig.curPage -= 1;
@@ -169,13 +184,12 @@ export class JobListComponent {
       );
     }
   }
-  
 
-  onPagination(isFilter = false): void {
+
+  onPagination(): void {
     this.spinner.show();
-    if(isFilter){
-      this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
-    }    
+    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
@@ -203,37 +217,47 @@ export class JobListComponent {
     this.pageConfig.curPage = 1; // Reset to the first page
     this.onPagination(); // Trigger the API call
   }
-  
-  
-navigateToCreateJob(){
-   this.router.navigate(['/create-job-posting'])
-}
-
-navigateToUserProfile(): void {
- 
-  this.router.navigate(['/user-profile']);
-}
 
 
-   // Handle search action
-   onSearch(): void {
+  navigateToCreateJob() {
+    this.router.navigate(['/create-job-posting'])
+  }
+
+  navigateToUserProfile(): void {
+
+    this.router.navigate(['/user-profile']);
+  }
+
+
+  // Handle search action
+  onSearch(): void {
     this.pageConfig.curPage = 1; // Reset to the first page
     this.onPagination(); // Trigger the pagination API
   }
 
-   // Clear the search field and trigger API
-   clearSearch(): void {
+  // Clear the search field and trigger API
+  clearSearch(): void {
     this.filters.all = '';
     this.filters.title = "",
-    this.filters.job_type = "",
-    this.filters.deadline = "",
-    this.filters.start_salary = this.salaryRange.min,
-    this.filters.end_salary = this.salaryRange.max
+      this.filters.job_type = "",
+      this.filters.deadline = "",
+      // Reset the salary range
+      this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
+    this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
+
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
+
+    // Reset whereClause
+    this.pageConfig.whereClause = []; // Clear all filters in whereClause
+
+    // Trigger the UI update for the slider
+    this.onSalaryRangeChange();
     this.onSearch();
   }
 
-   // Trigger API if input becomes empty
-   onInputChange(value: string): void {
+  // Trigger API if input becomes empty
+  onInputChange(value: string): void {
     if (!value.trim()) {
       this.clearSearch();
     }
@@ -253,8 +277,16 @@ navigateToUserProfile(): void {
   get paginationArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
-  navigate(){
+  navigate() {
     this.router.navigate(['auth/login']);
   }
 
+  // onSearchWithMinLength(): void {
+  //   if (this.filters.all.trim().length >= 2) {
+  //     this.onSearch(); // Trigger the API call only if 2 or more characters are entered
+  //   } else {
+  //     this.notify.showWarning('Please enter at least 2 characters to search.');
+  //   }
+  // }
+  
 }
