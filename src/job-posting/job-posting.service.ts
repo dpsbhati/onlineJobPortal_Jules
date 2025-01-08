@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Not, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -88,31 +88,99 @@ export class JobPostingService {
     }
   }
 
+  @Cron('*/1 * * * *') // Runs every minute
+  async closeExpiredJobs() {
+    try {
+      console.log('Running job scheduler to close expired jobs...');
+  
+      const currentDateTime = new Date();
+  
+      // Fetch jobs eligible to close
+      const jobsToClose = await this.jobPostingRepository.find({
+        where: {
+          is_deleted: false,
+          job_opening: 'open',
+          deadline: LessThanOrEqual(currentDateTime),
+        },
+      });
+  
+      if (jobsToClose.length === 0) {
+        console.log('No jobs found with expired deadlines.');
+        return;
+      }
+  
+      console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
+  
+      for (const job of jobsToClose) {
+        job.job_opening = 'close';
+        await this.jobPostingRepository.save(job);
+        console.log(`Job with ID ${job.id} marked as "close".`);
+      }
+    } catch (error) {
+      console.error('Error occurred while updating expired jobs:', error.message);
+    }
+  }
+  
+  
+  
+
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      // Check if the job ID exists for an update
-      const jobPosting = jobDto.id 
+      // Fetch existing job posting (if updating)
+      const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
             where: { id: jobDto.id, is_deleted: false },
           })
         : null;
-
-        return WriteResponse(
-            200,
-            jobPosting,
-            jobPosting
-                ? 'Job Posting updated successfully.'
-                : 'Job Posting created successfully.',
-        );
-    } catch (error) {
-        console.error('Error occurred during createOrUpdate process:', error.message);
-        return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
-    }
-}
-
-
   
+      // Preserve existing job_opening status if the job is being updated
+      let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
+  
+      // Only set job_opening during creation
+      if (!jobPosting && jobDto.date_published && jobDto.deadline) {
+        const now = new Date();
+        const datePublished = new Date(jobDto.date_published);
+        const deadline = new Date(jobDto.deadline);
+  
+        if (now >= datePublished && now <= deadline) {
+          job_opening = 'open';
+        } else if (now > deadline) {
+          job_opening = 'close';
+        }
+      }
+  
+      // Create or update job posting
+      const updatedJobPosting = this.jobPostingRepository.create({
+        ...jobPosting,
+        ...jobDto,
+        job_opening,
+        created_by: jobPosting ? jobPosting.created_by : userId,
+        updated_by: userId,
+      });
+  
+      const savedJobPosting = await this.jobPostingRepository.save(
+        updatedJobPosting,
+      );
+  
+      console.log(
+        jobPosting
+          ? `Updated Job Posting with ID: ${savedJobPosting.id}`
+          : `Created Job Posting with ID: ${savedJobPosting.id}`,
+      );
+  
+      return WriteResponse(
+        200,
+        savedJobPosting,
+        jobPosting
+          ? 'Job Posting updated successfully.'
+          : 'Job Posting created successfully.',
+      );
+    } catch (error) {
+      console.error('Error occurred during createOrUpdate process:', error.message);
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+  }
   
 
   async paginateJobPostings(pagination: IPagination) {
@@ -326,6 +394,37 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
+
+  async handleJobStatuses() {
+    console.log('Running job scheduler to manage job statuses...');
+  
+    const currentTime = new Date();
+    console.log('Current Time:', currentTime);
+  
+    try {
+      // Fetch jobs eligible to open
+      const jobsToOpen = await this.jobPostingRepository.find({
+        where: {
+          job_opening: 'hold',
+          date_published: LessThanOrEqual(currentTime),
+          deadline: MoreThan(currentTime),
+          is_deleted: false,
+        },
+      });
+  
+      console.log('Jobs eligible to open:', jobsToOpen);
+  
+      for (const job of jobsToOpen) {
+        job.job_opening = 'open';
+        await this.jobPostingRepository.save(job);
+        console.log(`Job with ID ${job.id} marked as "open".`);
+      }
+    } catch (error) {
+      console.error('Error in job scheduler:', error.message);
+    }
+  }
+  
+  
   
   
 }
