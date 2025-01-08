@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotifyService } from '../../core/services/notify.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -21,7 +22,8 @@ export class ForgotPasswordComponent {
   constructor(private _formBuilder: FormBuilder,
     private _authService: AuthService,
     private _notifyService: NotifyService,
-    private _spinner: NgxSpinnerService
+    private _spinner: NgxSpinnerService,
+    private _router : Router
   ) {
   }
 
@@ -94,6 +96,9 @@ export class ForgotPasswordComponent {
         }
       });
   }
-
+ // Navigate back to Login
+ navigateToLogin(): void {
+  this._router.navigate(['/auth/login']); // Replace with the correct login page route
+}
 }
 

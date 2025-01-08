@@ -34,7 +34,7 @@ export class UserService {
 
     getUserById(userId: string): Observable<any> {
         const key = 'id';
-        return this.genericService.Get<any>(`user-profile/get-one?key=id&value=${userId}`);
+        return this.genericService.Get<any>(`user-profile/get-one?id=${userId}`);
     }
 
     uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
