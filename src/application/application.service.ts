@@ -26,7 +26,7 @@ export class ApplicationService {
     });
   
     if (existingApplication) {
-      throw new Error('You have already applied for this job.');
+      return WriteResponse(409, [], 'You have already applied for this job.');
     }
   
     // Create a new application
