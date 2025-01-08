@@ -69,7 +69,7 @@ export class CreateUserProfileDto {
 
   @ApiProperty({ description: 'Mobile number of the user' })
   @IsNotEmpty({ message: 'mobile cannot be empty' })
-  // @IsNumber({}, { message: 'mobile must be a valid number' })
+  @IsNumber({}, { message: 'mobile must be a valid number' })
   @Matches(/^\d{10}$/, { message: 'mobile must be a valid 10-digit number' })
   mobile: number;
 

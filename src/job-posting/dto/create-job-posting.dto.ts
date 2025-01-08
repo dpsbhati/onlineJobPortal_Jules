@@ -56,9 +56,11 @@ export class CreateJobPostingDto {
   @ApiProperty({
     description: 'The job type',
     example: 'Full-time',
+    enum: ['Full-Time', 'Part-Time', 'Flexible'],
   })
   @IsNotEmpty({ message: 'job_type is required.' })
   @IsString({ message: 'job_type must be a valid string.' })
+  @IsIn(['Full-Time', 'Part-Time', 'Flexible'], { message: 'job_type must be one of the following: Full-Time, Part-Time, Flexible.' })
   @Validate(IsNotWhitespace)
   @Transform(({ value }) => value?.trim())
   @MaxLength(50, { message: 'Job type cannot exceed 50 characters.' })
