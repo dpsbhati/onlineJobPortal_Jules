@@ -92,28 +92,110 @@ export class JobPostingService {
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
       // Check if the job ID exists for an update
-      const jobPosting = jobDto.id 
+      const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-            where: { id: jobDto.id, is_deleted: false },
-          })
+          where: { id: jobDto.id, is_deleted: false },
+        })
         : null;
 
-        return WriteResponse(
-            200,
-            jobPosting,
-            jobPosting
-                ? 'Job Posting updated successfully.'
-                : 'Job Posting created successfully.',
-        );
+      return WriteResponse(
+        200,
+        jobPosting,
+        jobPosting
+          ? 'Job Posting updated successfully.'
+          : 'Job Posting created successfully.',
+      );
     } catch (error) {
-        console.error('Error occurred during createOrUpdate process:', error.message);
-        return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+      console.error('Error occurred during createOrUpdate process:', error.message);
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
-}
+  }
 
 
-  
-  
+
+
+
+  // async paginateJobPostings(pagination: IPagination) {
+  //   try {
+  //     const { curPage = 1, perPage = 10, whereClause } = pagination;
+
+  //     // Default whereClause to filter out deleted job postings
+  //     let lwhereClause = 'job.is_deleted = 0';
+
+  //     // Fields to search
+  //     const fieldsToSearch = [
+  //       'title',
+  //       'short_description',
+  //       'full_description',
+  //       'employer',
+  //       'job_type',
+  //       'work_type',
+  //       'qualifications',
+  //       'skills_required',
+  //       'date_published',
+  //       'deadline',
+  //       'assignment_duration',
+  //       'rank',
+  //       'required_experience',
+  //       'country_code',
+  //       'state_code',
+  //       'city',
+  //       'address',
+  //       'isActive',
+  //     ];
+
+  //     // Process whereClause
+  //     if (Array.isArray(whereClause)) {
+  //       fieldsToSearch.forEach((field) => {
+  //         const fieldValue = whereClause.find((p) => p.key === field)?.value;
+  //         if (fieldValue) {
+  //           lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
+  //         }
+  //       });
+
+  //       const allValues = whereClause.find((p) => p.key === 'all')?.value;
+  //       if (allValues) {
+  //         const searches = fieldsToSearch
+  //           .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
+  //           .join(' OR ');
+  //         lwhereClause += ` AND (${searches})`;
+  //       }
+
+  //       // Salary range filtering
+  //       const startSalary = whereClause.find((p) => p.key === 'start_salary')?.value;
+  //       const endSalary = whereClause.find((p) => p.key === 'end_salary')?.value;
+
+  //       if (startSalary && endSalary) {
+  //         lwhereClause += ` AND job.start_salary >= ${startSalary} AND job.end_salary <= ${endSalary}`;
+  //       }
+  //     }
+
+  //     const skip = (curPage - 1) * perPage;
+
+  //     // Fetch paginated data with user details
+  //     const [list, totalCount] = await this.jobPostingRepository
+  //       .createQueryBuilder('job')
+  //       .where(lwhereClause)
+  //       .skip(skip)
+  //       .take(perPage)
+  //       .orderBy('job.created_at', 'DESC')
+  //       .getManyAndCount();
+
+  //     const enrichedJobList = await Promise.all(
+  //       list.map(async (job) => {
+  //         const enrichedJob = {
+  //           ...job,
+  //         };
+  //         return enrichedJob;
+  //       }),
+  //     );
+
+  //     return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
+  //   } catch (error) {
+  //     console.error('Job Postings Pagination Error --> ', error);
+  //     return WriteResponse(500, error, `Something went wrong.`);
+  //   }
+  // }
 
   async paginateJobPostings(pagination: IPagination) {
     try {
@@ -137,9 +219,6 @@ export class JobPostingService {
             'assignment_duration',
             'rank',
             'required_experience',
-            'start_salary',
-            'end_salary',
-            'salary',
             'country_code',
             'state_code',
             'city',
@@ -162,6 +241,14 @@ export class JobPostingService {
                     .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
                     .join(' OR ');
                 lwhereClause += ` AND (${searches})`;
+            }
+
+            // Salary range filtering
+            const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value;
+            const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value;
+
+            if (salaryMin && salaryMax) {
+                lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
             }
         }
 
@@ -191,6 +278,8 @@ export class JobPostingService {
         return WriteResponse(500, error, `Something went wrong.`);
     }
 }
+
+
 
 
   async findAll() {
@@ -303,7 +392,7 @@ export class JobPostingService {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { id: jobId, is_deleted: false, jobpost_status: 'draft' },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(
           404,
@@ -311,12 +400,12 @@ export class JobPostingService {
           `Job with ID ${jobId} not found or is not in draft status.`,
         );
       }
-  
+
       jobPosting.jobpost_status = 'posted';
-      jobPosting.updated_by = userId; 
-  
+      jobPosting.updated_by = userId;
+
       const updatedJobPosting = await this.jobPostingRepository.save(jobPosting);
-  
+
       return WriteResponse(
         200,
         updatedJobPosting,
@@ -326,6 +415,6 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
-  
+
+
 }
