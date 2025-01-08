@@ -1,6 +1,34 @@
-import { IsNotEmpty, IsString, IsEmail, MinLength, IsOptional, IsEnum, IsBoolean, IsUUID, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEmail,
+  MinLength,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+  Matches,
+  Validate,
+  ValidationArguments,
+  ValidatorConstraint,
+  ValidatorConstraintInterface,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../enums/user-role.enums'; // Adjust the import path as necessary
+
+
+@ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
+export class IsNotWhitespace implements ValidatorConstraintInterface {
+  validate(value: string, args: ValidationArguments) {
+    if (typeof value !== 'string') return false;
+    return value.trim().length > 0; // Ensures the string is not empty or whitespace-only
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `${args.property} must not be empty or contain only whitespace.`;
+  }
+}
+
 
 export class CreateUserDto {
   @ApiPropertyOptional({
@@ -8,78 +36,120 @@ export class CreateUserDto {
     description: 'The unique identifier of the user for updates. Must be a valid UUID if provided.',
   })
   @IsOptional()
-  @IsUUID()
+  @IsUUID(undefined, { message: 'id must be a valid UUID.' })
   id?: string; // Optional for updates
+
   @ApiProperty({
     example: 'John',
     description: 'The first name of the user.',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'firstName must be a valid string.' })
+  @IsNotEmpty({ message: 'firstName is required.' })
+  @Validate(IsNotWhitespace)
+  @Transform(({ value }) => value?.trim())
   firstName: string;
 
   @ApiProperty({
     example: 'Doe',
     description: 'The last name of the user.',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'lastName must be a valid string.' })
+  @IsNotEmpty({ message: 'lastName is required.' })
+  @Validate(IsNotWhitespace)
+  @Transform(({ value }) => value?.trim())
   lastName: string;
 
   @ApiProperty({
     example: 'john.doe@example.com',
     description: 'The email address of the user.',
   })
-  @IsEmail()
-  @IsNotEmpty()
+  @IsEmail({}, { message: 'email must be a valid email address.' })
+  @IsNotEmpty({ message: 'email is required.' })
+  @Transform(({ value }) => value?.trim())
   email: string;
 
   @ApiProperty({
     example: 'securePassword123!',
-    description: 'The password of the user (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
+    description:
+      'The password of the user (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
   })
-  @IsString()
-  @MinLength(6)
-  @IsNotEmpty()
+  @IsString({ message: 'password must be a valid string.' })
+  @IsNotEmpty({ message: 'password is required.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message: 'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    message:
+      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
   })
-  password?: string; // Updated validation
+  @Transform(({ value }) => value?.trim())
+  password: string;
 
   @ApiPropertyOptional({
     example: UserRole.APPLICANT,
     enum: UserRole,
     description: 'The role of the user.',
   })
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { message: `role must be one of ${Object.values(UserRole).join(', ')}.` })
   @IsOptional()
-  role: string = UserRole.APPLICANT; // Default value set to UserRole.APPLICANT
- 
+  role: string = UserRole.APPLICANT;
 }
+
 
 export class forgetPasswordDto {
-  @IsEmail()
-  @IsNotEmpty()
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'The email address of the user requesting password reset.',
+  })
+  @IsEmail({}, { message: 'email must be a valid email address.' })
+  @IsNotEmpty({ message: 'email is required.' })
+  @Transform(({ value }) => value?.trim())
   email: string;
 }
+
+
 export class LoginDTO {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'The email address of the user.',
+  })
+  @IsEmail({}, { message: 'email must be a valid email address.' })
+  @IsNotEmpty({ message: 'email is required.' })
+  @Transform(({ value }) => value?.trim())
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'securePassword123!',
+    description: 'The password of the user.',
+  })
+  @IsString({ message: 'password must be a valid string.' })
+  @IsNotEmpty({ message: 'password is required.' })
+  @Transform(({ value }) => value?.trim())
   password: string;
 }
 
+
 export class ResetPasswordDto {
+  @ApiProperty({
+    example: 'valid-reset-token',
+    description: 'The reset token provided for password reset.',
+  })
+  @IsString({ message: 'token must be a valid string.' })
+  @IsNotEmpty({ message: 'token is required.' })
+  @Validate(IsNotWhitespace)
+  @Transform(({ value }) => value?.trim())
   token: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(6, {
-    message: 'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers.',
+  @ApiProperty({
+    example: 'newSecurePassword123!',
+    description:
+      'The new password (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
   })
+  @IsString({ message: 'newPassword must be a valid string.' })
+  @IsNotEmpty({ message: 'newPassword is required.' })
+  @MinLength(6, { message: 'New password must be at least 6 characters long.' })
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message: 'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    message:
+      'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
   })
+  @Transform(({ value }) => value?.trim())
   newPassword: string;
 }
