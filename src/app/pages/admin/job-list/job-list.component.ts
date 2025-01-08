@@ -36,9 +36,9 @@ export class JobListComponent {
     translate: (value: number, label: LabelType): string => {
       switch (label) {
         case LabelType.Low:
-          return "<b>Min salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+          return "<b>Start salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
         case LabelType.High:
-          return "<b>Max salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
+          return "<b>End salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
         default:
           return "$" + value;
       }
