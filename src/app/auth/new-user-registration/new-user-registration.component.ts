@@ -18,6 +18,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrl: './new-user-registration.component.css',
 })
 export class NewUserRegistrationComponent {
+  showPassword:boolean = false
   registrationForm: FormGroup;
   loading: boolean = false;
   errorMessage: string | null = null;
@@ -51,7 +52,9 @@ export class NewUserRegistrationComponent {
     trimmedValues.lastName = trimmedValues.lastName.trim();
     this.registrationForm.setValue(trimmedValues);
   }
-
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   onSubmit(): void {
     this.spinner.show();

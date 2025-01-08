@@ -16,6 +16,7 @@ import { NotifyService } from "../../core/services/notify.service";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  showPassword: boolean = false;
   loginForm!: FormGroup;
 
   constructor(
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
   ) { }
   ngOnInit(): void {
     this.initializeLoginForm();
+   
     this.loadRememberedCredentials();
     
     // this.loginForm = this._formBuilder.group({
@@ -43,6 +45,11 @@ export class LoginComponent implements OnInit {
       rememberMe: [false]
     });
   }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+  
   // signIn(): void {
   //   // Validate form before proceeding
   //   if (this.loginForm.invalid) {
@@ -108,6 +115,7 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
+            
             this._authService.accessToken = response.data.token;
             localStorage.setItem("user", JSON.stringify(response.data.User));
 
@@ -117,8 +125,8 @@ export class LoginComponent implements OnInit {
               this.clearSavedCredentials();
             }
 
-            this.notify.showSuccess('Login successful!');
-            this._router.navigateByUrl('/job-list'); // Redirect to job list
+            this._router.navigateByUrl('/job-list');
+            // this.notify.showSuccess('Login successful!');
           } else {
             this.notify.showError(response.message);
           }

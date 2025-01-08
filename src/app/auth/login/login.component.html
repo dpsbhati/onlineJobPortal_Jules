@@ -14,25 +14,43 @@
 
     <div>
         <label for="password">Password:</label>
-        <input id="password" type="password" formControlName="password" />
-        <button type="button" (click)="navigateToForgotPassword()">Forgot Password?</button>
-        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-            <small *ngIf="loginForm.get('password')?.errors?.['required']" style="color: red;">
-                Password is required.
-            </small>
-            <small *ngIf="loginForm.get('password')?.errors?.['minlength']" style="color: red;">
-                Password must be at least 6 characters long.
-            </small>
-        </div>
-        <!-- <button type="button" (click)="navigateToResetPassword()">Reset Password?</button> -->
 
-    </div>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+           
+          />
+          <button
+            type="button"
+            (click)="togglePasswordVisibility()"
+           
+          >
+            <i
+              [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+            
+            ></i>
+          </button>
+       <div>
+        <button type="button" (click)="navigateToForgotPassword()">Forgot Password?</button>
+       </div>
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <small *ngIf="loginForm.get('password')?.errors?.['required']" style="color: red;">
+            Password is required.
+          </small>
+          <small *ngIf="loginForm.get('password')?.errors?.['minlength']" style="color: red;">
+            Password must be at least 6 characters long.
+          </small>
+        </div>
+      </div>
+      
 
     <div>
         <input id="rememberMe" type="checkbox" formControlName="rememberMe" />
         <label for="rememberMe">Remember Me?</label>
     </div>
-
+<div>
     <button type="submit">Login</button>
     <button type=" submit" (click)=" navigateToNewuserRegistartion()">New User Registration</button>
+</div>
 </form>

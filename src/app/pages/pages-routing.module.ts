@@ -8,6 +8,7 @@ const routes: Routes = [
   // {
   //   path: 'user-profile', component: UserProfileComponent
   // },
+  
   { path: 'user-profile', component: UserProfileComponent },
   {
     path: 'create-job-posting',

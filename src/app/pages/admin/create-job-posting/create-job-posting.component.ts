@@ -86,6 +86,7 @@ export class CreateJobPostingComponent {
       this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
    this.listenToSocialMediaType();
   }
+  
   listenToSocialMediaType(): void {
     this.jobForm.get('social_media_type')?.valueChanges.subscribe((value) => {
       const postedAtControl = this.jobForm.get('posted_at');
