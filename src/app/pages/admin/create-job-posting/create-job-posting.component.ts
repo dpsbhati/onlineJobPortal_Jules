@@ -124,6 +124,7 @@ export class CreateJobPostingComponent {
   
   
   sanitizeFormValues(): void {
+  
     Object.keys(this.jobForm.controls).forEach(key => {
       const control = this.jobForm.get(key);
       if (control && typeof control.value === 'string') {
@@ -160,18 +161,33 @@ export class CreateJobPostingComponent {
   
   
   getJobPosting(jobId: string): void {
+    
     this.spinner.show();
     this.adminService.getJobById(jobId).subscribe((response: any) => {
       if (response.statusCode === 200 && response.data) {
         this.spinner.hide()
         const data = response.data;
-           console.log(data);
+          //  console.log(data);
+          // const formattedImageUrl = data.featured_image.replace(/\\/g, '/');
+          // this.jobForm.patchValue({featured_image: formattedImageUrl,});
            const formattedDatePublished = formatDate(data.date_published, 'yyyy-MM-dd', 'en-US');
            const formattedDeadline = formatDate(data.deadline, 'yyyy-MM-dd', 'en-US');
-           const formattedPostedAt = data.posted_at
-           ? new Date(data.posted_at).toISOString().slice(0, 16) 
-           : '';
 
+          //  const formattedPostedAt = data.posted_at
+          //  ? new Date(data.posted_at).toISOString().slice(0, 16) 
+          //  : '';
+          //  const formattedPostedAt = data.posted_at
+          //  ? new Date(data.posted_at).toLocaleString('en-GB', {
+          //      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          //      year: 'numeric',
+          //      month: '2-digit',
+          //      day: '2-digit',
+          //      hour: '2-digit',
+          //      minute: '2-digit',
+          //    }).replace(',', '') // Optional: Remove comma for formatting
+          //  : '';
+
+     
            const formattedStartSalary = data.start_salary
            ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
            : '';
@@ -198,7 +214,7 @@ export class CreateJobPostingComponent {
           country_code: data.country_code || '',
           address: data.address || '',
           social_media_type: data.social_media_type || 'facebook',
-          posted_at: formattedPostedAt,
+          posted_at: data.posted_at,
           jobpost_status: data.jobpost_status || 'draft',
           // work_type: data.work_type || '',
           // file_path: data.file || null,
@@ -283,6 +299,14 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
+      // if (formValues.posted_at) {
+      //   const localDate = new Date(formValues.posted_at);
+      //   formValues.posted_at = localDate.toISOString(); // Convert to UTC ISO format
+      // }
+    //     if (formValues.posted_at) {
+    //   const localDate = new Date(formValues.posted_at);
+    //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
+    // }
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
       }

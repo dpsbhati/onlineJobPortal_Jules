@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   signIn(): void {
+    this.spinner.show();
     // Validate form before proceeding
     if (this.loginForm.invalid) {
       this.notify.showWarning('Please fill in all required fields correctly.');
@@ -41,7 +42,6 @@ export class LoginComponent implements OnInit {
     }
 
     // Show loading spinner
-    this.spinner.show();
 
     // Disable form to prevent multiple submissions
     this.loginForm.disable();
@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit {
         next: (response) => {
           // console.log(response);
           if (response.statusCode === 200) {
+            this.spinner.hide()
             this._authService.accessToken = response.data.token;
             localStorage.setItem("user", JSON.stringify(response.data.User));
             this.notify.showSuccess('Login successful!');
@@ -65,10 +66,12 @@ export class LoginComponent implements OnInit {
             // this._router.navigate(['/create-job-posting'])
             // this._router.navigateByUrl('/create-job-posting'); // Redirect to dashboard
           } else {
+            this.spinner.hide()
             this.notify.showError(response.message);
           }
         },
         error: (error) => {
+          this.spinner.hide()
           console.log(error);
           this.notify.showError('Login failed.');
         }

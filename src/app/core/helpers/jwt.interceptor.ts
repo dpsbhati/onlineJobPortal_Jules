@@ -35,7 +35,10 @@ export const JwtInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): 
     // the user out from the app.
     if (authService.accessToken) {
         newReq = req.clone({
-            headers: req.headers.set('Authorization', 'Bearer ' + authService.accessToken),
+            headers: req.headers.
+            set('Authorization', 'Bearer ' + authService.accessToken)
+            // .set('ngrok-skip-browser-warning', '1234 ')
+            // .set('User-Agent', 'CustomUserAgent/1.0 (Compatible; Testing/1.0)')
         });
     }
 
@@ -45,10 +48,10 @@ export const JwtInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): 
             // Catch "401 Unauthorized" responses
             if (error instanceof HttpErrorResponse && error.status === 401) {
                 // Sign out
-                //authService.logout();
+                authService.logout();
 
                 // Reload the app
-                //location.reload();
+                location.reload();
             }
 
             if (error instanceof HttpErrorResponse && error.status === 500) {
