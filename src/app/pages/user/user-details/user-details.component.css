@@ -46,3 +46,12 @@
   .button{
     width: 50px
   }
+  button:disabled {
+    background-color: #ccc; /* Gray background for disabled button */
+    color: #666; /* Light gray text */
+    cursor: not-allowed; /* Change cursor to show it's not clickable */
+    border: 1px solid #999; /* Slightly darker border for distinction */
+    opacity: 0.6; /* Reduce opacity for a disabled look */
+    transition: background-color 0.3s, color 0.3s;
+  }
+  

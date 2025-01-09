@@ -29,9 +29,9 @@ export class UserDetailsComponent {
       job_id : new FormControl (this.jobId),
       user_id : new FormControl(this.user),
       work_experiences: new FormControl('', Validators.required),
-      additional_info: new FormControl(''),
+      additional_info: new FormControl('', Validators.required),
       description: new FormControl('', Validators.required),
-      comments: new FormControl(''),
+      comments: new FormControl('',  Validators.required),
       cv_path: new FormControl('', Validators.required),
       certification_path: new FormControl('', Validators.required),
     });
@@ -118,7 +118,7 @@ export class UserDetailsComponent {
     this.spinner.show();
     this.submitted = true;
 
-    if (this.userDetailsForm.valid) {
+    if (this.userDetailsForm.valid  && this.fileUploaded) {
       this.sanitizeFormValues();
       const formData = this.userDetailsForm.value; 
       const apiPayload = {
