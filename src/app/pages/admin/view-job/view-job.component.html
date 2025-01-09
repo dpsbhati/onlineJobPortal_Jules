@@ -8,9 +8,15 @@
 
   <div class="job-details" *ngIf="jobDetails; else loading">
     <div class="job-header">
-      <h2>{{ jobDetails.title }}</h2>
+      <div class="title-section">
+        <label>Job Title</label>
+        <h2>{{ jobDetails.title }}</h2>
+      </div>
       <div class="company-info">
-        <span class="employer">{{ jobDetails.employer }}</span>
+        <div class="employer-section">
+          <label>Employer Name</label>
+          <span class="employer">{{ jobDetails.employer }}</span>
+        </div>
         <span class="location" *ngIf="jobDetails.address">
           <i class="fas fa-map-marker-alt"></i> {{ jobDetails.address }}
         </span>
