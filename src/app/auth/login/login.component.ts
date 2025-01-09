@@ -45,8 +45,7 @@ export class LoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
   
-  signIn(): void {
-  
+  async signIn(): Promise<void> {
     // Validate form before proceeding
     if (this.loginForm.invalid) {
       this.notify.showWarning('Please fill in all required fields correctly.');
@@ -55,42 +54,40 @@ export class LoginComponent implements OnInit {
 
     this.spinner.show();
 
-    this._authService.login(this.loginForm.value)
-      .pipe(
-        finalize(() => this.spinner.hide())
-      )
-      .subscribe({
-        next: (response) => {
-          if (response.statusCode === 200) {
-            this.spinner.hide()
-            this._authService.accessToken = response.data.token;
-            localStorage.setItem("user", JSON.stringify(response.data.User));
+    try {
+      const response = await this._authService.login(this.loginForm.value).toPromise();
+      
+      if (response.statusCode === 200) {
+        const userData = response.data.User;
+        
+        // Set token
+        this._authService.accessToken = response.data.token;
+        
+        // Wait for user data to be set
+        await this._authService.setCurrentUser(userData);
 
-            if (this.loginForm.value.rememberMe) {
-              this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
-            } else {
-              this.clearSavedCredentials();
-            }
-
-            // Navigate based on role
-            const user = response.data.User;
-            if (user.role === 'ADMIN') {
-              this._router.navigateByUrl('/job-list');
-            } else {
-              this._router.navigateByUrl('/job-list');
-            }
-            
-          } else {
-            this.spinner.hide()
-            this.notify.showError(response.message);
-          }
-        },
-        error: (error) => {
-          this.spinner.hide()
-          console.log(error);
-          this.notify.showError('Login failed.');
+        // Handle remember me
+        if (this.loginForm.value.rememberMe) {
+          this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
+        } else {
+          this.clearSavedCredentials();
         }
-      });
+
+        // Navigate after ensuring user data is set
+        if (userData.role === 'ADMIN') {
+          await this._router.navigate(['/job-list'], { replaceUrl: true });
+        } else {
+          await this._router.navigate(['/job-list'], { replaceUrl: true });
+        }
+      } else {
+        this.notify.showError(response.message);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      this.notify.showError('Login failed.');
+    } finally {
+      this.spinner.hide();
+    }
   }
 
   // Remember Me functionality
