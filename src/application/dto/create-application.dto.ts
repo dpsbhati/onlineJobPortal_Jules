@@ -13,7 +13,9 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-
+/**
+ * Custom Validator: Ensures strings are not just whitespace
+ */
 @ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
 export class IsNotWhitespace implements ValidatorConstraintInterface {
   validate(value: string, args: ValidationArguments) {
@@ -26,7 +28,9 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
   }
 }
 
-
+/**
+ * DTO for Job Application
+ */
 export class CreateApplicationDto {
   @ApiProperty({
     description: 'The unique identifier of the job posting.',
@@ -77,6 +81,18 @@ export class CreateApplicationDto {
   @Transform(({ value }) => value?.trim())
   @IsOptional()
   cv_path?: string;
+
+  @ApiPropertyOptional({
+    description: 'The file path for certifications (optional). Must be one of pdf, image, or doc formats.',
+    example: '/uploads/certifications/certification.pdf',
+  })
+  @IsString({ message: 'certification_path must be a valid string.' })
+  @Matches(/\.(pdf|jpg|jpeg|png|doc|docx)$/i, {
+    message: 'certification_path must be a valid file path ending with .pdf, .jpg, .jpeg, .png, .doc, or .docx.',
+  })
+  @Transform(({ value }) => value?.trim())
+  @IsOptional()
+  certification_path?: string;
 
   @ApiPropertyOptional({
     description: 'Additional information provided by the applicant (optional).',

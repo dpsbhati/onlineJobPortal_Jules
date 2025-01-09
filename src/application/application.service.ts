@@ -15,38 +15,51 @@ export class ApplicationService {
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
-    const { job_id, user_id } = createApplicationDto;
-  
+    const { job_id, user_id, certification_path } = createApplicationDto;
+
+    // Validate the certification file format
+    if (
+      certification_path &&
+      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(certification_path)
+    ) {
+      return WriteResponse(
+        400,
+        {},
+        'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
+      );
+    }
+
     // Check if the user has already applied for this job
     const existingApplication = await this.applicationRepository.findOne({
       where: {
-        job: { id: job_id }, 
+        job: { id: job_id },
         user: { id: user_id },
         is_deleted: false,
       },
     });
-  
+
     if (existingApplication) {
       return WriteResponse(409, [], 'You have already applied for this job.');
     }
-  
+
     // Create a new application
     const application = this.applicationRepository.create({
-      job: { id: job_id }, // Reference the job relation
-      user: { id: user_id }, // Reference the user relation
+      job: { id: job_id },
+      user: { id: user_id },
       status: 'Pending',
       description: createApplicationDto.description,
       comments: createApplicationDto.comments,
       cv_path: createApplicationDto.cv_path,
+      certification_path, // New field
       additional_info: createApplicationDto.additional_info,
       work_experiences: createApplicationDto.work_experiences,
       created_by: user_id,
       updated_by: user_id,
     });
-  
+
     return await this.applicationRepository.save(application);
   }
-  
+
   async findAll() {
     try {
       const applications = await this.applicationRepository.find({
@@ -76,18 +89,29 @@ export class ApplicationService {
   async findOne(id: string) {
     const application = await this.applicationRepository.findOne({
       where: { id, is_deleted: false },
-      relations: ['job', 'user'], // Use property names of relations
+      relations: ['job', 'user'],
     });
-  
+
     if (!application) {
       throw new NotFoundException(`Application with ID ${id} not found.`);
     }
-  
+
     return application;
   }
-  
+
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     const application = await this.findOne(id);
+    if (
+      updateApplicationDto.certification_path &&
+      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(updateApplicationDto.certification_path)
+    ) {
+      return WriteResponse(
+        400,
+        {},
+        'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
+      );
+    }
+
     Object.assign(application, updateApplicationDto);
     return await this.applicationRepository.save(application);
   }
@@ -100,59 +124,59 @@ export class ApplicationService {
 
   async paginateApplications(pagination: IPagination) {
     try {
-        const { curPage = 1, perPage = 10, whereClause } = pagination;
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-        let lwhereClause = 'app.is_deleted = 0';
+      let lwhereClause = 'app.is_deleted = 0';
 
-        const fieldsToSearch = [
-            'status',
-            'description',
-            'comments',
-            'additional_info',
-            'work_experiences',
-            'user.first_name',
-            'user.last_name',
-            'job.title',
-        ];
+      const fieldsToSearch = [
+        'status',
+        'description',
+        'comments',
+        'additional_info',
+        'work_experiences',
+        'certification_path', // Added for search
+        'user.first_name',
+        'user.last_name',
+        'job.title',
+      ];
 
-        if (Array.isArray(whereClause)) {
-            fieldsToSearch.forEach((field) => {
-                const fieldValue = whereClause.find((p) => p.key === field)?.value;
-                if (fieldValue) {
-                    lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
-                }
-            });
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
+          }
+        });
 
-            const allValues = whereClause.find((p) => p.key === 'all')?.value;
-            if (allValues) {
-                const searches = fieldsToSearch
-                    .map((field) => `${field} LIKE '%${allValues}%'`)
-                    .join(' OR ');
-                lwhereClause += ` AND (${searches})`;
-            }
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((field) => `${field} LIKE '%${allValues}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
         }
+      }
 
-        const skip = (curPage - 1) * perPage;
+      const skip = (curPage - 1) * perPage;
 
-        const [list, totalCount] = await this.applicationRepository
-            .createQueryBuilder('app')
-            .leftJoinAndSelect('app.job', 'job')
-            .leftJoinAndSelect('app.user', 'user')
-            .where(lwhereClause)
-            .skip(skip)
-            .take(perPage)
-            .orderBy('app.created_at', 'DESC')
-            .getManyAndCount();
+      const [list, totalCount] = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        .where(lwhereClause)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('app.created_at', 'DESC')
+        .getManyAndCount();
 
-        const enrichedApplications = list.map((application) => ({
-            ...application,
-        }));
+      const enrichedApplications = list.map((application) => ({
+        ...application,
+      }));
 
-        return paginateResponse(enrichedApplications, totalCount, curPage, perPage);
+      return paginateResponse(enrichedApplications, totalCount, curPage, perPage);
     } catch (error) {
-        console.error('Application Pagination Error --> ', error);
-        return WriteResponse(500, {}, `Something went wrong.`);
+      console.error('Application Pagination Error --> ', error);
+      return WriteResponse(500, {}, `Something went wrong.`);
     }
-}
-
+  }
 }

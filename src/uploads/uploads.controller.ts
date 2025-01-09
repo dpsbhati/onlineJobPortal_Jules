@@ -53,6 +53,7 @@ export class UploadsController {
           'image/png',
           'video/mp4',
           'application/msword', // .doc
+          'application/pdf', // .doc
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
         ];
 

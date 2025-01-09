@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const isProd = process.env.NODE_ENV === 'production';
 
-  console.log(isProd, " ENV");
+  console.log(isProd, ' ENV');
 
   app.enableCors({
     origin: '*',
@@ -23,10 +23,10 @@ async function bootstrap() {
   // app.use('/api/', express.static(join(__dirname, 'uploads')));
 
   // Environment-specific static file handling
-    // app.use('/api', express.static(join(__dirname, 'upload')));
-    // app.use('/api/images', express.static(join(__dirname, 'public', 'upload')));
-    app.use('/api/public/', express.static(join(__dirname, 'public')));
-  
+  // app.use('/api', express.static(join(__dirname, 'upload')));
+  // app.use('/api/images', express.static(join(__dirname, 'public', 'upload')));
+  app.use('/api/public/', express.static(join(__dirname, 'public')));
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -51,6 +51,7 @@ async function bootstrap() {
     customSiteTitle: 'onlinejobportal',
   });
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3002);
+  // await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
