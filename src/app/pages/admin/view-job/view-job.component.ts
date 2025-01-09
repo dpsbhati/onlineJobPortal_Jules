@@ -16,6 +16,7 @@ export class ViewJobComponent implements OnInit {
   jobDetails: any;
   loading: boolean = true;
   error: string = '';
+  id:any;
   
   constructor(
     private route: ActivatedRoute,
@@ -26,9 +27,9 @@ export class ViewJobComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id') as string;
-    if (id) {
-      this.loadJobDetails(id);
+    this.id = this.route.snapshot.paramMap.get('id') as string;
+    if (this.id) {
+      this.loadJobDetails(this.id);
     }
   }
 
@@ -54,5 +55,9 @@ export class ViewJobComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/job-list']);
+  }
+   
+  navigate(){
+    this.router.navigate([`/user-details/${this.id}`]);
   }
 }

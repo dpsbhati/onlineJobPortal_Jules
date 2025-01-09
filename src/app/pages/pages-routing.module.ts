@@ -5,6 +5,7 @@ import { CreateJobPostingComponent } from './admin/create-job-posting/create-job
 import { JobListComponent } from './admin/job-list/job-list.component';
 import { roleGuard } from '../core/guards/role.guard';
 import { ViewJobComponent } from './admin/view-job/view-job.component';
+import { UserDetailsComponent } from './user/user-details/user-details.component';
 
 const routes: Routes = [
   { 
@@ -31,6 +32,14 @@ const routes: Routes = [
     path: 'view-job/:id',
     component: ViewJobComponent,
     canActivate: [() => roleGuard(['ADMIN', 'applicant'])]
+  },
+  {
+    path : 'user-details',
+    component : UserDetailsComponent
+  },
+  {
+    path : 'user-details/:id',
+    component : UserDetailsComponent
   }
 ];
 

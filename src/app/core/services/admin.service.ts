@@ -50,6 +50,10 @@ export class AdminService {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
 
+  applyJobs(payload: any): Observable<any> {
+    return this.genericService.Post(`applications/apply`, payload);
+  }
+
   // getJobPostings(params: {
   //   page?: number;
   //   limit?: number;

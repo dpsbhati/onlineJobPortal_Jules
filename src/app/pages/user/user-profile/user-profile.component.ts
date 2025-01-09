@@ -350,4 +350,5 @@ export class UserProfileComponent implements OnInit {
   navigate(){
     this.router.navigate(['/job-list']);
   }
+
 }
