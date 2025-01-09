@@ -75,20 +75,21 @@ export class CreateApplicationDto {
     example: '/uploads/cv/johndoe_cv.pdf',
   })
   @IsString({ message: 'cv_path must be a valid string.' })
-  @Matches(/^\/uploads\/cv\/.+\.pdf$/, {
-    message: 'CV path must be a valid file path ending with .pdf.',
+  @Matches(/^\/uploads\/cv\/.+\.(pdf|doc|docx)$/i, {
+    message:
+      'CV path must be a valid file path ending with .pdf, .doc, or .docx.',
   })
-  @Transform(({ value }) => value?.trim())
-  @IsOptional()
   cv_path?: string;
 
   @ApiPropertyOptional({
-    description: 'The file path for certifications (optional). Must be one of pdf, image, or doc formats.',
+    description:
+      'The file path for certifications (optional). Must be one of pdf, image, or doc formats.',
     example: '/uploads/certifications/certification.pdf',
   })
   @IsString({ message: 'certification_path must be a valid string.' })
   @Matches(/\.(pdf|jpg|jpeg|png|doc|docx)$/i, {
-    message: 'certification_path must be a valid file path ending with .pdf, .jpg, .jpeg, .png, .doc, or .docx.',
+    message:
+      'certification_path must be a valid file path ending with .pdf, .jpg, .jpeg, .png, .doc, or .docx.',
   })
   @Transform(({ value }) => value?.trim())
   @IsOptional()
@@ -108,7 +109,8 @@ export class CreateApplicationDto {
   additional_info?: string;
 
   @ApiPropertyOptional({
-    description: 'Previous work experiences shared by the applicant (optional).',
+    description:
+      'Previous work experiences shared by the applicant (optional).',
     example: 'Worked as a senior software developer at XYZ Corp.',
   })
   @IsString({ message: 'work_experiences must be a valid string.' })

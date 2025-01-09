@@ -6,6 +6,8 @@ import { applications } from './entities/application.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { IPagination } from 'src/shared/paginationEum';
+import * as nodemailer from 'nodemailer';
+
 
 @Injectable()
 export class ApplicationService {
@@ -16,7 +18,7 @@ export class ApplicationService {
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
     const { job_id, user_id, certification_path } = createApplicationDto;
-
+  
     // Validate the certification file format
     if (
       certification_path &&
@@ -28,7 +30,7 @@ export class ApplicationService {
         'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
       );
     }
-
+  
     // Check if the user has already applied for this job
     const existingApplication = await this.applicationRepository.findOne({
       where: {
@@ -37,11 +39,11 @@ export class ApplicationService {
         is_deleted: false,
       },
     });
-
+  
     if (existingApplication) {
       return WriteResponse(409, [], 'You have already applied for this job.');
     }
-
+  
     // Create a new application
     const application = this.applicationRepository.create({
       job: { id: job_id },
@@ -56,8 +58,27 @@ export class ApplicationService {
       created_by: user_id,
       updated_by: user_id,
     });
-
-    return await this.applicationRepository.save(application);
+  
+    const savedApplication = await this.applicationRepository.save(application);
+  
+    // Fetch job and user details for the email
+    const jobDetails = await this.applicationRepository
+      .createQueryBuilder('app')
+      .leftJoinAndSelect('app.job', 'job')
+      .leftJoinAndSelect('app.user', 'user')
+      .where('app.id = :id', { id: savedApplication.id })
+      .getOne();
+  
+    if (jobDetails) {
+      // Send confirmation email
+      await this.sendConfirmationEmail(jobDetails);
+    }
+  
+    return WriteResponse(
+      200,
+      savedApplication,
+      'Application submitted successfully.',
+    );
   }
 
   async findAll() {
@@ -134,7 +155,7 @@ export class ApplicationService {
         'comments',
         'additional_info',
         'work_experiences',
-        'certification_path', // Added for search
+        'certification_path', 
         'user.first_name',
         'user.last_name',
         'job.title',
@@ -179,4 +200,41 @@ export class ApplicationService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+
+  private async sendConfirmationEmail(application: any) {
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail', 
+      auth: {
+        user: process.env.EMAIL_USER, // Your email address
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+  
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: application.user.email, 
+      subject: `Application Confirmation for ${application.job.title}`,
+      text: `Dear ${application.user.firstName},
+  
+  Thank you for applying for the position of ${application.job.title}.
+  
+  Your application has been received and is currently under review. We will contact you if your profile matches our requirements.
+  
+  Best regards,
+  Hiring Team`,
+      html: `<p>Dear ${application.user.firstName},</p>
+        <p>Thank you for applying for the position of <strong>${application.job.title}</strong>.</p>
+        <p>Your application has been received and is currently under review. We will contact you if your profile matches our requirements.</p>
+        <p>Best regards,<br>Hiring Team</p>`,
+    };
+  
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('Confirmation email sent successfully.');
+    } catch (error) {
+      console.error('Failed to send confirmation email:', error.message);
+    }
+  }
+
+
 }
