@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserProfileComponent } from './user/user-profile/user-profile.component';
 import { CreateJobPostingComponent } from './admin/create-job-posting/create-job-posting.component';
 import { JobListComponent } from './admin/job-list/job-list.component';
-
+import { UserDetailsComponent } from './user/user-details/user-details.component';
 const routes: Routes = [
   // {
   //   path: 'user-profile', component: UserProfileComponent
@@ -19,6 +19,10 @@ const routes: Routes = [
   },
   {path : 'job-list',
     component : JobListComponent
+  },
+  {
+    path: 'user-details',
+    component : UserDetailsComponent
   }
 
 ];

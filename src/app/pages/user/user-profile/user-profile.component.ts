@@ -315,4 +315,8 @@ export class UserProfileComponent implements OnInit {
   navigate(){
     this.router.navigate(['/job-list']);
   }
+  
+  navigate2(){
+    this.router.navigate(['/user-details']);
+  }
 }
