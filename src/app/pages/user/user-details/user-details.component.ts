@@ -144,4 +144,7 @@ export class UserDetailsComponent {
      this.spinner.hide();
     }
   }
+  naviagte(){
+    this.router.navigate(['/job-list']);
+  }
 }

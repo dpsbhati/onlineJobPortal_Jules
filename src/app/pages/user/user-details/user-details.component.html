@@ -1,3 +1,6 @@
+<div>
+  <button class="button" (click)="naviagte()"> back</button>
+</div>
 <div class="form-container">
   <form [formGroup]="userDetailsForm">
 
@@ -22,7 +25,12 @@
       <label for="additional_info">Additional Information:</label>
       <textarea id="additional_info" formControlName="additional_info"></textarea>
     </div>
-
+    <div>
+      <h2>Upload Section</h2>
+      <label for="cv_path">Upload:</label>
+      <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc" />
+      <div *ngIf="fileError" class="error">{{ fileError }}</div>
+    </div>
     <div>
       <label for="certification_path">Upload Certification:</label>
       <input id="certification_path" type="file" (change)="onFileChange($event, 'certification_path')" accept=".pdf, .doc" />
@@ -38,15 +46,8 @@
       <input id="cv_path" type="file" (change)="onFileChange($event, 'file_path')" accept=".pdf, .doc" />
       <div *ngIf="fileError" class="error">{{ fileError }}</div> -->
       
-      <div>
-        <h2>Cv Upload</h2>
-        <label for="cv_path">Upload:</label>
-        <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc" />
-        <div *ngIf="fileError" class="error">{{ fileError }}</div>
-      </div>
-      <div *ngIf="userDetailsForm.get('cv_path')?.invalid && userDetailsForm.get('cv_path')?.touched" class="text-danger">
-        File Path is required.
-      </div>
+     
+     
    
     </div>
 
