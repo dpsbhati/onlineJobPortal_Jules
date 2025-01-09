@@ -5,10 +5,9 @@ import { AuthGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'auth/login', // Redirect to the login page
-    pathMatch: 'full', // Ensure it only matches the empty path
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
   },
-
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
@@ -16,7 +15,7 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule),
-    canActivate:[AuthGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'email-activation',
@@ -24,5 +23,8 @@ export const routes: Routes = [
       { path: 'email-activation', component: EmailActivationComponent },
     ],
   },
-
+  {
+    path: '**',
+    redirectTo: 'auth/login'
+  }
 ];

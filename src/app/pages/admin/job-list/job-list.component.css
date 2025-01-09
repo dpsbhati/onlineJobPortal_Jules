@@ -204,3 +204,21 @@
   color: #555; /* Icon color */
   pointer-events: none; /* Prevent the icon from interfering with clicks */
 }
+
+.view-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.view-button:hover {
+  background-color: #45a049;
+}
+
+.view-button i {
+  margin-right: 5px;
+}

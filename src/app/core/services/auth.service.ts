@@ -12,6 +12,7 @@ import { GenericService } from './generic.service';
 
 import { UserService } from './user/user.service';
 import { LocalStorageService } from './local-stoarge.service';
+import { UserRole } from '../enums/roles.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -22,8 +23,8 @@ export class AuthService {
   private _userService = inject(UserService);
   // private _roleService = inject(RoleService);
 
-  private currentUserSubject: BehaviorSubject<{ role: string } | null>;
-  public currentUser: Observable<{ role: string } | null>;
+  private currentUserSubject: BehaviorSubject<any>;
+  public currentUser: Observable<any>;
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -31,7 +32,7 @@ export class AuthService {
   ) {
     const storedUser = this.localStorageService.GetItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
-    this.currentUserSubject = new BehaviorSubject<{ role: string } | null>(user);
+    this.currentUserSubject = new BehaviorSubject<any>(user);
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -48,6 +49,10 @@ export class AuthService {
 
   get accessToken(): string {
     return localStorage.getItem('accessToken') ?? '';
+  }
+
+  get currentUserValue(): any {
+    return this.currentUserSubject.value;
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -68,7 +73,6 @@ export class AuthService {
       })
     );
   }
-
 
   /**
    * Reset password
@@ -107,7 +111,7 @@ export class AuthService {
     return this._httpClient.post('api/auth/unlock-session', credentials);
   }
 
-  registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: string }): Observable<any> {
+  registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: UserRole }): Observable<any> {
     return this.genericService.Post('user/create-update', user)
     // .pipe(
     //   catchError((error) => {
@@ -124,7 +128,6 @@ export class AuthService {
       })
     );
   }
-  
 
   /**
    * Check the authentication status
@@ -146,8 +149,6 @@ export class AuthService {
   //   return of(false);
   // }
 
-
-
   /**
    * Decode JWT Token
    */
@@ -166,11 +167,30 @@ export class AuthService {
   /**
    * Get the current user
    */
-  get currentUserValue(): { role: string } | null {
+  getCurrentUser(): any {
     return this.currentUserSubject.value;
   }
 
-  getUser(): { role: string } | null {
-    return this.currentUserValue;
+  getUser(): any {
+    return this.getCurrentUser();
+  }
+
+  setCurrentUser(user: any): void {
+    if (user) {
+      this.localStorageService.SetItem('user', JSON.stringify(user));
+    } else {
+      this.localStorageService.RemoveItem('user');
+    }
+    this.currentUserSubject.next(user);
+  }
+
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return user?.role === UserRole.ADMIN;
+  }
+
+  isApplicant(): boolean {
+    const user = this.getCurrentUser();
+    return user?.role === UserRole.APPLICANT;
   }
 }

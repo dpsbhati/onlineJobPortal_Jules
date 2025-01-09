@@ -121,7 +121,9 @@
         <!-- <td>{{ job.work_type }}</td> -->
         <td>{{ job.country_code == '0' ? 'N/A' : job.country_code}}</td>
         <td class="actions">
-
+          <button (click)="viewJob(job.id)" class="action-button view-button">
+            <i class="fas fa-eye"></i>
+          </button>
           <button (click)="editJob(job.id)" class="action-button edit-button">
             <i class="fas fa-edit"></i>
           </button>

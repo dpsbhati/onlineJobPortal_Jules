@@ -1,26 +1,32 @@
 import { Injectable } from '@angular/core';
 
+interface RoleRoutes {
+  [key: string]: string[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class RoleService {
+  private roles: RoleRoutes = {
+    'ADMIN': [
+      '/create-job-posting',
+      '/job-list',
+      '/user-profile'
+    ],
+    'applicant': [
+      '/job-list',
+      '/user-profile'
+    ]
+  };
 
-  // private currentRole: string;
+  canAccess(userRole: string | undefined, route: string): boolean {
+    if (!userRole) return false;
+    
+    const allowedRoutes = this.roles[userRole];
+    if (!allowedRoutes) return false;
 
-  // setRole(role: string) {
-  //   this.currentRole = role;
-  // }
-
-  // getRole(): string {
-  //   return this.currentRole;
-  // }
-
-  // canAccess(link: string): boolean {
-  //   // return this.roles[this.currentRole]?.includes(link);
-  //   return this.roles[this.currentRole]?.some(allowedRoute => {
-  //     const routeRegex = new RegExp(`^${allowedRoute}$`);
-  //     return routeRegex.test(link);
-  //   });
-  // }
-
+    // Check if the route starts with any of the allowed routes
+    return allowedRoutes.some(allowedRoute => route.startsWith(allowedRoute));
+  }
 }

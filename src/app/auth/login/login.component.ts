@@ -7,6 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from "../../core/services/auth.service";
 import { NotifyService } from "../../core/services/notify.service";
+import { UserRole } from '../../core/enums/roles.enum';
 
 @Component({
   selector: 'app-login',
@@ -31,12 +32,6 @@ export class LoginComponent implements OnInit {
     this.initializeLoginForm();
    
     this.loadRememberedCredentials();
-    
-    // this.loginForm = this._formBuilder.group({
-    //   email: ["", [Validators.required, Validators.email]],
-    //   password: ["", [Validators.required, Validators.minLength(6)]],
-    //   rememberMe: [false]
-    // });
   }
   initializeLoginForm(): void {
     this.loginForm = this._formBuilder.group({
@@ -50,57 +45,8 @@ export class LoginComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
   
-  // signIn(): void {
-  //   // Validate form before proceeding
-  //   if (this.loginForm.invalid) {
-  //     this.notify.showWarning('Please fill in all required fields correctly.');
-  //     return;
-  //   }
-
-  //   // Show loading spinner
-  //   this.spinner.show();
-
-  //   // Disable form to prevent multiple submissions
-  //   this.loginForm.disable();
-
-  //   // Attempt login
-  //   this._authService.login(this.loginForm.value)
-  //     .pipe(
-  //       finalize(() => {
-  //         this.spinner.hide(); // Hide the spinner
-  //         this.loginForm.enable();
-  //       })
-  //     )
-  //     .subscribe({
-  //       next: (response) => {
-  //         // console.log(response);
-  //         if (response.statusCode === 200) {
-  //           this._authService.accessToken = response.data.token;
-  //           localStorage.setItem("user", JSON.stringify(response.data.User));
-
-  //           if (this.loginForm.value.rememberMe) {
-  //             this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
-  //           } else {
-  //             this.clearSavedCredentials();
-  //           }
-
-  //           this.notify.showSuccess('Login successful!');
-  //           this._router.navigateByUrl('/job-list');
-  //           // this._router.navigate(['/create-job-posting'])
-  //           // this._router.navigateByUrl('/create-job-posting'); // Redirect to dashboard
-  //         } else {
-  //           this.notify.showError(response.message);
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.log(error);
-  //         this.notify.showError('Login failed.');
-  //       }
-  //     });
-  // }
-
   signIn(): void {
-    this.spinner.show();
+  
     // Validate form before proceeding
     if (this.loginForm.invalid) {
       this.notify.showWarning('Please fill in all required fields correctly.');
@@ -126,8 +72,14 @@ export class LoginComponent implements OnInit {
               this.clearSavedCredentials();
             }
 
-            this._router.navigateByUrl('/job-list');
-            // this.notify.showSuccess('Login successful!');
+            // Navigate based on role
+            const user = response.data.User;
+            if (user.role === 'ADMIN') {
+              this._router.navigateByUrl('/job-list');
+            } else {
+              this._router.navigateByUrl('/job-list');
+            }
+            
           } else {
             this.spinner.hide()
             this.notify.showError(response.message);
@@ -141,8 +93,8 @@ export class LoginComponent implements OnInit {
       });
   }
 
-   // Remember Me functionality
-   loadRememberedCredentials(): void {
+  // Remember Me functionality
+  loadRememberedCredentials(): void {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     const rememberedPassword = localStorage.getItem('rememberedPassword');
 

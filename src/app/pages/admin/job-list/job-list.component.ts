@@ -9,7 +9,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options, LabelType } from "@angular-slider/ngx-slider";
 import moment from 'moment';
-
+import { AuthService } from '../../../core/services/auth.service';
 
 declare var $: any;
 
@@ -59,10 +59,24 @@ export class JobListComponent {
   total: number = 0;
   jobPostingList: any[] = [];
 
-  constructor(private adminService: AdminService, private router: Router,
-    private helperService: HelperService, private notify: NotifyService,
-    private spinner: NgxSpinnerService
+  constructor(
+    private adminService: AdminService,
+    private router: Router,
+    private helperService: HelperService,
+    private notify: NotifyService,
+    private spinner: NgxSpinnerService,
+    private authService: AuthService
   ) { }
+
+  isAdmin(): boolean {
+    const user = this.authService.currentUserValue;
+    return user?.role === 'ADMIN';
+  }
+
+  isApplicant(): boolean {
+    const user = this.authService.currentUserValue;
+    return user?.role === 'applicant';
+  }
 
   ngOnInit(): void {
     // this.fetchJobs();
@@ -76,10 +90,9 @@ export class JobListComponent {
     this.onPagination()
   }
 
-
   initializeDeadlinePicker(): void {
     const datePickerElement = $('input[name="deadlineDatePicker"]');
-  
+
     datePickerElement.daterangepicker(
       {
         singleDatePicker: true,
@@ -99,14 +112,14 @@ export class JobListComponent {
         }
       }
     );
-  
+
     // Handle the 'Clear' button functionality
     datePickerElement.on('cancel.daterangepicker', () => {
       this.filters.deadline = '';
       datePickerElement.val(''); // Clear the input field
       this.onSearch(); // Trigger the search API call on clear
     });
-  
+
     // Handle the 'Apply' button functionality explicitly
     datePickerElement.on('apply.daterangepicker', () => {
       const selectedDateFormatted = datePickerElement.data('daterangepicker').startDate.format('YYYY-MM-DD');
@@ -114,9 +127,6 @@ export class JobListComponent {
       this.onSearch();
     });
   }
-  
-  
-  
 
   openDatePicker(name: string): void {
     $(`input[name="${name}"]`).trigger('click');
@@ -185,7 +195,6 @@ export class JobListComponent {
     }
   }
 
-
   onPagination(): void {
     this.spinner.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
@@ -218,7 +227,6 @@ export class JobListComponent {
     this.onPagination(); // Trigger the API call
   }
 
-
   navigateToCreateJob() {
     this.router.navigate(['/create-job-posting'])
   }
@@ -227,7 +235,6 @@ export class JobListComponent {
 
     this.router.navigate(['/user-profile']);
   }
-
 
   // Handle search action
   onSearch(): void {
@@ -288,5 +295,8 @@ export class JobListComponent {
   //     this.notify.showWarning('Please enter at least 2 characters to search.');
   //   }
   // }
-  
+
+  viewJob(id: number) {
+    this.router.navigate(['/view-job', id]);
+  }
 }
