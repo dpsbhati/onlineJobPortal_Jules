@@ -345,3 +345,29 @@ h1 {
 .loading-state p {
   margin: 0;
 }
+
+.title-section, .employer-section {
+  margin-bottom: 15px;
+}
+
+.title-section label, .employer-section label {
+  font-size: 14px;
+  color: #666;
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.title-section h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.employer-section .employer {
+  font-size: 18px;
+  color: #3498db;
+  font-weight: 500;
+}
