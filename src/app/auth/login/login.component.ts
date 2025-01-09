@@ -62,22 +62,27 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            this.spinner.hide()
+            this.spinner.hide();
+            
+            const userData = response.data.User;
+            
+            // Set token and update current user
             this._authService.accessToken = response.data.token;
-            localStorage.setItem("user", JSON.stringify(response.data.User));
+            this._authService.setCurrentUser(userData);
+            localStorage.setItem("user", JSON.stringify(userData));
 
+            // Handle remember me
             if (this.loginForm.value.rememberMe) {
               this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
             } else {
               this.clearSavedCredentials();
             }
 
-            // Navigate based on role
-            const user = response.data.User;
-            if (user.role === 'ADMIN') {
-              this._router.navigateByUrl('/job-list');
+            // Navigate after setting user data
+            if (userData.role === 'ADMIN') {
+              this._router.navigate(['/job-list'], { replaceUrl: true });
             } else {
-              this._router.navigateByUrl('/job-list');
+              this._router.navigate(['/job-list'], { replaceUrl: true });
             }
             
           } else {

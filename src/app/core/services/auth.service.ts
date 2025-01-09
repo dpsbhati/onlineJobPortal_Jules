@@ -51,6 +51,11 @@ export class AuthService {
     return localStorage.getItem('accessToken') ?? '';
   }
 
+  public setCurrentUser(user: any): void {
+    this._authenticated = true;
+    this.currentUserSubject.next(user);
+  }
+
   get currentUserValue(): any {
     return this.currentUserSubject.value;
   }
@@ -175,7 +180,7 @@ export class AuthService {
     return this.getCurrentUser();
   }
 
-  setCurrentUser(user: any): void {
+  setCurrentUserLocal(user: any): void {
     if (user) {
       this.localStorageService.SetItem('user', JSON.stringify(user));
     } else {
