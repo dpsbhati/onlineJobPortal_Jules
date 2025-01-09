@@ -51,9 +51,14 @@ export class AuthService {
     return localStorage.getItem('accessToken') ?? '';
   }
 
-  public setCurrentUser(user: any): void {
-    this._authenticated = true;
-    this.currentUserSubject.next(user);
+  public setCurrentUser(user: any): Promise<void> {
+    return new Promise((resolve) => {
+      this._authenticated = true;
+      localStorage.setItem('user', JSON.stringify(user));
+      this.currentUserSubject.next(user);
+      // Small delay to ensure storage is updated
+      setTimeout(resolve, 100);
+    });
   }
 
   get currentUserValue(): any {
