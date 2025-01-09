@@ -32,7 +32,8 @@
               "node_modules/ngx-spinner/animations/ball-scale-ripple.css",
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
-                "node_modules/daterangepicker/daterangepicker.css"
+                "node_modules/daterangepicker/daterangepicker.css",
+                "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

@@ -2,6 +2,10 @@ import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
+import { ActivatedRoute } from '@angular/router';
+import { NotifyService } from '../../../core/services/notify.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-user-details',
   standalone: true,
@@ -14,9 +18,16 @@ export class UserDetailsComponent {
   submitted = false;
   fileError: string | null = null;
   fileUploaded: File | null = null;
-
-  constructor( private adminService : AdminService) {
+  jobId: any;
+  user:any
+  constructor( private adminService : AdminService, 
+    private route : ActivatedRoute,
+     private notify : NotifyService,
+      private spinner : NgxSpinnerService,
+    private router : Router) {
     this.userDetailsForm = new FormGroup({
+      job_id : new FormControl (this.jobId),
+      user_id : new FormControl(this.user),
       work_experiences: new FormControl('', Validators.required),
       additional_info: new FormControl(''),
       description: new FormControl('', Validators.required),
@@ -25,24 +36,36 @@ export class UserDetailsComponent {
       certification_path: new FormControl('', Validators.required),
     });
   }
+  ngOnInit(): void {
+    this.jobId = this.route.snapshot.paramMap.get('id') as string;
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    this.userDetailsForm.patchValue({
+      job_id: this.jobId,
+      user_id: this.user?.id
+    });
+  
+  }   
 
   onFileChange(event: Event, controlName: string): void {
+
     const fileInput = event.target as HTMLInputElement;
     const file = fileInput?.files?.[0];
-  
+    this.spinner.show();
     if (file) {
       const validFormats = [
         'application/pdf',                 // PDF
         'application/msword',              // DOC
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
-        'application/vnd.oasis.opendocument.text', // ODT
-        'text/rtf',                        // RTF
-        'text/plain'                       // TXT
+        // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+        // 'application/vnd.oasis.opendocument.text', // ODT
+        // 'text/rtf',                        // RTF
+        // 'text/plain'                       // TXT
       ];
   
       if (!validFormats.includes(file.type)) {
         this.fileError = 'Invalid file format. Only PDF, DOC, DOCX, ODT, RTF, and TXT files are allowed.';
         this.fileUploaded= null;
+        this.spinner.hide();
         return;
       }
   
@@ -55,28 +78,30 @@ export class UserDetailsComponent {
       this.fileError = null;
       this.fileUploaded = file;
   
-      // Upload file to the server using adminService
       const folderName = 'user-details';
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const userId = user.id;
+      this.user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userId =this. user.id;
       console.log(folderName, file, userId);
       this.adminService.uploadFile({ folderName, file, userId }).subscribe(
         (response :any) => {
         
           if (response.statusCode === 200) {
+            this.notify.showSuccess(response.message);
+            this.spinner.hide();
             this.userDetailsForm.patchValue({
               [controlName]: response.data.path
             });
           } else {
+            this.notify.showWarning(response.message);
+            this.spinner.hide();
             this.fileError = 'File upload failed. Please try again.';
           }
         },
         
       );
-      (error :any) => {
-        console.error('Error uploading file:', error);
-        this.fileError = 'An error occurred during file upload.';
-      }
+    }
+    else{
+      this.spinner.hide();
     }
   }
   sanitizeFormValues(): void {
@@ -90,37 +115,33 @@ export class UserDetailsComponent {
   }
 
   Submit(): void {
-    debugger
+    this.spinner.show();
     this.submitted = true;
 
     if (this.userDetailsForm.valid) {
-      const formValues = this.userDetailsForm.value;
       this.sanitizeFormValues();
-      // const apiPayload = {
-      //   job_id: 'b3f5f1e7-5030-4b9f-baa2-510d195c7607', // Static or dynamic job_id
-      //   user_id: JSON.parse(localStorage.getItem('user') || '{}').id,
-      //   description: formData.description,
-      //   comments: formData.comments,
-      //   cv_path: formData.cv_path,
-      //   certification_path: formData.certification_path,
-      //   additional_info: formData.additionalInfo,
-      //   work_experiences: formData.experience,
-      // };
+      const formData = this.userDetailsForm.value; 
+      const apiPayload = {
+        ...formData,
+        job_id: this.jobId, 
+        user_id: this.user?.id, 
+      };
 
-      this.adminService.applyJobs(formValues ).subscribe(
+      this.adminService.applyJobs(apiPayload ).subscribe(
         (response: any) => {
           if (response.statusCode === 200) {
-            console.log('Data submitted successfully:', response);
+            this.spinner.hide();
+               this.notify.showSuccess(response.message);
+               this.router.navigate(['/job-list'])
           } else {
-            console.error('Failed to submit data:', response);
+                this.spinner.hide();
+                this.notify.showWarning(response.message);
+                this.router.navigate(['/job-list'])
           }
         },
-        (error: any) => {
-          console.error('Error during submission:', error);
-        }
       );
     } else {
-      console.log('Form is invalid.');
+     this.spinner.hide();
     }
   }
 }

@@ -25,7 +25,10 @@
 
     <div>
       <label for="certification_path">Upload Certification:</label>
-      <input id="certification_path" type="file" (change)="onFileChange($event, 'certification_path')"  />
+      <input id="certification_path" type="file" (change)="onFileChange($event, 'certification_path')" accept=".pdf, .doc" />
+      <!-- <div *ngIf="userDetailsForm.get('certification_path')?.invalid && userDetailsForm.get('certification_path')?.touched" class="text-danger">
+        File Path is required.
+      </div> -->
     </div>
 
     <!-- cv_path Upload -->
@@ -38,7 +41,7 @@
       <div>
         <h2>Cv Upload</h2>
         <label for="cv_path">Upload:</label>
-        <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')"  />
+        <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc" />
         <div *ngIf="fileError" class="error">{{ fileError }}</div>
       </div>
       <div *ngIf="userDetailsForm.get('cv_path')?.invalid && userDetailsForm.get('cv_path')?.touched" class="text-danger">

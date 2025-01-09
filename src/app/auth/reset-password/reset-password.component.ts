@@ -23,6 +23,8 @@ export type FuseAlertType = 'success' | 'error' | 'info' | 'warning';
   ],
 })
 export class ResetPasswordComponent implements OnInit {
+  showNewPassword: boolean = false;
+  showConfirmPassword: boolean = false;
   isSubmitting = false;
   @ViewChild('resetPasswordNgForm') resetPasswordNgForm!: NgForm;
 
@@ -109,6 +111,15 @@ export class ResetPasswordComponent implements OnInit {
   //       }
   //     });
   // }
+
+  toggleNewPasswordVisibility(): void {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+  
   resetPassword(): void {
     if (this.resetPasswordForm.invalid) {
       this.resetPasswordForm.markAllAsTouched();

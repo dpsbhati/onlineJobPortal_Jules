@@ -76,4 +76,23 @@
       background-color: #0056b3;
     }
     
-  
+   
+    .eye-icon {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #666;
+    }
+    
+    .eye-icon:hover {
+      color: #000;
+    }
+    
+.password-container {
+  position: relative;
+}

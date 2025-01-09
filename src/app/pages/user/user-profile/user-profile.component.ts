@@ -52,15 +52,18 @@ export class UserProfileComponent implements OnInit {
     // });
   }
 
+ 
+  
+
   initializeForm(): void {
     this.userProfileForm = new FormGroup({
-      first_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
-      last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$')]),
+      first_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), this.noWhitespaceValidator]),
+      last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'),this.noWhitespaceValidator]),
       dob: new FormControl('', Validators.required),
       gender: new FormControl('', Validators.required),
-      mobile: new FormControl('', [
+      mobile: new FormControl(null, [
         Validators.required,
-        Validators.pattern('^[0-9]{10}$'), // Validate 10 digits only
+        Validators.pattern('^[0-9]{10}$'),this.noWhitespaceValidator // Ensure only valid 10-digit numbers
       ]),
       key_skills: new FormControl(''),
       work_experiences: new FormControl('', [this.twoDigitWorkExperienceValidator.bind(this)]),
@@ -71,6 +74,28 @@ export class UserProfileComponent implements OnInit {
     });
   }
   
+  addTrimValidators(): void {
+    Object.keys(this.userProfileForm.controls).forEach((controlName) => {
+      const control = this.userProfileForm.get(controlName);
+      if (control) {
+        control.valueChanges.subscribe((value) => {
+          if (typeof value === 'string') {
+            const trimmedValue = value.trim();
+            if (value !== trimmedValue) {
+              control.setValue(trimmedValue, { emitEvent: false });
+            }
+          }
+        });
+      }
+    });
+  }
+  
+
+  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+    const isWhitespace = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespace;
+    return isValid ? null : { whitespace: true };
+  }
 
   salaryLimitValidator(maxLimit: number) {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -226,8 +251,18 @@ export class UserProfileComponent implements OnInit {
       this.notify.showWarning( 'Please fill all required fields correctly.');
       return;
     }
+
+     // Trim all values in the form
+  Object.keys(this.userProfileForm.controls).forEach((controlName) => {
+    const control = this.userProfileForm.get(controlName);
+    if (control && typeof control.value === 'string') {
+      control.setValue(control.value.trim());
+    }
+  });
   
-    const payload = { ...this.userProfileForm.value };
+    const payload = { ...this.userProfileForm.value,
+      mobile: +this.userProfileForm.value.mobile, 
+     };
   
     // Update user profile
     this.userService.SaveUserProfile(payload).subscribe(
@@ -290,7 +325,7 @@ export class UserProfileComponent implements OnInit {
             last_name: data.last_name || '',
             dob: dob, // Patch the converted date here
             gender: data.gender || '',
-            mobile: data.mobile || '',
+            mobile: data.mobile || null,
             key_skills: data.key_skills || '',
             work_experiences: data.work_experiences || '',
             current_company: data.current_company || '',
@@ -315,8 +350,5 @@ export class UserProfileComponent implements OnInit {
   navigate(){
     this.router.navigate(['/job-list']);
   }
-  
-  navigate2(){
-    this.router.navigate(['/user-details']);
-  }
+
 }

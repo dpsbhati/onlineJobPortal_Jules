@@ -1,0 +1,154 @@
+<div class="job-details-container">
+  <div class="header">
+    <button (click)="goBack()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back to List
+    </button>
+    <h1>Job Details</h1>
+  </div>
+
+  <div class="job-details" *ngIf="jobDetails; else loading">
+    <div class="job-header">
+      <h2>{{ jobDetails.title }}</h2>
+      <div class="company-info">
+        <span class="employer">{{ jobDetails.employer }}</span>
+        <span class="location" *ngIf="jobDetails.address">
+          <i class="fas fa-map-marker-alt"></i> {{ jobDetails.address }}
+        </span>
+      </div>
+    </div>
+
+    <div class="job-highlights">
+      <div class="highlight-item">
+        <i class="fas fa-briefcase"></i>
+        <div class="highlight-content">
+          <span class="highlight-label">Employment Type</span>
+          <span class="highlight-value">{{ jobDetails.job_type | titlecase }}</span>
+        </div>
+      </div>
+      <div class="highlight-item">
+        <i class="fas fa-money-bill-wave"></i>
+        <div class="highlight-content">
+          <span class="highlight-label">Salary Range</span>
+          <span class="highlight-value">₹{{ jobDetails.start_salary | number }} - ₹{{ jobDetails.end_salary | number }}</span>
+        </div>
+      </div>
+      <div class="highlight-item">
+        <i class="fas fa-calendar-alt"></i>
+        <div class="highlight-content">
+          <span class="highlight-label">Application Deadline</span>
+          <span class="highlight-value">{{ jobDetails.deadline | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-details">
+      <div class="key-detail-item" *ngIf="jobDetails.rank">
+        <i class="fas fa-user-tie"></i>
+        <div class="key-detail-content">
+          <span class="key-detail-label">Position Level</span>
+          <span class="key-detail-value">{{ jobDetails.rank }}</span>
+        </div>
+      </div>
+      <div class="key-detail-item" *ngIf="jobDetails.required_experience">
+        <i class="fas fa-history"></i>
+        <div class="key-detail-content">
+          <span class="key-detail-label">Required Experience</span>
+          <span class="key-detail-value">{{ jobDetails.required_experience }}</span>
+        </div>
+      </div>
+      <div class="key-detail-item" *ngIf="jobDetails.assignment_duration">
+        <i class="fas fa-clock"></i>
+        <div class="key-detail-content">
+          <span class="key-detail-label">Assignment Duration</span>
+          <span class="key-detail-value">{{ jobDetails.assignment_duration }}</span>
+        </div>
+      </div>
+      <div class="key-detail-item" *ngIf="jobDetails.work_type">
+        <i class="fas fa-building"></i>
+        <div class="key-detail-content">
+          <span class="key-detail-label">Work Type</span>
+          <span class="key-detail-value">{{ jobDetails.work_type || 'Not Specified' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="description-section">
+      <div class="description-box">
+        <h3>
+          <i class="fas fa-align-left"></i>
+          Short Description
+        </h3>
+        <div class="description-content">
+          {{ jobDetails.short_description }}
+        </div>
+      </div>
+
+      <div class="description-box" *ngIf="jobDetails.full_description">
+        <h3>
+          <i class="fas fa-file-alt"></i>
+          Full Description
+        </h3>
+        <div class="description-content">
+          {{ jobDetails.full_description }}
+        </div>
+      </div>
+    </div>
+
+    <div class="requirements-section">
+      <div class="requirements-box" *ngIf="jobDetails.qualifications">
+        <h3>
+          <i class="fas fa-graduation-cap"></i>
+          Required Qualifications
+        </h3>
+        <div class="requirements-content">
+          {{ jobDetails.qualifications }}
+        </div>
+      </div>
+
+      <div class="requirements-box" *ngIf="jobDetails.skills_required">
+        <h3>
+          <i class="fas fa-tools"></i>
+          Required Skills
+        </h3>
+        <div class="requirements-content">
+          {{ jobDetails.skills_required }}
+        </div>
+      </div>
+    </div>
+
+    <div class="additional-info">
+      <div class="status-info">
+        <!-- <span class="status-badge" [ngClass]="jobDetails.jobpost_status">
+          <i class="fas fa-info-circle"></i>
+          Status: {{ jobDetails.jobpost_status | titlecase }}
+        </span> -->
+        <span class="status-badge" [ngClass]="jobDetails.job_opening">
+          <i class="fas fa-door-open"></i>
+          Job Opening: {{ jobDetails.job_opening | titlecase }}
+        </span>
+      </div>
+      <p class="posted-date">
+        <i class="fas fa-clock"></i> Posted on {{ jobDetails.date_published | date:'mediumDate' }}
+      </p>
+      <p class="social-media" *ngIf="jobDetails.social_media_type">
+        <i class="fab fa-{{ jobDetails.social_media_type }}"></i>
+        Posted on {{ jobDetails.social_media_type | titlecase }}
+      </p>
+    </div>
+
+    <div class="action-buttons">
+      <button class="apply-button" [disabled]="jobDetails.job_opening === 'close'" (click)="navigate()">
+        <i class="fas fa-paper-plane"></i> Apply Now
+      </button>
+      <button (click)="goBack()" class="cancel-button">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading-state">
+      <p>Loading job details...</p>
+    </div>
+  </ng-template>
+</div>

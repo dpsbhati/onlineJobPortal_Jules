@@ -6,10 +6,10 @@
         <label for="firstName">First Name</label>
         <input id="firstName" formControlName="firstName" type="text" />
         <div *ngIf="registrationForm.get('firstName')?.touched && registrationForm.get('firstName')?.invalid">
-          <small *ngIf="registrationForm.get('firstName')?.errors?.['required']">First Name is required.</small>
-          <small *ngIf="registrationForm.get('firstName')?.errors?.['minlength']">First Name must be at least 2 characters.</small>
-          <small *ngIf="registrationForm.get('firstName')?.errors?.['pattern']">First Name must contain only alphabets.</small>
-          <small *ngIf="registrationForm.get('firstName')?.errors?.['maxlength']">Last Name cannot exceed 50 characters.</small>
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['required']" style="color: red;">First Name is required.</small>
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['minlength']" style="color: red;">First Name must be at least 2 characters.</small>
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['pattern']" style="color: red;">First Name must contain only alphabets.</small>
+          <small *ngIf="registrationForm.get('firstName')?.errors?.['maxlength']" style="color: red;">Last Name cannot exceed 50 characters.</small>
         </div>
       </div>
   
@@ -17,10 +17,10 @@
         <label for="lastName">Last Name</label>
         <input id="lastName" formControlName="lastName" type="text" />
         <div *ngIf="registrationForm.get('lastName')?.touched && registrationForm.get('lastName')?.invalid">
-          <small *ngIf="registrationForm.get('lastName')?.errors?.['required']">Last Name is required.</small>
-          <small *ngIf="registrationForm.get('lastName')?.errors?.['minlength']">Last Name must be at least 2 characters.</small>
-          <small *ngIf="registrationForm.get('lastName')?.errors?.['pattern']">Last Name must contain only alphabets.</small>
-          <small *ngIf="registrationForm.get('lastName')?.errors?.['maxlength']">Last Name cannot exceed 50 characters.</small>
+          <small *ngIf="registrationForm.get('lastName')?.errors?.['required']" style="color: red;">Last Name is required.</small>
+          <small *ngIf="registrationForm.get('lastName')?.errors?.['minlength']" style="color: red;">Last Name must be at least 2 characters.</small>
+          <small *ngIf="registrationForm.get('lastName')?.errors?.['pattern']" style="color: red;">Last Name must contain only alphabets.</small>
+          <small *ngIf="registrationForm.get('lastName')?.errors?.['maxlength']" style="color: red;">Last Name cannot exceed 50 characters.</small>
         </div>
       </div>
   
@@ -28,17 +28,40 @@
         <label for="email">Email</label>
         <input id="email" formControlName="email" type="email" />
         <div *ngIf="registrationForm.get('email')?.touched && registrationForm.get('email')?.invalid">
-          <small *ngIf="registrationForm.get('email')?.errors?.['required']">Email is required.</small>
-          <small *ngIf="registrationForm.get('email')?.errors?.['email']">Invalid email format.</small>
+          <small *ngIf="registrationForm.get('email')?.errors?.['required']" style="color: red;">Email is required.</small>
+          <small *ngIf="registrationForm.get('email')?.errors?.['email']" style="color: red;">Invalid email format.</small>
         </div>
       </div>
   
-      <div>
+      <div style="position: relative;">
         <label for="password">Password</label>
-        <input id="password" formControlName="password" type="password" />
+        <input
+          id="password"
+          formControlName="password"
+          [type]="showPassword ? 'text' : 'password'"
+          style="padding-right: 40px;"
+        />
+        <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="eye-icon"
+          style="
+          position: absolute;
+          bottom: 8px;
+          right: 10px;
+          background: none;
+          border: none;
+          cursor: pointer;
+        "
+      >
+          <i
+            [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"
+            style="font-size: 1.2rem; color: #666;"
+          ></i>
+        </button>
         <div *ngIf="registrationForm.get('password')?.touched && registrationForm.get('password')?.invalid">
-          <small *ngIf="registrationForm.get('password')?.errors?.['required']">Password is required.</small>
-          <small *ngIf="registrationForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</small>
+          <small *ngIf="registrationForm.get('password')?.errors?.['required']" style="color: red;">Password is required.</small>
+          <small *ngIf="registrationForm.get('password')?.errors?.['minlength']" style="color: red;">Password must be at least 6 characters.</small>
         </div>
       </div>
   
