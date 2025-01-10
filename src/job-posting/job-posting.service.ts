@@ -95,6 +95,24 @@ export class JobPostingService {
 
       const currentDateTime = new Date();
 
+      // New functionality: Check for jobs in 'hold' or with today's date as date_published
+      const jobsToOpen = await this.jobPostingRepository.find({
+        where: {
+          is_deleted: false,
+          job_opening: 'hold',
+          date_published: LessThanOrEqual(currentDateTime),
+        },
+      });
+
+      if (jobsToOpen.length > 0) {
+        console.log(`Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`);
+        for (const job of jobsToOpen) {
+          job.job_opening = 'open';
+          await this.jobPostingRepository.save(job);
+          console.log(`Job with ID ${job.id} marked as "open".`);
+        }
+      }
+
       const jobsToClose = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
@@ -103,17 +121,14 @@ export class JobPostingService {
         },
       });
 
-      if (jobsToClose.length === 0) {
-        console.log('No jobs found with expired deadlines.');
-        return;
-      }
+      if (jobsToClose.length > 0) {
+        console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
 
-      console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
-
-      for (const job of jobsToClose) {
-        job.job_opening = 'close';
-        await this.jobPostingRepository.save(job);
-        console.log(`Job with ID ${job.id} marked as "close".`);
+        for (const job of jobsToClose) {
+          job.job_opening = 'close';
+          await this.jobPostingRepository.save(job);
+          console.log(`Job with ID ${job.id} marked as "close".`);
+        }
       }
     } catch (error) {
       console.error(
@@ -123,13 +138,17 @@ export class JobPostingService {
     }
   }
 
+
+
+
+
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-            where: { id: jobDto.id, is_deleted: false },
-          })
+          where: { id: jobDto.id, is_deleted: false },
+        })
         : null;
 
       // Preserve existing job_opening status if the job is being updated
@@ -157,8 +176,9 @@ export class JobPostingService {
         updated_by: userId,
       });
 
-      const savedJobPosting =
-        await this.jobPostingRepository.save(updatedJobPosting);
+      const savedJobPosting = await this.jobPostingRepository.save(
+        updatedJobPosting,
+      );
 
       console.log(
         jobPosting
