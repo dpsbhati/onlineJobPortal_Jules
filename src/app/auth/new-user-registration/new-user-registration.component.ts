@@ -75,7 +75,7 @@ export class NewUserRegistrationComponent {
           );
           this.loading = false;
         }
-        else if(res.statusCode == 409 ){
+        else{
           this.notify.showWarning(res.message
           );
           this.spinner.hide();

@@ -15,11 +15,23 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <!-- <div class="form-group">
       <label for="job_type">Job Type<span class="text-danger">*</span></label>
       <input id="job_type" formControlName="job_type" type="text" class="form-control" />
       <div *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched" class="text-danger">
         Job Type is required.
+      </div>
+    </div> -->
+    <div class="form-group">
+      <label for="job_type">Job Type<span class="text-danger">*</span></label>
+      <select id="job_type" formControlName="job_type" class="form-control">
+        <option value="">Select Job Type</option>
+        <option value="Full-Time" >Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Flexible">Flexible</option>
+      </select>
+      <div *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched" class="text-danger">
+        <small *ngIf="jobForm.get('job_type')?.errors?.['required']">Job Type is required.</small>
       </div>
     </div>
 
@@ -30,15 +42,49 @@
         rank is required.
       </div>
     </div>
+    <div class="form-group">
+      <label for="skills_required">Skills Required<span class="text-danger">*</span></label>
+      <div class="d-flex">
+        <input
+          id="skills_input"
+          type="text"
+          class="form-control"
+          placeholder="Enter a skill and press Enter"
+          [(ngModel)]="newSkill"
+          (keyup.enter)="addSkill()"
+          [ngModelOptions]="{standalone: true}"
+        />
+        <button
+          type="button"
+          class="add-button"
+          (click)="addSkill()"
+          [disabled]="!newSkill.trim()"
+        >
+          Add Skill
+        </button>
+      </div>
+      <ul class="list-group mt-2">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let skill of skillsArray; let i = index"
+        >
+          {{ skill }}
+          <button
+            type="button"
+            class="remove"
+            (click)="removeSkill(i)"
+          >
+            Remove
+          </button>
+        </li>
+      </ul>
+      <div *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched" class="text-danger">
+        <small>At least one skill is required.</small>
+      </div>
+    </div>
+    
 
     <!-- <div class="form-group">
-      <label for="skills_required">Skills Required</label>
-      <input id="skills_required" formControlName="skills_required" type="text" class="form-control" />
-      <div *ngIf="jobForm.get('skills_required')?.invalid && jobForm.get('skills_required')?.touched" class="text-danger">
-        skill is required.
-      </div>
-    </div> -->
-    <div class="form-group">
       <label for="skills_required">Skills Required<span class="text-danger">*</span></label>
       <ng-select id="skills_required" formControlName="skills_required" [items]="skillsList" bindLabel="name"
         bindValue="id" multiple="true" closeOnSelect="false" placeholder="Select skills">
@@ -47,7 +93,7 @@
         class="text-danger">
         Skills are required.
       </div>
-    </div>
+    </div> -->
 
 
 
