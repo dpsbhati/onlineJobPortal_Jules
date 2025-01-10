@@ -55,7 +55,7 @@ export class CreateJobPostingComponent {
       job_type: new FormControl('', Validators.required),
       rank: new FormControl('', Validators.required),
       // skills_required: new FormControl([], Validators.required),
-      skills_required: new FormControl([], [Validators.required, Validators.min(2),  Validators.maxLength(50),]),
+      skills_required: new FormControl([], [Validators.required, Validators.min(2),  Validators.maxLength(50), this.SkillArrayValidator(1,10),  this.skillsValidator(2, 50),]),
       title: new FormControl('', [Validators.required , Validators.minLength(2),  Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
       featured_image: new FormControl(null,Validators.required),
       date_published: new FormControl(this.todaysDate),
@@ -95,18 +95,18 @@ export class CreateJobPostingComponent {
   }
   addSkill(): void {
     const skill = this.newSkill.trim();
-    // if (!skill) {
-    //   this.notify.showWarning('Skill cannot be empty.');
-    //   return;
-    // }
-    // if (skill.length < 2) {
-    //   this.notify.showWarning('Skill must be at least 2 characters long.');
-    //   return;
-    // }
-    // if (skill.length > 50) {
-    //   this.notify.showWarning('Skill cannot exceed 50 characters.');
-    //   return;
-    // }
+    if (!skill) {
+      this.notify.showWarning('Skill cannot be empty.');
+      return;
+    }
+    if (skill.length < 2) {
+      this.notify.showWarning('Skill must be at least 2 characters long.');
+      return;
+    }
+    if (skill.length > 50) {
+      this.notify.showWarning('Skill cannot exceed 50 characters.');
+      return;
+    }
     if (skill && !this.skillsArray.includes(skill)) {
       this.skillsArray.push(skill);
       this.newSkill = ''; // Clear the input field
@@ -136,6 +136,25 @@ export class CreateJobPostingComponent {
       postedAtControl?.updateValueAndValidity();
     });
   }
+  skillsValidator(minLength: number, maxLength: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const skills = control.value;
+  
+      if (!Array.isArray(skills)) {
+        return { invalidType: true };
+      }
+  
+      for (const skill of skills) {
+        if (skill.length < minLength) {
+          return { minLengthSkill: { requiredLength: minLength, actualLength: skill.length } };
+        }
+        if (skill.length > maxLength) {
+          return { maxLengthSkill: { requiredLength: maxLength, actualLength: skill.length } };
+        }
+      }
+  
+      return null;
+    };}
   SkillArrayValidator(min: number, max: number) {
     return (control: AbstractControl): ValidationErrors | null => {
       const skills = control.value;
@@ -410,5 +429,6 @@ export class CreateJobPostingComponent {
   navigate(){
     this.router.navigate(['/job-list']);
   }
+
   
 }

@@ -81,10 +81,28 @@
       <div *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched" class="text-danger">
         <small>At least one skill is required.</small>
       </div>
-      <div *ngIf="jobForm.get('skills_required')?.invalid && jobForm.get('skills_required')?.touched" class="text-danger">
-        <small *ngIf="jobForm.get('skills_required')?.errors?.['minlength']">Skill  must be at least 2 characters.</small>
-        <small *ngIf="jobForm.get('skills_required')?.errors?.['maxlength']">Skill cannot exceed 50 characters.</small>
+      <div *ngIf="jobForm.get('skills_required')?.errors?.['minLengthSkill']" class="text-danger">
+  <small>
+    Each skill must be at least 
+    {{ jobForm.get('skills_required')?.errors?.['minLengthSkill'].requiredLength }} 
+    characters long.
+  </small>
+</div>
+<div *ngIf="jobForm.get('skills_required')?.errors?.['maxLengthSkill']" class="text-danger">
+  <small>
+    Each skill cannot exceed 
+    {{ jobForm.get('skills_required')?.errors?.['maxLengthSkill'].requiredLength }} 
+    characters.
+  </small>
+</div>
+
+      <div *ngIf="jobForm.get('skills_required')?.errors?.['minSkills']" class="text-danger">
+        <small>At least {{ jobForm.get('skills_required')?.errors?.['minSkills'].required }} skills are required.</small>
       </div>
+      <div *ngIf="jobForm.get('skills_required')?.errors?.['maxSkills']" class="text-danger">
+        <small>No more than {{ jobForm.get('skills_required')?.errors?.['maxSkills'].required }} skills are allowed.</small>
+      </div>
+      
     </div>
     
 

@@ -28,10 +28,26 @@ export class UserDetailsComponent {
     this.userDetailsForm = new FormGroup({
       job_id : new FormControl (this.jobId),
       user_id : new FormControl(this.user),
-      work_experiences: new FormControl('', Validators.required),
-      additional_info: new FormControl('', Validators.required),
-      description: new FormControl('', Validators.required),
-      comments: new FormControl('',  Validators.required),
+      work_experiences: new FormControl('',  [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(200),
+      ]),
+      additional_info: new FormControl('',  [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(500),
+      ]),
+      description: new FormControl('',  [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(1000),
+      ]),
+      comments: new FormControl('',   [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(500),
+      ]),
       cv_path: new FormControl('', Validators.required),
       certification_path: new FormControl('', Validators.required),
     });
