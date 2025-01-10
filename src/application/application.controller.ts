@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -54,7 +54,7 @@ export class ApplicationController {
        properties: IPaginationSwagger,
      },
    })
-  async pagination(@Body() pagination: IPagination) {
-    return this.applicationService.paginateApplications(pagination);
+  async pagination(@Request() req: any,@Body() pagination: IPagination) {
+    return this.applicationService.paginateApplications(req,pagination);
   }  
 }

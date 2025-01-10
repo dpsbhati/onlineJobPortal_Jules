@@ -8,7 +8,6 @@ import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { IPagination } from 'src/shared/paginationEum';
 import * as nodemailer from 'nodemailer';
 
-
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -18,7 +17,7 @@ export class ApplicationService {
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
     const { job_id, user_id, certification_path } = createApplicationDto;
-  
+
     // Validate the certification file format
     if (
       certification_path &&
@@ -30,7 +29,7 @@ export class ApplicationService {
         'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
       );
     }
-  
+
     // Check if the user has already applied for this job
     const existingApplication = await this.applicationRepository.findOne({
       where: {
@@ -39,11 +38,11 @@ export class ApplicationService {
         is_deleted: false,
       },
     });
-  
+
     if (existingApplication) {
       return WriteResponse(409, [], 'You have already applied for this job.');
     }
-  
+
     // Create a new application
     const application = this.applicationRepository.create({
       job: { id: job_id },
@@ -58,9 +57,9 @@ export class ApplicationService {
       created_by: user_id,
       updated_by: user_id,
     });
-  
+
     const savedApplication = await this.applicationRepository.save(application);
-  
+
     // Fetch job and user details for the email
     const jobDetails = await this.applicationRepository
       .createQueryBuilder('app')
@@ -68,12 +67,12 @@ export class ApplicationService {
       .leftJoinAndSelect('app.user', 'user')
       .where('app.id = :id', { id: savedApplication.id })
       .getOne();
-  
+
     if (jobDetails) {
       // Send confirmation email
       await this.sendConfirmationEmail(jobDetails);
     }
-  
+
     return WriteResponse(
       200,
       savedApplication,
@@ -124,7 +123,9 @@ export class ApplicationService {
     const application = await this.findOne(id);
     if (
       updateApplicationDto.certification_path &&
-      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(updateApplicationDto.certification_path)
+      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(
+        updateApplicationDto.certification_path,
+      )
     ) {
       return WriteResponse(
         400,
@@ -143,76 +144,107 @@ export class ApplicationService {
     return await this.applicationRepository.save(application);
   }
 
-  async paginateApplications(pagination: IPagination) {
+  async paginateApplications(req: any, pagination: IPagination) {
     try {
-      const { curPage = 1, perPage = 10, whereClause } = pagination;
+        console.log('Request User -->', req.user);
 
-      let lwhereClause = 'app.is_deleted = 0';
+        const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-      const fieldsToSearch = [
-        'status',
-        'description',
-        'comments',
-        'additional_info',
-        'work_experiences',
-        'certification_path', 
-        'user.first_name',
-        'user.last_name',
-        'job.title',
-      ];
+        // Default whereClause to filter out deleted applications
+        let lwhereClause = 'app.is_deleted = 0';
 
-      if (Array.isArray(whereClause)) {
-        fieldsToSearch.forEach((field) => {
-          const fieldValue = whereClause.find((p) => p.key === field)?.value;
-          if (fieldValue) {
-            lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
-          }
-        });
+        const isApplicant = req.user?.role === 'applicant';
+        const isAdmin = req.user?.role === 'admin';
 
-        const allValues = whereClause.find((p) => p.key === 'all')?.value;
-        if (allValues) {
-          const searches = fieldsToSearch
-            .map((field) => `${field} LIKE '%${allValues}%'`)
-            .join(' OR ');
-          lwhereClause += ` AND (${searches})`;
+        // If applicant, ensure they can only see their own applications
+        if (isApplicant) {
+            const userId = parseInt(req.user.id, 10);  // Ensure the ID is treated as a number
+            lwhereClause += ` AND app.user_id = ${userId}`;
         }
-      }
 
-      const skip = (curPage - 1) * perPage;
+        console.log('Role:', req.user?.role);
+        console.log('Initial Where Clause:', lwhereClause);
 
-      const [list, totalCount] = await this.applicationRepository
-        .createQueryBuilder('app')
-        .leftJoinAndSelect('app.job', 'job')
-        .leftJoinAndSelect('app.user', 'user')
-        .where(lwhereClause)
-        .skip(skip)
-        .take(perPage)
-        .orderBy('app.created_at', 'DESC')
-        .getManyAndCount();
+        const fieldsToSearch = [
+            'status',
+            'description',
+            'comments',
+            'additional_info',
+            'work_experiences',
+            'certification_path',
+            'user.first_name',
+            'user.last_name',
+            'job.title',
+        ];
 
-      const enrichedApplications = list.map((application) => ({
-        ...application,
-      }));
+        // Process whereClause if search filters are applied
+        if (Array.isArray(whereClause)) {
+            fieldsToSearch.forEach((field) => {
+                const fieldValue = whereClause.find((p) => p.key === field)?.value;
+                if (fieldValue) {
+                    lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
+                }
+            });
 
-      return paginateResponse(enrichedApplications, totalCount, curPage, perPage);
+            const allValues = whereClause.find((p) => p.key === 'all')?.value;
+            if (allValues) {
+                const searches = fieldsToSearch
+                    .map((field) => `${field} LIKE '%${allValues}%'`)
+                    .join(' OR ');
+                lwhereClause += ` AND (${searches})`;
+            }
+        }
+
+        const skip = (curPage - 1) * perPage;
+
+        console.log('Final Where Clause:', lwhereClause);
+
+        // Fetch paginated application data
+        const [list, totalCount] = await this.applicationRepository
+            .createQueryBuilder('app')
+            .leftJoinAndSelect('app.job', 'job')
+            .leftJoinAndSelect('app.user', 'user')
+            .where(lwhereClause)
+            .skip(skip)
+            .take(perPage)
+            .orderBy('app.created_at', 'DESC')
+            .getManyAndCount();
+
+        console.log('Query Result:', { list, totalCount });
+
+        if (!list.length) {
+            return WriteResponse(400, [], `Record not found.`);
+        }
+
+        const enrichedApplications = list.map((application) => ({
+            ...application,
+        }));
+
+        return paginateResponse(
+            enrichedApplications,
+            totalCount,
+            curPage,
+            perPage,
+        );
     } catch (error) {
-      console.error('Application Pagination Error --> ', error);
-      return WriteResponse(500, {}, `Something went wrong.`);
+        console.error('Application Pagination Error --> ', error);
+        return WriteResponse(500, {}, `Something went wrong.`);
     }
-  }
+}
+
 
   private async sendConfirmationEmail(application: any) {
     const transporter = nodemailer.createTransport({
-      service: 'Gmail', 
+      service: 'Gmail',
       auth: {
         user: process.env.EMAIL_USER, // Your email address
         pass: process.env.EMAIL_PASS, // Your email password
       },
     });
-  
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: application.user.email, 
+      to: application.user.email,
       subject: `Application Confirmation for ${application.job.title}`,
       text: `Dear ${application.user.firstName},
   
@@ -227,7 +259,7 @@ export class ApplicationService {
         <p>Your application has been received and is currently under review. We will contact you if your profile matches our requirements.</p>
         <p>Best regards,<br>Hiring Team</p>`,
     };
-  
+
     try {
       await transporter.sendMail(mailOptions);
       console.log('Confirmation email sent successfully.');
@@ -235,6 +267,4 @@ export class ApplicationService {
       console.error('Failed to send confirmation email:', error.message);
     }
   }
-
-
 }
