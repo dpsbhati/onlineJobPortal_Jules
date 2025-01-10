@@ -7,7 +7,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { UserRole } from '../../../core/enums/roles.enum';
 import { AuthService } from '../../../core/services/auth.service';
 
-
 @Component({
   selector: 'app-view-job',
   standalone: true,
@@ -19,8 +18,9 @@ export class ViewJobComponent implements OnInit {
   jobDetails: any;
   loading: boolean = true;
   error: string = '';
-  id:any;
+  id: any;
   userRole: string = '';
+  formattedSkills: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -48,12 +48,27 @@ export class ViewJobComponent implements OnInit {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
-  loadJobDetails(id: string): void { 
+  formatSkills(skills: string): string[] {
+    try {
+      if (!skills) return [];
+      // Parse the JSON string and remove any special characters
+      const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
+      return parsedSkills.map((skill: string) => skill.replace(/["\[\]]/g, '').trim());
+    } catch (error) {
+      console.error('Error parsing skills:', error);
+      return [];
+    }
+  }
+
+  loadJobDetails(id: string): void {
     this.spinner.show();
     this.adminService.getJobById(id).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
-          this.jobDetails = response.data;  // Assigning to component property
+          this.jobDetails = response.data;
+          if (this.jobDetails.skills_required) {
+            this.formattedSkills = this.formatSkills(this.jobDetails.skills_required);
+          }
           this.spinner.hide();
         } else {
           this.spinner.hide();
@@ -71,8 +86,8 @@ export class ViewJobComponent implements OnInit {
   goBack() {
     this.router.navigate(['/job-list']);
   }
-   
-  navigate(){
+
+  navigate() {
     this.router.navigate([`/user-details/${this.id}`]);
   }
 }
