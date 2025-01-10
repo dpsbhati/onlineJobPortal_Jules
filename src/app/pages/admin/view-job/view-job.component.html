@@ -117,7 +117,11 @@
           Required Skills
         </h3>
         <div class="requirements-content">
-          {{ jobDetails.skills_required }}
+          <div class="skills-list">
+            <span class="skill-tag" *ngFor="let skill of formattedSkills">
+              {{ skill }}
+            </span>
+          </div>
         </div>
       </div>
     </div>

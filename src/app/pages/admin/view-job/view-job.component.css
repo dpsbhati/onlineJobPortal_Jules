@@ -371,3 +371,26 @@ h1 {
   color: #3498db;
   font-weight: 500;
 }
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.skill-tag {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-block;
+  margin: 2px;
+  border: 1px solid #dee2e6;
+}
+
+.skill-tag:hover {
+  background-color: #dee2e6;
+  cursor: default;
+}
