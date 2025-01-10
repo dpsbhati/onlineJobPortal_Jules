@@ -92,9 +92,27 @@ export class JobPostingService {
   async closeExpiredJobs() {
     try {
       console.log('Running job scheduler to close expired jobs...');
-  
+
       const currentDateTime = new Date();
-  
+
+      // New functionality: Check for jobs in 'hold' or with today's date as date_published
+      const jobsToOpen = await this.jobPostingRepository.find({
+        where: {
+          is_deleted: false,
+          job_opening: 'hold',
+          date_published: LessThanOrEqual(currentDateTime),
+        },
+      });
+
+      if (jobsToOpen.length > 0) {
+        console.log(`Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`);
+        for (const job of jobsToOpen) {
+          job.job_opening = 'open';
+          await this.jobPostingRepository.save(job);
+          console.log(`Job with ID ${job.id} marked as "open".`);
+        }
+      }
+
       const jobsToClose = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
@@ -102,26 +120,23 @@ export class JobPostingService {
           deadline: LessThanOrEqual(currentDateTime),
         },
       });
-  
-      if (jobsToClose.length === 0) {
-        console.log('No jobs found with expired deadlines.');
-        return;
-      }
-  
-      console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
-  
-      for (const job of jobsToClose) {
-        job.job_opening = 'close';
-        await this.jobPostingRepository.save(job);
-        console.log(`Job with ID ${job.id} marked as "close".`);
+
+      if (jobsToClose.length > 0) {
+        console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
+
+        for (const job of jobsToClose) {
+          job.job_opening = 'close';
+          await this.jobPostingRepository.save(job);
+          console.log(`Job with ID ${job.id} marked as "close".`);
+        }
       }
     } catch (error) {
       console.error('Error occurred while updating expired jobs:', error.message);
     }
   }
-  
-  
-  
+
+
+
 
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
@@ -129,26 +144,26 @@ export class JobPostingService {
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-            where: { id: jobDto.id, is_deleted: false },
-          })
+          where: { id: jobDto.id, is_deleted: false },
+        })
         : null;
-  
+
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
-  
+
       // Only set job_opening during creation
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
         const datePublished = new Date(jobDto.date_published);
         const deadline = new Date(jobDto.deadline);
-  
+
         if (now >= datePublished && now <= deadline) {
           job_opening = 'open';
         } else if (now > deadline) {
           job_opening = 'close';
         }
       }
-  
+
       // Create or update job posting
       const updatedJobPosting = this.jobPostingRepository.create({
         ...jobPosting,
@@ -157,17 +172,17 @@ export class JobPostingService {
         created_by: jobPosting ? jobPosting.created_by : userId,
         updated_by: userId,
       });
-  
+
       const savedJobPosting = await this.jobPostingRepository.save(
         updatedJobPosting,
       );
-  
+
       console.log(
         jobPosting
           ? `Updated Job Posting with ID: ${savedJobPosting.id}`
           : `Created Job Posting with ID: ${savedJobPosting.id}`,
       );
-  
+
       return WriteResponse(
         200,
         savedJobPosting,
@@ -269,83 +284,83 @@ export class JobPostingService {
 
   async paginateJobPostings(pagination: IPagination) {
     try {
-        const { curPage = 1, perPage = 10, whereClause } = pagination;
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-        // Default whereClause to filter out deleted job postings
-        let lwhereClause = 'job.is_deleted = 0';
+      // Default whereClause to filter out deleted job postings
+      let lwhereClause = 'job.is_deleted = 0';
 
-        // Fields to search
-        const fieldsToSearch = [
-            'title',
-            'short_description',
-            'full_description',
-            'employer',
-            'job_type',
-            'work_type',
-            'qualifications',
-            'skills_required',
-            'date_published',
-            'deadline',
-            'assignment_duration',
-            'rank',
-            'required_experience',
-            'country_code',
-            'state_code',
-            'city',
-            'address',
-            'isActive',
-        ];
+      // Fields to search
+      const fieldsToSearch = [
+        'title',
+        'short_description',
+        'full_description',
+        'employer',
+        'job_type',
+        'work_type',
+        'qualifications',
+        'skills_required',
+        'date_published',
+        'deadline',
+        'assignment_duration',
+        'rank',
+        'required_experience',
+        'country_code',
+        'state_code',
+        'city',
+        'address',
+        'isActive',
+      ];
 
-        // Process whereClause
-        if (Array.isArray(whereClause)) {
-            fieldsToSearch.forEach((field) => {
-                const fieldValue = whereClause.find((p) => p.key === field)?.value;
-                if (fieldValue) {
-                    lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
-                }
-            });
+      // Process whereClause
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
+          }
+        });
 
-            const allValues = whereClause.find((p) => p.key === 'all')?.value;
-            if (allValues) {
-                const searches = fieldsToSearch
-                    .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
-                    .join(' OR ');
-                lwhereClause += ` AND (${searches})`;
-            }
-
-            // Salary range filtering
-            const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value || 0;
-            const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value || 1000000000000;
-
-            lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
         }
 
-        const skip = (curPage - 1) * perPage;
+        // Salary range filtering
+        const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value || 0;
+        const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value || 1000000000000;
 
-        // Fetch paginated data with user details
-        const [list, totalCount] = await this.jobPostingRepository
-            .createQueryBuilder('job')
-            .where(lwhereClause)
-            .skip(skip)
-            .take(perPage)
-            .orderBy('job.created_at', 'DESC')
-            .getManyAndCount();
+        lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
+      }
 
-        const enrichedJobList = await Promise.all(
-            list.map(async (job) => {
-                const enrichedJob = {
-                    ...job,
-                };
-                return enrichedJob;
-            }),
-        );
+      const skip = (curPage - 1) * perPage;
 
-        return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
+      // Fetch paginated data with user details
+      const [list, totalCount] = await this.jobPostingRepository
+        .createQueryBuilder('job')
+        .where(lwhereClause)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('job.created_at', 'DESC')
+        .getManyAndCount();
+
+      const enrichedJobList = await Promise.all(
+        list.map(async (job) => {
+          const enrichedJob = {
+            ...job,
+          };
+          return enrichedJob;
+        }),
+      );
+
+      return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
     } catch (error) {
-        console.error('Job Postings Pagination Error --> ', error);
-        return WriteResponse(500, error, `Something went wrong.`);
+      console.error('Job Postings Pagination Error --> ', error);
+      return WriteResponse(500, error, `Something went wrong.`);
     }
-}
+  }
 
 
 

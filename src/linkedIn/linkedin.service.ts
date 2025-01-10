@@ -21,7 +21,7 @@ export class LinkedInService {
       });
       return response.data;
     } catch (error) {
-      throw new Error(`LinkedIn API error: ${error.message}`);
+      throw new Error(`LinkedIn API error: ${error}`);
     }
   }
 
