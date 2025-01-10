@@ -75,9 +75,9 @@ export class CreateApplicationDto {
     example: '/uploads/cv/johndoe_cv.pdf',
   })
   @IsString({ message: 'cv_path must be a valid string.' })
-  @Matches(/^\/uploads\/cv\/.+\.(pdf|doc|docx)$/i, {
+  @Matches(/^(\/uploads\/cv\/)?.+\.(pdf|doc|docx)$/i, {
     message:
-      'CV path must be a valid file path ending with .pdf, .doc, or .docx.',
+      'cv_path must be a valid file path ending with .pdf, .doc, or .docx.',
   })
   cv_path?: string;
 
@@ -88,8 +88,7 @@ export class CreateApplicationDto {
   })
   @IsString({ message: 'certification_path must be a valid string.' })
   @Matches(/\.(pdf|jpg|jpeg|png|doc|docx)$/i, {
-    message:
-      'certification_path must be a valid file path ending with .pdf, .jpg, .jpeg, .png, .doc, or .docx.',
+    message: '',
   })
   @Transform(({ value }) => value?.trim())
   @IsOptional()
