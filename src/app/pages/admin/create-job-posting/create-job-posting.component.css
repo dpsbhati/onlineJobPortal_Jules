@@ -98,4 +98,12 @@
   .button{
     color: blue;
   }
+  .add-button{
+     width: 80px;
+     color: blue;
+  }
+  .remove{
+    width: 80px;
+    color: blue;
+ }
   

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, NgSelectOption, FormsModule, AbstractControl } from '@angular/forms';
+import { Component, NgModule } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, NgSelectOption, FormsModule, AbstractControl, NgModel } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
@@ -9,6 +9,7 @@ import { CommonModule, formatDate, NgFor, NgIf } from '@angular/common';
 import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
 import {  ValidationErrors, ValidatorFn} from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+
 @Component({
   selector: 'app-create-job-posting',
   standalone: true,
@@ -16,6 +17,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
     NgLabelTemplateDirective,
     NgOptionTemplateDirective,
     NgSelectComponent,
+
   
   ],
   templateUrl: './create-job-posting.component.html',
@@ -25,13 +27,17 @@ export class CreateJobPostingComponent {
   jobForm: FormGroup;
   isEditMode = false;
   countryList = countries;
-  skillsList = [
-    { id: 1, name: 'JavaScript' },
-    { id: 2, name: 'Angular' },
-    { id: 3, name: 'React' },
-    { id: 4, name: 'Node.js' },
-    { id: 5, name: 'Python' }
-  ];
+  newSkill: string = '';
+  skillsArray: string[] = [];
+  // skillsList = [
+  //   { id: 1, name: 'JavaScript' },
+  //   { id: 2, name: 'Angular' },
+  //   { id: 3, name: 'React' },
+  //   { id: 4, name: 'Node.js' },
+  //   { id: 5, name: 'Python' }
+  // ];
+ 
+
   isDatePublishedReadonly = true;
   todaysDate = new Date();
   
@@ -48,6 +54,7 @@ export class CreateJobPostingComponent {
       id: new FormControl(''),
       job_type: new FormControl('', Validators.required),
       rank: new FormControl('', Validators.required),
+      // skills_required: new FormControl([], Validators.required),
       skills_required: new FormControl([], Validators.required),
       title: new FormControl('', [Validators.required , Validators.minLength(2),  Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
       featured_image: new FormControl(null,Validators.required),
@@ -85,6 +92,24 @@ export class CreateJobPostingComponent {
       this.jobForm.get('date_published')?.setValue(today);
       this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
    this.listenToSocialMediaType();
+  }
+  addSkill(): void {
+    const skill = this.newSkill.trim();
+    if (skill && !this.skillsArray.includes(skill)) {
+      this.skillsArray.push(skill);
+      this.newSkill = ''; // Clear the input field
+      this.updateSkillsInForm();
+    }
+  }
+
+  removeSkill(index: number): void {
+    this.skillsArray.splice(index, 1);
+    this.updateSkillsInForm();
+  }
+
+  updateSkillsInForm(): void {
+    this.jobForm.get('skills_required')?.setValue(this.skillsArray);
+    this.jobForm.get('skills_required')?.markAsTouched();
   }
   
   listenToSocialMediaType(): void {
@@ -187,8 +212,9 @@ export class CreateJobPostingComponent {
           //      minute: '2-digit',
           //    }).replace(',', '') // Optional: Remove comma for formatting
           //  : '';
-
-     
+          const skills = data.skills_required ? JSON.parse(data.skills_required) : [];
+          this.skillsArray = Array.isArray(skills) ? skills : [];
+        
            const formattedStartSalary = data.start_salary
            ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
            : '';
@@ -200,7 +226,7 @@ export class CreateJobPostingComponent {
           id: data.id || '',
           job_type: data.job_type || '',
           rank: data.rank || '',
-          skills_required: JSON.parse(data.skills_required || '[]'),
+          skills_required: this.skillsArray,
           title: data.title || '',
           featured_image: data.featured_image || null,
           date_published: formattedDatePublished || '',
@@ -308,6 +334,11 @@ export class CreateJobPostingComponent {
     //   const localDate = new Date(formValues.posted_at);
     //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
     // }
+      //  const jobTypeControl = this.jobForm.get('job_type');
+      //  if (jobTypeControl) {
+      //    formValues.job_type.setValue(jobTypeControl.value.toUpperCase(), { emitEvent: false });
+      //   }
+
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
       }
