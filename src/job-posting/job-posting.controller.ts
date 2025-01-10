@@ -12,6 +12,7 @@ import {
   Query,
   Req,
   Put,
+  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -58,9 +59,10 @@ export class JobPostingController {
       properties: IPaginationSwagger,
     },
   })
-  pagination(@Body() pagination: IPagination) {
-    return this.jobPostingService.paginateJobPostings(pagination);
+  pagination(@Request() req: any, @Body() pagination: IPagination) {
+    return this.jobPostingService.paginateJobPostings(req, pagination);
   }
+  
   
   @Get()
   @ApiOperation({ summary: 'Get all job postings' })
