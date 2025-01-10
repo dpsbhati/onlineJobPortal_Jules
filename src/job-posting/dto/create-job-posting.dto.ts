@@ -116,9 +116,9 @@ export class CreateJobPostingDto {
   @IsString({ message: 'short_description must be a valid string.' })
   @Validate(IsNotWhitespace)
   @Transform(({ value }) => value?.trim())
-  @MaxLength(255, {
-    message: 'Short description cannot exceed 255 characters.',
-  })
+  // @MaxLength(255, {
+  //   message: 'Short description cannot exceed 255 characters.',
+  // })
   short_description: string;
 
   @ApiProperty({
