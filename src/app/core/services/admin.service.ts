@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -62,5 +63,11 @@ export class AdminService {
   //   sortOrder?: string;
   // }): Observable<any> {
   //   return this.genericService.Get('job-posting/find-all', params);
+  // }
+
+
+  // Update application status
+  // updateApplicationStatus(jobId: string, applicantId: string, status: string): Observable<any> {
+  //   return this.http.put(`${this.BASE_URL}jobs/${jobId}/applicants/${applicantId}/status`, { status });
   // }
 }

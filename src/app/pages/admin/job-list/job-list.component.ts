@@ -306,4 +306,9 @@ export class JobListComponent {
   viewJob(id: number) {
     this.router.navigate(['/view-job', id]);
   }
+
+  viewJobApplications(jobId: string) {
+    // Navigate to the job applications view with initial filters
+    this.router.navigate(['/job-applicants-list', jobId]);
+  }
 }

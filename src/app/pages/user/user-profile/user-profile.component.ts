@@ -1,79 +1,86 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../core/services/user/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { AdminService } from '../../../core/services/admin.service';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { NgFor, NgIf } from '@angular/common';
+import { UserRole } from '../../../core/enums/roles.enum';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule, NgIf, NgFor],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+  userRole : string = '';
   userProfileForm!: FormGroup;
   isEditMode = false;
+  loading = false;
+  apiError: string | null = null;
+  fieldErrors: string[] = [];
   successMessage: string = '';
-  errorMessage: string = ''; 
+  errorMessage: string = '';
   userId: string | null = null;
+  userEmail: string = '';
 
   private readonly allowedImageFormats = ['image/jpeg', 'image/png', 'image/webp'];
-  constructor(private userService: UserService, private route: ActivatedRoute,
+
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
-    private notify : NotifyService,
-    private spinner : NgxSpinnerService
+    private notify: NotifyService,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
     this.initializeForm();
-    const user = localStorage.getItem('user');
+    const userStr = localStorage.getItem('user');
 
-    if(user){
-      const userID = JSON.parse(user).id
-      console.log(userID)
-      if (userID) {
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      this.userRole = user.role || '';
+      this.userEmail = user.email || '';
+      if (user.id) {
         this.isEditMode = true;
-        this.loadUserData(userID);
+        this.loadUserData(user.id);
       }
     }
-
-    // this.checkEditMode();
-    // this.route.params.subscribe((params) => {
-    //   this.isEditMode = false;
-    //   this.userId = params['id'];
-    //   this.getUserDetailsById(this.userId);
-    // });
   }
 
- 
-  
+  isAdmin(): boolean {
+    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
+  }
+
+  isApplicant(): boolean {
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
+  }
 
   initializeForm(): void {
     this.userProfileForm = new FormGroup({
       first_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), this.noWhitespaceValidator]),
-      last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'),this.noWhitespaceValidator]),
+      last_name: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), this.noWhitespaceValidator]),
+  
       dob: new FormControl('', Validators.required),
       gender: new FormControl('', Validators.required),
       mobile: new FormControl(null, [
         Validators.required,
-        Validators.pattern('^[0-9]{10}$'),this.noWhitespaceValidator // Ensure only valid 10-digit numbers
+        Validators.pattern('^[0-9]{10}$'), this.noWhitespaceValidator
       ]),
       key_skills: new FormControl(''),
       work_experiences: new FormControl('', [this.twoDigitWorkExperienceValidator.bind(this)]),
-
       current_company: new FormControl('', [Validators.pattern('^[a-zA-Z ]*$')]),
-      // current_salary: new FormControl('', [ Validators.min(3),  Validators.maxLength(7),]),
-      expected_salary: new FormControl('', [Validators.min(3),  Validators.maxLength(8),]),
+      expected_salary: new FormControl('', [Validators.min(1), Validators.maxLength(8)]),
     });
   }
-  
+
   addTrimValidators(): void {
     Object.keys(this.userProfileForm.controls).forEach((controlName) => {
       const control = this.userProfileForm.get(controlName);
@@ -89,7 +96,6 @@ export class UserProfileComponent implements OnInit {
       }
     });
   }
-  
 
   noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
     const isWhitespace = (control.value || '').trim().length === 0;
@@ -100,51 +106,48 @@ export class UserProfileComponent implements OnInit {
   salaryLimitValidator(maxLimit: number) {
     return (control: AbstractControl): ValidationErrors | null => {
       const rawValue = control.value;
-  
+
       if (!rawValue) return null; // If the field is empty, no validation error
-  
+
       // Remove commas from the input for validation
       const numericValue = parseInt(rawValue.toString().replace(/,/g, ''), 10);
-  
+
       // Validate if the value is a number and within the limit
       if (isNaN(numericValue) || numericValue > maxLimit) {
         return { salaryLimitExceeded: `Value exceeds the allowed limit of ${maxLimit.toLocaleString()}` };
       }
-  
+
       return null; // Validation passed
     };
   }
-  
+
   formatSalary(controlName: string): void {
     const control = this.userProfileForm.get(controlName);
-    console.log(control)
     if (control && control.value) {
       // Remove commas for processing
       const unformattedValue = control.value.toString().replace(/[^0-9]/g, '');
-  
+
       // Check if it's a valid number before formatting
       if (!isNaN(unformattedValue)) {
         const formattedValue = parseInt(unformattedValue).toLocaleString('en-IN')
-        console.log(typeof formattedValue)
         control.setValue(formattedValue, { emitEvent: false });
       }
     }
   }
-  
-  
+
   twoDigitWorkExperienceValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
-  
+
     // Allow values like "22 years" or "5 years"
     const isValid = /^(\d{1,2})(\s*[a-zA-Z]*)?$/.test(value);
     if (!isValid) {
       return { invalidWorkExperience: 'Each work experience must be a valid number (1 or 2 digits) followed by optional text.' };
     }
-  
+
     return null;
   }
-  
+
   onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0];
 
@@ -214,70 +217,91 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  // onSubmit(): void {
-  //   if (this.userProfileForm.invalid) {
-  //     console.log('Invalid fields:', this.getInvalidFields());
-  //     this.notify.showWarning("Please fill all required fields correctly.")
-  //     return;
-  //   }  
-
-  //   const payload = { ...this.userProfileForm.value };
-
-  //   if (this.isEditMode) {
-  //     this.userService.SaveUserProfile(payload).subscribe(
-  //       (response) => {
-  //         this.notify.showSuccess(response.message);
-  //       },
-  //       (error) => console.error('Error updating profile:', error)
-  //     );
-  //   } else {
-  //     this.userService.SaveUserProfile(payload).subscribe(
-  //       (response) => {
-  //         alert('User profile created successfully!');
-  //         if (response && response.data && response.data.id) {
-  //           this.navigateToEditMode(response.data.id);
-  //         }
-  //       },
-  //       (error) => console.error('Error creating profile:', error)
-  //     );
-  //   }
-  // }
-
   onSubmit(): void {
     if (this.userProfileForm.invalid) {
-      // Get the first invalid field and its corresponding error message
-      // const firstInvalidField = this.getInvalidFields()[0];
-      // const errorMessage = this.getValidationMessage(firstInvalidField);
-      this.notify.showWarning( 'Please fill all required fields correctly.');
+      // Show validation messages for all invalid fields
+      Object.keys(this.userProfileForm.controls).forEach(key => {
+        const control = this.userProfileForm.get(key);
+        if (control?.invalid) {
+          if (key === 'mobile' && control.errors?.['pattern']) {
+            this.notify.showWarning('Mobile number must be exactly 10 digits');
+          }
+        }
+      });
+      this.notify.showWarning('Please fill all required fields correctly.');
       return;
     }
 
-     // Trim all values in the form
-  Object.keys(this.userProfileForm.controls).forEach((controlName) => {
-    const control = this.userProfileForm.get(controlName);
-    if (control && typeof control.value === 'string') {
-      control.setValue(control.value.trim());
-    }
-  });
-  
-    const payload = { ...this.userProfileForm.value,
-      mobile: +this.userProfileForm.value.mobile, 
-     };
-  
-    // Update user profile
-    this.userService.SaveUserProfile(payload).subscribe(
-      (response) => {
-        this.notify.showSuccess(response.message);
-        this.router.navigate(['/job-list']);
-      },
-      (error) => {
-        console.error('Error updating profile:', error);
-        this.notify.showError(error.message);
+    // Trim all values in the form
+    Object.keys(this.userProfileForm.controls).forEach((controlName) => {
+      const control = this.userProfileForm.get(controlName);
+      if (control && typeof control.value === 'string') {
+        control.setValue(control.value.trim());
       }
-    );
+    });
+
+    const payload = {
+      ...this.userProfileForm.value,
+      mobile: +this.userProfileForm.value.mobile,
+    };
+
+    // Update user profile
+    this.userService.SaveUserProfile(payload).subscribe({
+      next: (response: any) => {
+        if (response.statusCode === 200) {
+          this.notify.showSuccess(response.message);
+          this.router.navigate(['/job-list']);
+        } else {
+          this.notify.showError(response.message || 'Failed to update profile');
+          this.scrollToTop();
+        }
+      },
+      error: (error) => {
+        console.error('Error updating profile:', error);
+        // Show API error messages and scroll to top
+        if (error.error?.message) {
+          this.notify.showError(error.error.message);
+        } else {
+          this.notify.showError('An error occurred while updating the profile');
+        }
+        this.scrollToTop();
+      }
+    });
   }
-  
-  
+
+  onMobileInput() {
+    const mobileControl = this.userProfileForm.get('mobile');
+    if (mobileControl && mobileControl.value) {
+      const mobileValue = mobileControl.value.toString();
+      if (mobileValue.length > 10) {
+        this.notify.showWarning('Mobile number cannot exceed 10 digits');
+        // Truncate to 10 digits
+        mobileControl.setValue(mobileValue.slice(0, 10), { emitEvent: false });
+      }
+    }
+  }
+
+  private handleApiError(error: any) {
+    if (error.message) {
+      // If it's a single error message
+      this.apiError = error.message;
+    } else if (error.errors && Array.isArray(error.errors)) {
+      // If it's an array of error messages
+      this.fieldErrors = error.errors;
+    } else if (typeof error === 'string') {
+      // If it's just a string
+      this.apiError = error;
+    } else {
+      // Default error message
+      this.apiError = 'An error occurred. Please try again.';
+    }
+
+    // Handle specific field errors
+    if (error.mobile) {
+      this.userProfileForm.get('mobile')?.setErrors({ 'apiError': error.mobile });
+    }
+  }
+
   getValidationMessage(fieldName: string): string {
     const errorMessages: { [key: string]: string } = {
       first_name: 'First Name is required.',
@@ -291,10 +315,9 @@ export class UserProfileComponent implements OnInit {
       current_salary: 'Current Salary must be a valid number.',
       expected_salary: 'Expected Salary must be a valid number.',
     };
-  
+
     return errorMessages[fieldName] || 'Invalid input.';
   }
-  
 
   getInvalidFields(): any {
     const invalidFields: any = {};
@@ -317,13 +340,14 @@ export class UserProfileComponent implements OnInit {
       (response: any) => {
         this.spinner.hide();
         if (response.statusCode === 200 && response.data) {
-          const data = response.data;  
+          const data = response.data;
           // Convert the `dob` field to YYYY-MM-DD format
-          const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;  
+          const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
           this.userProfileForm.patchValue({
             first_name: data.first_name || '',
             last_name: data.last_name || '',
-            dob: dob, // Patch the converted date here
+            email: data.email || '',
+            dob: dob,
             gender: data.gender || '',
             mobile: data.mobile || null,
             key_skills: data.key_skills || '',
@@ -345,10 +369,12 @@ export class UserProfileComponent implements OnInit {
       }
     );
   }
-  
-  
-  navigate(){
+
+  navigate() {
     this.router.navigate(['/job-list']);
   }
 
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }

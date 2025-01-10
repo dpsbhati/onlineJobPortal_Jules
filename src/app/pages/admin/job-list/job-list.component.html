@@ -121,14 +121,17 @@
         <!-- <td>{{ job.work_type }}</td> -->
         <td>{{ job.country_code == '0' ? 'N/A' : job.country_code}}</td>
         <td class="actions">
-          <button  (click)="viewJob(job.id)" class="action-button view-button">
-            <i class="fas fa-eye"></i> 
+          <button (click)="viewJob(job.id)" class="action-button view-button">
+            <i class="fas fa-eye"></i>
           </button>
           <button *ngIf="isAdmin()" (click)="editJob(job.id)" class="action-button edit-button">
-            <i class="fas fa-edit"></i> 
+            <i class="fas fa-edit"></i>
           </button>
           <button *ngIf="isAdmin()" (click)="deleteJob(job.id)" class="action-button delete-button">
-            <i class="fas fa-trash-alt"></i> 
+            <i class="fas fa-trash-alt"></i>
+          </button>
+          <button *ngIf="isAdmin()" (click)="viewJobApplications(job.id)" class="action-button applications-button" title="View Applications">
+            <i class="fas fa-users"></i>
           </button>
         </td>
 
@@ -167,6 +170,6 @@
          
   <div class="create-job-container" >
     <button *ngIf="isAdmin()" (click)="navigateToCreateJob()" class="create-job-button">Create Job</button>
-    <button *ngIf="isApplicant()" (click)="navigateToApplicantList()" class="btn btn-primary">View Applicants</button>
+    <button *ngIf="isApplicant()" (click)="navigateToApplicantList()" class="btn btn-primary">View Applications</button>
   </div>
   

@@ -13,7 +13,7 @@
     <h2>Applies</h2>
     <div class="tabs">
       <button class="tab active">Actions ({{totalItems}})</button>
-      <button class="tab">Applies on External Site (0)</button>
+      <!-- <button class="tab">Applies on External Site (0)</button> -->
     </div>
     <div class="subtitle">Applies in last 90 days</div>
   </div>
@@ -21,14 +21,14 @@
   <div class="jobs-list" *ngIf="appliedJobs.length > 0; else noJobs">
     <div class="job-card" *ngFor="let application of appliedJobs">
       <div class="company-logo">
-        {{ application.job.employer.charAt(0) | uppercase }}
+        {{ application.job.title.charAt(0) | uppercase }}
       </div>
       
       <div class="job-content">
-        <h3 class="job-title">{{ application.job.title }}</h3>
-        <div class="company-name" 
-             [class.clickable]="canViewJobDetails()" 
-             (click)="canViewJobDetails() && viewJobDetails(application.job.id)">
+        <h3 class="job-title"
+        [class.clickable]="canViewJobDetails()" 
+        (click)="canViewJobDetails() && viewJobDetails(application.job.id)">{{ application.job.title }}</h3>
+        <div class="company-name">
           {{ application.job.employer }}
           <span class="rating">★ {{ application.job.start_salary / 10000 | number:'1.1-1' }}</span>
         </div>

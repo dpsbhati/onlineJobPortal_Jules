@@ -1,0 +1,118 @@
+<div class="container">
+  <div class="header">
+    <button (click)="goBack()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <h2>Job Applicants</h2>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (keyup.enter)="onSearch()"
+        placeholder="Search by name or email"
+        class="search-input"
+      >
+      <button (click)="onSearch()" class="search-button">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
+    <div class="filter-controls">
+      <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Shortlisted">Shortlisted</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Hired">Hired</option>
+      </select>
+
+      <select [(ngModel)]="selectedDateRange" (change)="onDateRangeChange()" class="date-filter">
+        <option value="">All Time</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Applicants Table -->
+  <div class="table-container">
+    <table class="applicants-table">
+      <thead>
+        <tr>
+          <th (click)="onSort('name')">
+            Name 
+            <i class="fas" [ngClass]="{'fa-sort-up': pageConfig.sortBy === 'name' && pageConfig.direction === 'asc',
+                                     'fa-sort-down': pageConfig.sortBy === 'name' && pageConfig.direction === 'desc',
+                                     'fa-sort': pageConfig.sortBy !== 'name'}"></i>
+          </th>
+          <th (click)="onSort('email')">
+            Email
+            <i class="fas" [ngClass]="{'fa-sort-up': pageConfig.sortBy === 'email' && pageConfig.direction === 'asc',
+                                     'fa-sort-down': pageConfig.sortBy === 'email' && pageConfig.direction === 'desc',
+                                     'fa-sort': pageConfig.sortBy !== 'email'}"></i>
+          </th>
+          <th (click)="onSort('created_on')">
+            Applied Date
+            <i class="fas" [ngClass]="{'fa-sort-up': pageConfig.sortBy === 'created_on' && pageConfig.direction === 'asc',
+                                     'fa-sort-down': pageConfig.sortBy === 'created_on' && pageConfig.direction === 'desc',
+                                     'fa-sort': pageConfig.sortBy !== 'created_on'}"></i>
+          </th>
+          <th>Skills</th>
+          <th>Experience</th>
+          <th>Status</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let applicant of applicants">
+          <td>{{applicant.userData?.name || 'N/A'}}</td>
+          <td>{{applicant.user?.email || 'N/A'}}</td>
+          <td>{{applicant.created_on | date:'medium'}}</td>
+          <td>
+            <div class="skills-container">
+              <span class="skill-tag" *ngFor="let skill of applicant.userData?.skills">{{skill}}</span>
+            </div>
+          </td>
+          <td>{{applicant.userData?.experience || 'N/A'}} years</td>
+          <td>
+            <span class="status-badge" [ngClass]="applicant.status?.toLowerCase()">
+              {{applicant.status || 'Pending'}}
+            </span>
+          </td>
+         
+        </tr>
+        <tr *ngIf="applicants.length === 0">
+          <td colspan="7" class="no-data">No applicants found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalItems > 0">
+    <button 
+      [disabled]="pageConfig.curPage === 1"
+      (click)="onPageChange(pageConfig.curPage - 1)"
+      class="page-button"
+    >
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    
+    <span class="page-info">
+      Page {{pageConfig.curPage}} of {{getTotalPages()}}
+    </span>
+    
+    <button 
+      [disabled]="pageConfig.curPage >= getTotalPages()"
+      (click)="onPageChange(pageConfig.curPage + 1)"
+      class="page-button"
+    >
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>

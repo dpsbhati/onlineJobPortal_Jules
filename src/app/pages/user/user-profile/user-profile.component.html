@@ -1,175 +1,127 @@
-<div>
-    <button (click)="navigate()" class="button">Back</button>
-  </div>
- 
-  
 <div class="container mt-5">
-    <div class="text-center mb-4">
-        <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
-    </div>
-    <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="form-container">
-        <!-- First Name -->
-        <div class="form-group">
-            <label for="first_name" class="req">First Name</label>
-            <input id="first_name" class="form-control" formControlName="first_name" type="text"
-                placeholder="Enter first name" />
-                <div *ngIf="userProfileForm.get('first_name')?.touched && userProfileForm.get('first_name')?.invalid">
-                    <small *ngIf="userProfileForm.get('first_name')?.errors?.['required']" class="text-danger">
-                        First name is required.
-                    </small>
-                    <small *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']" class="text-danger">
-                        First name can only contain letters, numbers, and spaces.
-                    </small>
-                </div>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>
         </div>
+        <div class="card-body">
+          <!-- Error Messages Display -->
+          <div *ngIf="apiError" class="alert alert-danger">
+            {{ apiError }}
+          </div>
 
-        <!-- Last Name -->
-        <div class="form-group">
-            <label for="last_name" class="req">Last Name</label>
-            <input id="last_name" class="form-control" formControlName="last_name" type="text"
-                placeholder="Enter last name" />
-                <div *ngIf="userProfileForm.get('last_name')?.touched && userProfileForm.get('last_name')?.invalid">
-                    <small *ngIf="userProfileForm.get('last_name')?.errors?.['required']" class="text-danger">
-                        Last name is required.
-                    </small>
-                    <small *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']" class="text-danger">
-                        Last name can only contain letters, numbers, and spaces.
-                    </small>
-                </div>
-        </div>
+          <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
+            <!-- First Name -->
+            <div class="form-group">
+              <label for="first_name" class="req">First Name</label>
+              <input id="first_name" class="form-control" formControlName="first_name" type="text" placeholder="Enter first name" />
+              <div *ngIf="userProfileForm.get('first_name')?.touched && userProfileForm.get('first_name')?.invalid">
+                <small *ngIf="userProfileForm.get('first_name')?.errors?.['required']" class="text-danger">First name is required</small>
+                <small *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']" class="text-danger">First name can only contain letters, numbers, and spaces</small>
+              </div>
+            </div>
 
-        <!-- Date of Birth -->
-        <div class="form-group">
-            <label for="dob" class="req">Date of Birth</label>
-            <input id="dob" class="form-control" formControlName="dob" type="date" />
-            <div *ngIf="userProfileForm.get('dob')?.touched && userProfileForm.get('dob')?.invalid">
-                <small *ngIf="userProfileForm.get('dob')?.errors?.['required']" class="text-danger">
-                    Date of birth is required.
-                </small>
-                </div>
-        </div>
+            <!-- Last Name -->
+            <div class="form-group">
+              <label for="last_name" class="req">Last Name</label>
+              <input id="last_name" class="form-control" formControlName="last_name" type="text" placeholder="Enter last name" />
+              <div *ngIf="userProfileForm.get('last_name')?.touched && userProfileForm.get('last_name')?.invalid">
+                <small class="text-danger" *ngIf="userProfileForm.get('last_name')?.errors?.['required']">Last name is required</small>
+                <small class="text-danger" *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']">Only alphanumeric characters are allowed</small>
+                <small class="text-danger" *ngIf="userProfileForm.get('last_name')?.errors?.['whitespace']">Last name cannot be empty or just whitespace</small>
+              </div>
+            </div>
 
-        <!-- Gender -->
-        <div class="form-group">
-            <label for="gender" class="req">Gender</label>
-            <select id="gender" class="form-select" formControlName="gender">
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input id="email" class="form-control" type="email" [value]="userEmail" disabled />
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="form-group">
+              <label for="dob" class="req">Date of Birth</label>
+              <input id="dob" class="form-control" formControlName="dob" type="date" />
+              <div *ngIf="userProfileForm.get('dob')?.touched && userProfileForm.get('dob')?.invalid">
+                <small *ngIf="userProfileForm.get('dob')?.errors?.['required']" class="text-danger">Date of birth is required</small>
+              </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+              <label for="gender" class="req">Gender</label>
+              <select id="gender" class="form-select" formControlName="gender">
                 <option value="">Select Gender</option>
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
                 <option value="OTHERS">Other</option>
-            </select>
-            <div *ngIf="userProfileForm.get('gender')?.touched && userProfileForm.get('gender')?.invalid">
-                <small *ngIf="userProfileForm.get('gender')?.errors?.['required']" class="text-danger">
-                    Gender is required.
-                </small>
+              </select>
+              <div *ngIf="userProfileForm.get('gender')?.touched && userProfileForm.get('gender')?.invalid">
+                <small *ngIf="userProfileForm.get('gender')?.errors?.['required']" class="text-danger">Gender is required</small>
+              </div>
             </div>
-        </div>
 
-        <!-- Mobile -->
-        <div class="form-group">
-            <label for="mobile" class="req">Mobile</label>
-            <input id="mobile" class="form-control" formControlName="mobile" type="number"
-                placeholder="Enter mobile number" />
-                <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">
-                    <small *ngIf="userProfileForm.get('mobile')?.errors?.['required']" class="text-danger">
-                      Mobile number is required.
-                    </small>
-                    <small *ngIf="userProfileForm.get('mobile')?.errors?.['pattern']" class="text-danger">
-                      Please enter a valid 10-digit mobile number.
-                    </small>
-                  </div>
-        </div>
+            <!-- Mobile -->
+            <div class="form-group">
+              <label for="mobile" class="req">Mobile</label>
+              <input id="mobile" class="form-control" formControlName="mobile" type="number" placeholder="Enter mobile number" (input)="onMobileInput()" />
+              <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">
+                <small *ngIf="userProfileForm.get('mobile')?.errors?.['required']" class="text-danger">Mobile number is required</small>
+                <small *ngIf="userProfileForm.get('mobile')?.errors?.['pattern']" class="text-danger">Please enter a valid 10-digit mobile number</small>
+              </div>
+            </div>
 
-        <!-- Key Skills -->
-        <div class="form-group">
-            <label for="key_skills">Key Skills</label>
-            <input id="key_skills" class="form-control" formControlName="key_skills" type="text"
-                placeholder="Enter key skills" />
-        </div>
+            <!-- Key Skills -->
+            <div class="form-group" *ngIf="isApplicant()">
+              <label for="key_skills">Key Skills</label>
+              <input id="key_skills" class="form-control" formControlName="key_skills" type="text" placeholder="Enter key skills" />
+            </div>
 
-       <!-- Work Experiences -->
-<div class="form-group">
-    <label for="work_experiences">Work Experiences</label>
-    <input
-      id="work_experiences"
-      class="form-control"
-      formControlName="work_experiences"
-      placeholder="Enter work experiences"
-    />
-    <div *ngIf="userProfileForm.get('work_experiences')?.touched && userProfileForm.get('work_experiences')?.invalid">
-      <small
-        *ngIf="userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences']"
-        class="text-danger"
-      >
-        {{ userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences'] }}
-      </small>
-      <small
-        *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']"
-        class="text-danger"
-      >
-        {{ userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience'] }}
-      </small>
-    </div>
-  </div>
-  
-
-        <!-- Current Company -->
-        <div class="form-group">
-            <label for="current_company">Current Company</label>
-            <input id="current_company" class="form-control" formControlName="current_company" type="text"
-                placeholder="Enter current company" />
-                <div
-                *ngIf="
-                  userProfileForm.get('current_company')?.touched &&
-                  userProfileForm.get('current_company')?.invalid
-                "
-                class="text-danger"
-              >
-               
-                <small *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']">
-                  Current Company must contain only alphabets.
+            <!-- Work Experience -->
+            <div class="form-group" *ngIf="isApplicant()">
+              <label for="work_experiences">Work Experience</label>
+              <input id="work_experiences" class="form-control" formControlName="work_experiences" type="text" placeholder="Enter work experience" />
+              <div *ngIf="userProfileForm.get('work_experiences')?.touched && userProfileForm.get('work_experiences')?.invalid">
+                <small *ngIf="userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences']" class="text-danger">
+                  {{ userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences'] }}
+                </small>
+                <small *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']" class="text-danger">
+                  {{ userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience'] }}
                 </small>
               </div>
-        </div>
+            </div>
 
-        <!-- Current Salary -->
-        <!-- <div class="form-group">
-            <label for="current_salary">Current Salary</label>
-            <input id="current_salary" class="form-control" formControlName="current_salary" type="text" appNumberFormatter
-                placeholder="Enter current salary" min="0" (input)="formatSalary('current_salary')"/>
-                <div *ngIf="userProfileForm.get('current_salary')?.touched && userProfileForm.get('current_salary')?.invalid">
-                    
-                    <small *ngIf="userProfileForm.get('current_salary')?.errors?.['salaryLimitExceeded']" class="text-danger">
-                      {{ userProfileForm.get('current_salary')?.errors?.['salaryLimitExceeded'] }}
-                    </small>
-                  </div>
-        </div> -->
+            <!-- Current Company -->
+            <div class="form-group" *ngIf="isApplicant()">
+              <label for="current_company">Current Company</label>
+              <input id="current_company" class="form-control" formControlName="current_company" type="text" placeholder="Enter current company" />
+              <div *ngIf="userProfileForm.get('current_company')?.touched && userProfileForm.get('current_company')?.invalid">
+                <small *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']" class="text-danger">Current Company must contain only alphabets</small>
+              </div>
+            </div>
 
-        <!-- Expected Salary -->
-        <div class="form-group">
-            <label for="expected_salary">Expected Salary</label>
-            <input id="expected_salary" class="form-control" formControlName="expected_salary" type="text"
-                placeholder="Enter expected salary" (input)="formatSalary('expected_salary')"/>
-                <div *ngIf="userProfileForm.get('expected_salary')?.touched && userProfileForm.get('expected_salary')?.invalid">
-                    <!-- <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']" class="text-danger">
-                      Expected salary is required.
-                    </small>
-                    <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded']" class="text-danger">
-                      {{ userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded'] }}
-                    </small> -->
-                  </div>
-        </div>
+            <!-- Expected Salary -->
+            <div class="form-group" *ngIf="isApplicant()">
+              <label for="expected_salary">Expected Salary</label>
+              <input id="expected_salary" class="form-control" formControlName="expected_salary" type="text" placeholder="Enter expected salary" (input)="formatSalary('expected_salary')" />
+              <div *ngIf="userProfileForm.get('expected_salary')?.touched && userProfileForm.get('expected_salary')?.invalid">
+                <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']" class="text-danger">Expected salary is required</small>
+                <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded']" class="text-danger">
+                  {{ userProfileForm.get('expected_salary')?.errors?.['salaryLimitExceeded'] }}
+                </small>
+              </div>
+            </div>
 
-        <!-- Submit Button -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary" [disabled]="userProfileForm.invalid">
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="userProfileForm.invalid">
                 {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
-            </button>
+              </button>
+            </div>
+          </form>
         </div>
-    </form>
-
-    <!-- Edit Button -->
-    <!-- <div class="text-center mt-3">
-        <button (click)="navigateToEditMode('id')" class="btn btn-secondary">Edit Example User</button>
-    </div> -->
+      </div>
+    </div>
+  </div>
 </div>
