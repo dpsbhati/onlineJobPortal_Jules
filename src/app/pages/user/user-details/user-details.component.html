@@ -7,32 +7,53 @@
     <!-- Work work_experiences -->
     <div>
       <h2>Work experiences</h2>
-      <label for="workExperiences">Years/Roles:</label>
+      <label for="workExperiences">Years/Roles: <span class="required">*</span></label>
       <input id="workExperiences" type="text" formControlName="work_experiences" required />
+      <div *ngIf="userDetailsForm.get('work_experiences')?.touched && userDetailsForm.get('work_experiences')?.errors">
+        <div *ngIf="userDetailsForm.get('work_experiences')?.errors?.['required']"class="text-danger">This field is required.</div>
+        <div *ngIf="userDetailsForm.get('work_experiences')?.errors?.['minlength']"class="text-danger">Minimum length is 5 characters.</div>
+        <div *ngIf="userDetailsForm.get('work_experiences')?.errors?.['maxlength']"class="text-danger">Maximum length is 200 characters.</div>
+      </div>
+
     </div>
     <div>
-      <label for="comment">Comments:</label>
+      <label for="comment">Comments: <span class="required">*</span></label>
       <textarea id="comment" formControlName="comments"></textarea>
+      <div *ngIf="userDetailsForm.get('comments')?.touched && userDetailsForm.get('comments')?.errors">
+        <div *ngIf="userDetailsForm.get('comments')?.errors?.['required']"class="text-danger">This field is required.</div>
+        <div *ngIf="userDetailsForm.get('comments')?.errors?.['minlength']"class="text-danger">Minimum length is 10 characters.</div>
+        <div *ngIf="userDetailsForm.get('comments')?.errors?.['maxlength']"class="text-danger">Maximum length is 500 characters.</div>
+      </div>
     </div>
     <div>
     
-      <label for="descriptions">Description:</label>
+      <label for="descriptions">Description: <span class="required">*</span></label>
       <textarea id="descriptions" formControlName="description"></textarea>
+      <div *ngIf="userDetailsForm.get('description')?.touched && userDetailsForm.get('description')?.errors">
+        <div *ngIf="userDetailsForm.get('description')?.errors?.['required']"class="text-danger">This field is required.</div>
+        <div *ngIf="userDetailsForm.get('description')?.errors?.['minlength']"class="text-danger">Minimum length is 15 characters.</div>
+        <div *ngIf="userDetailsForm.get('description')?.errors?.['maxlength']"class="text-danger">Maximum length is 100 characters.</div>
+      </div>
     </div>
     <!-- Additional Information -->
     <div>
       <!-- <h2>Additional Information</h2> -->
-      <label for="additional_info">Additional Information:</label>
+      <label for="additional_info">Additional Information: <span class="required">*</span></label>
       <textarea id="additional_info" formControlName="additional_info"></textarea>
+      <div *ngIf="userDetailsForm.get('additional_info')?.touched && userDetailsForm.get('additional_info')?.errors">
+        <div *ngIf="userDetailsForm.get('additional_info')?.errors?.['required']"class="text-danger">This field is required.</div>
+        <div *ngIf="userDetailsForm.get('additional_info')?.errors?.['minlength']" class="text-danger">Minimum length is 5 characters.</div>
+        <div *ngIf="userDetailsForm.get('additional_info')?.errors?.['maxlength']"class="text-danger">Maximum length is 500 characters.</div>
+      </div>
     </div>
     <div>
       <h2>Upload Section</h2>
-      <label for="cv_path">Upload:</label>
+      <label for="cv_path">Upload: <span class="required">*</span></label>
       <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc" />
       <div *ngIf="fileError" class="error">{{ fileError }}</div>
     </div>
     <div>
-      <label for="certification_path">Upload Certification:</label>
+      <label for="certification_path">Upload Certification: <span class="required">*</span></label>
       <input id="certification_path" type="file" (change)="onFileChange($event, 'certification_path')" accept=".pdf, .doc" />
       <!-- <div *ngIf="userDetailsForm.get('certification_path')?.invalid && userDetailsForm.get('certification_path')?.touched" class="text-danger">
         File Path is required.

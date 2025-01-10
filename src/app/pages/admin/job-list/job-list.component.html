@@ -94,7 +94,7 @@
         <th>Deadline</th>
         <th>Start Salary</th>
         <th>End Salary</th>
-        <th>Job Post</th>
+        <th *ngIf="isAdmin()">Job Post</th>
         <!-- <th>Work Type</th> -->
         <th>Country</th>
         <th>Actions</th>
@@ -117,7 +117,7 @@
         <td>{{ job.deadline | date: 'shortDate' }}</td>
         <td>{{ job.start_salary | number }}</td>
         <td>{{ job.end_salary | number }}</td>
-        <td>{{job.jobpost_status}}</td>
+        <td *ngIf="isAdmin()">{{job.jobpost_status}}</td>
         <!-- <td>{{ job.work_type }}</td> -->
         <td>{{ job.country_code == '0' ? 'N/A' : job.country_code}}</td>
         <td class="actions">

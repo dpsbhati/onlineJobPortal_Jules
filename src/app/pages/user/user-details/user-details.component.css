@@ -54,4 +54,9 @@
     opacity: 0.6; /* Reduce opacity for a disabled look */
     transition: background-color 0.3s, color 0.3s;
   }
+  .required {
+    color: red;
+    font-weight: bold;
+  }
+  
   
