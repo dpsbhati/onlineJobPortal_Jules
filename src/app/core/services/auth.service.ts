@@ -122,7 +122,7 @@ export class AuthService {
   }
 
   registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: UserRole }): Observable<any> {
-    return this.genericService.Post('user/create-update', user)
+    return this.genericService.Post('user/register', user)
     // .pipe(
     //   catchError((error) => {
     //     console.error('Error in registerUser:', error);
