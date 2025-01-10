@@ -13,14 +13,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class JobPostingService {
-  private readonly logger = new Logger(JobPostingService.name)
+  private readonly logger = new Logger(JobPostingService.name);
 
   constructor(
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) { }
+  ) {}
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
@@ -131,7 +131,10 @@ export class JobPostingService {
         }
       }
     } catch (error) {
-      console.error('Error occurred while updating expired jobs:', error.message);
+      console.error(
+        'Error occurred while updating expired jobs:',
+        error.message,
+      );
     }
   }
 
@@ -191,14 +194,13 @@ export class JobPostingService {
           : 'Job Posting created successfully.',
       );
     } catch (error) {
-      console.error('Error occurred during createOrUpdate process:', error.message);
+      console.error(
+        'Error occurred during createOrUpdate process:',
+        error.message,
+      );
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-
-
-
-
 
   // async paginateJobPostings(pagination: IPagination) {
   //   try {
@@ -282,12 +284,21 @@ export class JobPostingService {
   //   }
   // }
 
-  async paginateJobPostings(pagination: IPagination) {
+  async paginateJobPostings(req: any, pagination: IPagination): Promise<any> {
     try {
+      console.log('Request User -->', req.user);
+
       const { curPage = 1, perPage = 10, whereClause } = pagination;
 
       // Default whereClause to filter out deleted job postings
       let lwhereClause = 'job.is_deleted = 0';
+
+      // Check user role
+      const isAdmin = req.user?.role === 'admin';
+      const isApplicant = req.user?.role === 'applicant';
+      if (isApplicant) {
+        lwhereClause += ` AND job_opening = 'open'`;
+      }
 
       // Fields to search
       const fieldsToSearch = [
@@ -329,15 +340,17 @@ export class JobPostingService {
         }
 
         // Salary range filtering
-        const salaryMin = whereClause.find((p) => p.key === 'salary_min')?.value || 0;
-        const salaryMax = whereClause.find((p) => p.key === 'salary_max')?.value || 1000000000000;
+        const salaryMin =
+          whereClause.find((p) => p.key === 'salary_min')?.value || 0;
+        const salaryMax =
+          whereClause.find((p) => p.key === 'salary_max')?.value ||
+          1000000000000;
 
         lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
       }
 
       const skip = (curPage - 1) * perPage;
 
-      // Fetch paginated data with user details
       const [list, totalCount] = await this.jobPostingRepository
         .createQueryBuilder('job')
         .where(lwhereClause)
@@ -351,6 +364,9 @@ export class JobPostingService {
           const enrichedJob = {
             ...job,
           };
+          if (!isAdmin) {
+            delete enrichedJob.jobpost_status; // Remove jobpost_status if not admin
+          }
           return enrichedJob;
         }),
       );
@@ -361,9 +377,6 @@ export class JobPostingService {
       return WriteResponse(500, error, `Something went wrong.`);
     }
   }
-
-
-
 
   async findAll() {
     try {
@@ -487,7 +500,8 @@ export class JobPostingService {
       jobPosting.jobpost_status = 'posted';
       jobPosting.updated_by = userId;
 
-      const updatedJobPosting = await this.jobPostingRepository.save(jobPosting);
+      const updatedJobPosting =
+        await this.jobPostingRepository.save(jobPosting);
 
       return WriteResponse(
         200,
@@ -498,5 +512,4 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-
 }
