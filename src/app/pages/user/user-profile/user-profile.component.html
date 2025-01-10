@@ -40,7 +40,7 @@
             </div>
 
             <!-- Date of Birth -->
-            <div class="form-group">
+            <div class="form-group" *ngIf="isApplicant()">
               <label for="dob" class="req">Date of Birth</label>
               <input id="dob" class="form-control" formControlName="dob" type="date" />
               <div *ngIf="userProfileForm.get('dob')?.touched && userProfileForm.get('dob')?.invalid">
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Gender -->
-            <div class="form-group">
+            <div class="form-group" *ngIf="isApplicant()">
               <label for="gender" class="req">Gender</label>
               <select id="gender" class="form-select" formControlName="gender">
                 <option value="">Select Gender</option>
@@ -63,7 +63,7 @@
             </div>
 
             <!-- Mobile -->
-            <div class="form-group">
+            <div class="form-group" *ngIf="isApplicant()">
               <label for="mobile" class="req">Mobile</label>
               <input id="mobile" class="form-control" formControlName="mobile" type="number" placeholder="Enter mobile number" (input)="onMobileInput()" />
               <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">
