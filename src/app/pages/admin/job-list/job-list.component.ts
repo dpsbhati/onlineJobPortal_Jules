@@ -10,6 +10,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { Options, LabelType } from "@angular-slider/ngx-slider";
 import moment from 'moment';
 import { AuthService } from '../../../core/services/auth.service';
+import { UserRole } from '../../../core/enums/roles.enum';
 
 declare var $: any;
 
@@ -22,6 +23,7 @@ declare var $: any;
 })
 export class JobListComponent {
   jobs: any[] = []; // To store job data
+  userRole: string = '';
   errorMessage: string = '';
   pageConfig: any = {
     curPage: 1,
@@ -66,16 +68,17 @@ export class JobListComponent {
     private notify: NotifyService,
     private spinner: NgxSpinnerService,
     private authService: AuthService
-  ) { }
+  ) {
+    this.userRole = this.authService.getUserRole();
+    console.log('Current user role:', this.userRole); // Debug log
+  }
 
   isAdmin(): boolean {
-    const user = this.authService.currentUserValue;
-    return user?.role === 'ADMIN';
+    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
   isApplicant(): boolean {
-    const user = this.authService.currentUserValue;
-    return user?.role === 'applicant';
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
   ngOnInit(): void {
@@ -234,6 +237,10 @@ export class JobListComponent {
   navigateToUserProfile(): void {
 
     this.router.navigate(['/user-profile']);
+  }
+
+  navigateToApplicantList(): void {
+    this.router.navigate(['/applied-jobs']);
   }
 
   // Handle search action

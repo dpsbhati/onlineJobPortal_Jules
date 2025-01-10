@@ -65,6 +65,11 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  getUserRole(): string {
+    const currentUser = this.currentUserValue;
+    return currentUser ? currentUser.role : '';
+  }
+
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
