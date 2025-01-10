@@ -1,0 +1,94 @@
+<ngx-spinner 
+  bdColor="rgba(0, 0, 0, 0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-clip-rotate"
+  [fullScreen]="true"
+>
+  <p style="color: white">Loading...</p>
+</ngx-spinner>
+
+<div class="applied-jobs-container" *ngIf="isAuthorized(); else unauthorizedAccess">
+  <div class="header">
+    <h2>Applies</h2>
+    <div class="tabs">
+      <button class="tab active">Actions ({{totalItems}})</button>
+      <button class="tab">Applies on External Site (0)</button>
+    </div>
+    <div class="subtitle">Applies in last 90 days</div>
+  </div>
+
+  <div class="jobs-list" *ngIf="appliedJobs.length > 0; else noJobs">
+    <div class="job-card" *ngFor="let application of appliedJobs">
+      <div class="company-logo">
+        {{ application.job.employer.charAt(0) | uppercase }}
+      </div>
+      
+      <div class="job-content">
+        <h3 class="job-title">{{ application.job.title }}</h3>
+        <div class="company-name" 
+             [class.clickable]="canViewJobDetails()" 
+             (click)="canViewJobDetails() && viewJobDetails(application.job.id)">
+          {{ application.job.employer }}
+          <span class="rating">★ {{ application.job.start_salary / 10000 | number:'1.1-1' }}</span>
+        </div>
+        
+        <div class="application-status">
+          <span class="status-icon">✓</span>
+          Applied {{ application.applied_at | date:'mediumDate' }}
+        </div>
+      </div>
+
+      <div class="action-button">
+        <button class="copy-btn">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noJobs>
+    <div class="no-jobs">
+      <i class="fas fa-briefcase"></i>
+      <p>You haven't applied to any jobs yet.</p>
+    </div>
+  </ng-template>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalItems > itemsPerPage">
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === 1"
+      (click)="onPageChange(currentPage - 1)"
+    >
+      <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <div class="page-numbers">
+      <button 
+        *ngFor="let page of paginationArray()"
+        class="page-number"
+        [class.active]="page === currentPage"
+        (click)="onPageChange(page)"
+      >
+        {{ page }}
+      </button>
+    </div>
+
+    <button 
+      class="page-btn" 
+      [disabled]="currentPage === totalPages"
+      (click)="onPageChange(currentPage + 1)"
+    >
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
+
+<ng-template #unauthorizedAccess>
+  <div class="unauthorized-message">
+    <i class="fas fa-lock"></i>
+    <h2>Access Denied</h2>
+    <p>You are not authorized to view this page. Please log in as an applicant to access your applied jobs.</p>
+  </div>
+</ng-template>

@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../core/services/admin.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { UserRole } from '../../../core/enums/roles.enum';
+import { AuthService } from '../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-view-job',
@@ -17,20 +20,32 @@ export class ViewJobComponent implements OnInit {
   loading: boolean = true;
   error: string = '';
   id:any;
-  
+  userRole: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
     private router: Router,
     private notifyService: NotifyService,
-    private spinner: NgxSpinnerService
-  ) {}
+    private spinner: NgxSpinnerService,
+    private authService: AuthService
+  ) {
+    this.userRole = this.authService.getUserRole();
+  }
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     if (this.id) {
       this.loadJobDetails(this.id);
     }
+  }
+
+  isAdmin(): boolean {
+    return this.userRole.toUpperCase() === UserRole.ADMIN;
+  }
+
+  isApplicant(): boolean {
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
   loadJobDetails(id: string): void { 

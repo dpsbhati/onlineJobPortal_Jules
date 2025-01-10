@@ -58,25 +58,8 @@ export class UserService {
         return this.genericService.Post<any>(`user-profile/update-user-profile`, data);
     }
 
-    // updateProfileImage(id: any, data: any): Observable<any> {
-    //     return this._generic.Post<any>(`user/${id}/profile-image`, data);
-    // }
-
-    // archiveUser(id: any): Observable<any> {
-    //     return this._generic.Post<any>(`user/${id}/archive`, null);
-    // }
-
-    // userGetAll(): Observable<any> {
-    //     return this._generic.Get<any>(`user/get-All`);
-    // }
-
-    // GetUserByRoleName(Role: string, vesselId?: any): Observable<any> {
-    //     if (vesselId) return this._generic.Get<any>(`user/userByRole/${Role}?vesselId=${vesselId}`);
-    //     else return this._generic.Get<any>(`user/userByRole/${Role}`);
-    // }
-
-    // removeProfileImage(id: any): Observable<any> {
-    //     return this._generic.Get<any>(`user/updateProfileImageToNull/${id}`);
-    // }
+    getAppliedJobs(payload:any): Observable<any> {
+        return this.genericService.Post(`applications/pagination`, payload);
+      }
 
 }
