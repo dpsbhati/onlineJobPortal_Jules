@@ -147,7 +147,11 @@
       <textarea id="short_description" formControlName="short_description" class="form-control"></textarea>
       <div *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched"
         class="text-danger">
-        short description is required.
+        <small *ngIf="jobForm.get('short_description')?.errors?.['required']">short description is required.</small>
+        <small *ngIf="jobForm.get('short_description')?.errors?.['minlength']">
+          Short Description must be at least {{ jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('short_description')?.errors?.['maxlength']">
+          Short Description cannot exceed {{ jobForm.get('short_description')?.errors?.['maxlength'].requiredLength }} characters.</small>
       </div>
     </div>
 
@@ -156,24 +160,33 @@
       <textarea id="full_description" formControlName="full_description" class="form-control"></textarea>
       <div *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched"
         class="text-danger">
-        full description is required.
+        <small *ngIf="jobForm.get('full_description')?.errors?.['required']">full description is required.</small>
+        <small *ngIf="jobForm.get('full_description')?.errors?.['minlength']">Full Description must be at least {{ jobForm.get('full_description')?.errors?.['minlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('full_description')?.errors?.['maxlength']">Full Description cannot exceed {{ jobForm.get('full_description')?.errors?.['maxlength'].requiredLength }} characters.</small>
       </div>
-    </div>
+      </div>
+    
 
     <div class="form-group">
       <label for="assignment_duration">Assignment Duration<span class="text-danger">*</span></label>
       <input id="assignment_duration" formControlName="assignment_duration" type="text" class="form-control" />
       <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched"
         class="text-danger">
-        Assignment duration is required.
+        <small *ngIf="jobForm.get('assignment_duration')?.errors?.['required']"> Assignment duration is required.</small>
+       
+        <small *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50 characters.</small>
       </div>
+      <!-- <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched" class="text-danger">
+       
+      </div> -->
     </div>
 
     <div class="form-group">
       <label for="employer">Employer<span class="text-danger">*</span></label>
       <input id="employer" formControlName="employer" type="text" class="form-control" />
       <div *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched" class="text-danger">
-        Employer is required.
+        <small *ngIf="jobForm.get('employer')?.errors?.['required']">  Employer is required.</small>
+        <small *ngIf="jobForm.get('employer')?.errors?.['maxlength']">Duration cannot exceed 50 characters.</small>
       </div>
     </div>
 
@@ -182,7 +195,8 @@
       <input id="required_experience" formControlName="required_experience" type="text" class="form-control" />
       <div *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched"
         class="text-danger">
-        Experience is required.
+        <small *ngIf="jobForm.get('required_experience')?.errors?.['required']">  Experience is required..</small>
+        <small *ngIf="jobForm.get('required_experience')?.errors?.['maxlength']">Duration cannot exceed 50 characters.</small>
       </div>
     </div>
 
@@ -232,8 +246,14 @@
     <div class="form-group">
       <label for="address">Address<span class="text-danger">*</span></label>
       <input id="address" formControlName="address" type="text" class="form-control" />
+      <!-- <div *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched" class="text-danger">
+        <small *ngIf="jobForm.get('address')?.errors?.['required']"> Address is required.</small>
+  
+      </div> -->
       <div *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched" class="text-danger">
-        Address is required.
+        <small *ngIf="jobForm.get('address')?.errors?.['required']">Address is required.</small>
+        <small *ngIf="jobForm.get('address')?.errors?.['minlength']">Address must be at least {{ jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('address')?.errors?.['maxlength']">Address cannot exceed {{ jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</small>
       </div>
     </div>
 
