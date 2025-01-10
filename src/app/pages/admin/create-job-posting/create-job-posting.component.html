@@ -81,6 +81,10 @@
       <div *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched" class="text-danger">
         <small>At least one skill is required.</small>
       </div>
+      <div *ngIf="jobForm.get('skills_required')?.invalid && jobForm.get('skills_required')?.touched" class="text-danger">
+        <small *ngIf="jobForm.get('skills_required')?.errors?.['minlength']">Skill  must be at least 2 characters.</small>
+        <small *ngIf="jobForm.get('skills_required')?.errors?.['maxlength']">Skill cannot exceed 50 characters.</small>
+      </div>
     </div>
     
 
