@@ -65,10 +65,19 @@
             <!-- Mobile -->
             <div class="form-group" *ngIf="isApplicant()">
               <label for="mobile" class="req">Mobile</label>
-              <input id="mobile" class="form-control" formControlName="mobile" type="number" placeholder="Enter mobile number" (input)="onMobileInput()" />
-              <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid">
-                <small *ngIf="userProfileForm.get('mobile')?.errors?.['required']" class="text-danger">Mobile number is required</small>
-                <small *ngIf="userProfileForm.get('mobile')?.errors?.['pattern']" class="text-danger">Please enter a valid 10-digit mobile number</small>
+              <input 
+                id="mobile" 
+                class="form-control" 
+                formControlName="mobile" 
+                type="number" 
+                placeholder="Enter mobile number" 
+                (input)="onMobileInput()" 
+              />
+              <div *ngIf="userProfileForm.get('mobile')?.touched && userProfileForm.get('mobile')?.invalid" class="text-danger">
+                <small *ngIf="userProfileForm.get('mobile')?.errors?.['required']">Mobile number is required</small>
+                <small *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']">
+                  Please enter a valid 10-digit mobile number
+                </small>
               </div>
             </div>
 
@@ -115,7 +124,7 @@
 
             <!-- Submit Button -->
             <div class="text-center mt-4">
-              <button type="submit" class="btn btn-primary" [disabled]="userProfileForm.invalid">
+              <button type="submit" class="btn btn-primary" [disabled]="isUpdateButtonDisabled">
                 {{ isEditMode ? 'Update Profile' : 'Create Profile' }}
               </button>
             </div>

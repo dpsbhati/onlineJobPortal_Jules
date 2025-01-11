@@ -29,8 +29,7 @@ export class JobApplicantListComponent implements OnInit {
     perPage: 10,
     sortBy: "created_on",
     direction: "desc",
-    whereClause: [],
-    jobId: ''
+    whereClause: []
   };
 
   // For template use
@@ -47,38 +46,43 @@ export class JobApplicantListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Get jobId from route params
     this.jobId = this.route.snapshot.paramMap.get('jobId') || '';
-    if (this.jobId) {
-      this.pageConfig.jobId = this.jobId;
-      this.loadApplicants();
+    if (!this.jobId) {
+      this.notifyService.showError('Job ID not found');
+      this.router.navigate(['/admin/jobs']);
+      return;
     }
+    
+    this.loadApplicants();
   }
 
   loadApplicants() {
     this.spinner.show();
     
-    // Update whereClause based on filters
-    this.pageConfig.whereClause = [];
-    
+    // Reset whereClause array
+    this.pageConfig.whereClause = [
+      {
+        key: "job.id", // Update the key to match the nested property path
+        value: this.jobId,
+        operator: "="
+      }
+    ];
+
+    // Add search filter if present
     if (this.searchTerm) {
       this.pageConfig.whereClause.push({
-        field: 'userData.name',
-        operator: 'contains',
-        value: this.searchTerm
-      });
-      // Also search in email
-      this.pageConfig.whereClause.push({
-        field: 'userData.email',
-        operator: 'contains',
-        value: this.searchTerm
+        key: "all",
+        value: this.searchTerm,
+        operator: "="
       });
     }
 
     if (this.selectedStatus) {
       this.pageConfig.whereClause.push({
-        field: 'status',
-        operator: 'equals',
-        value: this.selectedStatus
+        key: "status",
+        value: this.selectedStatus,
+        operator: "="
       });
     }
 
@@ -100,60 +104,77 @@ export class JobApplicantListComponent implements OnInit {
 
       if (this.selectedDateRange !== '') {
         this.pageConfig.whereClause.push({
-          field: 'created_on',
-          operator: 'between',
-          value: [startDate.toISOString(), today.toISOString()]
+          key: "created_on",
+          value: [startDate.toISOString(), today.toISOString()],
+          operator: "between"
         });
       }
     }
 
+    // Update pagination parameters
+    this.pageConfig.curPage = this.currentPage;
+    this.pageConfig.perPage = this.itemsPerPage;
+
+    console.log('Request payload:', this.pageConfig); // Add this to debug the request
+
+    // Make API call with exact payload format
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
-          this.applicants = response.data;
-          this.totalItems = response.count || 0;
-          
-          // Log the response to see the structure
-          console.log('Applicants:', this.applicants);
+          console.log('API Response:', response); // Add this to debug the response
+          // Double-check filtering on client side
+          this.applicants = response.data.filter((app: any) => {
+            return app.job && app.job.id === this.jobId;
+          });
+          this.totalItems = this.applicants.length;
         } else {
           this.notifyService.showError(response.message);
         }
         this.spinner.hide();
       },
       error: (error) => {
-        this.notifyService.showError(error?.error?.message || 'Error loading applicants');
+        console.error('API Error:', error); // Add this to debug errors
+        this.notifyService.showError('Failed to load applicants');
         this.spinner.hide();
       }
     });
   }
 
   onSearch() {
-    this.pageConfig.curPage = 1;
+    this.currentPage = 1;
     this.loadApplicants();
   }
 
   onStatusChange() {
-    this.pageConfig.curPage = 1;
+    this.currentPage = 1;
     this.loadApplicants();
   }
 
   onDateRangeChange() {
-    this.pageConfig.curPage = 1;
+    this.currentPage = 1;
+    this.loadApplicants();
+  }
+
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadApplicants();
+  }
+
+  onPerPageChange(perPage: number) {
+    this.itemsPerPage = perPage;
+    this.currentPage = 1;
     this.loadApplicants();
   }
 
   onSort(field: string) {
     if (this.pageConfig.sortBy === field) {
+      // Toggle direction if clicking same field
       this.pageConfig.direction = this.pageConfig.direction === 'asc' ? 'desc' : 'asc';
     } else {
+      // Set new sort field and default to desc
       this.pageConfig.sortBy = field;
-      this.pageConfig.direction = 'asc';
+      this.pageConfig.direction = 'desc';
     }
-    this.loadApplicants();
-  }
-
-  onPageChange(page: number) {
-    this.pageConfig.curPage = page;
     this.loadApplicants();
   }
 

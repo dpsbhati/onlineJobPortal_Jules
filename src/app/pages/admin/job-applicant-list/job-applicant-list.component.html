@@ -95,24 +95,36 @@
 
   <!-- Pagination -->
   <div class="pagination" *ngIf="totalItems > 0">
-    <button 
-      [disabled]="pageConfig.curPage === 1"
-      (click)="onPageChange(pageConfig.curPage - 1)"
-      class="page-button"
-    >
-      <i class="fas fa-chevron-left"></i>
-    </button>
-    
-    <span class="page-info">
-      Page {{pageConfig.curPage}} of {{getTotalPages()}}
-    </span>
-    
-    <button 
-      [disabled]="pageConfig.curPage >= getTotalPages()"
-      (click)="onPageChange(pageConfig.curPage + 1)"
-      class="page-button"
-    >
-      <i class="fas fa-chevron-right"></i>
-    </button>
+    <div class="items-per-page">
+      <label>Items per page:</label>
+      <select [(ngModel)]="itemsPerPage" (change)="onPerPageChange(itemsPerPage)">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+      </select>
+    </div>
+
+    <div class="page-controls">
+      <button 
+        [disabled]="currentPage === 1"
+        (click)="onPageChange(currentPage - 1)"
+        class="page-button"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      
+      <span class="page-info">
+        Page {{currentPage}} of {{Math.ceil(totalItems / itemsPerPage)}}
+        ({{totalItems}} total)
+      </span>
+      
+      <button 
+        [disabled]="currentPage >= Math.ceil(totalItems / itemsPerPage)"
+        (click)="onPageChange(currentPage + 1)"
+        class="page-button"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
   </div>
 </div>
