@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../core/services/user/user.service';
 import { AdminService } from '../../../core/services/admin.service';
@@ -8,15 +8,23 @@ import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { NgFor, NgIf } from '@angular/common';
 import { UserRole } from '../../../core/enums/roles.enum';
+import { NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor],
+  imports: [ReactiveFormsModule, NgIf, NgFor,FormsModule,
+        NgSelectComponent,
+            NgOptionTemplateDirective,
+        
+  ],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+  skillsArray: string[] = [];
+  newSkill: string = '';
+
   userRole: string = '';
   userProfileForm!: FormGroup;
   isEditMode = false;
@@ -28,7 +36,7 @@ export class UserProfileComponent implements OnInit {
   userId: string | null = null;
   userEmail: string = '';
 
-  private readonly allowedImageFormats = ['image/jpeg', 'image/png', 'image/webp']
+  
 
   constructor(
     private userService: UserService,
@@ -81,7 +89,7 @@ export class UserProfileComponent implements OnInit {
         Validators.required,
         Validators.pattern('^[0-9]{10}$'),this.mobileNumberValidator
       ] : null),
-      key_skills: new FormControl('', this.isApplicant() ? [Validators.required] : null),
+      key_skills: new FormControl([], this.isApplicant() ? [Validators.required, Validators.min(2),  Validators.maxLength(50),this.SkillArrayValidator(1,10),  this.skillsValidator(2, 50),] : null),
       work_experiences: new FormControl('', this.isApplicant() ? [
         Validators.required,
         this.twoDigitWorkExperienceValidator.bind(this)
@@ -110,6 +118,41 @@ export class UserProfileComponent implements OnInit {
       }
     });
   }
+
+  skillsValidator(minLength: number, maxLength: number): ValidatorFn {
+      return (control: AbstractControl): ValidationErrors | null => {
+        const skills = control.value;
+    
+        if (!Array.isArray(skills)) {
+          return { invalidType: true };
+        }
+    
+        for (const skill of skills) {
+          if (skill.length < minLength) {
+            return { minLengthSkill: { requiredLength: minLength, actualLength: skill.length } };
+          }
+          if (skill.length > maxLength) {
+            return { maxLengthSkill: { requiredLength: maxLength, actualLength: skill.length } };
+          }
+        }
+    
+        return null;
+      };}
+    SkillArrayValidator(min: number, max: number) {
+      return (control: AbstractControl): ValidationErrors | null => {
+        const skills = control.value;
+        if (!Array.isArray(skills)) {
+          return { invalidType: true };
+        }
+        if (skills.length < min) {
+          return { minSkills: { required: min, actual: skills.length } };
+        }
+        if (skills.length > max) {
+          return { maxSkills: { required: max, actual: skills.length } };
+        }
+        return null;
+      };
+    }
 
   mobileNumberValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
@@ -184,6 +227,11 @@ export class UserProfileComponent implements OnInit {
         if (!control) return true;
 
         const value = control.value;
+      if (field === 'key_skills') {
+        return !Array.isArray(value) || value.length === 0;
+      }
+
+       
         if (typeof value === 'string') {
           return !value || value.trim() === '';
         }
@@ -285,135 +333,45 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: Event, controlName: string): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
 
-    if (file) {
-      if (this.allowedImageFormats.includes(file.type)) {
-        this.imageCompressionService.compressImage(file).then((compressedImageUrl: string) => {
-          fetch(compressedImageUrl)
-            .then((res) => res.blob())
-            .then((compressedFileBlob) => {
-              const compressedFile = new File([compressedFileBlob], file.name, { type: file.type });
+  // getValidationMessage(fieldName: string): string {
+  //   const errorMessages: { [key: string]: string } = {
+  //     first_name: 'First Name is required and can only contain letters, numbers and spaces.',
+  //     last_name: 'Last Name is required and can only contain letters, numbers and spaces.',
+  //     dob: 'Date of Birth is required.',
+  //     gender: 'Gender is required.',
+  //     mobile: 'Mobile Number must be exactly 10 digits.',
+  //     key_skills: 'Key Skills are required and cannot be empty.',
+  //     work_experiences: 'Work Experience must be a valid number (1 or 2 digits) followed by optional text.',
+  //     current_company: 'Current Company is required and cannot exceed 100 characters.',
+  //     expected_salary: 'Expected Salary must be a valid number.',
+  //   };
 
-              const folderName = 'user-profile';
-              const user = JSON.parse(localStorage.getItem('user') || '{}');
-              const userId = user.id;
-              this.userService.uploadFile({ folderName, file: compressedFile, userId }).subscribe(
-                (response) => {
-                  if (response.statusCode === 200) {
-                    this.userProfileForm.patchValue({
-                      [controlName]: response.data.path,
-                    });
+  //   const control = this.userProfileForm.get(fieldName);
+  //   if (control?.errors) {
+  //     if (control.errors['required']) {
+  //       return `${fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} is required.`;
+  //     }
+  //     if (control.errors['pattern'] || control.errors['invalidMobile']) {
+  //       if (fieldName === 'mobile') {
+  //         return 'Please enter a valid 10-digit mobile number.';
+  //       }
+  //       if (fieldName === 'current_company') {
+  //         return 'Company name can only contain letters and spaces.';
+  //       }
+  //     }
+  //     if (control.errors['maxlength']) {
+  //       if (fieldName === 'current_company') {
+  //         return 'Company name cannot exceed 100 characters.';
+  //       }
+  //     }
+  //     if (control.errors['invalidWorkExperience']) {
+  //       return 'Work experience must be a valid number (1 or 2 digits) followed by optional text.';
+  //     }
+  //   }
 
-                    // Wrap in setTimeout to ensure change detection triggers
-                    setTimeout(() => {
-                      this.successMessage = response.message || 'File uploaded successfully!';
-                      this.errorMessage = ''; // Clear error message
-                    });
-                  }
-                },
-                (error) => {
-                  console.error('Error uploading file:', error);
-
-                  setTimeout(() => {
-                    this.errorMessage = 'Failed to upload the file. Please try again.';
-                    this.successMessage = ''; // Clear success message
-                  });
-                }
-              );
-            });
-        });
-      } else {
-        const folderName = 'user-profile';
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = user.id;
-        this.adminService.uploadFile({ folderName, file, userId }).subscribe(
-          (response) => {
-            if (response.statusCode === 200) {
-              this.userProfileForm.patchValue({
-                [controlName]: response.data.path,
-              });
-
-              setTimeout(() => {
-                this.successMessage = response.message || 'File uploaded successfully!';
-                this.errorMessage = ''; // Clear error message
-              });
-            }
-          },
-          (error) => {
-            console.error('Error uploading file:', error);
-
-            setTimeout(() => {
-              this.errorMessage = 'Failed to upload the file. Please try again.';
-              this.successMessage = ''; // Clear success message
-            });
-          }
-        );
-      }
-    }
-  }
-
-
-  private handleApiError(error: any) {
-    if (error.message) {
-      // If it's a single error message
-      this.apiError = error.message;
-    } else if (error.errors && Array.isArray(error.errors)) {
-      // If it's an array of error messages
-      this.fieldErrors = error.errors;
-    } else if (typeof error === 'string') {
-      // If it's just a string
-      this.apiError = error;
-    } else {
-      // Default error message
-      this.apiError = 'An error occurred. Please try again.';
-    }
-
-    // Handle specific field errors
-    if (error.mobile) {
-      this.userProfileForm.get('mobile')?.setErrors({ 'apiError': error.mobile });
-    }
-  }
-
-  getValidationMessage(fieldName: string): string {
-    const errorMessages: { [key: string]: string } = {
-      first_name: 'First Name is required and can only contain letters, numbers and spaces.',
-      last_name: 'Last Name is required and can only contain letters, numbers and spaces.',
-      dob: 'Date of Birth is required.',
-      gender: 'Gender is required.',
-      mobile: 'Mobile Number must be exactly 10 digits.',
-      key_skills: 'Key Skills are required and cannot be empty.',
-      work_experiences: 'Work Experience must be a valid number (1 or 2 digits) followed by optional text.',
-      current_company: 'Current Company is required and cannot exceed 100 characters.',
-      expected_salary: 'Expected Salary must be a valid number.',
-    };
-
-    const control = this.userProfileForm.get(fieldName);
-    if (control?.errors) {
-      if (control.errors['required']) {
-        return `${fieldName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} is required.`;
-      }
-      if (control.errors['pattern'] || control.errors['invalidMobile']) {
-        if (fieldName === 'mobile') {
-          return 'Please enter a valid 10-digit mobile number.';
-        }
-        if (fieldName === 'current_company') {
-          return 'Company name can only contain letters and spaces.';
-        }
-      }
-      if (control.errors['maxlength']) {
-        if (fieldName === 'current_company') {
-          return 'Company name cannot exceed 100 characters.';
-        }
-      }
-      if (control.errors['invalidWorkExperience']) {
-        return 'Work experience must be a valid number (1 or 2 digits) followed by optional text.';
-      }
-    }
-
-    return errorMessages[fieldName] || 'Invalid input.';
-  }
+  //   return errorMessages[fieldName] || 'Invalid input.';
+  // }
 
   getInvalidFields(): any {
     const invalidFields: any = {};
@@ -472,5 +430,36 @@ export class UserProfileComponent implements OnInit {
 
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  addSkill(): void {
+    const skill = this.newSkill.trim();
+    if (!skill) {
+      this.notify.showWarning('Skill cannot be empty.');
+      return;
+    }
+    if (skill.length < 2) {
+      this.notify.showWarning('Skill must be at least 2 characters long.');
+      return;
+    }
+    if (skill.length > 50) {
+      this.notify.showWarning('Skill cannot exceed 50 characters.');
+      return;
+    }
+    if (skill && !this.skillsArray.includes(skill)) {
+      this.skillsArray.push(skill);
+      this.newSkill = ''; // Clear the input field
+      this.updateSkillsInForm();
+    }
+  }
+
+  removeSkill(index: number): void {
+    this.skillsArray.splice(index, 1);
+    this.updateSkillsInForm();
+  }
+
+  updateSkillsInForm(): void {
+    this.userProfileForm.get('key_skills')?.setValue(this.skillsArray);
+    this.userProfileForm.get('key_skills')?.markAsTouched();
   }
 }

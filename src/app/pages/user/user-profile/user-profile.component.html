@@ -11,7 +11,7 @@
             {{ apiError }}
           </div>
 
-          <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
+          <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()" (keydown.enter)="$event.preventDefault()">
             <!-- First Name -->
             <div class="form-group">
               <label for="first_name" class="req">First Name</label>
@@ -82,14 +82,62 @@
             </div>
 
             <!-- Key Skills -->
-            <div class="form-group" *ngIf="isApplicant()">
+            <!-- <div class="form-group" *ngIf="isApplicant()">
               <label for="key_skills">Key Skills</label>
               <input id="key_skills" class="form-control" formControlName="key_skills" type="text" placeholder="Enter key skills" />
+            </div> -->
+            <div class="form-group" *ngIf="isApplicant()">
+              <label class="req">Key Skills</label>
+              <div class="d-flex">
+                <input
+                  id="skills_input"
+                  type="text"
+                  class="form-control"
+                  
+                  placeholder="Enter a skill and press Enter"
+                  [(ngModel)]="newSkill"
+                  (keyup.enter)="addSkill()"
+                  [ngModelOptions]="{standalone: true}"
+                />
+                <button
+                  type="button"
+                  class="add-button"
+                  (click)="addSkill()"
+                  [disabled]="!newSkill.trim()"
+                >
+                  Add Skill
+                </button>
+              </div>
+              <ul class="list-group mt-2">
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                  *ngFor="let skill of skillsArray; let i = index"
+                >
+                  {{ skill }}
+                  <button
+                    type="button"
+                    class="remove"
+                    (click)="removeSkill(i)"
+                  >
+                    Remove
+                  </button>
+                </li>
+              </ul>
+              <div *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.invalid" class="text-danger">
+                <small *ngIf="userProfileForm.get('key_skills')?.errors?.['required']">At least one skill is required.</small>
+                <small *ngIf="userProfileForm.get('key_skills')?.errors?.['minSkills']">
+                  At least {{ userProfileForm.get('key_skills')?.errors?.['minSkills'].required }} skills are required.
+                </small>
+                <small *ngIf="userProfileForm.get('key_skills')?.errors?.['maxSkills']">
+                  No more than {{ userProfileForm.get('key_skills')?.errors?.['maxSkills'].required }} skills are allowed.
+                </small>
+              </div>
+                       
             </div>
 
             <!-- Work Experience -->
             <div class="form-group" *ngIf="isApplicant()">
-              <label for="work_experiences">Work Experience</label>
+              <label for="work_experiences" class="req">Work Experience</label>
               <input id="work_experiences" class="form-control" formControlName="work_experiences" type="text" placeholder="Enter work experience" />
               <div *ngIf="userProfileForm.get('work_experiences')?.touched && userProfileForm.get('work_experiences')?.invalid">
                 <small *ngIf="userProfileForm.get('work_experiences')?.errors?.['maxWorkExperiences']" class="text-danger">
@@ -103,7 +151,7 @@
 
             <!-- Current Company -->
             <div class="form-group" *ngIf="isApplicant()">
-              <label for="current_company">Current Company</label>
+              <label for="current_company" class="req">Current Company</label>
               <input id="current_company" class="form-control" formControlName="current_company" type="text" placeholder="Enter current company" />
               <div *ngIf="userProfileForm.get('current_company')?.touched && userProfileForm.get('current_company')?.invalid">
                 <small *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']" class="text-danger">Current Company must contain only alphabets</small>
@@ -112,7 +160,7 @@
 
             <!-- Expected Salary -->
             <div class="form-group" *ngIf="isApplicant()">
-              <label for="expected_salary">Expected Salary</label>
+              <label for="expected_salary" class="req">Expected Salary</label>
               <input id="expected_salary" class="form-control" formControlName="expected_salary" type="text" placeholder="Enter expected salary" (input)="formatSalary('expected_salary')" />
               <div *ngIf="userProfileForm.get('expected_salary')?.touched && userProfileForm.get('expected_salary')?.invalid">
                 <small *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']" class="text-danger">Expected salary is required</small>
