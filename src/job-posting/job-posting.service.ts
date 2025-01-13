@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
+import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
@@ -18,6 +19,8 @@ export class JobPostingService {
   constructor(
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
+    @InjectRepository(CoursesAndCertification)
+    private coursesRepository: Repository<CoursesAndCertification>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
   ) {}
@@ -147,23 +150,23 @@ export class JobPostingService {
             where: { id: jobDto.id, is_deleted: false },
           })
         : null;
-  
+
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
-  
+
       // Only set job_opening during creation
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
         const datePublished = new Date(jobDto.date_published);
         const deadline = new Date(jobDto.deadline);
-  
+
         if (now >= datePublished && now <= deadline) {
           job_opening = 'open';
         } else if (now > deadline) {
           job_opening = 'close';
         }
       }
-  
+
       // Create or update job posting
       const updatedJobPosting = this.jobPostingRepository.create({
         ...jobPosting,
@@ -174,17 +177,32 @@ export class JobPostingService {
         created_by: jobPosting ? jobPosting.created_by : userId,
         updated_by: userId,
       });
-      
-      const savedJobPosting = await this.jobPostingRepository.save(
-        updatedJobPosting,
-      );
-  
+
+      // Save the job posting
+      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+
+      if (jobDto.id) {
+        // Delete existing courses and certifications for the job ID
+        await this.coursesRepository.delete({ job_id: jobDto.id });
+      }
+
+      if (jobDto.courses_and_certification) {
+        for (const course of jobDto.courses_and_certification) {
+          const courseWithJobId = {
+            ...course,
+            job_id: savedJobPosting.id, // Add job ID to each course
+          };
+          // Save the course
+          await this.coursesRepository.save(courseWithJobId);
+        }
+      }
+
       console.log(
         jobPosting
           ? `Updated Job Posting with ID: ${savedJobPosting.id}`
           : `Created Job Posting with ID: ${savedJobPosting.id}`,
       );
-  
+
       return WriteResponse(
         200,
         savedJobPosting,

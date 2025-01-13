@@ -16,6 +16,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   IsIn,
+  IsArray,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
@@ -270,4 +271,13 @@ export class CreateJobPostingDto {
       'Invalid social_media_type. Allowed values are: facebook, linkedin.',
   })
   social_media_type?: string;
+
+  @ApiPropertyOptional({
+    description: 'List of courses and certifications relevant to the job, including PDF files',
+    example: [{ organization_name: 'Course 1',  certification_description: 'Description of Course 1', start_date: '2020-01-01', end_date: '2020-12-31', certification_file: 'course1.pdf' }, { organization_name: 'Certification 1',  certification_description: 'Description of Certification 1', start_date: '2021-01-01', end_date: '2021-12-31', certification_file: 'certification1.pdf' }],
+  })
+  @IsOptional()
+  @IsArray()
+  // @Validate(IsNotWhitespace, { each: true })
+  courses_and_certification?: { organization_name: string; certification_description?: string; start_date?: Date; end_date?: Date; certification_file?: string }[];
 }
