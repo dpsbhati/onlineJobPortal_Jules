@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { AdminService } from '../../../core/services/admin.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { UserService } from '../../../core/services/user/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/enums/roles.enum';
+import { HelperService } from '../../../core/helpers/helper.service';
 
 @Component({
   selector: 'app-applicant-applied-list',
@@ -35,13 +35,18 @@ export class ApplicantAppliedListComponent implements OnInit {
   
   // User role
   userRole: string = '';
-  
+
+  filters: any = {
+    all: ""
+  }
+
   constructor(
     private userService: UserService,
     private router: Router,
     private spinner: NgxSpinnerService,
     private notify: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private helperService: HelperService
   ) {
     this.userRole = this.authService.getUserRole();
   }
@@ -49,7 +54,6 @@ export class ApplicantAppliedListComponent implements OnInit {
   ngOnInit(): void {
     // Check if user is authorized to access this page
     if (!this.isAuthorized()) {
-      this.notify.showError('You are not authorized to access this page');
       this.router.navigate(['/']);
       return;
     }
@@ -68,10 +72,35 @@ export class ApplicantAppliedListComponent implements OnInit {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
+  OnSearch(event: any) {
+    if (event?.target?.value) {
+      this.filters.all = event.target.value.trim();
+    } else {
+      this.filters.all = "";
+    }
+    this.pageConfig.curPage = 1;
+    this.loadAppliedJobs();
+  }
+
+  onSearch(): void {
+    this.pageConfig.curPage = 1;
+    this.loadAppliedJobs();
+  }
+
+  Clear() {
+    this.filters.all = "";
+    this.searchTerm = "";
+    this.pageConfig.curPage = 1;
+    this.pageConfig.perPage = 10;
+    this.loadAppliedJobs();
+  }
+
   loadAppliedJobs(): void {
     if (!this.isAuthorized()) return;
 
     this.spinner.show();
+    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
@@ -90,29 +119,9 @@ export class ApplicantAppliedListComponent implements OnInit {
     });
   }
 
-  onSearch(): void {
-    if (!this.isAuthorized()) return;
-
-    if (!this.searchTerm.trim()) {
-      this.loadAppliedJobs();
-      return;
-    }
-
-    // Add search term to whereClause
-    this.pageConfig.whereClause = [{
-      field: 'job.title',
-      operator: 'like',
-      value: this.searchTerm
-    }];
-    this.pageConfig.curPage = 1; // Reset to first page when searching
-    this.loadAppliedJobs();
-  }
-
-  onPageChange(page: number): void {
-    if (!this.isAuthorized()) return;
-
-    this.pageConfig.curPage = page;
-    this.currentPage = page;
+  OnPerPageChange(event?: any) {
+    this.pageConfig.curPage = 1;
+    if (event) this.pageConfig.perPage = +event.target.value;
     this.loadAppliedJobs();
   }
 
@@ -120,20 +129,17 @@ export class ApplicantAppliedListComponent implements OnInit {
     return Math.ceil(this.totalItems / this.itemsPerPage);
   }
 
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.pageConfig.curPage = page;
+      this.loadAppliedJobs();
+    }
+  }
+
   paginationArray(): number[] {
-    const pages = [];
-    const maxPages = Math.min(5, this.totalPages);
-    let startPage = Math.max(1, this.currentPage - 2);
-    let endPage = Math.min(this.totalPages, startPage + maxPages - 1);
-
-    if (endPage - startPage + 1 < maxPages) {
-      startPage = Math.max(1, endPage - maxPages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-    return pages;
+    const pageCount = Math.ceil(this.totalItems / this.itemsPerPage);
+    return Array.from({ length: pageCount }, (_, i) => i + 1);
   }
 
   viewJobDetails(jobId: string): void {
