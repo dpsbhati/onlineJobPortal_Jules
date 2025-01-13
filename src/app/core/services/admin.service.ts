@@ -54,6 +54,9 @@ export class AdminService {
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
   }
+  deleteCertification(id: string): Observable<any> {
+    return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
+  }
 
   // getJobPostings(params: {
   //   page?: number;
