@@ -186,6 +186,7 @@ export class ApplicationService {
 
       const fieldsToSearch = [
         'status',
+        'job.id',
         'description',
         'comments',
         'additional_info',
