@@ -1,3 +1,4 @@
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('courses_and_certification')
@@ -40,5 +41,7 @@ export class CoursesAndCertification {
   @Column({ type: 'char', nullable: true })
   certification_file: string;
 
-
+  @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.courses_and_certification) // Define relation with JobPosting
+  @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
+  job: JobPosting;
 }

@@ -17,7 +17,7 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<applications>,
     @InjectRepository(CoursesAndCertification)
     private coursesRepository: Repository<CoursesAndCertification>,
-  ) {}
+  ) { }
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
     const { job_id, user_id, certification_path } = createApplicationDto;
@@ -103,7 +103,7 @@ export class ApplicationService {
     try {
       const applications = await this.applicationRepository.find({
         where: { is_deleted: false },
-        relations: ['job', 'user'],
+        relations: ['job', 'user', 'job.courses_and_certification'],
         order: { applied_at: 'DESC' },
       });
 
@@ -128,7 +128,7 @@ export class ApplicationService {
   async findOne(id: string) {
     const application = await this.applicationRepository.findOne({
       where: { id, is_deleted: false },
-      relations: ['job', 'user'],
+      relations: ['job', 'user', 'job.courses_and_certification'],
     });
 
     if (!application) {
@@ -165,91 +165,92 @@ export class ApplicationService {
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
-        console.log('Request User -->', req.user);
+      console.log('Request User -->', req.user);
 
-        const { curPage = 1, perPage = 10, whereClause } = pagination;
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-        // Default whereClause to filter out deleted applications
-        let lwhereClause = 'app.is_deleted = 0';
+      // Default whereClause to filter out deleted applications
+      let lwhereClause = 'app.is_deleted = 0';
 
-        const isApplicant = req.user?.role === 'applicant';
-        const isAdmin = req.user?.role === 'admin';
+      const isApplicant = req.user?.role === 'applicant';
+      const isAdmin = req.user?.role === 'admin';
 
-        // If applicant, ensure they can only see their own applications
-        if (isApplicant) {
-            const userId = parseInt(req.user.id, 10);  // Ensure the ID is treated as a number
-            lwhereClause += ` AND app.user_id = ${userId}`;
+      // If applicant, ensure they can only see their own applications
+      if (isApplicant) {
+        const userId = parseInt(req.user.id, 10);  // Ensure the ID is treated as a number
+        lwhereClause += ` AND app.user_id = ${userId}`;
+      }
+
+      console.log('Role:', req.user?.role);
+      console.log('Initial Where Clause:', lwhereClause);
+
+      const fieldsToSearch = [
+        'status',
+        'description',
+        'comments',
+        'additional_info',
+        'work_experiences',
+        'certification_path',
+        'user.first_name',
+        'user.last_name',
+        'job.title',
+      ];
+
+      // Process whereClause if search filters are applied
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
+          }
+        });
+
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((field) => `${field} LIKE '%${allValues}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
         }
+      }
 
-        console.log('Role:', req.user?.role);
-        console.log('Initial Where Clause:', lwhereClause);
+      const skip = (curPage - 1) * perPage;
 
-        const fieldsToSearch = [
-            'status',
-            'description',
-            'comments',
-            'additional_info',
-            'work_experiences',
-            'certification_path',
-            'user.first_name',
-            'user.last_name',
-            'job.title',
-        ];
+      console.log('Final Where Clause:', lwhereClause);
 
-        // Process whereClause if search filters are applied
-        if (Array.isArray(whereClause)) {
-            fieldsToSearch.forEach((field) => {
-                const fieldValue = whereClause.find((p) => p.key === field)?.value;
-                if (fieldValue) {
-                    lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
-                }
-            });
+      // Fetch paginated application data
+      const [list, totalCount] = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        .leftJoinAndSelect('job.courses_and_certification', 'courses_and_certification')
+        .where(lwhereClause)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('app.created_at', 'DESC')
+        .getManyAndCount();
 
-            const allValues = whereClause.find((p) => p.key === 'all')?.value;
-            if (allValues) {
-                const searches = fieldsToSearch
-                    .map((field) => `${field} LIKE '%${allValues}%'`)
-                    .join(' OR ');
-                lwhereClause += ` AND (${searches})`;
-            }
-        }
+      console.log('Query Result:', { list, totalCount });
 
-        const skip = (curPage - 1) * perPage;
+      if (!list.length) {
+        return WriteResponse(400, [], `Record not found.`);
+      }
 
-        console.log('Final Where Clause:', lwhereClause);
+      const enrichedApplications = list.map((application) => ({
+        ...application,
+      }));
 
-        // Fetch paginated application data
-        const [list, totalCount] = await this.applicationRepository
-            .createQueryBuilder('app')
-            .leftJoinAndSelect('app.job', 'job')
-            .leftJoinAndSelect('app.user', 'user')
-            .where(lwhereClause)
-            .skip(skip)
-            .take(perPage)
-            .orderBy('app.created_at', 'DESC')
-            .getManyAndCount();
-
-        console.log('Query Result:', { list, totalCount });
-
-        if (!list.length) {
-            return WriteResponse(400, [], `Record not found.`);
-        }
-
-        const enrichedApplications = list.map((application) => ({
-            ...application,
-        }));
-
-        return paginateResponse(
-            enrichedApplications,
-            totalCount,
-            curPage,
-            perPage,
-        );
+      return paginateResponse(
+        enrichedApplications,
+        totalCount,
+        curPage,
+        perPage,
+      );
     } catch (error) {
-        console.error('Application Pagination Error --> ', error);
-        return WriteResponse(500, {}, `Something went wrong.`);
+      console.error('Application Pagination Error --> ', error);
+      return WriteResponse(500, {}, `Something went wrong.`);
     }
-}
+  }
 
 
   private async sendConfirmationEmail(application: any) {

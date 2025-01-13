@@ -1,5 +1,6 @@
+import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { Users } from 'src/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity('job_postings')
 export class JobPosting {
@@ -124,5 +125,8 @@ export class JobPosting {
 
   @Column({type:"longtext",nullable:true})
   employee_experience:string
+
+  @OneToMany(() => CoursesAndCertification, (job) => job.job)
+  courses_and_certification: CoursesAndCertification[];
 
 }
