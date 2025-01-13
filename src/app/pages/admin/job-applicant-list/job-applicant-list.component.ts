@@ -50,7 +50,6 @@ export class JobApplicantListComponent implements OnInit {
     this.jobId = this.route.snapshot.paramMap.get('jobId') || '';
     if (!this.jobId) {
       this.notifyService.showError('Job ID not found');
-      this.router.navigate(['/admin/jobs']);
       return;
     }
     
@@ -59,73 +58,13 @@ export class JobApplicantListComponent implements OnInit {
 
   loadApplicants() {
     this.spinner.show();
-    
-    // Reset whereClause array
-    this.pageConfig.whereClause = [
-      {
-        key: "job.id", // Update the key to match the nested property path
-        value: this.jobId,
-        operator: "="
-      }
-    ];
-
-    // Add search filter if present
-    if (this.searchTerm) {
-      this.pageConfig.whereClause.push({
-        key: "all",
-        value: this.searchTerm,
-        operator: "="
-      });
-    }
-
-    if (this.selectedStatus) {
-      this.pageConfig.whereClause.push({
-        key: "status",
-        value: this.selectedStatus,
-        operator: "="
-      });
-    }
-
-    if (this.selectedDateRange) {
-      const today = new Date();
-      let startDate = new Date();
-      
-      switch(this.selectedDateRange) {
-        case 'today':
-          startDate = today;
-          break;
-        case 'week':
-          startDate.setDate(today.getDate() - 7);
-          break;
-        case 'month':
-          startDate.setMonth(today.getMonth() - 1);
-          break;
-      }
-
-      if (this.selectedDateRange !== '') {
-        this.pageConfig.whereClause.push({
-          key: "created_on",
-          value: [startDate.toISOString(), today.toISOString()],
-          operator: "between"
-        });
-      }
-    }
-
-    // Update pagination parameters
-    this.pageConfig.curPage = this.currentPage;
-    this.pageConfig.perPage = this.itemsPerPage;
-
-    console.log('Request payload:', this.pageConfig); // Add this to debug the request
 
     // Make API call with exact payload format
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
           console.log('API Response:', response); // Add this to debug the response
-          // Double-check filtering on client side
-          this.applicants = response.data.filter((app: any) => {
-            return app.job && app.job.id === this.jobId;
-          });
+         this.applicants = response.data; 
           this.totalItems = this.applicants.length;
         } else {
           this.notifyService.showError(response.message);
@@ -166,17 +105,17 @@ export class JobApplicantListComponent implements OnInit {
     this.loadApplicants();
   }
 
-  onSort(field: string) {
-    if (this.pageConfig.sortBy === field) {
-      // Toggle direction if clicking same field
-      this.pageConfig.direction = this.pageConfig.direction === 'asc' ? 'desc' : 'asc';
-    } else {
-      // Set new sort field and default to desc
-      this.pageConfig.sortBy = field;
-      this.pageConfig.direction = 'desc';
-    }
-    this.loadApplicants();
-  }
+  // onSort(field: string) {
+  //   if (this.pageConfig.sortBy === field) {
+  //     // Toggle direction if clicking same field
+  //     this.pageConfig.direction = this.pageConfig.direction === 'asc' ? 'desc' : 'asc';
+  //   } else {
+  //     // Set new sort field and default to desc
+  //     this.pageConfig.sortBy = field;
+  //     this.pageConfig.direction = 'desc';
+  //   }
+  //   this.loadApplicants();
+  // }
 
   viewApplicantProfile(applicantId: string) {
     this.router.navigate(['/user-details', applicantId]);
