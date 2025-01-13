@@ -76,13 +76,12 @@ export class UserProfileComponent implements OnInit {
       first_name: new FormControl('', [
         Validators.required, 
         Validators.pattern('^[a-zA-Z0-9 ]+$'), 
-      
       ]),
       last_name: new FormControl('', [
         Validators.required, 
         Validators.pattern('^[a-zA-Z0-9 ]+$')
       ]),
-      
+      email: new FormControl({ value: this.userEmail || '', disabled: true }), 
       dob: new FormControl('', this.isApplicant() ? [Validators.required] : null),
       gender: new FormControl('', this.isApplicant() ? [Validators.required] : null),
       mobile: new FormControl('', this.isApplicant() ? [
@@ -94,16 +93,16 @@ export class UserProfileComponent implements OnInit {
         Validators.required,
         this.twoDigitWorkExperienceValidator.bind(this)
       ] : null),
-      current_company: new FormControl('', [
+      current_company: new FormControl('', this.isApplicant() ? [
         Validators.required,
         Validators.pattern('^[a-zA-Z ]*$'),
         Validators.maxLength(100)
-      ]),
-      expected_salary: new FormControl('', [
+      ] : null),
+      expected_salary: new FormControl('', this.isApplicant () ? [
         Validators.required,
-        Validators.min(1), 
-        Validators.maxLength(9)
-      ])
+        Validators.min(1),
+        this.expectedSalaryValidator()
+      ] : null),
     });
 
     // Subscribe to form value changes to show validation messages
@@ -193,6 +192,11 @@ export class UserProfileComponent implements OnInit {
             this.notify.showWarning('Current Company must contain only alphabets');
             this.scrollToTop();
           }
+        } else if (fieldName === 'expected_salary') {
+          if (errors['maxDigits']) {
+            this.notify.showWarning('Expected Salary should not exceed 8 digits');
+            this.scrollToTop();
+          }
         }
       }
     }
@@ -219,19 +223,29 @@ export class UserProfileComponent implements OnInit {
         'gender',
         'mobile',
         'key_skills',
-        'work_experiences'
+        'work_experiences',
+        'current_company',
+        'expected_salary'
       ];
+
+      // Check expected salary length
+      const expectedSalaryValue = this.userProfileForm?.get('expected_salary')?.value;
+      if (expectedSalaryValue) {
+        const numStr = expectedSalaryValue.toString().replace(/,/g, '');
+        if (numStr.length > 8) {
+          return true; // Disable button if more than 8 digits
+        }
+      }
 
       const hasEmptyRequiredFields = requiredFields.some(field => {
         const control = this.userProfileForm?.get(field);
         if (!control) return true;
 
         const value = control.value;
-      if (field === 'key_skills') {
-        return !Array.isArray(value) || value.length === 0;
-      }
+        if (field === 'key_skills') {
+          return !Array.isArray(value) || value.length === 0;
+        }
 
-       
         if (typeof value === 'string') {
           return !value || value.trim() === '';
         }
@@ -287,17 +301,18 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const formValues = this.userProfileForm.value;
+    
+    // Format skills array with forward slashes
+    const formattedSkills = formValues.key_skills.map((skill: string) => `/${skill}`);
+    
+    const payload = {
+      ...formValues,
+      key_skills: JSON.stringify(formattedSkills),
+      mobile: formValues.mobile ? +formValues.mobile : null,
+      role: this.userRole // Add role from localStorage
+    };
 
-    const mobileControl = this.userProfileForm.get('mobile');
-    if (mobileControl && this.isApplicant()) {
-      const mobileValue = mobileControl.value?.toString() || '';
-      if (mobileValue.length !== 10) {
-        mobileControl.setErrors({ invalidMobile: true });
-        mobileControl.markAsTouched();
-        this.scrollToTop();
-        return;
-      }
-    }
     if (this.userProfileForm.invalid) {
       Object.keys(this.userProfileForm.controls).forEach(key => {
         const control = this.userProfileForm.get(key);
@@ -309,11 +324,6 @@ export class UserProfileComponent implements OnInit {
       this.scrollToTop();
       return;
     }
-
-    const payload = {
-      ...this.userProfileForm.value,
-      mobile: this.userProfileForm.value.mobile ? +this.userProfileForm.value.mobile : null
-    };
 
     this.userService.SaveUserProfile(payload).subscribe({
       next: (response: any) => {
@@ -390,38 +400,75 @@ export class UserProfileComponent implements OnInit {
 
   loadUserData(userId: string): void {
     this.spinner.show();
-    this.userService.getUserById(userId).subscribe(
-      (response: any) => {
+    this.userService.getUserById(userId).subscribe({
+      next: (response: any) => {
         this.spinner.hide();
         if (response.statusCode === 200 && response.data) {
           const data = response.data;
+          
+          // Parse key_skills from JSON string if it exists
+          let keySkills = [];
+          if (data.key_skills) {
+            try {
+              // Remove forward slashes from skills when displaying
+              keySkills = JSON.parse(data.key_skills).map((skill: string) => skill.replace('/', ''));
+            } catch (e) {
+              console.warn('Error parsing key_skills:', e);
+              keySkills = Array.isArray(data.key_skills) ? data.key_skills : [];
+            }
+          }
+          
           // Convert the `dob` field to YYYY-MM-DD format
           const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
+
+          // Format salary values if they exist
+          const currentSalary = data.current_salary ? data.current_salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+          const expectedSalary = data.expected_salary ? data.expected_salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
+          
+          // Update the form with all available data
           this.userProfileForm.patchValue({
             first_name: data.first_name || '',
             last_name: data.last_name || '',
-            email: data.email || '',
+            email: this.userEmail, 
             dob: dob,
             gender: data.gender || '',
             mobile: data.mobile || null,
-            key_skills: data.key_skills || '',
+            key_skills: keySkills,
             work_experiences: data.work_experiences || '',
             current_company: data.current_company || '',
-            current_salary: data.current_salary || '',
-            expected_salary: data.expected_salary || '',
+            current_salary: currentSalary,
+            expected_salary: expectedSalary
           });
+
+          // Update component properties
+          this.userId = data.id || userId;
+          this.skillsArray = keySkills;
+
+          // Mark form as pristine after loading data
+          this.userProfileForm.markAsPristine();
+          
+          // Add validators based on role
+          if (this.isApplicant()) {
+            const applicantControls = ['dob', 'gender', 'mobile', 'key_skills', 'work_experiences'];
+            applicantControls.forEach(controlName => {
+              const control = this.userProfileForm.get(controlName);
+              if (control) {
+                control.setValidators([Validators.required]);
+                control.updateValueAndValidity();
+              }
+            });
+          }
         } else {
           console.error('Failed to retrieve user profile data', response.message);
-          this.notify.showError('Failed to retrieve user profile data');
+          this.notify.showError(response.message || 'Failed to retrieve user profile data');
         }
       },
-      (error: any) => {
-        // Hide the spinner in case of error
+      error: (error: any) => {
         this.spinner.hide();
-        console.error('Error fetching user profile data:', error.message);
-        this.notify.showError('An error occurred while fetching user profile data');
+        console.error('Error fetching user profile data:', error);
+        this.notify.showError(error.error?.message || 'An error occurred while fetching user profile data');
       }
-    );
+    });
   }
 
   navigate() {
@@ -461,5 +508,22 @@ export class UserProfileComponent implements OnInit {
   updateSkillsInForm(): void {
     this.userProfileForm.get('key_skills')?.setValue(this.skillsArray);
     this.userProfileForm.get('key_skills')?.markAsTouched();
+  }
+
+  expectedSalaryValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) return null;
+      
+      // Convert to string and remove any commas
+      const numStr = value.toString().replace(/,/g, '');
+      
+      // Check if it's more than 8 digits
+      if (numStr.length > 8) {
+        return { maxDigits: true };
+      }
+      
+      return null;
+    };
   }
 }

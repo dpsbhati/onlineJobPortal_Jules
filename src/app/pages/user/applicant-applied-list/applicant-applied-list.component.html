@@ -11,6 +11,20 @@
 <div class="applied-jobs-container" *ngIf="isAuthorized(); else unauthorizedAccess">
   <div class="header">
     <h2>Applies</h2>
+    <div class="search-filters">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="filters.all" 
+          (keyup)="OnSearch($event)"
+          placeholder="Search by name or email"
+          class="search-input"
+        >
+        <button (click)="Clear()" class="search-button" *ngIf="filters.all">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
     <div class="tabs">
       <button class="tab active">Actions ({{totalItems}})</button>
       <!-- <button class="tab">Applies on External Site (0)</button> -->
@@ -39,11 +53,11 @@
         </div>
       </div>
 
-      <div class="action-button">
+      <!-- <div class="action-button">
         <button class="copy-btn">
           <i class="fas fa-copy"></i>
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 
