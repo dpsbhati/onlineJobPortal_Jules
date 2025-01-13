@@ -15,6 +15,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
+  ValidateIf,
 } from 'class-validator';
 import { Gender } from '../entities/user-profile.entity';
 import { Type, Transform } from 'class-transformer';
@@ -59,25 +60,29 @@ export class CreateUserProfileDto {
   last_name: string;
 
   @ApiProperty({ description: 'Date of Birth of user in ISO 8601 format' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'dob cannot be empty for applicants' })
   @IsDate({ message: 'dob must be a valid ISO 8601 date' })
   @Type(() => Date)
   dob?: Date;
 
   @ApiProperty({ description: 'Gender of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'gender cannot be empty for applicants' })
   @IsEnum(Gender, {
     message: `gender must be one of the following: ${Object.values(Gender).join(', ')}`,
   })
   gender?: Gender;
 
   @ApiProperty({ description: 'Mobile number of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'mobile cannot be empty for applicants' })
   @IsNumber({}, { message: 'mobile must be a valid number' })
   mobile?: number;
 
   @ApiProperty({ description: 'Key skills of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'key_skills cannot be empty for applicants' })
   @IsString({ message: 'key_skills must be a valid string' })
   @Validate(IsNotWhitespace, { message: 'key_skills cannot contain only whitespace' })
   @MaxLength(255, { message: 'key_skills cannot exceed 255 characters' })
@@ -85,7 +90,8 @@ export class CreateUserProfileDto {
   key_skills?: string;
 
   @ApiProperty({ description: 'Work experiences of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'work_experiences cannot be empty for applicants' })
   @IsString({ message: 'work_experiences must be a valid string' })
   @Validate(IsNotWhitespace, { message: 'work_experiences cannot contain only whitespace' })
   @MaxLength(1000, { message: 'work_experiences cannot exceed 1000 characters' })
@@ -93,7 +99,8 @@ export class CreateUserProfileDto {
   work_experiences?: string;
 
   @ApiProperty({ description: 'Current company of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'current_company cannot be empty for applicants' })
   @IsString({ message: 'current_company must be a valid string' })
   @Validate(IsNotWhitespace, { message: 'current_company cannot contain only whitespace' })
   @MaxLength(100, { message: 'current_company cannot exceed 100 characters' })
@@ -101,11 +108,11 @@ export class CreateUserProfileDto {
   current_company?: string;
 
   @ApiProperty({ description: 'Expected salary of the user' })
-  @IsOptional()
+  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  @IsNotEmpty({ message: 'expected_salary cannot be empty for applicants' })
   @IsString({ message: 'expected_salary must be a valid string' })
   @Validate(IsNotWhitespace, { message: 'expected_salary cannot contain only whitespace' })
   @MaxLength(50, { message: 'expected_salary cannot exceed 50 characters' })
   @Transform(({ value }) => value?.trim()) // Trim whitespace
   expected_salary?: string;
-
 }
