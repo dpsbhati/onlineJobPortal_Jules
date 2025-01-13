@@ -60,7 +60,10 @@ export class CreateJobPostingDto {
   })
   @IsNotEmpty({ message: 'job_type is required.' })
   @IsString({ message: 'job_type must be a valid string.' })
-  @IsIn(['Full-Time', 'Part-Time', 'Flexible'], { message: 'job_type must be one of the following: Full-Time, Part-Time, Flexible.' })
+  @IsIn(['Full-Time', 'Part-Time', 'Flexible'], {
+    message:
+      'job_type must be one of the following: Full-Time, Part-Time, Flexible.',
+  })
   @Validate(IsNotWhitespace)
   @Transform(({ value }) => value?.trim())
   @MaxLength(50, { message: 'Job type cannot exceed 50 characters.' })
@@ -199,7 +202,8 @@ export class CreateJobPostingDto {
 
   @ApiProperty({
     description: 'Instructions for applying to the job',
-    example: 'Please submit your resume and cover letter through the application portal.',
+    example:
+      'Please submit your resume and cover letter through the application portal.',
   })
   @IsOptional()
   @IsString({ message: 'application_instruction must be a valid string.' })
@@ -209,6 +213,19 @@ export class CreateJobPostingDto {
     message: 'application_instruction cannot exceed 1000 characters.',
   })
   application_instruction?: string;
+
+  @ApiPropertyOptional({
+    description: 'Employee experience details for the job',
+    example: 'Previous experience in management is preferred.',
+  })
+  @IsString({ message: 'employee_experience must be a valid string.' })
+  @Validate(IsNotWhitespace)
+  @Transform(({ value }) => value?.trim())
+  @IsOptional()
+  @MaxLength(500, {
+    message: 'Employee experience details cannot exceed 1000employee_experience characters.',
+  })
+  employee_experience?: string;
 
   @ApiProperty({
     description: 'Required experience for the job',
@@ -236,11 +253,11 @@ export class CreateJobPostingDto {
   @ApiProperty({
     description: 'The date and time when the job is scheduled to be posted.',
     example: '2025-01-15T10:30:00.000Z',
-})
-@IsOptional()
-// @IsDate({ message: 'posted_at must be a valid ISO date.' })
-// @Type(() => Date)
-posted_at?: String;
+  })
+  @IsOptional()
+  // @IsDate({ message: 'posted_at must be a valid ISO date.' })
+  // @Type(() => Date)
+  posted_at?: String;
 
   @ApiProperty({
     description: 'The social media platform where the job will be posted.',
@@ -249,7 +266,8 @@ posted_at?: String;
   })
   @IsOptional()
   @IsIn(['facebook', 'linkedin'], {
-    message: 'Invalid social_media_type. Allowed values are: facebook, linkedin.',
+    message:
+      'Invalid social_media_type. Allowed values are: facebook, linkedin.',
   })
   social_media_type?: string;
 }

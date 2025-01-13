@@ -122,4 +122,7 @@ export class JobPosting {
   @Column({ type: 'text', nullable: true })
   application_instruction: string;
 
+  @Column({type:"longtext",nullable:true})
+  employee_experience:string
+
 }
