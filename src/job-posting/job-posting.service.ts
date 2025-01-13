@@ -202,87 +202,7 @@ export class JobPostingService {
     }
   }
 
-  // async paginateJobPostings(pagination: IPagination) {
-  //   try {
-  //     const { curPage = 1, perPage = 10, whereClause } = pagination;
 
-  //     // Default whereClause to filter out deleted job postings
-  //     let lwhereClause = 'job.is_deleted = 0';
-
-  //     // Fields to search
-  //     const fieldsToSearch = [
-  //       'title',
-  //       'short_description',
-  //       'full_description',
-  //       'employer',
-  //       'job_type',
-  //       'work_type',
-  //       'qualifications',
-  //       'skills_required',
-  //       'date_published',
-  //       'deadline',
-  //       'assignment_duration',
-  //       'rank',
-  //       'required_experience',
-  //       'country_code',
-  //       'state_code',
-  //       'city',
-  //       'address',
-  //       'isActive',
-  //     ];
-
-  //     // Process whereClause
-  //     if (Array.isArray(whereClause)) {
-  //       fieldsToSearch.forEach((field) => {
-  //         const fieldValue = whereClause.find((p) => p.key === field)?.value;
-  //         if (fieldValue) {
-  //           lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
-  //         }
-  //       });
-
-  //       const allValues = whereClause.find((p) => p.key === 'all')?.value;
-  //       if (allValues) {
-  //         const searches = fieldsToSearch
-  //           .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
-  //           .join(' OR ');
-  //         lwhereClause += ` AND (${searches})`;
-  //       }
-
-  //       // Salary range filtering
-  //       const startSalary = whereClause.find((p) => p.key === 'start_salary')?.value;
-  //       const endSalary = whereClause.find((p) => p.key === 'end_salary')?.value;
-
-  //       if (startSalary && endSalary) {
-  //         lwhereClause += ` AND job.start_salary >= ${startSalary} AND job.end_salary <= ${endSalary}`;
-  //       }
-  //     }
-
-  //     const skip = (curPage - 1) * perPage;
-
-  //     // Fetch paginated data with user details
-  //     const [list, totalCount] = await this.jobPostingRepository
-  //       .createQueryBuilder('job')
-  //       .where(lwhereClause)
-  //       .skip(skip)
-  //       .take(perPage)
-  //       .orderBy('job.created_at', 'DESC')
-  //       .getManyAndCount();
-
-  //     const enrichedJobList = await Promise.all(
-  //       list.map(async (job) => {
-  //         const enrichedJob = {
-  //           ...job,
-  //         };
-  //         return enrichedJob;
-  //       }),
-  //     );
-
-  //     return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
-  //   } catch (error) {
-  //     console.error('Job Postings Pagination Error --> ', error);
-  //     return WriteResponse(500, error, `Something went wrong.`);
-  //   }
-  // }
 
   async paginateJobPostings(req: any, pagination: IPagination): Promise<any> {
     try {
@@ -403,22 +323,7 @@ export class JobPostingService {
     }
   }
 
-  // async findOne(id: string): Promise<any> {
-  //   try {
-  //     const stage = await this.jobPostingRepository.findOne({
-  //       where: {
-  //         id: id,
-  //         is_deleted: false,
-  //       }
-  //     });
-  //     return stage
-  //       ? WriteResponse(200, stage, `Job Posting Found successfully`)
-  //       : WriteResponse(404, null, `Job Posting not found`)
-  //   }
-  //   catch (error) {
-  //     return WriteResponse(500, error, `Something went wrong.`);
-  //   }
-  // }
+ 
 
   async findOne(key: string, value: string) {
     try {

@@ -198,6 +198,19 @@ export class CreateJobPostingDto {
   rank: string;
 
   @ApiProperty({
+    description: 'Instructions for applying to the job',
+    example: 'Please submit your resume and cover letter through the application portal.',
+  })
+  @IsOptional()
+  @IsString({ message: 'application_instruction must be a valid string.' })
+  @Validate(IsNotWhitespace)
+  @Transform(({ value }) => value?.trim())
+  @MaxLength(1000, {
+    message: 'application_instruction cannot exceed 1000 characters.',
+  })
+  application_instruction?: string;
+
+  @ApiProperty({
     description: 'Required experience for the job',
     example: '3-5 years',
   })

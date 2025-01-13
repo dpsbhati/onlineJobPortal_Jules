@@ -119,4 +119,7 @@ export class JobPosting {
   job_opening:string
   
 
+  @Column({ type: 'text', nullable: true })
+  application_instruction: string;
+
 }
