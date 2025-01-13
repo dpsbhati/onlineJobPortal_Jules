@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
-import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
@@ -19,8 +18,6 @@ export class JobPostingService {
   constructor(
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
-    @InjectRepository(CoursesAndCertification)
-    private coursesRepository: Repository<CoursesAndCertification>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
   ) {}
@@ -181,21 +178,7 @@ export class JobPostingService {
       // Save the job posting
       const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
 
-      if (jobDto.id) {
-        // Delete existing courses and certifications for the job ID
-        await this.coursesRepository.delete({ job_id: jobDto.id });
-      }
 
-      if (jobDto.courses_and_certification) {
-        for (const course of jobDto.courses_and_certification) {
-          const courseWithJobId = {
-            ...course,
-            job_id: savedJobPosting.id, // Add job ID to each course
-          };
-          // Save the course
-          await this.coursesRepository.save(courseWithJobId);
-        }
-      }
 
       console.log(
         jobPosting

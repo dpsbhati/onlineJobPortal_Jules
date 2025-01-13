@@ -6,6 +6,8 @@ import { applications } from './entities/application.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { IPagination } from 'src/shared/paginationEum';
+import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
+
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
@@ -13,6 +15,8 @@ export class ApplicationService {
   constructor(
     @InjectRepository(applications)
     private readonly applicationRepository: Repository<applications>,
+    @InjectRepository(CoursesAndCertification)
+    private coursesRepository: Repository<CoursesAndCertification>,
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
@@ -59,6 +63,21 @@ export class ApplicationService {
     });
 
     const savedApplication = await this.applicationRepository.save(application);
+    if (createApplicationDto.job_id) {
+      // Delete existing courses and certifications for the job ID
+      await this.coursesRepository.delete({ job_id: createApplicationDto.job_id });
+    }
+
+    if (createApplicationDto.courses_and_certification) {
+      for (const course of createApplicationDto.courses_and_certification) {
+        const courseWithJobId = {
+          ...course,
+          job_id: createApplicationDto.job_id, // Add job ID to each course
+        };
+        // Save the course
+        await this.coursesRepository.save(courseWithJobId);
+      }
+    }
 
     // Fetch job and user details for the email
     const jobDetails = await this.applicationRepository
