@@ -43,7 +43,7 @@ export class UserProfile {
   @Column({ type: 'enum', enum: Gender, default: Gender.MALE })
   gender: Gender;
 
-  @Column({ type: 'text' })
+  @Column()
   key_skills: string;
 
   @Column({ type: 'text' })

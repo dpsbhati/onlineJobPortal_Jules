@@ -16,7 +16,7 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { Gender, PreferredJobShift } from '../entities/user-profile.entity';
+import { Gender } from '../entities/user-profile.entity';
 import { Type, Transform } from 'class-transformer';
 
 /**
@@ -34,10 +34,14 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
   }
 }
 
-/**
- * CreateUserProfileDto
- */
 export class CreateUserProfileDto {
+  @ApiProperty({ description: 'User role, e.g., admin or applicant' })
+  @IsNotEmpty({ message: 'role cannot be empty' })
+  @IsEnum(['admin', 'applicant'], {
+    message: 'role must be either admin or applicant',
+  })
+  role: string;
+
   @ApiProperty({ description: 'First name of the user' })
   @IsNotEmpty({ message: 'first_name cannot be empty' })
   @IsString({ message: 'first_name must be a valid string' })
@@ -55,25 +59,23 @@ export class CreateUserProfileDto {
   last_name: string;
 
   @ApiProperty({ description: 'Date of Birth of user in ISO 8601 format' })
-  @IsNotEmpty({ message: 'dob cannot be empty' })
+  @IsOptional()
   @IsDate({ message: 'dob must be a valid ISO 8601 date' })
   @Type(() => Date)
-  dob: Date;
+  dob?: Date;
 
   @ApiProperty({ description: 'Gender of the user' })
-  @IsNotEmpty({ message: 'gender cannot be empty or null' })
+  @IsOptional()
   @IsEnum(Gender, {
     message: `gender must be one of the following: ${Object.values(Gender).join(', ')}`,
   })
-  gender: Gender;
+  gender?: Gender;
 
   @ApiProperty({ description: 'Mobile number of the user' })
-  @IsNotEmpty({ message: 'mobile cannot be empty' })
-  // @IsNumber({}, { message: 'mobile must be a valid number' })
-  // @Matches(/^\d{10}$/, { message: 'mobile must be a valid 10-digit number' })
-  mobile: number;
+  @IsOptional()
+  @IsNumber({}, { message: 'mobile must be a valid number' })
+  mobile?: number;
 
-  // Optional fields
   @ApiProperty({ description: 'Key skills of the user' })
   @IsOptional()
   @IsString({ message: 'key_skills must be a valid string' })
@@ -105,4 +107,5 @@ export class CreateUserProfileDto {
   @MaxLength(50, { message: 'expected_salary cannot exceed 50 characters' })
   @Transform(({ value }) => value?.trim()) // Trim whitespace
   expected_salary?: string;
+
 }

@@ -109,30 +109,6 @@ export class UserProfileService {
     }
   }
 
-  // async update(id: string, updateUserProfileDto: UpdateUserProfileDto) {
-  //   try {
-  //     const profile = await this.findOne(id);
-  //     if (profile.statusCode === 404) {
-  //       return profile;
-  //     }
-  //     Object.assign(profile.data, updateUserProfileDto);
-  //     const updatedProfile = await this.userProfileRepository.save(
-  //       profile.data,
-  //     );
-  //     return WriteResponse(
-  //       200,
-  //       updatedProfile,
-  //       'User profile updated successfully.',
-  //     );
-  //   } catch (error) {
-  //     return WriteResponse(
-  //       500,
-  //       {},
-  //       error.message || 'An unexpected error occurred.',
-  //     );
-  //   }
-  // }
-
   async remove(id: string) {
     try {
       const profile = await this.findOne(id);
