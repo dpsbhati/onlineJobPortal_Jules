@@ -65,7 +65,7 @@ export class ApplicantAppliedListComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.userRole.toUpperCase() === UserRole.ADMIN;
+    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
   isApplicant(): boolean {
@@ -103,11 +103,15 @@ export class ApplicantAppliedListComponent implements OnInit {
           this.totalItems = response.count;
           this.spinner.hide();
         } else {
-          this.notify.showError(response.message);
+          this.appliedJobs = [];
+          this.totalItems = 0;
+          // this.notify.showError(response.message);
           this.spinner.hide();
         }
       },
       error: (error) => {
+        this.appliedJobs = [];
+        this.totalItems = 0;
         this.notify.showError(error?.error?.message || 'Failed to load applied jobs');
         this.spinner.hide();
       }
