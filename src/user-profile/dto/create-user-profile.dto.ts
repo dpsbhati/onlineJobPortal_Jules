@@ -67,11 +67,11 @@ export class CreateUserProfileDto {
   dob?: Date;
 
   @ApiProperty({ description: 'Gender of the user' })
-  @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
-  @IsNotEmpty({ message: 'gender cannot be empty for applicants' })
-  @IsEnum(Gender, {
-    message: `gender must be one of the following: ${Object.values(Gender).join(', ')}`,
-  })
+  // @ValidateIf((dto: CreateUserProfileDto) => dto.role === 'applicant')
+  // @IsNotEmpty({ message: 'gender cannot be empty for applicants' })
+  // @IsEnum(Gender, {
+  //   message: `gender must be one of the following: ${Object.values(Gender).join(', ')}`,
+  // })
   gender?: Gender;
 
   @ApiProperty({ description: 'Mobile number of the user' })

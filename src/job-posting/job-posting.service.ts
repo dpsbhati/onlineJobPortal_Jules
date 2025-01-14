@@ -215,10 +215,10 @@ export class JobPostingService {
       const isAdmin = req.user?.role === 'admin';
       const isApplicant = req.user?.role === 'applicant';
   
-      // Applicants should not see expired jobs
+      // Add filters specific to applicants
       if (isApplicant) {
         const now = new Date().toISOString();
-        lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}'`;
+        lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}' AND job.jobpost_status != 'draft'`;
       }
   
       // Fields to search
@@ -300,6 +300,7 @@ export class JobPostingService {
       return WriteResponse(500, error, `Something went wrong.`);
     }
   }
+  
   
   
   async findAll() {
