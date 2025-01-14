@@ -5,15 +5,13 @@ import { Users } from './entities/user.entity';
 import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { forgetPasswordDto } from 'src/user/dto/create-user.dto'
+import { forgetPasswordDto } from 'src/user/dto/create-user.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MailService } from 'src/utils/mail.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { IPagination } from 'src/shared/paginationEum';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
-
-
 
 @Injectable()
 export class UserService {
@@ -24,10 +22,10 @@ export class UserService {
     private userProfileRepository: Repository<UserProfile>,
     private readonly mailerService: MailService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async validateUserById(userId: any) {
-    console.log(userId)
+    console.log(userId);
     return this.userRepository.findOne({
       where: { id: userId },
     });
@@ -42,8 +40,8 @@ export class UserService {
 
       const user = userDto.id
         ? await this.userRepository.findOne({
-          where: { id: userDto.id, is_deleted: false },
-        })
+            where: { id: userDto.id, is_deleted: false },
+          })
         : null;
 
       if (userDto.id && !user) {
@@ -54,7 +52,11 @@ export class UserService {
         userDto.email = user.email;
 
         const existingUser = await this.userRepository.findOne({
-          where: { email: userDto.email, is_deleted: false, id: Not(userDto.id) },
+          where: {
+            email: userDto.email,
+            is_deleted: false,
+            id: Not(userDto.id),
+          },
         });
         if (existingUser) {
           return WriteResponse(
@@ -105,12 +107,21 @@ export class UserService {
       }
 
       if (!userDto.id && isTemporaryEmail(userDto.email)) {
-        return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
+        return WriteResponse(
+          400,
+          {},
+          'Temporary email addresses are not allowed.',
+        );
       }
 
       // Create a new object excluding role only when updating
-      const userData = userDto.id ? { ...userDto } : { role: userDto.role, ...userDto }; // Include role on create
-      const savedUser = await this.userRepository.save({ ...user, ...userData });
+      const userData = userDto.id
+        ? { ...userDto }
+        : { role: userDto.role, ...userDto }; // Include role on create
+      const savedUser = await this.userRepository.save({
+        ...user,
+        ...userData,
+      });
 
       // Insert data into user profile immediately after user creation
       if (!userDto.id) {
@@ -144,7 +155,9 @@ export class UserService {
           firstName: userDto.firstName,
           lastName: userDto.lastName,
         },
-        user ? 'User updated successfully.' : 'User created successfully. Please verify your email.',
+        user
+          ? 'User updated successfully.'
+          : 'User created successfully. Please verify your email.',
       );
     } catch (error) {
       return WriteResponse(
@@ -154,7 +167,6 @@ export class UserService {
       );
     }
   }
-
 
   async LogIn(email: string, password: string) {
     console.log('LogIn function called with email:', email);
@@ -173,7 +185,8 @@ export class UserService {
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
-    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+    if (!User.isActive) {
+      // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
 
@@ -185,8 +198,6 @@ export class UserService {
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
-
-
 
   async findOne(key: string, value: any) {
     try {
@@ -209,7 +220,9 @@ export class UserService {
 
   async findAll() {
     try {
-      const users = await this.userRepository.find({ where: { is_deleted: false } });
+      const users = await this.userRepository.find({
+        where: { is_deleted: false },
+      });
       if (users.length === 0) {
         return WriteResponse(404, [], 'No users found.');
       }
@@ -253,11 +266,7 @@ export class UserService {
       let lwhereClause = 'is_deleted = false'; // Ensure deleted users are not fetched
 
       // Fields to search
-      const fieldsToSearch = [
-        'email',
-        'isActive',
-        'role'
-      ];
+      const fieldsToSearch = ['email', 'isActive', 'role'];
 
       // Process whereClause
       if (Array.isArray(whereClause)) {
@@ -278,21 +287,26 @@ export class UserService {
       }
       const skip = (curPage - 1) * perPage;
       const [list, count] = await this.userRepository
-        .createQueryBuilder('user') // Changed alias to 'user'
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
         .where(lwhereClause)
-        .orderBy('createdAt', 'DESC') // Order by created_at DESC
+        .orderBy('user.createdAt', 'DESC')
         .skip(skip)
         .take(perPage)
         .getManyAndCount();
 
-      const enrichedUserList = await Promise.all(
-        list.map(async (user) => {
-          const { password, ...enrichedUser } = user; // Exclude password
-          return enrichedUser;
-        }),
-      );
+      // const enrichedUserList = await Promise.all(
+      //   list.map(async (user) => {
+      //     const { password, ...enrichedUser } = user;
+      //     return {
+      //       ...enrichedUser,
+      //       firstName: user.userProfile?.first_name,
+      //       lastName: user.userProfile?.last_name,
+      //     };
+      //   }),
+      // );
 
-      return paginateResponse(enrichedUserList, count, curPage);
+      return paginateResponse( count, curPage);
     } catch (error) {
       console.error('User Pagination Error --> ', error);
       return WriteResponse(500, error, `Something went wrong.`);
@@ -342,7 +356,7 @@ export class UserService {
     }
   }
 
-  async resetPassword(newPassword: string, token: string,) {
+  async resetPassword(newPassword: string, token: string) {
     try {
       const decoded = this.jwtService.verify(token);
       const userId = decoded.id;
@@ -352,11 +366,17 @@ export class UserService {
       });
 
       if (!user) {
-        return WriteResponse(400, false, 'User not found with the provided token.');
+        return WriteResponse(
+          400,
+          false,
+          'User not found with the provided token.',
+        );
       }
 
       // Update the user's password using update instead of save
-      await this.userRepository.update(userId, { password: await bcrypt.hash(newPassword, 10) });
+      await this.userRepository.update(userId, {
+        password: await bcrypt.hash(newPassword, 10),
+      });
 
       return WriteResponse(200, {
         message: 'Password reset successfully.',

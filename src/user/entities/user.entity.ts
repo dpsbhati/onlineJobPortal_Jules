@@ -8,10 +8,13 @@ import {
   BeforeUpdate,
   PrimaryColumn,
   Generated,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 
 @Entity('users')
 export class Users {
@@ -70,4 +73,13 @@ export class Users {
   async validateResetToken(token: string) {
     // return this.resetPasswordToken === token && new Date();
   }
+
+ 
+
+  @OneToOne(() => UserProfile, (profile) => profile.user, { eager: true })
+  @JoinColumn({ name: 'id' }) // 'id' in Users is referenced by 'user_id' in UserProfile
+  userProfile: UserProfile;
+  
+  
+  
 }

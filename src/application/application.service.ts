@@ -17,7 +17,7 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<applications>,
     @InjectRepository(CoursesAndCertification)
     private coursesRepository: Repository<CoursesAndCertification>,
-  ) { }
+  ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
     const { job_id, user_id, certification_path } = createApplicationDto;
@@ -65,7 +65,9 @@ export class ApplicationService {
     const savedApplication = await this.applicationRepository.save(application);
     if (createApplicationDto.job_id) {
       // Delete existing courses and certifications for the job ID
-      await this.coursesRepository.delete({ job_id: createApplicationDto.job_id });
+      await this.coursesRepository.delete({
+        job_id: createApplicationDto.job_id,
+      });
     }
 
     if (createApplicationDto.courses_and_certification) {
@@ -126,16 +128,31 @@ export class ApplicationService {
   }
 
   async findOne(id: string) {
-    const application = await this.applicationRepository.findOne({
-      where: { id, is_deleted: false },
-      relations: ['job', 'user', 'job.courses_and_certification'],
-    });
+    try {
+      // Fetch the application with its relations
+      const application = await this.applicationRepository.findOne({
+        where: { id, is_deleted: false },
+        relations: ['job', 'user', 'job.courses_and_certification'],
+      });
 
-    if (!application) {
-      throw new NotFoundException(`Application with ID ${id} not found.`);
+      if (!application) {
+        throw new NotFoundException(`Application with ID ${id} not found.`);
+      }
+
+      // Add comments and status to the response
+      const response = {
+        ...application,
+        comments: application.comments || 'No comments available', // Fallback if comments are null/undefined
+        status: application.status || 'No status available', // Fallback if status is null/undefined
+      };
+
+      return response;
+    } catch (error) {
+      console.error('Error fetching application:', error.message);
+      throw new Error(
+        'An unexpected error occurred while fetching the application.',
+      );
     }
-
-    return application;
   }
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
@@ -170,15 +187,15 @@ export class ApplicationService {
       const { curPage = 1, perPage = 10, whereClause } = pagination;
 
       // Default whereClause to filter out deleted applications
-      let lwhereClause = 'app.is_deleted = 0';
+      let lwhereClause = 'app.is_deleted = :isDeleted';
+      const parameters: Record<string, any> = { isDeleted: false };
 
       const isApplicant = req.user?.role === 'applicant';
-      const isAdmin = req.user?.role === 'admin';
 
       // If applicant, ensure they can only see their own applications
       if (isApplicant) {
-        const userId = parseInt(req.user.id, 10);  // Ensure the ID is treated as a number
-        lwhereClause += ` AND app.user_id = ${userId}`;
+        lwhereClause += ` AND app.user_id = :userId`;
+        parameters.userId = req.user.id;
       }
 
       console.log('Role:', req.user?.role);
@@ -186,13 +203,13 @@ export class ApplicationService {
 
       const fieldsToSearch = [
         'status',
-        'job.id',
+        'job_id',
         'description',
         'comments',
         'additional_info',
         'work_experiences',
         'certification_path',
-        'user.first_name',
+        'user_id.first_name',
         'user.last_name',
         'job.title',
       ];
@@ -202,30 +219,33 @@ export class ApplicationService {
         fieldsToSearch.forEach((field) => {
           const fieldValue = whereClause.find((p) => p.key === field)?.value;
           if (fieldValue) {
-            lwhereClause += ` AND ${field} LIKE '%${fieldValue}%'`;
+            lwhereClause += ` AND ${field} LIKE :${field}_search`;
+            parameters[`${field}_search`] = `%${fieldValue}%`;
           }
         });
 
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
           const searches = fieldsToSearch
-            .map((field) => `${field} LIKE '%${allValues}%'`)
+            .map((field) => `${field} LIKE :all_search`)
             .join(' OR ');
           lwhereClause += ` AND (${searches})`;
+          parameters.all_search = `%${allValues}%`;
         }
       }
 
       const skip = (curPage - 1) * perPage;
 
       console.log('Final Where Clause:', lwhereClause);
+      console.log('Parameters:', parameters);
 
       // Fetch paginated application data
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
-        .leftJoinAndSelect('app.job', 'job')
-        .leftJoinAndSelect('app.user', 'user')
-        .leftJoinAndSelect('job.courses_and_certification', 'courses_and_certification')
-        .where(lwhereClause)
+        .leftJoinAndSelect('app.job', 'job') // Join Job data
+        .leftJoinAndSelect('app.user', 'user') // Join User data
+        .leftJoinAndSelect('user.userProfile', 'userProfile') // Join UserProfile data
+        .where(lwhereClause, parameters)
         .skip(skip)
         .take(perPage)
         .orderBy('app.created_at', 'DESC')
@@ -233,12 +253,28 @@ export class ApplicationService {
 
       console.log('Query Result:', { list, totalCount });
 
+      console.log(
+        this.applicationRepository
+          .createQueryBuilder('app')
+          .leftJoinAndSelect('app.job', 'job')
+          .leftJoinAndSelect('app.user', 'user')
+          .leftJoinAndSelect('user.userProfile', 'userProfile')
+          .where(lwhereClause, parameters)
+          .getSql(),
+      );
+
       if (!list.length) {
-        return WriteResponse(400, [], `Record not found.`);
+        return WriteResponse(404, [], `No records found.`);
       }
 
       const enrichedApplications = list.map((application) => ({
         ...application,
+        user_details: application.user.userProfile
+          ? {
+              first_name: application.user.userProfile.first_name,
+              last_name: application.user.userProfile.last_name,
+            }
+          : null,
       }));
 
       return paginateResponse(
@@ -252,7 +288,6 @@ export class ApplicationService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
-
 
   private async sendConfirmationEmail(application: any) {
     const transporter = nodemailer.createTransport({
