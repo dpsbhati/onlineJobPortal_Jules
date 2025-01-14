@@ -202,7 +202,7 @@ export class JobPostingService {
     }
   }
   
-  async paginateJobPostings(req: any, pagination: IPagination): Promise<any> {
+  async paginateJobPostings(req: any, pagination: IPagination) {
     try {
       console.log('Request User -->', req.user);
   

@@ -41,7 +41,8 @@ export class CoursesAndCertification {
   @Column({ type: 'char', nullable: true })
   certification_file: string;
 
-  @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.courses_and_certification) // Define relation with JobPosting
-  @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
-  job: JobPosting;
+  @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.courses_and_certification)
+@JoinColumn({ name: 'job_id' }) 
+job: JobPosting;
+
 }
