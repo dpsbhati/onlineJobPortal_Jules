@@ -72,17 +72,12 @@ export class ApplicantAppliedListComponent implements OnInit {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
-  OnSearch(event: any) {
-    if (event?.target?.value) {
-      this.filters.all = event.target.value.trim();
+  onSearch(): void {
+    if (this.searchTerm) {
+      this.filters.all = this.searchTerm.trim();
     } else {
       this.filters.all = "";
     }
-    this.pageConfig.curPage = 1;
-    this.loadAppliedJobs();
-  }
-
-  onSearch(): void {
     this.pageConfig.curPage = 1;
     this.loadAppliedJobs();
   }

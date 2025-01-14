@@ -63,16 +63,16 @@
         <tr *ngFor="let applicant of applicants">
           <td>{{applicant.userData?.name || 'N/A'}}</td>
           <td>{{applicant.user?.email || 'N/A'}}</td>
-          <td>{{applicant.created_on | date:'medium'}}</td>
+          <td>{{applicant.applied_at | date:'medium'}}</td>
           <td>
             <div class="skills-container">
               <span class="skill-tag" *ngFor="let skill of applicant.userData?.skills">{{skill}}</span>
             </div>
           </td>
-          <td>{{applicant.userData?.experience || 'N/A'}} years</td>
+          <td>{{applicant.work_experiences || 'N/A'}}</td>
           <td>
             <span class="status-badge" [ngClass]="applicant.status?.toLowerCase()">
-              {{applicant.status || 'Pending'}}
+              {{applicant.status || "--"}}
             </span>
           </td>
          

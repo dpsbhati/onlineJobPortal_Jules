@@ -13,19 +13,13 @@
     <button (click)="goBack()" class="back-button">
       <i class="fas fa-arrow-left"></i> Back
     </button>
-    <h2>Applies</h2>
-    <div class="search-filters">
-      <div class="search-box">
-        <input 
-          type="text" 
-          [(ngModel)]="filters.all" 
-          (keyup)="OnSearch($event)"
-          placeholder="Search by name or email"
-          class="search-input"
-        >
-        <button (click)="Clear()" class="search-button" *ngIf="filters.all">
-          <i class="fas fa-times"></i>
-        </button>
+    <div class="header-content">
+      <h2>Applies</h2>
+      <div class="search-filters">
+        <div class="search-box">
+          <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" placeholder="Search..." class="search-input">
+        </div>
+        <button (click)="Clear()" class="clear-btn">Clear</button>
       </div>
     </div>
     <div class="tabs">
@@ -37,30 +31,17 @@
 
   <div class="jobs-list" *ngIf="appliedJobs.length > 0; else noJobs">
     <div class="job-card" *ngFor="let application of appliedJobs">
-      <div class="company-logo">
-        {{ application.job.title.charAt(0) | uppercase }}
-      </div>
-      
+      <div class="company-logo">{{application.job.title?.charAt(0)}}</div>
       <div class="job-content">
-        <h3 class="job-title"
-        [class.clickable]="canViewJobDetails()" 
-        (click)="canViewJobDetails() && viewJobDetails(application.job.id)">{{ application.job.title }}</h3>
-        <div class="company-name">
-          {{ application.job.employer }}
-          <span class="rating">★ {{ application.job.start_salary / 10000 | number:'1.1-1' }}</span>
-        </div>
-        
+        <h3 class="job-title" [class.clickable]="canViewJobDetails()" (click)="canViewJobDetails() && viewJobDetails(application.job.id)">
+          {{application.job.title}}
+        </h3>
+        <div class="company-name">{{application.job.employer}}</div>
         <div class="application-status">
           <span class="status-icon">✓</span>
-          Applied {{ application.applied_at | date:'mediumDate' }}
+          Applied {{application.applied_at | date:'mediumDate'}}
         </div>
       </div>
-
-      <!-- <div class="action-button">
-        <button class="copy-btn">
-          <i class="fas fa-copy"></i>
-        </button>
-      </div> -->
     </div>
   </div>
 
