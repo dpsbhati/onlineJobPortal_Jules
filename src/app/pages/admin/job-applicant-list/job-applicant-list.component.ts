@@ -59,6 +59,24 @@ export class JobApplicantListComponent implements OnInit {
   loadApplicants() {
     this.spinner.show();
 
+    // Initialize where clause array
+    this.pageConfig.whereClause = [
+      {
+        key: 'job.id',
+        value: this.jobId,
+        operator: '='
+      }
+    ];
+
+    // Add search filter if search term exists
+    if (this.searchTerm && this.searchTerm.trim() !== '') {
+      this.pageConfig.whereClause.push({
+        key: 'all',
+        value: this.searchTerm.trim(),
+        operator: '='
+      });
+    }
+
     // Make API call with exact payload format
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (response: any) => {
