@@ -1,4 +1,5 @@
 import { Optional } from '@nestjs/common';
+import { applications } from 'src/application/entities/application.entity';
 import { Users } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -8,6 +9,8 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 export enum Gender {
@@ -95,10 +98,11 @@ export class UserProfile {
   @Column({ type: 'varchar', length: 250, nullable: true })
   file: string;
 
-  @OneToOne(() => Users, (user) => user.userProfile)
+  @ManyToOne(() => Users, (user) => user.userProfile)
   @JoinColumn({ name: 'user_id' }) // 'user_id' in UserProfile references 'id' in Users
   user: Users;
   
-  
+  // @OneToMany(() => applications, (app) => app.user_details)
+  // application: applications[];
   
 }

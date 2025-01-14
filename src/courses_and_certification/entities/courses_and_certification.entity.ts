@@ -42,7 +42,7 @@ export class CoursesAndCertification {
   certification_file: string;
 
   @ManyToOne(() => JobPosting, (jobPosting) => jobPosting.courses_and_certification)
-@JoinColumn({ name: 'job_id' }) 
-job: JobPosting;
+  @JoinColumn({ name: 'job_id' })
+  job: JobPosting;
 
 }

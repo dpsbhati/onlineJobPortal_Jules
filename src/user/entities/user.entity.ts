@@ -10,6 +10,7 @@ import {
   Generated,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
@@ -76,9 +77,8 @@ export class Users {
 
  
 
-  @OneToOne(() => UserProfile, (profile) => profile.user, { eager: true })
-  @JoinColumn({ name: 'id' }) // 'id' in Users is referenced by 'user_id' in UserProfile
-  userProfile: UserProfile;
+  @OneToMany(() => UserProfile, (profile) => profile.user, { eager: true })
+  userProfile: UserProfile[];
   
   
   

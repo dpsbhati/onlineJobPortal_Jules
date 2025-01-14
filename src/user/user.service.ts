@@ -263,7 +263,7 @@ export class UserService {
       const { curPage, perPage, whereClause } = pagination;
 
       // Default whereClause to filter out deleted users
-      let lwhereClause = 'is_deleted = false'; // Ensure deleted users are not fetched
+      let lwhereClause = ''; // Ensure deleted users are not fetched
 
       // Fields to search
       const fieldsToSearch = ['email', 'isActive', 'role'];
@@ -295,18 +295,17 @@ export class UserService {
         .take(perPage)
         .getManyAndCount();
 
-      // const enrichedUserList = await Promise.all(
-      //   list.map(async (user) => {
-      //     const { password, ...enrichedUser } = user;
-      //     return {
-      //       ...enrichedUser,
-      //       firstName: user.userProfile?.first_name,
-      //       lastName: user.userProfile?.last_name,
-      //     };
-      //   }),
-      // );
+      const enrichedUserList = await Promise.all(
+        list.map(async (user) => {
+          const { password, ...enrichedUser } = user;
+          return {
+            ...enrichedUser,
+            
+          };
+        }),
+      );
 
-      return paginateResponse( count, curPage);
+      return paginateResponse( enrichedUserList,count, curPage,perPage);
     } catch (error) {
       console.error('User Pagination Error --> ', error);
       return WriteResponse(500, error, `Something went wrong.`);
