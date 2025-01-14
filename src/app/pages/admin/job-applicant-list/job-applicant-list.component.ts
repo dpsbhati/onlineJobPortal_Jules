@@ -62,7 +62,7 @@ export class JobApplicantListComponent implements OnInit {
     // Initialize where clause array
     this.pageConfig.whereClause = [
       {
-        key: 'job.id',
+        key: 'job_id',
         value: this.jobId,
         operator: '='
       }
@@ -85,11 +85,15 @@ export class JobApplicantListComponent implements OnInit {
          this.applicants = response.data; 
           this.totalItems = this.applicants.length;
         } else {
-          this.notifyService.showError(response.message);
+          this.applicants = [];
+          this.totalItems = 0;
+          // this.notifyService.showError(response.message);
         }
         this.spinner.hide();
       },
       error: (error) => {
+this.applicants = [];
+this.totalItems = 0;
         console.error('API Error:', error); // Add this to debug errors
         this.notifyService.showError('Failed to load applicants');
         this.spinner.hide();
@@ -97,27 +101,35 @@ export class JobApplicantListComponent implements OnInit {
     });
   }
 
-  onSearch() {
+  onSearch(): void {
+    this.loadApplicants();
+  }
+
+  clear(): void {
+    this.searchTerm = '';
+    this.selectedStatus = '';
+    this.selectedDateRange = '';
+    this.pageConfig.curPage = 1;
+    this.pageConfig.perPage = 10;
+    this.loadApplicants();
+  }
+
+  onStatusChange(): void {
     this.currentPage = 1;
     this.loadApplicants();
   }
 
-  onStatusChange() {
+  onDateRangeChange(): void {
     this.currentPage = 1;
     this.loadApplicants();
   }
 
-  onDateRangeChange() {
-    this.currentPage = 1;
-    this.loadApplicants();
-  }
-
-  onPageChange(page: number) {
+  onPageChange(page: number): void {
     this.currentPage = page;
     this.loadApplicants();
   }
 
-  onPerPageChange(perPage: number) {
+  onPerPageChange(perPage: number): void {
     this.itemsPerPage = perPage;
     this.currentPage = 1;
     this.loadApplicants();
@@ -135,11 +147,11 @@ export class JobApplicantListComponent implements OnInit {
   //   this.loadApplicants();
   // }
 
-  viewApplicantProfile(applicantId: string) {
+  viewApplicantProfile(applicantId: string): void {
     this.router.navigate(['/user-details', applicantId]);
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(['/job-list']);
   }
 

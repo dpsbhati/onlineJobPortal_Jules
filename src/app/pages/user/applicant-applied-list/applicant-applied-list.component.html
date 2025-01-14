@@ -26,10 +26,19 @@
       <button class="tab active">Actions ({{totalItems}})</button>
       <!-- <button class="tab">Applies on External Site (0)</button> -->
     </div>
-    <div class="subtitle">Applies in last 90 days</div>
+    <!-- <div class="subtitle">Applies in last 90 days</div> -->
   </div>
 
-  <div class="jobs-list" *ngIf="appliedJobs.length > 0; else noJobs">
+  <div *ngIf="!appliedJobs || appliedJobs.length === 0" class="no-records-container">
+    <div class="no-records">
+      <i class="fas" [ngClass]="{'fa-search': searchTerm, 'fa-briefcase': !searchTerm}"></i>
+      <p *ngIf="searchTerm">No matching jobs found</p>
+      <p *ngIf="!searchTerm">You haven't applied to any jobs yet</p>
+
+    </div>
+  </div>
+
+  <div class="jobs-list" *ngIf="appliedJobs && appliedJobs.length > 0">
     <div class="job-card" *ngFor="let application of appliedJobs">
       <div class="company-logo">{{application.job.title?.charAt(0)}}</div>
       <div class="job-content">
@@ -44,13 +53,6 @@
       </div>
     </div>
   </div>
-
-  <ng-template #noJobs>
-    <div class="no-jobs">
-      <i class="fas fa-briefcase"></i>
-      <p>You haven't applied to any jobs yet.</p>
-    </div>
-  </ng-template>
 
   <!-- Pagination -->
   <div class="pagination" *ngIf="totalItems > itemsPerPage">

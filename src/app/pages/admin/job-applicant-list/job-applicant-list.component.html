@@ -22,7 +22,7 @@
     </div>
 
     <div class="filter-controls">
-      <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
+      <!-- <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
         <option value="">All Status</option>
         <option value="Pending">Pending</option>
         <option value="Shortlisted">Shortlisted</option>
@@ -35,13 +35,23 @@
         <option value="today">Today</option>
         <option value="week">This Week</option>
         <option value="month">This Month</option>
-      </select>
+      </select> -->
+
+      <button (click)="clear()" class="clear-btn">
+        Clear
+      </button>
     </div>
   </div>
 
   <!-- Applicants Table -->
   <div class="table-container">
-    <table class="applicants-table">
+    <div *ngIf="!applicants || applicants.length === 0" class="no-records-container">
+      <div class="no-records">
+        No records found
+      </div>
+    </div>
+
+    <table *ngIf="applicants && applicants.length > 0" class="applicants-table">
       <thead>
         <tr>
           <th >
@@ -53,7 +63,7 @@
           <th >
             Applied Date
           </th>
-          <th>Skills</th>
+        
           <th>Experience</th>
           <th>Status</th>
          
@@ -61,24 +71,17 @@
       </thead>
       <tbody>
         <tr *ngFor="let applicant of applicants">
-          <td>{{applicant.userData?.name || 'N/A'}}</td>
+          <td>{{(applicant.user.userProfile[0].first_name || '') + ' ' + (applicant.user.userProfile[0].last_name || '') || 'N/A'}}</td>
           <td>{{applicant.user?.email || 'N/A'}}</td>
           <td>{{applicant.applied_at | date:'medium'}}</td>
-          <td>
-            <div class="skills-container">
-              <span class="skill-tag" *ngFor="let skill of applicant.userData?.skills">{{skill}}</span>
-            </div>
-          </td>
-          <td>{{applicant.work_experiences || 'N/A'}}</td>
+          
+          <td>{{applicant?.user?.userProfile[0]?.work_experiences || 'N/A'}}</td>
           <td>
             <span class="status-badge" [ngClass]="applicant.status?.toLowerCase()">
               {{applicant.status || "--"}}
             </span>
           </td>
          
-        </tr>
-        <tr *ngIf="applicants.length === 0">
-          <td colspan="7" class="no-data">No applicants found</td>
         </tr>
       </tbody>
     </table>
