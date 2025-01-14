@@ -108,7 +108,7 @@ export class ApplicantAppliedListComponent implements OnInit {
           this.totalItems = response.count;
           this.spinner.hide();
         } else {
-          this.notify.showError('Failed to load applied jobs');
+          this.notify.showError(response.message);
           this.spinner.hide();
         }
       },
