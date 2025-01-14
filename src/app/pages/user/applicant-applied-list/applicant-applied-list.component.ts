@@ -143,11 +143,12 @@ export class ApplicantAppliedListComponent implements OnInit {
   }
 
   viewJobDetails(jobId: string): void {
+ 
     if (!this.isAuthorized()) {
       this.notify.showError('You are not authorized to view job details');
       return;
     }
-    this.router.navigate(['/view-job', jobId]);
+    this.router.navigate(['/applicant-jobview', jobId]);
   }
 
   canViewJobDetails(): boolean {

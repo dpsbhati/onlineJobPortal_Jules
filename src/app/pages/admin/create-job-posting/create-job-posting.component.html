@@ -257,13 +257,15 @@
       </div>
     </div>
 
-    <!-- <div class="form-group">
-      <label for="work_type">Work Type</label>
-      <input id="work_type" formControlName="work_type" type="text" class="form-control" />
-      <div *ngIf="jobForm.get('work_type')?.invalid && jobForm.get('work_type')?.touched" class="text-danger">
-        Work type is required.
+    <div class="form-group">
+      <label for="application_instructions">Application Instruction</label>
+      <textarea id="application_instruction" formControlName="application_instruction" type="text" class="form-control" ></textarea>
+      <div *ngIf="jobForm.get('application_instruction')?.invalid && jobForm.get('application_instruction')?.touched" class="text-danger">
+        <small *ngIf="jobForm.get('application_instruction')?.errors?.['required']">Application Instruction is required.</small>
+        <small *ngIf="jobForm.get('application_instruction')?.errors?.['minlength']">Application Instruction must be at least {{ jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('application_instruction')?.errors?.['maxlength']">Application Instruction cannot exceed {{ jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</small>
       </div>
-    </div> -->
+    </div>
 
     <!-- <div class="form-group">
       <label for="file_path"> Document File</label>
