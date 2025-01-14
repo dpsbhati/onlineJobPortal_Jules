@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 import { Users } from 'src/user/entities/user.entity';
+import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 
 @Entity('applications') // Explicitly set the table name
 export class applications {
@@ -69,4 +70,8 @@ export class applications {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   certification_path: string;
+
+  // @ManyToOne(() => UserProfile, (user_profile) => user_profile.application)
+  // @JoinColumn({ name: 'user_id' })
+  // user_details: JobPosting;
 }

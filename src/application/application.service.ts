@@ -182,13 +182,12 @@ export class ApplicationService {
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
-      console.log('Request User -->', req.user);
 
       const { curPage = 1, perPage = 10, whereClause } = pagination;
 
       // Default whereClause to filter out deleted applications
-      let lwhereClause = 'app.is_deleted = :isDeleted';
-      const parameters: Record<string, any> = { isDeleted: false };
+      let lwhereClause = 'app.is_deleted = :is_deleted';
+      const parameters: Record<string, any> = { is_deleted: false };
 
       const isApplicant = req.user?.role === 'applicant';
 
@@ -198,20 +197,19 @@ export class ApplicationService {
         parameters.userId = req.user.id;
       }
 
-      console.log('Role:', req.user?.role);
-      console.log('Initial Where Clause:', lwhereClause);
-
       const fieldsToSearch = [
         'status',
         'job_id',
         'description',
         'comments',
         'additional_info',
-        'work_experiences',
         'certification_path',
-        'user_id.first_name',
-        'user.last_name',
+        'status',
+        'applied_at',
         'job.title',
+        'user.email',
+        'userProfile.first_name',
+        'userProfile.last_name',
       ];
 
       // Process whereClause if search filters are applied
@@ -236,9 +234,6 @@ export class ApplicationService {
 
       const skip = (curPage - 1) * perPage;
 
-      console.log('Final Where Clause:', lwhereClause);
-      console.log('Parameters:', parameters);
-
       // Fetch paginated application data
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
@@ -251,30 +246,13 @@ export class ApplicationService {
         .orderBy('app.created_at', 'DESC')
         .getManyAndCount();
 
-      console.log('Query Result:', { list, totalCount });
-
-      console.log(
-        this.applicationRepository
-          .createQueryBuilder('app')
-          .leftJoinAndSelect('app.job', 'job')
-          .leftJoinAndSelect('app.user', 'user')
-          .leftJoinAndSelect('user.userProfile', 'userProfile')
-          .where(lwhereClause, parameters)
-          .getSql(),
-      );
-
       if (!list.length) {
         return WriteResponse(404, [], `No records found.`);
       }
 
       const enrichedApplications = list.map((application) => ({
         ...application,
-        user_details: application.user.userProfile
-          ? {
-              first_name: application.user.userProfile.first_name,
-              last_name: application.user.userProfile.last_name,
-            }
-          : null,
+        // user_details removed
       }));
 
       return paginateResponse(
