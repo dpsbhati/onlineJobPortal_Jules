@@ -54,9 +54,20 @@ export class AdminService {
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
   }
-  deleteCertification(id: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
+  // deleteCertification(id: string): Observable<any> {
+  //   return this.http.post(`${this.BASE_URL}courses-and-certification/${id}`, {});
+  // }
+  deleteCertification(jobId: string): Observable<any> {
+    const url = `${this.BASE_URL}courses-and-certification/delete`;
+    const payload = { job_id: jobId }; 
+    return this.http.post(url, payload)
   }
+  
+  
+//   deleteCertification(payload: { path: string; userId: string }): Observable<any> {
+//   return this.http.post(`${this.BASE_URL}courses-and-certification`, payload);
+// }
+
 
   // getJobPostings(params: {
   //   page?: number;
