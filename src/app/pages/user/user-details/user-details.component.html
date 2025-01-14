@@ -52,7 +52,7 @@
       <input id="cv_path" type="file" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc" />
       <div *ngIf="fileError" class="error">{{ fileError }}</div>
       <div *ngIf="uploadedFileName" class="filename"> {{ uploadedFileName }}
-        <button (click)="deleteFile('cv_path',  user.id,)" type="button" class="delete-button">X</button>    
+        <!-- <button (click)="deleteFile('cv_path', ' user.id',)" type="button" class="delete-button">X</button>     -->
       </div>
      
     </div>
@@ -70,7 +70,7 @@
         <h5>Selected Files:</h5>
         <ul>
           <li *ngFor="let file of certificationFiles  let i = index">{{ file.name }}
-            <button (click)="deleteFile('courses_and_certification', user.id, i)" type="button" class="delete-button">X</button>
+            <!-- <button (click)="deleteFile('courses_and_certification', 'user.id', i)" type="button" class="delete-button">X</button> -->
           </li>
 
         </ul>

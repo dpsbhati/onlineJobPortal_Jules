@@ -298,71 +298,72 @@ onFileChange(event: Event, controlName: string): void {
   naviagte(){
     this.router.navigate(['/job-list']);
   }
-  deleteFile(controlName: string, index?: number): void {
-    if (controlName === 'cv_path') {
-      this.uploadedFileName = null;
-      this.fileUploaded = null;
-      this.userDetailsForm.patchValue({
-        [controlName]: null,
-      });
-      this.notify.showSuccess('CV removed successfully.');
-    } else if (controlName === 'courses_and_certification' && index !== undefined) {
-      this.certificationFiles.splice(index, 1);
-
-      const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
-      updatedCertifications.splice(index, 1);
-      this.userDetailsForm.patchValue({
-        [controlName]: updatedCertifications,
-      });
-  
-      this.notify.showSuccess('Certification removed successfully.');
-    }
-  }
-  // deleteFile(controlName: string, userId: string, index?: number): void {
+  // deleteFile(controlName: string, index?: number): void {
   //   if (controlName === 'cv_path') {
-  //     // API call to delete CV file
-  //     this.adminService.deleteFile({ path: this.userDetailsForm.get(controlName)?.value, userId }).subscribe(
-  //       (response: any) => {
-  //         if (response.statusCode === 200) {
-  //           this.uploadedFileName = null;
-  //           this.fileUploaded = null;
-  //           this.userDetailsForm.patchValue({
-  //             [controlName]: null,
-  //           });
-  //           this.notify.showSuccess('CV removed successfully.');
-  //         } else {
-  //           this.notify.showWarning('Failed to remove CV. Please try again.');
-  //         }
-  //       },
-  //       error => {
-  //         this.notify.showError('Error while deleting CV file.');
-  //         console.error(error);
-  //       }
-  //     );
+  //     this.uploadedFileName = null;
+  //     this.fileUploaded = null;
+  //     this.userDetailsForm.patchValue({
+  //       [controlName]: null,
+  //     });
+  //     this.notify.showSuccess('CV removed successfully.');
   //   } else if (controlName === 'courses_and_certification' && index !== undefined) {
-  //     // API call to delete certification file
-  //     const certification = this.certificationFiles[index];
-  //     this.adminService.deleteFile({ path: certification.certification_file, userId }).subscribe(
-  //       (response: any) => {
-  //         if (response.statusCode === 200) {
-  //           this.certificationFiles.splice(index, 1);
-  //           const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
-  //           updatedCertifications.splice(index, 1);
-  //           this.userDetailsForm.patchValue({
-  //             [controlName]: updatedCertifications,
-  //           });
-  //           this.notify.showSuccess('Certification removed successfully.');
-  //         } else {
-  //           this.notify.showWarning('Failed to remove certification. Please try again.');
-  //         }
-  //       },
-  //       error => {
-  //         this.notify.showError('Error while deleting certification file.');
-  //         console.error(error);
-  //       }
-  //     );
+  //     this.certificationFiles.splice(index, 1);
+
+  //     const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
+  //     updatedCertifications.splice(index, 1);
+  //     this.userDetailsForm.patchValue({
+  //       [controlName]: updatedCertifications,
+  //     });
+  
+  //     this.notify.showSuccess('Certification removed successfully.');
   //   }
   // }
+  deleteFile(controlName: string, userId: string, index?: number): void {
+    if (controlName === 'cv_path') {
+      // API call to delete CV file
+      // { path: this.userDetailsForm.get(controlName)?.value, userId }
+      this.adminService.deleteCertification(userId).subscribe(
+        (response: any) => {
+          if (response.statusCode === 200) {
+            this.uploadedFileName = null;
+            this.fileUploaded = null;
+            this.userDetailsForm.patchValue({
+              [controlName]: null,
+            });
+            this.notify.showSuccess('CV removed successfully.');
+          } else {
+            this.notify.showWarning('Failed to remove CV. Please try again.');
+          }
+        },
+        error => {
+          this.notify.showError('Error while deleting CV file.');
+          console.error(error);
+        }
+      );
+    } else if (controlName === 'courses_and_certification' && index !== undefined) {
+      // API call to delete certification file
+      const certification = this.certificationFiles[index];
+      this.adminService.deleteCertification(userId).subscribe(
+        (response: any) => {
+          if (response.statusCode === 200) {
+            this.certificationFiles.splice(index, 1);
+            const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
+            updatedCertifications.splice(index, 1);
+            this.userDetailsForm.patchValue({
+              [controlName]: updatedCertifications,
+            });
+            this.notify.showSuccess('Certification removed successfully.');
+          } else {
+            this.notify.showWarning('Failed to remove certification. Please try again.');
+          }
+        },
+        error => {
+          this.notify.showError('Error while deleting certification file.');
+          console.error(error);
+        }
+      );
+    }
+  }
   
   
 }
