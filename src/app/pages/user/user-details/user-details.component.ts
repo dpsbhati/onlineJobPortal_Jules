@@ -72,7 +72,7 @@ export class UserDetailsComponent {
 
 
 onFileChange(event: Event, controlName: string): void {
-  debugger
+  // debugger
   this.spinner.show();
   const fileInput = event.target as HTMLInputElement;
   const files = fileInput?.files;
@@ -259,7 +259,7 @@ onFileChange(event: Event, controlName: string): void {
       });
       this.notify.showSuccess('CV removed successfully.');
   }   else if (controlName === 'courses_and_certification' && index !== undefined) {
-   debugger
+  //  debugger
       this.certificationFiles.splice(index, 1);
       this.userDetailsForm.patchValue({
         [controlName]: [...this.certificationFiles],
