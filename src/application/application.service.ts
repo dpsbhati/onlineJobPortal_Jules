@@ -206,7 +206,10 @@ export class ApplicationService {
         'certification_path',
         'status',
         'applied_at',
-        'job.title'
+        'job.title',
+        'user.email',
+        'userProfile.first_name',
+        'userProfile.last_name',
       ];
 
       // Process whereClause if search filters are applied
