@@ -154,4 +154,8 @@ export class ApplicantAppliedListComponent implements OnInit {
   canViewJobDetails(): boolean {
     return this.isApplicant();
   }
+
+  goBack(): void {
+    this.router.navigate(['/job-list']);
+  }
 }

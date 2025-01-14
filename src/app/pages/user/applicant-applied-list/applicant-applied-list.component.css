@@ -186,6 +186,28 @@
   border-color: #999;
 }
 
+.back-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.back-button:hover {
+  color: #007bff;
+}
+
+.back-button i {
+  font-size: 16px;
+}
+
 /* Pagination styles */
 .pagination {
   display: flex;

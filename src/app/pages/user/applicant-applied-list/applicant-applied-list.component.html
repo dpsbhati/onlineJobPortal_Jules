@@ -10,6 +10,9 @@
 
 <div class="applied-jobs-container" *ngIf="isAuthorized(); else unauthorizedAccess">
   <div class="header">
+    <button (click)="goBack()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
     <h2>Applies</h2>
     <div class="search-filters">
       <div class="search-box">
