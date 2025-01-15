@@ -7,6 +7,7 @@ import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
 import { AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
+
 @Component({
   selector: 'app-user-details',
   standalone: true,
@@ -70,75 +71,73 @@ export class UserDetailsComponent {
   
   }   
 
+  onFileChange(event: Event, controlName: string): void {
+    // debugger
+    this.spinner.show();
+    const fileInput = event.target as HTMLInputElement;
+    const files = fileInput?.files;
 
-onFileChange(event: Event, controlName: string): void {
-  // debugger
-  this.spinner.show();
-  const fileInput = event.target as HTMLInputElement;
-  const files = fileInput?.files;
+    if (!files) {
+      return;
+    }
 
-  if (!files) {
-    return;
-  }
+    const validFormats = ['application/pdf', 'application/msword']; 
+    const maxFileSize = 5 * 1024 * 1024; 
 
-  const validFormats = ['application/pdf', 'application/msword']; 
-  const maxFileSize = 5 * 1024 * 1024; 
-
-  if (controlName === 'courses_and_certification') {
+    if (controlName === 'courses_and_certification') {
   
-    Array.from(files).forEach(file => {
-      if (!validFormats.includes(file.type)) {
-        this.fileError = `Invalid file format. Only PDF and DOC files are allowed.`;
-        return;
-      }
+      Array.from(files).forEach(file => {
+        if (!validFormats.includes(file.type)) {
+          this.fileError = `Invalid file format. Only PDF and DOC files are allowed.`;
+          return;
+        }
 
-      if (file.size > maxFileSize) {
-        this.fileError = `File size should not exceed 5 MB for ${file.name}.`;
-        return;
-      }
-     
-
-      this.fileError = null; 
-      this.certificationFiles.push(file); 
-    });
+        if (file.size > maxFileSize) {
+          this.fileError = `File size should not exceed 5 MB for ${file.name}.`;
+          return;
+        }
+       
+        this.fileError = null; 
+        this.certificationFiles.push(file); 
+      });
 
  
-    const folderName = 'certifications';
-    const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
+      const folderName = 'certifications';
+      const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
 
-    const uploadPromises = this.certificationFiles.map(file =>
-      this.adminService.uploadFile({ folderName, file, userId }).toPromise()
-    );
+      const uploadPromises = this.certificationFiles.map(file =>
+        this.adminService.uploadFile({ folderName, file, userId }).toPromise()
+      );
 
-    Promise.all(uploadPromises)
-      .then(responses => {
-        const certifications: { organization_name: any; certification_description: string; start_date: string; end_date: string; certification_file: any; }[] = [];
-        responses.forEach((response: any) => {
-          if (response.statusCode === 200) {
-            certifications.push({
-              organization_name: response.data.originalName.split('.')[0], 
-              certification_description: `Uploaded file: ${response.data.originalName}`, 
-              start_date: '2023-01-01', 
-              end_date: '2023-12-31', 
-              certification_file: response.data.path, 
-            });
-            this.spinner.hide();
-             this.notify.showSuccess(response.message);
-            
-          } else {
-            this.spinner.hide();
-            this.notify.showWarning(response.message);
-          }
-        });
-
-        if (certifications.length > 0) {
-          // const existingCertifications = this.userDetailsForm.get(controlName)?.value || [];
-          this.userDetailsForm.patchValue({
-            [controlName]: [ ...certifications],
+      Promise.all(uploadPromises)
+        .then(responses => {
+          const certifications: { organization_name: any; certification_description: string; start_date: string; end_date: string; certification_file: any; }[] = [];
+          responses.forEach((response: any) => {
+            if (response.statusCode === 200) {
+              certifications.push({
+                organization_name: response.data.originalName.split('.')[0], 
+                certification_description: `Uploaded file: ${response.data.originalName}`, 
+                start_date: '2023-01-01', 
+                end_date: '2023-12-31', 
+                certification_file: response.data.path, 
+              });
+              this.spinner.hide();
+               this.notify.showSuccess(response.message);
+              
+            } else {
+              this.spinner.hide();
+              this.notify.showWarning(response.message);
+            }
           });
+
+          if (certifications.length > 0) {
+            // const existingCertifications = this.userDetailsForm.get(controlName)?.value || [];
+            this.userDetailsForm.patchValue({
+              [controlName]: [ ...certifications],
+            });
          
-        }
-      })
+          }
+        })
   } else if (controlName === 'cv_path') {
     
     const file = files[0];
@@ -214,38 +213,34 @@ onFileChange(event: Event, controlName: string): void {
       // const apiPayload = {
       //   ...formData,
       //   courses_and_certification: this.certificationFiles.map(file => ({
-      //     organization_name: file.name,
-      //     certification_description: 'Description placeholder', 
-      //     start_date: '2020-01-01',
-      //     end_date: '2020-12-31', 
-      //     certification_file: file.name,
-      //   })),
-      //   job_id: this.jobId,
-      //   user_id: this.user?.id,
-      // };
-  
+
       const apiPayload = {
         ...formData,
         job_id: this.jobId, 
         user_id: this.user?.id, 
       };
 
-      this.adminService.applyJobs(apiPayload ).subscribe(
-        (response: any) => {
+      this.adminService.applyJobs(apiPayload).subscribe({
+        next: (response: any) => {
+          this.spinner.hide();
           if (response.statusCode === 200) {
-            this.spinner.hide();
-               this.notify.showSuccess(response.message);
-               this.router.navigate(['/job-list'])
+            this.notify.showSuccess(response.message);
+            this.router.navigate(['/job-list']);
           } else {
-                this.spinner.hide();
-                this.notify.showWarning(response.message);
-                this.router.navigate(['/job-list'])
+            this.notify.showWarning(response.message);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         },
-      );
+        error: (error: any) => {
+          this.spinner.hide();
+          this.notify.showError(error.error?.message || 'Failed to apply for job');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
     } else {
      this.spinner.hide();
     }
+    this.spinner.hide();
   }
   naviagte(){
     this.router.navigate(['/job-list']);
@@ -259,80 +254,20 @@ onFileChange(event: Event, controlName: string): void {
       });
       this.notify.showSuccess('CV removed successfully.');
   }   else if (controlName === 'courses_and_certification' && index !== undefined) {
-  //  debugger
       this.certificationFiles.splice(index, 1);
       this.userDetailsForm.patchValue({
         [controlName]: [...this.certificationFiles],
       });
-  
+
       // const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
       // updatedCertifications.splice(index, 1);
       // this.userDetailsForm.patchValue({
       //   [controlName]: updatedCertifications,
       // });
-  
+
       this.notify.showSuccess('Certification removed successfully.');
     
   }
 }
   
-  
-  // onFileChange(event: Event, controlName: string): void {
-
-  //   const fileInput = event.target as HTMLInputElement;
-  //   const file = fileInput?.files?.[0];
-  //   this.spinner.show();
-  //   if (file) {
-  //     const validFormats = [
-  //       'application/pdf',                 // PDF
-  //       'application/msword',              // DOC
-  //       // 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
-  //       // 'application/vnd.oasis.opendocument.text', // ODT
-  //       // 'text/rtf',                        // RTF
-  //       // 'text/plain'                       // TXT
-  //     ];
-  
-  //     if (!validFormats.includes(file.type)) {
-  //       this.fileError = 'Invalid file format. Only PDF, DOC, DOCX, ODT, RTF, and TXT files are allowed.';
-  //       this.fileUploaded= null;
-  //       this.spinner.hide();
-  //       return;
-  //     }
-  
-  //     if (file.size > 5 * 1024 * 1024) { 
-  //       this.fileError = 'File size should not exceed  5 MB.';
-  //       this.fileUploaded = null;
-  //       return;
-  //     }
-  
-  //     this.fileError = null;
-  //     this.fileUploaded = file;
-  
-  //     const folderName = 'user-details';
-  //     this.user = JSON.parse(localStorage.getItem('user') || '{}');
-  //     const userId =this. user.id;
-  //     console.log(folderName, file, userId);
-  //     this.adminService.uploadFile({ folderName, file, userId }).subscribe(
-  //       (response :any) => {
-        
-  //         if (response.statusCode === 200) {
-  //           this.notify.showSuccess(response.message);
-  //           this.spinner.hide();
-  //           this.userDetailsForm.patchValue({
-  //             [controlName]: response.data.path
-  //           });
-  //         } else {
-  //           this.notify.showWarning(response.message);
-  //           this.spinner.hide();
-  //           this.fileError = 'File upload failed. Please try again.';
-  //         }
-  //       },
-        
-  //     );
-  //   }
-  //   else{
-  //     this.spinner.hide();
-  //   }
-  // }
-  
-}
+} 

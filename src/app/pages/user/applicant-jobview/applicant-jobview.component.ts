@@ -84,7 +84,7 @@ jobDetails: any;
   }
 
   goBack() {
-    this.router.navigate(['/job-list']);
+    this.router.navigate(['/applied-jobs']);
   }
 
   navigate() {

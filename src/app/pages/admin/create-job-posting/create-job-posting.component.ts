@@ -6,7 +6,7 @@ import { ImageCompressionService } from '../../../core/services/image-compressio
 import countries from '../../../core/helpers/country.json';
 import { NotifyService } from '../../../core/services/notify.service';
 import { CommonModule, formatDate, NgFor, NgIf } from '@angular/common';
-import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent } from '@ng-select/ng-select';
+import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import {  ValidationErrors, ValidatorFn} from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 
@@ -17,7 +17,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
     NgLabelTemplateDirective,
     NgOptionTemplateDirective,
     NgSelectComponent,
-
+    NgSelectModule
   
   ],
   templateUrl: './create-job-posting.component.html',
@@ -29,13 +29,11 @@ export class CreateJobPostingComponent {
   countryList = countries;
   newSkill: string = '';
   skillsArray: string[] = [];
-  // skillsList = [
-  //   { id: 1, name: 'JavaScript' },
-  //   { id: 2, name: 'Angular' },
-  //   { id: 3, name: 'React' },
-  //   { id: 4, name: 'Node.js' },
-  //   { id: 5, name: 'Python' }
-  // ];
+  socialMediaOptions = [
+    { label: 'Facebook', value: 'facebook' },
+    { label: 'LinkedIn', value: 'linkedin' },
+   
+  ];
  
 
   isDatePublishedReadonly = true;
@@ -70,10 +68,10 @@ export class CreateJobPostingComponent {
       application_instruction: new FormControl('',[ Validators.min(2),  Validators.maxLength(1500)]),
       country_code: new FormControl('', Validators.required),
       address: new FormControl('',  [Validators.required, Validators.min(2),  Validators.maxLength(100)]),
-      social_media_type: new FormControl('', Validators.required),
-      posted_at: new FormControl(''),
+      social_media_type: new FormControl([], Validators.required),
+      posted_at: new FormControl('', Validators.required),
       jobpost_status: new FormControl('draft'),
-      
+      jobposting :  new FormControl('', Validators.required),
       // work_type: new FormControl(''),
       // file_path: new FormControl(null),
     }, 
@@ -89,10 +87,31 @@ export class CreateJobPostingComponent {
       this.isEditMode = true;
       this.getJobPosting(jobId);
     }
+    if (this.isEditMode) {
+      this.jobForm.get('social_media_type')?.disable();
+      this.jobForm.get('jobposting')?.disable();
+      this.jobForm.get('jobposting')?.disable();
+    } else {
+      this.jobForm.get('social_media_type')?.enable();
+      this.jobForm.get('jobposting')?.enable();
+    }
+    this.jobForm.get('jobposting')?.valueChanges.subscribe(value => {
+      const postedAtControl = this.jobForm.get('posted_at');
+      if (value === 'Schedule later') {
+        postedAtControl?.setValidators([
+          Validators.required,
+          this.validateMinimumTime()
+        ]);
+      } else {
+        postedAtControl?.clearValidators();
+        postedAtControl?.setValue('');
+      }
+      postedAtControl?.updateValueAndValidity();
+    });
       const today = new Date().toISOString().split('T')[0];
       this.jobForm.get('date_published')?.setValue(today);
       this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
-   this.listenToSocialMediaType();
+  //  this.listenToSocialMediaType();
   }
   addSkill(): void {
     const skill = this.newSkill.trim();
@@ -125,17 +144,30 @@ export class CreateJobPostingComponent {
     this.jobForm.get('skills_required')?.markAsTouched();
   }
   
-  listenToSocialMediaType(): void {
-    this.jobForm.get('social_media_type')?.valueChanges.subscribe((value) => {
-      const postedAtControl = this.jobForm.get('posted_at');
-      if (value === 'facebook' || value === 'linkedin') {
-        postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
-      } else {
-        postedAtControl?.clearValidators();
-        postedAtControl?.setValue(''); // Clear the value
+  // listenToSocialMediaType(): void {
+  //   this.jobForm.get('social_media_type')?.valueChanges.subscribe((value) => {
+  //     const postedAtControl = this.jobForm.get('posted_at');
+  //     if (value === 'facebook' || value === 'linkedin') {
+  //       postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
+  //     } else {
+  //       postedAtControl?.clearValidators();
+  //       postedAtControl?.setValue(''); // Clear the value
+  //     }
+  //     postedAtControl?.updateValueAndValidity();
+  //   });
+  // }
+  validateMinimumTime(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
       }
-      postedAtControl?.updateValueAndValidity();
-    });
+  
+      const selectedDate = new Date(control.value);
+      const currentDate = new Date();
+      const oneHourFromNow = new Date(currentDate.getTime() + (60 * 60 * 1000)); // Add 1 hour
+  
+      return selectedDate < oneHourFromNow ? { minimumTime: true } : null;
+    };
   }
   skillsValidator(minLength: number, maxLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -221,15 +253,24 @@ export class CreateJobPostingComponent {
     const endSalaryControl = control.get('end_salary');
   
     if (startSalaryControl && endSalaryControl) {
-      const startSalary = parseInt(startSalaryControl.value.replace(/,/g, '') || '0', 10);
-      const endSalary = parseInt(endSalaryControl.value.replace(/,/g, '') || '0', 10);
+      const startSalary = parseInt((startSalaryControl.value || '0').replace(/,/g, ''), 10);
+      const endSalary = parseInt((endSalaryControl.value || '0').replace(/,/g, ''), 10);
   
       if (startSalary > endSalary) {
+        endSalaryControl.setErrors({ salaryMismatch: true });
         return { salaryMismatch: true };
+      } else {
+      
+        if (endSalaryControl.hasError('salaryMismatch')) {
+          const endSalaryErrors = { ...endSalaryControl.errors };
+          delete endSalaryErrors['salaryMismatch'];
+          endSalaryControl.setErrors(Object.keys(endSalaryErrors).length ? endSalaryErrors : null);
+        }
       }
     }
     return null;
   }
+  
   
   
   
@@ -245,7 +286,9 @@ export class CreateJobPostingComponent {
           // this.jobForm.patchValue({featured_image: formattedImageUrl,});
            const formattedDatePublished = formatDate(data.date_published, 'yyyy-MM-dd', 'en-US');
            const formattedDeadline = formatDate(data.deadline, 'yyyy-MM-dd', 'en-US');
-
+           const socialMediaTypes = data.social_media_type 
+           ? JSON.parse(data.social_media_type) 
+           : [];
           //  const formattedPostedAt = data.posted_at
           //  ? new Date(data.posted_at).toISOString().slice(0, 16) 
           //  : '';
@@ -288,7 +331,7 @@ export class CreateJobPostingComponent {
           application_instruction : data.application_instruction,
           country_code: data.country_code || '',
           address: data.address || '',
-          social_media_type: data.social_media_type || 'facebook',
+          social_media_type: socialMediaTypes,
           posted_at: data.posted_at,
           jobpost_status: data.jobpost_status || 'draft',
           // work_type: data.work_type || '',
@@ -378,10 +421,10 @@ export class CreateJobPostingComponent {
       //   const localDate = new Date(formValues.posted_at);
       //   formValues.posted_at = localDate.toISOString(); // Convert to UTC ISO format
       // }
-    //     if (formValues.posted_at) {
-    //   const localDate = new Date(formValues.posted_at);
-    //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
-    // }
+      //     if (formValues.posted_at) {
+      //   const localDate = new Date(formValues.posted_at);
+      //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
+      // }
       //  const jobTypeControl = this.jobForm.get('job_type');
       //  if (jobTypeControl) {
       //    formValues.job_type.setValue(jobTypeControl.value.toUpperCase(), { emitEvent: false });
@@ -396,37 +439,77 @@ export class CreateJobPostingComponent {
       if (!formValues.id) {
         delete formValues.id;
       }
+      
       formValues.skills_required = JSON.stringify(formValues.skills_required);
-      if (this.isEditMode) {
-     
-        this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-          if (response.statusCode === 200) {
-            this.notify.showSuccess(response.message);
-            this.router.navigate(['/job-list']);
-          }
-          else{
-            this.notify.showWarning(response.message);
-            this.spinner.hide();
-          }
-        });
-      } else {
+      // if (this.isEditMode) {
+      
         
-        this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-          if (response.statusCode === 200) {
-            this.notify.showSuccess(response.message);
-            this.router.navigate(['/job-list']);
-          }
-          else{
-            this.notify.showWarning(response.message);
+      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+      //     if (response.statusCode === 200) {
+      //       this.notify.showSuccess(response.message);
+      //       this.router.navigate(['/job-list']);
+      //     }
+      //     else{
+      //       this.notify.showError(response.message);
+      //       this.spinner.hide();
+      //     }
+      //   });
+      // } else {
+        
+      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+      //     if (response.statusCode === 200) {
+      //       this.notify.showSuccess(response.message);
+      //       this.router.navigate(['/job-list']);
+      //     }
+      //     else{
+      //       this.notify.showWarning(response.message);
+      //       this.spinner.hide();
+      //     }
+      //   });
+    
+        this.spinner.show();
+        this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+          next: (response) => {
             this.spinner.hide();
+            if (response.statusCode === 200) {
+              this.notify.showSuccess(response.message);
+              this.router.navigate(['/job-list']);
+            } else {
+              this.notify.showError(response.message);
+            }
+          },
+          error: (error) => {
+            this.spinner.hide();
+            this.notify.showError(error.error?.message);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         });
-      }
+      // } else {
+      //   this.spinner.show();
+      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+      //     next: (response) => {
+      //       this.spinner.hide();
+      //       if (response.statusCode === 200) {
+      //         this.notify.showSuccess(response.message);
+      //         this.router.navigate(['/job-list']);
+      //       } else {
+      //         this.notify.showError(response.message );
+      //       }
+      //     },
+      //     error: (error) => {
+      //       this.spinner.hide();
+      //       this.notify.showError(error.error?.message );
+      //       window.scrollTo({ top: 0, behavior: 'smooth' });
+      //     }
+      //   });
+  
+    
     } 
     else {
       this.spinner.hide();
       this.notify.showWarning("Failed to update the form")
     }
+    this.spinner.hide()
   }
   navigate(){
     this.router.navigate(['/job-list']);
