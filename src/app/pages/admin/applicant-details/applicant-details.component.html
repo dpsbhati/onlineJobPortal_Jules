@@ -1,0 +1,189 @@
+<div class="container" *ngIf="applicantDetails">
+  <div class="header">
+    <button (click)="goBack()" class="back-button">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <h2>Applicant Details</h2>
+  </div>
+
+  <!-- Application Status -->
+  <div class="section status-section">
+    <h3>Application Status</h3>
+    <div class="status-controls">
+      <div class="current-status">
+        <label>Current Status:</label>
+        <span class="status-badge" [ngClass]="applicantDetails.status?.toLowerCase()">
+          {{applicantDetails.status}}
+        </span>
+      </div>
+      <div class="status-change">
+        <label>Change Status:</label>
+        <select [(ngModel)]="selectedStatus" class="status-select">
+          <option value="">Select Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Shortlisted">Shortlisted</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Hired">Hired</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Information -->
+  <div class="section">
+    <h3>Personal Information</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Name:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.first_name}} {{applicantDetails.user?.userProfile[0]?.last_name}}</span>
+      </div>
+      <div class="info-item">
+        <label>Email:</label>
+        <span>{{applicantDetails.user?.email}}</span>
+      </div>
+      <div class="info-item">
+        <label>Gender:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.gender}}</span>
+      </div>
+      <div class="info-item">
+        <label>Date of Birth:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.dob | date}}</span>
+      </div>
+      <div class="info-item">
+        <label>Mobile:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.mobile || 'Not specified'}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Information -->
+  <div class="section">
+    <h3>Job Information</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Job Title:</label>
+        <span>{{applicantDetails.job?.title}}</span>
+      </div>
+      <div class="info-item">
+        <label>Job Type:</label>
+        <span>{{applicantDetails.job?.job_type}}</span>
+      </div>
+      <div class="info-item">
+        <label>Applied Date:</label>
+        <span>{{applicantDetails.applied_at | date:'medium'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Work Experience:</label>
+        <span>{{applicantDetails.work_experiences || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Employer:</label>
+        <span>{{applicantDetails.job?.employer}}</span>
+      </div>
+      <div class="info-item">
+        <label>Salary Range:</label>
+        <span>{{applicantDetails.job?.start_salary}} - {{applicantDetails.job?.end_salary}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Professional Information -->
+  <div class="section">
+    <h3>Professional Details</h3>
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Current Company:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.current_company || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Current Salary:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.current_salary || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Expected Salary:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.expected_salary || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Preferred Location:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.preferred_location || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Preferred Job Role:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.preferred_job_role || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Preferred Shift:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.preferred_shift || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Key Skills:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.key_skills || 'Not specified'}}</span>
+      </div>
+      <div class="info-item">
+        <label>Languages Known:</label>
+        <span>{{applicantDetails.user?.userProfile[0]?.languages_known || 'Not specified'}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents -->
+  <div class="section">
+    <h3>Documents</h3>
+    <div class="documents-grid">
+      <div class="document-item" *ngIf="applicantDetails.cv_path">
+        <i class="fas fa-file-pdf"></i>
+        <span>CV/Resume</span>
+        <a [href]="applicantDetails.cv_path" target="_blank" class="btn btn-primary btn-sm">
+          <i class="fas fa-download"></i> Download CV
+        </a>
+      </div>
+      <div class="document-item" *ngIf="applicantDetails.certification_path">
+        <i class="fas fa-certificate"></i>
+        <span>Certification</span>
+        <a [href]="applicantDetails.certification_path" target="_blank" class="btn btn-primary btn-sm">
+          <i class="fas fa-download"></i> Download Certificate
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Information -->
+  <div class="section" *ngIf="applicantDetails.additional_info || applicantDetails.description">
+    <h3>Additional Information</h3>
+    <div class="info-grid">
+      <div class="info-item full-width" *ngIf="applicantDetails.description">
+        <label>Description:</label>
+        <p>{{applicantDetails.description}}</p>
+      </div>
+      <div class="info-item full-width" *ngIf="applicantDetails.additional_info">
+        <label>Additional Info:</label>
+        <p>{{applicantDetails.additional_info}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Comments -->
+  <div class="section">
+    <h3>Admin Comments</h3>
+    <div class="comments-section">
+      <textarea 
+        [(ngModel)]="adminComments" 
+        placeholder="Add your comments about the applicant..."
+        class="admin-comments"
+        rows="4"
+      ></textarea>
+      <button class="btn btn-primary">
+        Save Comments
+      </button>
+    </div>
+  </div>
+</div>
+
+<ngx-spinner 
+  bdColor="rgba(0, 0, 0, 0.8)" 
+  size="medium" 
+  color="#fff" 
+  type="ball-clip-rotate" 
+  [fullScreen]="true">
+  <p style="color: white">Loading...</p>
+</ngx-spinner>

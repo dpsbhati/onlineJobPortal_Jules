@@ -22,21 +22,6 @@
     </div>
 
     <div class="filter-controls">
-      <!-- <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
-        <option value="">All Status</option>
-        <option value="Pending">Pending</option>
-        <option value="Shortlisted">Shortlisted</option>
-        <option value="Rejected">Rejected</option>
-        <option value="Hired">Hired</option>
-      </select>
-
-      <select [(ngModel)]="selectedDateRange" (change)="onDateRangeChange()" class="date-filter">
-        <option value="">All Time</option>
-        <option value="today">Today</option>
-        <option value="week">This Week</option>
-        <option value="month">This Month</option>
-      </select> -->
-
       <button (click)="clear()" class="clear-btn">
         Clear
       </button>
@@ -54,34 +39,34 @@
     <table *ngIf="applicants && applicants.length > 0" class="applicants-table">
       <thead>
         <tr>
-          <th >
-            Name 
-          </th>
-          <th >
-            Email
-          </th>
-          <th >
-            Applied Date
-          </th>
-        
+          <th>Name</th>
+          <th>Email</th>
+          <th>Applied Date</th>
           <th>Experience</th>
           <th>Status</th>
-         
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let applicant of applicants">
-          <td>{{(applicant.user.userProfile[0].first_name || '') + ' ' + (applicant.user.userProfile[0].last_name || '') || 'N/A'}}</td>
+          <td>
+            <a (click)="applicantDetails(applicant.id)" class="text-primary cursor-pointer text-decoration-none">
+              {{(applicant.user.userProfile[0].first_name || '') + ' ' + (applicant.user.userProfile[0].last_name || '') || 'N/A'}}
+            </a>
+          </td>
           <td>{{applicant.user?.email || 'N/A'}}</td>
           <td>{{applicant.applied_at | date:'medium'}}</td>
-          
           <td>{{applicant?.user?.userProfile[0]?.work_experiences || 'N/A'}}</td>
           <td>
             <span class="status-badge" [ngClass]="applicant.status?.toLowerCase()">
               {{applicant.status || "--"}}
             </span>
           </td>
-         
+          <td>
+            <button class="btn btn-info btn-sm" (click)="applicantDetails(applicant.id)">
+              <i class="fas fa-eye me-1"></i> View
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
