@@ -103,10 +103,11 @@ export class JobPosting {
   jobpost_status: string;
 
   @Column({
-    type: 'simple-array',
-    nullable: true,
+    type:'enum',
+    enum:["facebook","linkedin"],
+    nullable:true,
   })
-  social_media_type: any;
+  social_media_type:string[]
 
   @Column()
   posted_at: String;

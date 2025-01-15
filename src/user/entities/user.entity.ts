@@ -79,8 +79,8 @@ export class Users {
 
  
 
-  @OneToMany(() => UserProfile, (profile) => profile.user, { eager: true })
-  userProfile: UserProfile[];
+  @OneToOne(() => UserProfile, (profile) => profile.user, { eager: true })
+  userProfile: UserProfile;
   
   @OneToMany(() => applications, (application) => application.user) // Relation with applications
   applications: applications[]; 

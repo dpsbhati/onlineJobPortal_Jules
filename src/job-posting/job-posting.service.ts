@@ -141,72 +141,62 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      // Validate if social_media_type exists and is an array
-      if (!Array.isArray(jobDto.social_media_type) || jobDto.social_media_type.length === 0) {
-        return WriteResponse(400, {}, 'Invalid or missing social_media_type array.');
-      }
+      // Fetch existing job posting (if updating)
+      const jobPosting = jobDto.id
+        ? await this.jobPostingRepository.findOne({
+            where: { id: jobDto.id, is_deleted: false },
+          })
+        : null;
 
-      // New validation: Check if social_media_type contains only allowed values
-      const allowedSocialMediaTypes = ['facebook', 'linkedin'];
-      const invalidTypes = jobDto.social_media_type.filter(type => !allowedSocialMediaTypes.includes(type));
-      if (invalidTypes.length > 0) {
-        return WriteResponse(400, {}, `Invalid social_media_type values: ${invalidTypes.join(', ')}. Allowed values are: facebook, linkedin.`);
-      }
+      // Preserve existing job_opening status if the job is being updated
+      let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
 
-      const now = new Date();
-      const datePublished = jobDto.date_published ? new Date(jobDto.date_published) : null;
-      const deadline = jobDto.deadline ? new Date(jobDto.deadline) : null;
+      // Only set job_opening during creation
+      if (!jobPosting && jobDto.date_published && jobDto.deadline) {
+        const now = new Date();
+        const datePublished = new Date(jobDto.date_published);
+        const deadline = new Date(jobDto.deadline);
 
-      const savedJobPostings = [];
-
-      for (const socialMediaType of jobDto.social_media_type) {
-        // Fetch existing job posting (if updating)
-        const jobPosting = jobDto.id
-          ? await this.jobPostingRepository.findOne({
-              where: { id: jobDto.id, is_deleted: false, social_media_type: socialMediaType },
-            })
-          : null;
-
-        // Preserve existing job_opening status if the job is being updated
-        let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
-
-        // Only set job_opening during creation
-        if (!jobPosting && datePublished && deadline) {
-          if (now >= datePublished && now <= deadline) {
-            job_opening = 'open';
-          } else if (now > deadline) {
-            job_opening = 'close';
-          }
+        if (now >= datePublished && now <= deadline) {
+          job_opening = 'open';
+        } else if (now > deadline) {
+          job_opening = 'close';
         }
-
-        // Create or update job posting
-        const updatedJobPosting = this.jobPostingRepository.create({
-          ...jobPosting,
-          ...jobDto,
-          social_media_type: socialMediaType, // Set current social media type
-          job_opening,
-          application_instruction: jobDto.application_instruction, 
-          employee_experience: jobDto.employee_experience, 
-          created_by: jobPosting ? jobPosting.created_by : userId,
-          updated_by: userId,
-        });
-
-        // Save the job posting
-        const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
-
-        console.log(
-          jobPosting
-            ? `Updated Job Posting with ID: ${savedJobPosting.id} for ${socialMediaType}`
-            : `Created Job Posting with ID: ${savedJobPosting.id} for ${socialMediaType}`,
-        );
-
-        savedJobPostings.push(savedJobPosting);
       }
+
+      // Stringify social_media_type if it's an array
+      if (Array.isArray(jobDto.social_media_type)) {
+        jobDto.social_media_type = JSON.stringify(jobDto.social_media_type);
+      }
+
+      // Create or update job posting
+      const updatedJobPosting = this.jobPostingRepository.create({
+        ...jobPosting,
+        ...jobDto,
+        job_opening,
+        application_instruction: jobDto.application_instruction, 
+        employee_experience: jobDto.employee_experience, 
+        created_by: jobPosting ? jobPosting.created_by : userId,
+        updated_by: userId,
+      });
+
+      // Save the job posting
+      const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
+
+
+
+      console.log(
+        jobPosting
+          ? `Updated Job Posting with ID: ${savedJobPosting.id}`
+          : `Created Job Posting with ID: ${savedJobPosting.id}`,
+      );
 
       return WriteResponse(
         200,
-        savedJobPostings,
-        'Job Posting(s) processed successfully.'
+        savedJobPosting,
+        jobPosting
+          ? 'Job Posting updated successfully.'
+          : 'Job Posting created successfully.',
       );
     } catch (error) {
       console.error(
@@ -216,7 +206,6 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
   
   async paginateJobPostings(req: any, pagination: IPagination) {
     try {

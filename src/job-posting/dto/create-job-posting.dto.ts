@@ -267,9 +267,9 @@ export class CreateJobPostingDto {
   })
   @IsOptional()
   // @IsIn(['facebook', 'linkedin'], {
-  //   message: 'Invalid social_media_type. Allowed values are: facebook, linkedin, both.',
+  //   message: 'Invalid social_media_type. Allowed values are: facebook, linkedin.',
   // })
-  social_media_type?: string[];
+  social_media_type?: any;
 
   
 }
