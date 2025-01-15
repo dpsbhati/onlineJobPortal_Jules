@@ -261,16 +261,15 @@ export class CreateJobPostingDto {
   posted_at?: String;
 
   @ApiProperty({
-    description: 'The social media platform where the job will be posted.',
-    example: 'facebook',
-    enum: ['facebook', 'linkedin'],
+    description: 'The social media platforms where the job will be posted.',
+    example: ['facebook', 'linkedin'],
+    isArray: true,
   })
   @IsOptional()
-  @IsIn(['facebook', 'linkedin'], {
-    message:
-      'Invalid social_media_type. Allowed values are: facebook, linkedin.',
-  })
-  social_media_type?: string;
+  // @IsIn(['facebook', 'linkedin'], {
+  //   message: 'Invalid social_media_type. Allowed values are: facebook, linkedin, both.',
+  // })
+  social_media_type?: string[];
 
   
 }

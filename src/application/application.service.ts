@@ -133,7 +133,7 @@ export class ApplicationService {
       // Fetch the application with its relations
       const application = await this.applicationRepository.findOne({
         where: { id, is_deleted: false },
-        relations: ['job', 'user', 'job.courses_and_certification'],
+        relations: ['job', 'user', 'job.courses_and_certification','user.userProfile'],
       });
 
       if (!application) {
