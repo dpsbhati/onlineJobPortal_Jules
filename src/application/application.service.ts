@@ -9,7 +9,6 @@ import { IPagination } from 'src/shared/paginationEum';
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 
 import * as nodemailer from 'nodemailer';
-import { Attachment } from 'src/attachment/entities/attachment.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -137,7 +136,7 @@ export class ApplicationService {
       });
 
       if (!application) {
-        throw new NotFoundException(`Application with ID ${id} not found.`);
+        return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
 
       // Add comments and status to the response
@@ -147,23 +146,55 @@ export class ApplicationService {
         status: application.status || 'No status available', // Fallback if status is null/undefined
       };
 
-      return response;
+      return WriteResponse(
+        200,
+        response,
+        'Application retrieved successfully.',
+      );
     } catch (error) {
       console.error('Error fetching application:', error.message);
-      throw new Error(
+      return WriteResponse(
+        500,
+        {},
         'An unexpected error occurred while fetching the application.',
       );
     }
   }
 
-  async update(id: string, updateApplicationDto: UpdateApplicationDto) {
+  async update(
+    id: string,
+    updateApplicationDto: UpdateApplicationDto,
+    user: any,
+  ) {
     try {
       // Fetch the application by ID
-      const application = await this.findOne(id);
+      const application: any = await this.findOne(id);
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
-  
+
+      const isAdmin = user?.role === 'admin';
+
+      if (!isAdmin) {
+        const restrictedFields = [
+          'status',
+          'comments',
+          'description',
+          'certification_path',
+        ];
+        const hasRestrictedFields = restrictedFields.some((field) =>
+          Object.keys(updateApplicationDto).includes(field),
+        );
+
+        if (hasRestrictedFields) {
+          return WriteResponse(
+            403,
+            {},
+            'You do not have permission to update these fields.',
+          );
+        }
+      }
+
       // Validate the certification_path format, if provided
       if (
         updateApplicationDto.certification_path &&
@@ -177,22 +208,14 @@ export class ApplicationService {
           'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
         );
       }
-  
-      // Update comments and status if provided
-      if (updateApplicationDto.comments) {
-        application.comments = updateApplicationDto.comments;
-      }
-  
-      if (updateApplicationDto.status) {
-        application.status = updateApplicationDto.status;
-      }
-  
-      // Merge other properties from DTO into the application entity
+
+      // Merge the DTO fields into the application
       Object.assign(application, updateApplicationDto);
-  
+
       // Save the updated application
-      const updatedApplication = await this.applicationRepository.save(application);
-  
+      const updatedApplication =
+        await this.applicationRepository.save(application);
+
       return WriteResponse(
         200,
         updatedApplication,
@@ -207,18 +230,19 @@ export class ApplicationService {
       );
     }
   }
-  
-
 
   async remove(id: string) {
     const application = await this.findOne(id);
-    application.is_deleted = true;
-    return await this.applicationRepository.save(application);
+    if (application.statusCode == 200) {
+      const data = application.data;
+      data.is_deleted = true;
+      return await this.applicationRepository.save(data);
+    }
+    return application;
   }
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
-
       const { curPage = 1, perPage = 10, whereClause } = pagination;
 
       // Default whereClause to filter out deleted applications
@@ -337,5 +361,4 @@ export class ApplicationService {
       console.error('Failed to send confirmation email:', error.message);
     }
   }
-
 }

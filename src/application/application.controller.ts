@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -35,8 +35,14 @@ export class ApplicationController {
   @Post('update')
   @ApiOperation({ summary: 'Update a specific application by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the application to update', example: 'uuid' })
-  update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-    return this.applicationService.update(id, updateApplicationDto);
+  
+  update(
+    @Param('id') id: string,
+     @Body() updateApplicationDto: UpdateApplicationDto,
+     @Req() req: any,
+    )
+   {
+    return this.applicationService.update(id, updateApplicationDto, req.user);
   }
 
   @Post('delete')
