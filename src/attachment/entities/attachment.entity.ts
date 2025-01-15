@@ -24,10 +24,10 @@ export class Attachment {
   @Column({ type: 'char', length: 36, nullable: true })
   updated_by: string;
   
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
   
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
   
 
