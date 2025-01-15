@@ -9,6 +9,7 @@ import { IPagination } from 'src/shared/paginationEum';
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 
 import * as nodemailer from 'nodemailer';
+import { Attachment } from 'src/attachment/entities/attachment.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -156,23 +157,58 @@ export class ApplicationService {
   }
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
-    const application = await this.findOne(id);
-    if (
-      updateApplicationDto.certification_path &&
-      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(
-        updateApplicationDto.certification_path,
-      )
-    ) {
+    try {
+      // Fetch the application by ID
+      const application = await this.findOne(id);
+      if (!application) {
+        return WriteResponse(404, {}, `Application with ID ${id} not found.`);
+      }
+  
+      // Validate the certification_path format, if provided
+      if (
+        updateApplicationDto.certification_path &&
+        !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(
+          updateApplicationDto.certification_path,
+        )
+      ) {
+        return WriteResponse(
+          400,
+          {},
+          'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
+        );
+      }
+  
+      // Update comments and status if provided
+      if (updateApplicationDto.comments) {
+        application.comments = updateApplicationDto.comments;
+      }
+  
+      if (updateApplicationDto.status) {
+        application.status = updateApplicationDto.status;
+      }
+  
+      // Merge other properties from DTO into the application entity
+      Object.assign(application, updateApplicationDto);
+  
+      // Save the updated application
+      const updatedApplication = await this.applicationRepository.save(application);
+  
       return WriteResponse(
-        400,
+        200,
+        updatedApplication,
+        'Application updated successfully.',
+      );
+    } catch (error) {
+      console.error('Error updating application:', error.message);
+      return WriteResponse(
+        500,
         {},
-        'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
+        'An unexpected error occurred while updating the application.',
       );
     }
-
-    Object.assign(application, updateApplicationDto);
-    return await this.applicationRepository.save(application);
   }
+  
+
 
   async remove(id: string) {
     const application = await this.findOne(id);
@@ -209,7 +245,7 @@ export class ApplicationService {
         'job.title',
         'user.email',
         'userProfile.first_name',
-        'userProfile.last_name',
+        // 'userProfile.last_name',
       ];
 
       // Process whereClause if search filters are applied
@@ -301,4 +337,5 @@ export class ApplicationService {
       console.error('Failed to send confirmation email:', error.message);
     }
   }
+
 }

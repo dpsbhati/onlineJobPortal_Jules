@@ -24,54 +24,58 @@ export class applications {
   @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
   job: JobPosting;
 
-  @ManyToOne(() => Users) // Define relation with User
-  @JoinColumn({ name: 'user_id' }) // Map the relation to the existing user_id column
-  user: Users;
-
+  
   @Column({
     type: 'enum',
     enum: ['Pending', 'Shortlisted', 'Rejected', 'Hired'],
     nullable: true,
   })
   status: string;
-
+  
   @Column({ type: 'text', nullable: true })
   description: string;
-
+  
   @Column({ type: 'varchar', length: 255, nullable: true })
   comments: string;
-
+  
   @Column({ type: 'varchar', length: 255, nullable: true })
   cv_path: string;
-
+  
   @Column({ type: 'text', nullable: true })
   additional_info: string;
-
+  
   @Column({ type: 'text', nullable: true })
   work_experiences: string;
-
+  
   @CreateDateColumn()
   applied_at: Date;
 
   @CreateDateColumn()
   created_at: Date;
-
+  
   @UpdateDateColumn()
   updated_at: Date;
-
+  
   @Column({ type: 'boolean', default: false })
   is_deleted: boolean;
-
+  
   @Column()
   created_by: string;
-
+  
   @Column()
   updated_by: string;
-
+  
   @Column({ type: 'varchar', length: 255, nullable: true })
   certification_path: string;
-
+  
   // @ManyToOne(() => UserProfile, (user_profile) => user_profile.application)
   // @JoinColumn({ name: 'user_id' })
   // user_details: JobPosting;
+  
+
+  
+  @ManyToOne(() => Users) // Define relation with User
+  @JoinColumn({ name: 'user_id' }) // Map the relation to the existing user_id column
+  user: Users;
+  
 }

@@ -15,6 +15,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { JobScheduler } from './linkedin/linkedin.service';
 import { FacebookModule } from './facebook/facebook.module';
 import { CoursesAndCertificationModule } from './courses_and_certification/courses_and_certification.module';
+import { AttachmentModule } from './attachment/attachment.module';
 
 
 @Module({
@@ -47,6 +48,8 @@ import { CoursesAndCertificationModule } from './courses_and_certification/cours
     LinkedinModule,
     FacebookModule,
     CoursesAndCertificationModule,
+    AttachmentModule,
+    
     
   ],
   providers: [JobScheduler],

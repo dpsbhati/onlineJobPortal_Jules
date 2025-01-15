@@ -16,6 +16,8 @@ import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
+import { applications } from 'src/application/entities/application.entity';
+import { Application } from 'express';
 
 @Entity('users')
 export class Users {
@@ -80,6 +82,7 @@ export class Users {
   @OneToMany(() => UserProfile, (profile) => profile.user, { eager: true })
   userProfile: UserProfile[];
   
-  
+  @OneToMany(() => applications, (application) => application.user) // Relation with applications
+  applications: applications[]; 
   
 }

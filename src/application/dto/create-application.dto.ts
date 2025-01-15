@@ -12,6 +12,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   IsArray,
+  IsIn,
 } from 'class-validator';
 
 /**
@@ -78,6 +79,18 @@ export class CreateApplicationDto {
       'cv_path must be a valid file path ending with .pdf, .doc, or .docx.',
   })
   cv_path?: string;
+
+
+  @ApiProperty({
+    description: 'The status of the application.',
+    example: 'Pending',
+  })
+  @IsString({ message: 'status must be a valid string.' })
+  @IsIn(['Pending', 'Shortlisted', 'Rejected', 'Hired'], {
+    message: 'status must be one of Pending, Shortlisted, Rejected, or Hired.',
+  })
+  @IsNotEmpty({ message: 'status is required.' }) // Make status mandatory
+  status: string;
 
   @ApiPropertyOptional({
     description:
