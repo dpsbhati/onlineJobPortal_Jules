@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../../../core/services/user/user.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { UserService } from '../../../core/services/user/user.service';
 
 @Component({
   selector: 'app-job-applicant-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './job-applicant-list.component.html',
   styleUrls: ['./job-applicant-list.component.css']
 })
@@ -149,6 +149,10 @@ this.totalItems = 0;
 
   viewApplicantProfile(applicantId: string): void {
     this.router.navigate(['/user-details', applicantId]);
+  }
+
+  applicantDetails(applicantId: string): void {
+    this.router.navigate(['/applicant-details', applicantId]);
   }
 
   goBack(): void {

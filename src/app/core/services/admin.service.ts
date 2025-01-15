@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
-
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-
 import { GenericService } from './generic.service';
 
 @Injectable({
@@ -27,22 +25,15 @@ export class AdminService {
     return this.genericService.Post('uploads/files', formData);
   }
 
-
   getJobPostings(): Observable<any> {
     return this.genericService.Get(`/job-posting`);
   }
 
   getJobById(jobId: string): Observable<any> {
     const key = 'id';
-    // return this.http.get<any>(`/job-posting/find-one`, { 
-    //   params: { key, value: jobId } 
-    // });
     return this.genericService.Get<any>(`job-posting/find-one?key=id&value=${jobId}`);
-
   }
-  // deleteJob(id: string, ): Observable<any> {
-  //   return this.http.post(`${this.BASE_URL}job-posting/${id}`);
-  // }
+
   deleteJob(id: string): Observable<any> {
     return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
   }
@@ -54,34 +45,14 @@ export class AdminService {
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
   }
-  // deleteCertification(id: string): Observable<any> {
-  //   return this.http.post(`${this.BASE_URL}courses-and-certification/${id}`, {});
-  // }
+
   deleteCertification(jobId: string): Observable<any> {
     const url = `${this.BASE_URL}courses-and-certification/delete`;
     const payload = { job_id: jobId }; 
-    return this.http.post(url, payload)
+    return this.http.post(url, payload);
   }
-  
-  
-//   deleteCertification(payload: { path: string; userId: string }): Observable<any> {
-//   return this.http.post(`${this.BASE_URL}courses-and-certification`, payload);
-// }
 
-
-  // getJobPostings(params: {
-  //   page?: number;
-  //   limit?: number;
-  //   search?: string;
-  //   sortField?: string;
-  //   sortOrder?: string;
-  // }): Observable<any> {
-  //   return this.genericService.Get('job-posting/find-all', params);
-  // }
-
-
-  // Update application status
-  // updateApplicationStatus(jobId: string, applicantId: string, status: string): Observable<any> {
-  //   return this.http.put(`${this.BASE_URL}jobs/${jobId}/applicants/${applicantId}/status`, { status });
-  // }
+  allApplicantDetails(applicantId: string): Observable<any> {
+    return this.genericService.Get(`applications/get-one?id=${applicantId}`);
+  }
 }

@@ -9,6 +9,7 @@ import { UserDetailsComponent } from './user/user-details/user-details.component
 import { ApplicantAppliedListComponent } from './user/applicant-applied-list/applicant-applied-list.component';
 import { JobApplicantListComponent } from './admin/job-applicant-list/job-applicant-list.component';
 import { ApplicantJobviewComponent } from './user/applicant-jobview/applicant-jobview.component';
+import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-details.component';
 
 const routes: Routes = [
   { 
@@ -57,6 +58,11 @@ const routes: Routes = [
   {
     path: 'job-applicants-list/:jobId',
     component: JobApplicantListComponent,
+    canActivate: [() => roleGuard(['ADMIN'])]
+  },
+  {
+    path: 'applicant-details/:id',
+    component: ApplicantDetailsComponent,
     canActivate: [() => roleGuard(['ADMIN'])]
   }
 ];

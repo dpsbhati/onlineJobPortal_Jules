@@ -62,14 +62,6 @@
   align-items: center;
 }
 
-.status-filter,
-.date-filter {
-  padding: 8px 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
 .clear-btn {
   padding: 8px 16px;
   background-color: #ef4444;
@@ -116,19 +108,6 @@
   background-color: #e9ecef;
 }
 
-.skills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.skill-tag {
-  background-color: #e9ecef;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
 .status-badge {
   padding: 4px 8px;
   border-radius: 12px;
@@ -156,32 +135,38 @@
   color: white;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.action-button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
+/* Added new styles for view functionality */
+.cursor-pointer {
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
-.view-button {
-  background-color: #17a2b8;
+.cursor-pointer:hover {
+  text-decoration: underline !important;
+}
+
+.btn-info {
   color: white;
+  background-color: #17a2b8;
 }
 
-.status-select {
-  padding: 4px 8px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  cursor: pointer;
+.btn-info:hover {
+  background-color: #138496;
 }
 
+.btn-sm {
+  padding: 0.25rem 0.8rem;
+  font-size: 0.875rem;
+}
+
+.text-primary {
+  color: #007bff;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+/* Rest of your existing styles */
 .no-records-container {
   display: flex;
   justify-content: center;
@@ -196,18 +181,6 @@
 .no-records {
   text-align: center;
   color: #6b7280;
-}
-
-.no-records-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  color: #9ca3af;
-}
-
-.no-records p {
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin: 0;
 }
 
 /* Pagination */
