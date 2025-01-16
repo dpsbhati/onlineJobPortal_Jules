@@ -51,7 +51,7 @@
       </div>
       <div class="info-item">
         <label>Mobile:</label>
-        <span>{{applicantDetails.user?.userProfile?.mobile || 'Not specified'}}</span>
+        <span>{{applicantDetails.user?.userProfile?.mobile}}</span>
       </div>
     </div>
   </div>
@@ -62,35 +62,39 @@
     <div class="info-grid">
       <div class="info-item">
         <label>Current Company:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.current_company || 'Not specified'}}</span>
+        <span>{{applicantDetails.user?.userProfile?.current_company}}</span>
       </div>
       <div class="info-item">
-        <label>Current Salary:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.current_salary || 'Not specified'}}</span>
+        <label>Work Experience:</label>
+        <span>{{applicantDetails.user?.userProfile?.work_experiences}}</span>
       </div>
       <div class="info-item">
         <label>Expected Salary:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.expected_salary || 'Not specified'}}</span>
-      </div>
-      <div class="info-item">
-        <label>Preferred Location:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.preferred_location || 'Not specified'}}</span>
-      </div>
-      <div class="info-item">
-        <label>Preferred Job Role:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.preferred_job_role || 'Not specified'}}</span>
-      </div>
-      <div class="info-item">
-        <label>Preferred Shift:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.preferred_shift || 'Not specified'}}</span>
+        <span>{{applicantDetails.user?.userProfile?.expected_salary}}</span>
       </div>
       <div class="info-item">
         <label>Key Skills:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.key_skills || 'Not specified'}}</span>
+        <div class="skills-container">
+          <span class="skill-tag" *ngFor="let skill of keySkills">
+            {{skill}}
+          </span>
+        </div>
       </div>
-      <div class="info-item">
-        <label>Languages Known:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.languages_known || 'Not specified'}}</span>
+    </div>
+  </div>
+
+  <!-- Certifications -->
+  <div class="section" *ngIf="certifications.length > 0">
+    <h3>Courses & Certifications</h3>
+    <div class="certifications-list">
+      <div class="certification-item" *ngFor="let cert of certifications">
+        <h4>{{cert.organization_name}}</h4>
+        <div class="cert-details">
+          <p><strong>Description:</strong> {{cert.certification_description}}</p>
+          <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank" class="cert-file-link">
+            <i class="fas fa-file-pdf"></i> View Certificate
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -106,13 +110,13 @@
           <i class="fas fa-download"></i> Download CV
         </a>
       </div>
-      <div class="document-item" *ngIf="applicantDetails.certification_path">
+      <!-- <div class="document-item" *ngIf="applicantDetails.certification_path">
         <i class="fas fa-certificate"></i>
         <span>Certification</span>
         <a [href]="applicantDetails.certification_path" target="_blank" class="btn btn-primary btn-sm">
           <i class="fas fa-download"></i> Download Certificate
         </a>
-      </div>
+      </div> -->
     </div>
   </div>
 
