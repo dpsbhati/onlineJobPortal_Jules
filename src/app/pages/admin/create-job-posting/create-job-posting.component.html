@@ -322,20 +322,20 @@
       </div>
     </div> -->
     <div class="form-group">
-      <label for="jobposting">Type of post<span class="text-danger">*</span></label>
-      <select id="jobposting" formControlName="jobposting" class="form-control"  [disabled]="isEditMode">
+      <label for="job_type_post">Type of post<span class="text-danger">*</span></label>
+      <select id="job_type_post" formControlName="job_type_post" class="form-control"  [disabled]="isEditMode">
         <option value="" disabled>Select a post</option>
-        <option value="Post now">Post now</option>
-        <option value="Schedule later">Schedule later</option>
+        <option value="postnow">Post now</option>
+        <option value="schedulelater">Schedule later</option>
       
       </select>
-      <div *ngIf="jobForm.get('jobposting')?.invalid && jobForm.get('jobposting')?.touched" class="text-danger">
+      <div *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched" class="text-danger">
         jobposting is required.
       </div>
     </div>
     
    
-    <div class="form-group" *ngIf="jobForm.get('jobposting')?.value === 'Schedule later'">
+    <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'schedulelater'">
       <label for="posted_at">Post At<span class="text-danger">*</span></label>
       <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
       <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
