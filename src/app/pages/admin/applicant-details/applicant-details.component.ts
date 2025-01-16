@@ -26,6 +26,8 @@ export class ApplicantDetailsComponent implements OnInit {
   selectedStatus: string = '';
   adminComments: string = '';
   statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
+  keySkills: string[] = [];
+  certifications: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +40,6 @@ export class ApplicantDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.userId = params['id'];
-      // Get jobId from localStorage
       this.jobId = localStorage.getItem('currentJobId') || '';
       
       if (!this.userId) {
@@ -50,25 +51,37 @@ export class ApplicantDetailsComponent implements OnInit {
   }
 
   loadApplicantDetails() {
-    if (this.userId) {
-      this.spinner.show();
-      this.adminService.allApplicantDetails(this.userId)
-        .subscribe({
-          next: (response: any) => {
-            if (response.statusCode === 200) {
-              this.applicantDetails = response.data;
-              this.selectedStatus = response.data.status;
-              this.adminComments = response.data.comments || '';
+    this.spinner.show();
+    this.adminService.allApplicantDetails(this.userId).subscribe({
+      next: (response: any) => {
+        if (response.statusCode === 200) {
+          this.applicantDetails = response.data;
+          this.selectedStatus = this.applicantDetails.status;
+          
+          // Parse key skills
+          if (response.data.user?.userProfile?.key_skills) {
+            try {
+              // Remove forward slashes from skills when displaying
+              this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
+            } catch (e) {
+              console.warn('Error parsing key_skills:', e);
+              this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ? 
+                response.data.user.userProfile.key_skills : [];
             }
-            this.spinner.hide();
-          },
-          error: (error) => {
-            console.error('Error loading applicant details:', error);
-            this.notifyService.showError(error?.error?.message || 'Error loading applicant details');
-            this.spinner.hide();
           }
-        });
-    }
+
+          // Get certifications from courses_and_certification array
+          this.certifications = this.applicantDetails.job?.courses_and_certification || [];
+        } else {
+          this.notifyService.showError('Failed to load applicant details');
+        }
+        this.spinner.hide();
+      },
+      error: (error) => {
+        this.notifyService.showError('Error loading applicant details');
+        this.spinner.hide();
+      }
+    });
   }
 
   updateStatus(): void {
