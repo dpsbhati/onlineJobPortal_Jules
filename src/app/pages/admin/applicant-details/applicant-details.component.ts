@@ -57,6 +57,7 @@ export class ApplicantDetailsComponent implements OnInit {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
+          this.adminComments = this.applicantDetails.comments ;
           
           // Parse key skills
           if (response.data.user?.userProfile?.key_skills) {

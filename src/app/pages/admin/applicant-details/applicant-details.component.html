@@ -20,13 +20,21 @@
         <label>Change Status:</label>
         <select [(ngModel)]="selectedStatus" class="status-select">
           <option value="">Select Status</option>
-          <option value="Pending">Pending</option>
-          <option value="Shortlisted">Shortlisted</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Hired">Hired</option>
+          <option *ngFor="let status of statusOptions" [value]="status">{{status}}</option>
         </select>
       </div>
     </div>
+    
+    <!-- Admin Comments -->
+    <!-- <div class="comments-section">
+      <label>Admin Comments:</label>
+      <textarea 
+        [(ngModel)]="adminComments" 
+        class="comments-input" 
+        placeholder="Add your comments here..."
+        rows="3"
+      ></textarea>
+    </div> -->
   </div>
 
   <!-- Personal Information -->
@@ -140,13 +148,13 @@
     <h3>Admin Comments</h3>
     <div class="comments-section">
       <textarea 
-        [(ngModel)]="adminComments" 
-        placeholder="Add your comments about the applicant..."
-        class="admin-comments"
-        rows="4"
-      ></textarea>
+      [(ngModel)]="adminComments" 
+      class="comments-input" 
+      placeholder="Add your comments here..."
+      rows="3"
+    ></textarea>
       <button class="btn btn-primary" (click)="updateStatus()">
-        Save Comments
+        Save 
       </button>
     </div>
   </div>
