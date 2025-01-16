@@ -25,6 +25,7 @@ export class ApplicantDetailsComponent implements OnInit {
   applicantDetails: any = null;
   selectedStatus: string = '';
   adminComments: string = '';
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
 
   constructor(
     private route: ActivatedRoute,
@@ -37,7 +38,9 @@ export class ApplicantDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.userId = params['id'];
-      this.jobId = params['jobId'];
+      // Get jobId from localStorage
+      this.jobId = localStorage.getItem('currentJobId') || '';
+      
       if (!this.userId) {
         this.notifyService.showError('Required parameters not found');
         return;
@@ -52,7 +55,7 @@ export class ApplicantDetailsComponent implements OnInit {
       this.adminService.allApplicantDetails(this.userId)
         .subscribe({
           next: (response: any) => {
-            if (response.data) {
+            if (response.statusCode === 200) {
               this.applicantDetails = response.data;
               this.selectedStatus = response.data.status;
               this.adminComments = response.data.comments || '';
@@ -68,9 +71,49 @@ export class ApplicantDetailsComponent implements OnInit {
     }
   }
 
+  updateStatus(): void {
+    if (!this.userId || !this.selectedStatus) {
+      this.notifyService.showError('Please select a status');
+      return;
+    }
+
+    this.spinner.show();
+    const updateData = {
+      status: this.selectedStatus,
+      comments: this.adminComments,
+      description: this.applicantDetails.description
+    };
+
+    this.adminService.updateApplicationStatus(this.userId, updateData)
+      .subscribe({
+        next: (response: any) => {
+          if (response.statusCode === 200) {
+            this.notifyService.showSuccess('Application status updated successfully');
+            // Get jobId from localStorage for navigation
+            const jobId = localStorage.getItem('currentJobId');
+            if (jobId) {
+              this.router.navigate(['/job-applicants-list', jobId]);
+            } else {
+              this.router.navigate(['/job-list']);
+            }
+          } else {
+            this.notifyService.showError(response.message || 'Failed to update status');
+          }
+          this.spinner.hide();
+        },
+        error: (error) => {
+          console.error('Error updating status:', error);
+          this.notifyService.showError(error?.error?.message || 'Error updating status');
+          this.spinner.hide();
+        }
+      });
+  }
+
   goBack(): void {
-    if (this.jobId) {
-      this.router.navigate(['/job-applicants-list', this.jobId]);
+    // Get jobId from localStorage for back navigation
+    const jobId = localStorage.getItem('currentJobId');
+    if (jobId) {
+      this.router.navigate(['/job-applicants-list', jobId]);
     } else {
       this.router.navigate(['/job-list']);
     }

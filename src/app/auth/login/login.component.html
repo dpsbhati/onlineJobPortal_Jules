@@ -1,56 +1,81 @@
-<form [formGroup]="loginForm" (ngSubmit)="signIn()">
-    <div>
-        <label for="email">Email:</label>
-        <input id="email" type="email" formControlName="email" />
-        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            <small *ngIf="loginForm.get('email')?.errors?.['required']" style="color: red;">
-                Email is required.
-            </small>
-            <small *ngIf="loginForm.get('email')?.errors?.['email']" style="color: red;">
-                Please enter a valid email address.
-            </small>
-        </div>
-    </div>
+<div class="login-card">
+  <h1 class="title">Sign In</h1>
 
-    <div>
-        <label for="password">Password:</label>
-
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            formControlName="password"
-           
-          />
-          <button
-            type="button"
-            (click)="togglePasswordVisibility()"
-           
-          >
-            <i
-              [class]="showPassword ?'fas fa-eye' : 'fas fa-eye-slash' "
-            
-            ></i>
-          </button>
-       <div>
-        <button type="button" (click)="navigateToForgotPassword()">Forgot Password?</button>
-       </div>
-        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          <small *ngIf="loginForm.get('password')?.errors?.['required']" style="color: red;">
-            Password is required.
-          </small>
-          <small *ngIf="loginForm.get('password')?.errors?.['minlength']" style="color: red;">
-            Password must be at least 6 characters long.
-          </small>
-        </div>
+  <form [formGroup]="loginForm" (ngSubmit)="signIn()">
+    <!-- Email Input -->
+    <div class="form-group">
+      <label for="email">
+        Email<span class="required-mark">*</span>
+      </label>
+      <input 
+        id="email" 
+        type="email" 
+        formControlName="email" 
+        class="form-input"
+        placeholder="Enter your email"
+      />
+      <div class="error-message" *ngIf="loginForm.get('email')?.touched">
+        <small *ngIf="loginForm.get('email')?.errors?.['required']">
+          Email is required
+        </small>
+        <small *ngIf="loginForm.get('email')?.errors?.['email']">
+          Please enter a valid email address
+        </small>
       </div>
-      
-
-    <div>
-        <input id="rememberMe" type="checkbox" formControlName="rememberMe" />
-        <label for="rememberMe">Remember Me?</label>
     </div>
-<div>
-    <button type="submit">Login</button>
-    <button type=" submit" (click)=" navigateToNewuserRegistartion()">New User Registration</button>
+
+    <!-- Password Input -->
+    <div class="form-group">
+      <label for="password">
+        Password<span class="required-mark">*</span>
+      </label>
+      <div class="password-input-container">
+        <input
+          id="password"
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="password"
+          class="form-input"
+          placeholder="Enter your password"
+        />
+        <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="password-toggle"
+        >
+          <i [class]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
+        </button>
+      </div>
+      <div class="error-message" *ngIf="loginForm.get('password')?.touched">
+        <small *ngIf="loginForm.get('password')?.errors?.['required']">
+          Password is required
+        </small>
+        <small *ngIf="loginForm.get('password')?.errors?.['minlength']">
+          Password must be at least 6 characters long
+        </small>
+      </div>
+    </div>
+
+    <!-- Forgot Password Link -->
+    <div class="forgot-password">
+      <a (click)="navigateToForgotPassword()">Forgot Password ?</a>
+    </div>
+
+    <!-- Sign In Button -->
+    <button type="submit" class="sign-in-button" [disabled]="loginForm.invalid">
+      Sign In
+    </button>
+
+    <!-- Remember Me -->
+    <div class="remember-me">
+      <input id="rememberMe" type="checkbox" formControlName="rememberMe" />
+      <label for="rememberMe">Remember Me?</label>
+    </div>
+
+    <!-- New User Registration -->
+    <div class="new-user">
+      <button type="button" (click)="navigateToNewuserRegistartion()" class="register-button">
+        New User Registration
+      </button>
+    </div>
+  </form>
 </div>
-</form>

@@ -35,7 +35,7 @@
     <div class="info-grid">
       <div class="info-item">
         <label>Name:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.first_name}} {{applicantDetails.user?.userProfile[0]?.last_name}}</span>
+        <span>{{applicantDetails.user?.userProfile?.first_name}} {{applicantDetails.user?.userProfile?.last_name}}</span>
       </div>
       <div class="info-item">
         <label>Email:</label>
@@ -43,46 +43,15 @@
       </div>
       <div class="info-item">
         <label>Gender:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.gender}}</span>
+        <span>{{applicantDetails.user?.userProfile?.gender}}</span>
       </div>
       <div class="info-item">
         <label>Date of Birth:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.dob | date}}</span>
+        <span>{{applicantDetails.user?.userProfile?.dob | date}}</span>
       </div>
       <div class="info-item">
         <label>Mobile:</label>
-        <span>{{applicantDetails.user?.userProfile[0]?.mobile || 'Not specified'}}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Job Information -->
-  <div class="section">
-    <h3>Job Information</h3>
-    <div class="info-grid">
-      <div class="info-item">
-        <label>Job Title:</label>
-        <span>{{applicantDetails.job?.title}}</span>
-      </div>
-      <div class="info-item">
-        <label>Job Type:</label>
-        <span>{{applicantDetails.job?.job_type}}</span>
-      </div>
-      <div class="info-item">
-        <label>Applied Date:</label>
-        <span>{{applicantDetails.applied_at | date:'medium'}}</span>
-      </div>
-      <div class="info-item">
-        <label>Work Experience:</label>
-        <span>{{applicantDetails.work_experiences || 'Not specified'}}</span>
-      </div>
-      <div class="info-item">
-        <label>Employer:</label>
-        <span>{{applicantDetails.job?.employer}}</span>
-      </div>
-      <div class="info-item">
-        <label>Salary Range:</label>
-        <span>{{applicantDetails.job?.start_salary}} - {{applicantDetails.job?.end_salary}}</span>
+        <span>{{applicantDetails.user?.userProfile?.mobile || 'Not specified'}}</span>
       </div>
     </div>
   </div>
@@ -172,7 +141,7 @@
         class="admin-comments"
         rows="4"
       ></textarea>
-      <button class="btn btn-primary">
+      <button class="btn btn-primary" (click)="updateStatus()">
         Save Comments
       </button>
     </div>

@@ -49,22 +49,18 @@
       </thead>
       <tbody>
         <tr *ngFor="let applicant of applicants">
+          <td>{{applicant.user?.userProfile?.first_name}} {{applicant.user?.userProfile?.last_name}}</td>
+          <td>{{applicant.user?.email}}</td>
+          <td>{{applicant.applied_at | date:'mediumDate'}}</td>
+          <td>{{applicant.user?.userProfile?.work_experiences || applicant.work_experiences || 'N/A'}}</td>
           <td>
-            <a (click)="applicantDetails(applicant.id)" class="text-primary cursor-pointer text-decoration-none">
-              {{(applicant.user.userProfile[0].first_name || '') + ' ' + (applicant.user.userProfile[0].last_name || '') || 'N/A'}}
-            </a>
-          </td>
-          <td>{{applicant.user?.email || 'N/A'}}</td>
-          <td>{{applicant.applied_at | date:'medium'}}</td>
-          <td>{{applicant?.user?.userProfile[0]?.work_experiences || 'N/A'}}</td>
-          <td>
-            <span class="status-badge" [ngClass]="applicant.status?.toLowerCase()">
-              {{applicant.status || "--"}}
+            <span [ngClass]="{'status-badge': true, 'pending': applicant.status === 'Pending'}">
+              {{applicant.status}}
             </span>
           </td>
           <td>
-            <button class="btn btn-info btn-sm" (click)="applicantDetails(applicant.id)">
-              <i class="fas fa-eye me-1"></i> View
+            <button class="view-btn" (click)="applicantDetails(applicant.id)">
+              <i class="fas fa-eye"></i> View
             </button>
           </td>
         </tr>
