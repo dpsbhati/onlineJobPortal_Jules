@@ -71,7 +71,7 @@ export class CreateJobPostingComponent {
       social_media_type: new FormControl([], Validators.required),
       posted_at: new FormControl('', Validators.required),
       jobpost_status: new FormControl('draft'),
-      jobposting :  new FormControl('', Validators.required),
+      job_type_post :  new FormControl('', Validators.required),
       // work_type: new FormControl(''),
       // file_path: new FormControl(null),
     }, 
@@ -89,15 +89,15 @@ export class CreateJobPostingComponent {
     }
     if (this.isEditMode) {
       this.jobForm.get('social_media_type')?.disable();
-      this.jobForm.get('jobposting')?.disable();
-      this.jobForm.get('jobposting')?.disable();
+      this.jobForm.get('job_type_post')?.disable();
+      this.jobForm.get('job_type_post')?.disable();
     } else {
       this.jobForm.get('social_media_type')?.enable();
-      this.jobForm.get('jobposting')?.enable();
+      this.jobForm.get('job_type_post')?.enable();
     }
-    this.jobForm.get('jobposting')?.valueChanges.subscribe(value => {
+    this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
       const postedAtControl = this.jobForm.get('posted_at');
-      if (value === 'Schedule later') {
+      if (value === 'schedulelater') {
         postedAtControl?.setValidators([
           Validators.required,
           this.validateMinimumTime()
@@ -111,7 +111,7 @@ export class CreateJobPostingComponent {
       const today = new Date().toISOString().split('T')[0];
       this.jobForm.get('date_published')?.setValue(today);
       this.jobForm.get('deadline')?.setValidators([Validators.required, this.deadlineValidator(this.todaysDate)]);
-  //  this.listenToSocialMediaType();
+  //  this.listenToJobPostingStatus();
   }
   addSkill(): void {
     const skill = this.newSkill.trim();
@@ -144,10 +144,10 @@ export class CreateJobPostingComponent {
     this.jobForm.get('skills_required')?.markAsTouched();
   }
   
-  // listenToSocialMediaType(): void {
-  //   this.jobForm.get('social_media_type')?.valueChanges.subscribe((value) => {
+  // listenToJobPostingStatus(): void {
+  //   this.jobForm.get('job_type_post')?.valueChanges.subscribe((value) => {
   //     const postedAtControl = this.jobForm.get('posted_at');
-  //     if (value === 'facebook' || value === 'linkedin') {
+  //     if (value === 'schedulelater') {
   //       postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
   //     } else {
   //       postedAtControl?.clearValidators();
@@ -334,6 +334,7 @@ export class CreateJobPostingComponent {
           social_media_type: socialMediaTypes,
           posted_at: data.posted_at,
           jobpost_status: data.jobpost_status || 'draft',
+          job_type_post : data.job_type_post
           // work_type: data.work_type || '',
           // file_path: data.file || null,
         });
