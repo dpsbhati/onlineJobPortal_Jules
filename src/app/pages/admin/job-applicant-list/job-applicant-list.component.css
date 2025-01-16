@@ -21,7 +21,7 @@
 }
 
 .back-button:hover {
-  background-color: #e9ecef;
+  background-color: #e9ecef;   
 }
 
 /* Filters Section */
@@ -87,37 +87,35 @@
 .applicants-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
 }
 
 .applicants-table th,
 .applicants-table td {
-  padding: 12px 15px;
+  padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .applicants-table th {
-  background-color: #f8f9fa;
+  background-color: #f9fafb;
   font-weight: 600;
-  cursor: pointer;
 }
 
-.applicants-table th:hover {
-  background-color: #e9ecef;
+.applicants-table tr:hover {
+  background-color: #f9fafb;
 }
 
 .status-badge {
   padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .status-badge.pending {
-  background-color: #ffd700;
-  color: #000;
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 .status-badge.shortlisted {
@@ -133,6 +131,22 @@
 .status-badge.hired {
   background-color: #28a745;
   color: white;
+}
+
+.view-btn {
+  background-color: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.view-btn:hover {
+  background-color: #0284c7;
 }
 
 /* Added new styles for view functionality */

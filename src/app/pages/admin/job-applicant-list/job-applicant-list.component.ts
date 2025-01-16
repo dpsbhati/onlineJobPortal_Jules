@@ -53,6 +53,8 @@ export class JobApplicantListComponent implements OnInit {
       return;
     }
     
+    // Store jobId in localStorage
+    localStorage.setItem('currentJobId', this.jobId);
     this.loadApplicants();
   }
 
@@ -80,20 +82,20 @@ export class JobApplicantListComponent implements OnInit {
     // Make API call with exact payload format
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (response: any) => {
-        if (response.statusCode === 200) {
-          console.log('API Response:', response); // Add this to debug the response
-         this.applicants = response.data; 
+        if (response.statusCode === 200 ) {
+          console.log('API Response:', response);
+          this.applicants = response.data;
           this.totalItems = this.applicants.length;
+          console.log('Processed applicants:', this.applicants); // Debug log
         } else {
           this.applicants = [];
           this.totalItems = 0;
-          // this.notifyService.showError(response.message);
         }
         this.spinner.hide();
       },
       error: (error) => {
-this.applicants = [];
-this.totalItems = 0;
+        this.applicants = [];
+        this.totalItems = 0;
         console.error('API Error:', error); // Add this to debug errors
         this.notifyService.showError('Failed to load applicants');
         this.spinner.hide();
@@ -152,6 +154,8 @@ this.totalItems = 0;
   }
 
   applicantDetails(applicantId: string): void {
+    // Store jobId before navigation
+    localStorage.setItem('currentJobId', this.jobId);
     this.router.navigate(['/applicant-details', applicantId]);
   }
 
