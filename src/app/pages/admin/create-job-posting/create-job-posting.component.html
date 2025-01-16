@@ -2,7 +2,7 @@
   <button (click)="navigate()" class="button">Back</button>
 </div>
 <div class="container">
-  <h2>{{ isEditMode ? 'Edit Job Posting' : 'Create Job Posting' }}</h2>
+  <h2>{{ isEditMode ? 'Edit jobposting' : 'Create jobposting' }}</h2>
   <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
     <div class="form-group">
       <label for="title">Job Title<span class="text-danger">*</span></label>
@@ -89,16 +89,16 @@
   </small>
 </div>
 <div *ngIf="jobForm.get('skills_required')?.errors?.['maxLengthSkill']" class="text-danger">
-  <small>
-    Each skill cannot exceed 
-    {{ jobForm.get('skills_required')?.errors?.['maxLengthSkill'].requiredLength }} 
-    characters.
-  </small>
-</div>
+        <small>
+             Each skill cannot exceed 
+             {{ jobForm.get('skills_required')?.errors?.['maxLengthSkill'].requiredLength }} 
+               characters.
+        </small>
+          </div>
 
-      <div *ngIf="jobForm.get('skills_required')?.errors?.['minSkills']" class="text-danger">
+      <!-- <div *ngIf="jobForm.get('skills_required')?.errors?.['minSkills']" class="text-danger">
         <small>At least {{ jobForm.get('skills_required')?.errors?.['minSkills'].required }} skills are required.</small>
-      </div>
+      </div> -->
       <div *ngIf="jobForm.get('skills_required')?.errors?.['maxSkills']" class="text-danger">
         <small>No more than {{ jobForm.get('skills_required')?.errors?.['maxSkills'].required }} skills are allowed.</small>
       </div>
@@ -118,8 +118,6 @@
     </div> -->
 
 
-
-
     <div class="form-group">
       <label for="date_published">Date Published<span class="text-danger">*</span></label>
       <input 
@@ -127,6 +125,7 @@
       formControlName="date_published" 
       type="text" 
       class="form-control" 
+      type="date"      
       [readonly]="isDatePublishedReadonly"/>
       <div *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched" class="text-danger">
         Date published is required.
@@ -225,7 +224,7 @@
         <!-- <small *ngIf="jobForm.get('end_salary')?.errors?.['pattern']">End salary must be a numeric value.</small> -->
         <small *ngIf="jobForm.get('end_salary')?.errors?.['maxlength']">Start salary cannot exceed 8 digits.</small>
       </div>
-      <div *ngIf="jobForm.errors?.['salaryMismatch']" class="text-danger">
+      <div *ngIf="jobForm.errors?.['salaryMismatch'] && jobForm.get('end_salary')?.touched" class="text-danger">
         Start salary cannot exceed the end salary.
       </div>
     </div>
@@ -295,38 +294,62 @@
     </div>
     <div class="form-group">
       <label for="social_media_type">Social Media Type<span class="text-danger">*</span></label>
-      <select id="social_media_type" formControlName="social_media_type" class="form-control">
-        <option value="" disabled>Select a platform</option>
-        <option value="facebook">Facebook</option>
-        <option value="linkedin">LinkedIn</option>
-        <option value="none">None</option>
-      </select>
+      <ng-select
+        [items]="socialMediaOptions"
+        [multiple]="true"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="social_media_type"
+        placeholder="Select platforms"
+        [disabled]="isEditMode"
+        class="form-control">
+      </ng-select>
       <div *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched" class="text-danger">
         Social Media Type is required.
       </div>
     </div>
     
-    <!-- <div class="form-group" *ngIf="jobForm.get('social_media_type')?.value === 'facebook' || jobForm.get('social_media_type')?.value === 'linkedin'">
-      <label for="posted_at">Post At<span class="text-danger">*</span></label>
-      <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
-      <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
-        <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
-        <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
+    <!-- <div class="form-group">
+      <label for="social_media_type">Social Media Type<span class="text-danger">*</span></label>
+      <select id="social_media_type" formControlName="social_media_type" class="form-control">
+        <option value="" disabled>Select a platform</option>
+        <option value="facebook">Facebook</option>
+        <option value="linkedin">LinkedIn</option>
+      
+      </select>
+      <div *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched" class="text-danger">
+        Social Media Type is required.
       </div>
     </div> -->
-    <div class="form-group" *ngIf="jobForm.get('social_media_type')?.value === 'facebook' || jobForm.get('social_media_type')?.value === 'linkedin'">
+    <div class="form-group">
+      <label for="jobposting">Type of post<span class="text-danger">*</span></label>
+      <select id="jobposting" formControlName="jobposting" class="form-control"  [disabled]="isEditMode">
+        <option value="" disabled>Select a post</option>
+        <option value="Post now">Post now</option>
+        <option value="Schedule later">Schedule later</option>
+      
+      </select>
+      <div *ngIf="jobForm.get('jobposting')?.invalid && jobForm.get('jobposting')?.touched" class="text-danger">
+        jobposting is required.
+      </div>
+    </div>
+    
+   
+    <div class="form-group" *ngIf="jobForm.get('jobposting')?.value === 'Schedule later'">
       <label for="posted_at">Post At<span class="text-danger">*</span></label>
       <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
       <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
         <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
         <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
+        <small *ngIf="jobForm.get('posted_at')?.errors?.['minimumTime']">Please select a time at least 1 hour from now.</small>
       </div>
     </div>
     
     
 
-    <button type="submit" class="btn btn-primary" [disabled]="!jobForm.valid">
-      {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+    <button type="submit" class="btn btn-primary" 
+      [disabled]="(!isEditMode && !jobForm.valid )">
+      {{ isEditMode ? 'Update' : 'Create' }} jobposting
     </button>
   </form>
 </div>
