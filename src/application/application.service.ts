@@ -167,7 +167,6 @@ export class ApplicationService {
     user: any,
   ) {
     try {
-      // Fetch the application by ID
       const application: any = await this.findOne(id);
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
