@@ -239,6 +239,17 @@ export class JobListComponent {
     this.router.navigate(['/user-profile']);
   }
 
+  logout() {
+    // Clear localStorage
+    localStorage.clear();
+    
+    // Navigate to login page
+    this.router.navigate(['/login']).then(() => {
+      // Show success message
+      // this.notify.showSuccess('Logged out successfully');
+    });
+  }
+
   navigateToApplicantList(): void {
     this.router.navigate(['/applied-jobs']);
   }

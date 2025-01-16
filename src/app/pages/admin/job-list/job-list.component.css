@@ -271,3 +271,27 @@
   opacity: 0.85;
   transform: translateY(-1px);
 }
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.logout-button i {
+  font-size: 16px;
+}
+
+.user-profile-button {
+  padding: 8px 15px;
+  font-size: 14px;
+}

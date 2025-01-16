@@ -3,9 +3,14 @@
 </div>
 <div class="job-list">
   <h1>Job Postings</h1>
-  <button (click)="navigateToUserProfile()" class="btn btn-info user-profile-button">
-    User Profile
-  </button>
+  <div class="user-actions">
+    <button (click)="navigateToUserProfile()" class="btn btn-info user-profile-button">
+      User Profile
+    </button>
+    <button (click)="logout()" class="btn btn-danger logout-button">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
   
   <div class="filters-container">
     <!-- Filters Section -->
@@ -34,6 +39,8 @@
       </div>
       
       
+      
+
 
      <!-- Salary Range -->
      <div class="filter-item">
@@ -45,6 +52,7 @@
       ></ngx-slider>
       <button (click)="onSalaryRangeChange()">Apply Range</button>
     </div>
+ 
  
   
       <!-- Salary Range
