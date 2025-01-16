@@ -129,4 +129,10 @@ export class JobPosting {
   @OneToMany(() => CoursesAndCertification, (job) => job.job)
   courses_and_certification: CoursesAndCertification[];
 
+  @Column({
+  type:'enum',
+  enum:['postnow','schedulelater'],
+  nullable:true})
+  job_type_post:string
+
 }

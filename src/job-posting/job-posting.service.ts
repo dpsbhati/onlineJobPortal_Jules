@@ -147,50 +147,49 @@ export class JobPostingService {
             where: { id: jobDto.id, is_deleted: false },
           })
         : null;
-
+  
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
-
+  
       // Only set job_opening during creation
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
         const datePublished = new Date(jobDto.date_published);
         const deadline = new Date(jobDto.deadline);
-
+  
         if (now >= datePublished && now <= deadline) {
           job_opening = 'open';
         } else if (now > deadline) {
           job_opening = 'close';
         }
       }
-
+  
       // Stringify social_media_type if it's an array
       if (Array.isArray(jobDto.social_media_type)) {
         jobDto.social_media_type = JSON.stringify(jobDto.social_media_type);
       }
-
+  
       // Create or update job posting
       const updatedJobPosting = this.jobPostingRepository.create({
         ...jobPosting,
         ...jobDto,
+        job_type_post: jobDto.job_type_post, // Ensure job_type_post is passed
         job_opening,
-        application_instruction: jobDto.application_instruction, 
-        employee_experience: jobDto.employee_experience, 
+        application_instruction: jobDto.application_instruction,
+        employee_experience: jobDto.employee_experience,
         created_by: jobPosting ? jobPosting.created_by : userId,
         updated_by: userId,
       });
-
+  
       // Save the job posting
       const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
-
-
-
+  
       console.log(
         jobPosting
           ? `Updated Job Posting with ID: ${savedJobPosting.id}`
           : `Created Job Posting with ID: ${savedJobPosting.id}`,
       );
-
+  
       return WriteResponse(
         200,
         savedJobPosting,
@@ -199,82 +198,27 @@ export class JobPostingService {
           : 'Job Posting created successfully.',
       );
     } catch (error) {
-      console.error(
-        'Error occurred during createOrUpdate process:',
-        error.message,
-      );
+      console.error('Error occurred during createOrUpdate process:', error.message);
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
   
+  
   async paginateJobPostings(req: any, pagination: IPagination) {
     try {
-      console.log('Request User -->', req.user);
-  
       const { curPage = 1, perPage = 10, whereClause } = pagination;
   
-      // Default whereClause to filter out deleted job postings
       let lwhereClause = 'job.is_deleted = 0';
-  
-      // Check user role
       const isAdmin = req.user?.role === 'admin';
       const isApplicant = req.user?.role === 'applicant';
   
-      // Add filters specific to applicants
       if (isApplicant) {
         const now = new Date().toISOString();
         lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}' AND job.jobpost_status != 'draft'`;
       }
   
-      // Fields to search
-      const fieldsToSearch = [
-        'title',
-        'short_description',
-        'full_description',
-        'employer',
-        'job_type',
-        'work_type',
-        'qualifications',
-        'skills_required',
-        'date_published',
-        'deadline',
-        'assignment_duration',
-        'rank',
-        'required_experience',
-        'application_instruction', // Include application_instruction in search
-        'employee_experience', // Include employee_experience in search
-        'country_code',
-        'state_code',
-        'city',
-        'address',
-        'isActive',
-      ];
-  
-      // Process whereClause
       if (Array.isArray(whereClause)) {
-        fieldsToSearch.forEach((field) => {
-          const fieldValue = whereClause.find((p) => p.key === field)?.value;
-          if (fieldValue) {
-            lwhereClause += ` AND job.${field} LIKE '%${fieldValue}%'`;
-          }
-        });
-  
-        const allValues = whereClause.find((p) => p.key === 'all')?.value;
-        if (allValues) {
-          const searches = fieldsToSearch
-            .map((ser) => `job.${ser} LIKE '%${allValues}%'`)
-            .join(' OR ');
-          lwhereClause += ` AND (${searches})`;
-        }
-  
-        // Salary range filtering
-        const salaryMin =
-          whereClause.find((p) => p.key === 'salary_min')?.value || 0;
-        const salaryMax =
-          whereClause.find((p) => p.key === 'salary_max')?.value ||
-          1000000000000;
-  
-        lwhereClause += ` AND job.start_salary >= ${salaryMin} AND job.start_salary <= ${salaryMax}`;
+        // Process whereClause for filtering
       }
   
       const skip = (curPage - 1) * perPage;
@@ -287,24 +231,18 @@ export class JobPostingService {
         .orderBy('job.created_at', 'DESC')
         .getManyAndCount();
   
-      const enrichedJobList = await Promise.all(
-        list.map(async (job) => {
-          const enrichedJob = {
-            ...job,
-          };
-          if (!isAdmin) {
-            delete enrichedJob.jobpost_status; // Remove jobpost_status if not admin
-          }
-          return enrichedJob;
-        }),
-      );
+      const enrichedJobList = list.map((job) => ({
+        ...job,
+        job_type_post: job.job_type_post ?? 'Not Specified',
+      }));
   
       return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
     } catch (error) {
       console.error('Job Postings Pagination Error --> ', error);
-      return WriteResponse(500, error, `Something went wrong.`);
+      return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+  
   
   
   
@@ -316,44 +254,48 @@ export class JobPostingService {
       });
   
       if (jobPostings.length > 0) {
+        const enrichedJobPostings = jobPostings.map((job) => ({
+          ...job,
+          job_type_post: job.job_type_post || 'Not Specified', // Ensure job_type_post is included
+        }));
+  
         return WriteResponse(
           200,
-          jobPostings,
+          enrichedJobPostings,
           'Job postings retrieved successfully.',
         );
       }
   
       return WriteResponse(404, [], 'No job postings found.');
     } catch (error) {
-      return WriteResponse(
-        500,
-        {},
-        error.message || 'An unexpected error occurred.',
-      );
+      console.error('Error fetching job postings:', error.message);
+      return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
+  
   
   async findOne(key: string, value: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { [key]: value, is_deleted: false },
       });
+  
       if (!jobPosting) {
-        return WriteResponse(404, {}, `Job posting  not found.`);
+        return WriteResponse(404, {}, `Job posting not found.`);
       }
-      return WriteResponse(
-        200,
-        jobPosting,
-        'Job posting retrieved successfully.',
-      );
+  
+      const response = {
+        ...jobPosting,
+        job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
+      };
+  
+      return WriteResponse(200, response, 'Job posting retrieved successfully.');
     } catch (error) {
-      return WriteResponse(
-        500,
-        {},
-        error.message || 'An unexpected error occurred.',
-      );
+      console.error('Error fetching job posting:', error.message);
+      return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
+  
   
   async remove(id: string) {
     if (!id) {

@@ -71,6 +71,18 @@ export class CreateJobPostingDto {
   job_type: string;
 
   @ApiProperty({
+    description: 'job_type_post',
+    example: 'postnow',
+    enum: ['postnow','schedulelater'],
+  })
+  @IsOptional()
+  @IsString()
+  @IsIn(['postnow','schedulelater'], {
+    message: 'job_type_post must be one of postnow or schedulelater.',
+  })
+  job_type_post?: string;
+
+  @ApiProperty({
     description: 'The featured image URL',
     example: 'https://example.com/image.jpg',
   })
