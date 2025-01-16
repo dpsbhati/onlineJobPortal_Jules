@@ -9,9 +9,13 @@
       <input id="title" formControlName="title" type="text" class="form-control" />
       <div *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched" class="text-danger">
         <small *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</small>
-        <small *ngIf="jobForm.get('title')?.errors?.['minlength']">Job Ttile must be at least 2 characters.</small>
+        <!-- <small *ngIf="jobForm.get('title')?.errors?.['minlength']">Job Ttile must be at least 2 characters.</small> -->
         <small *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Ttile must contain only alphabets.</small>
         <small *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</small>
+        <!-- <small *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">Title must be at least 2 characters excluding spaces.</small>   -->
+        <small *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
+          Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+        </small>
       </div>
     </div>
 
@@ -151,6 +155,9 @@
           Short Description must be at least {{ jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.</small>
         <small *ngIf="jobForm.get('short_description')?.errors?.['maxlength']">
           Short Description cannot exceed {{ jobForm.get('short_description')?.errors?.['maxlength'].requiredLength }} characters.</small>
+          <small *ngIf="jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces']">
+            short description must be at least {{ jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+          </small>
       </div>
     </div>
 
@@ -162,6 +169,9 @@
         <small *ngIf="jobForm.get('full_description')?.errors?.['required']">full description is required.</small>
         <small *ngIf="jobForm.get('full_description')?.errors?.['minlength']">Full Description must be at least {{ jobForm.get('full_description')?.errors?.['minlength'].requiredLength }} characters.</small>
         <small *ngIf="jobForm.get('full_description')?.errors?.['maxlength']">Full Description cannot exceed {{ jobForm.get('full_description')?.errors?.['maxlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces']">
+          full description must be at least {{ jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+        </small>
       </div>
       </div>
     
@@ -174,6 +184,9 @@
         <small *ngIf="jobForm.get('assignment_duration')?.errors?.['required']"> Assignment duration is required.</small>
        
         <small *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50 characters.</small>
+        <small *ngIf="jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces']">
+          assignment duration must be at least {{ jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+        </small>
       </div>
       <!-- <div *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched" class="text-danger">
        
@@ -253,6 +266,9 @@
         <small *ngIf="jobForm.get('address')?.errors?.['required']">Address is required.</small>
         <small *ngIf="jobForm.get('address')?.errors?.['minlength']">Address must be at least {{ jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</small>
         <small *ngIf="jobForm.get('address')?.errors?.['maxlength']">Address cannot exceed {{ jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('address')?.errors?.['minLengthWithoutSpaces']">
+          address must be at least {{ jobForm.get('address')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+        </small>
       </div>
     </div>
 
@@ -263,6 +279,9 @@
         <small *ngIf="jobForm.get('application_instruction')?.errors?.['required']">Application Instruction is required.</small>
         <small *ngIf="jobForm.get('application_instruction')?.errors?.['minlength']">Application Instruction must be at least {{ jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</small>
         <small *ngIf="jobForm.get('application_instruction')?.errors?.['maxlength']">Application Instruction cannot exceed {{ jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</small>
+        <small *ngIf="jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces']">
+          application instruction must be at least {{ jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+        </small>
       </div>
     </div>
 
