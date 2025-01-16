@@ -4,32 +4,38 @@
   <form [formGroup]="loginForm" (ngSubmit)="signIn()">
     <!-- Email Input -->
     <div class="form-group">
+      <label for="email">
+        Email<span class="required-mark">*</span>
+      </label>
       <input 
         id="email" 
         type="email" 
         formControlName="email" 
         class="form-input"
-        placeholder="E-mail"
+        placeholder="Enter your email"
       />
-      <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+      <div class="error-message" *ngIf="loginForm.get('email')?.touched">
         <small *ngIf="loginForm.get('email')?.errors?.['required']">
-          Email is required.
+          Email is required
         </small>
         <small *ngIf="loginForm.get('email')?.errors?.['email']">
-          Please enter a valid email address.
+          Please enter a valid email address
         </small>
       </div>
     </div>
 
     <!-- Password Input -->
     <div class="form-group">
+      <label for="password">
+        Password<span class="required-mark">*</span>
+      </label>
       <div class="password-input-container">
         <input
           id="password"
           [type]="showPassword ? 'text' : 'password'"
           formControlName="password"
           class="form-input"
-          placeholder="Password"
+          placeholder="Enter your password"
         />
         <button
           type="button"
@@ -39,12 +45,12 @@
           <i [class]="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
         </button>
       </div>
-      <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+      <div class="error-message" *ngIf="loginForm.get('password')?.touched">
         <small *ngIf="loginForm.get('password')?.errors?.['required']">
-          Password is required.
+          Password is required
         </small>
         <small *ngIf="loginForm.get('password')?.errors?.['minlength']">
-          Password must be at least 6 characters long.
+          Password must be at least 6 characters long
         </small>
       </div>
     </div>
@@ -63,29 +69,6 @@
     <div class="remember-me">
       <input id="rememberMe" type="checkbox" formControlName="rememberMe" />
       <label for="rememberMe">Remember Me?</label>
-    </div>
-
-    <!-- Or Sign in with -->
-    <div class="divider">
-      <span>Or Sign in with</span>
-    </div>
-
-    <!-- Social Login -->
-    <div class="social-login">
-      <button type="button" class="social-btn google">
-        <i class="fab fa-google"></i>
-      </button>
-      <button type="button" class="social-btn apple">
-        <i class="fab fa-apple"></i>
-      </button>
-      <button type="button" class="social-btn twitter">
-        <i class="fab fa-twitter"></i>
-      </button>
-    </div>
-
-    <!-- User Agreement -->
-    <div class="user-agreement">
-      <a href="#">Learn user licence agreement</a>
     </div>
 
     <!-- New User Registration -->

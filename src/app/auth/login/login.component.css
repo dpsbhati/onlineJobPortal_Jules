@@ -20,6 +20,14 @@
   position: relative;
 }
 
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .form-input {
   width: 100%;
   padding: 1rem;
@@ -206,4 +214,9 @@
 .register-button:hover {
   background: #eeeeee;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.required-mark {
+  color: #dc3545;
+  margin-left: 2px;
 }
