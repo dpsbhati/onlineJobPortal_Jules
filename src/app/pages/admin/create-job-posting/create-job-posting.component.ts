@@ -53,21 +53,21 @@ export class CreateJobPostingComponent {
       job_type: new FormControl('', Validators.required),
       rank: new FormControl('', Validators.required),
       // skills_required: new FormControl([], Validators.required),
-      skills_required: new FormControl([], [Validators.required, Validators.min(2),  Validators.maxLength(50), this.SkillArrayValidator(1,10),  this.skillsValidator(2, 50),]),
-      title: new FormControl('', [Validators.required , Validators.minLength(2),  Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
+      skills_required: new FormControl([], [Validators.required,  Validators.maxLength(50), this.SkillArrayValidator(1,10),  this.skillsValidator(2, 50),]),
+      title: new FormControl('', [Validators.required , Validators.minLength(2), this.minLengthWithoutSpaces(2), Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'), Validators.maxLength(50)],),
       featured_image: new FormControl(null,Validators.required),
       date_published: new FormControl(this.todaysDate),
       deadline: new FormControl('', [Validators.required,]),
-      short_description: new FormControl('',[Validators.min(2),  Validators.maxLength(250)]),
-      full_description: new FormControl('', [ Validators.min(2),  Validators.maxLength(1000)]),
-      assignment_duration: new FormControl('',[ Validators.min(2),  Validators.maxLength(50)]),
+      short_description: new FormControl('',[Validators.min(2), this.minLengthWithoutSpaces(2), Validators.maxLength(250)]),
+      full_description: new FormControl('', [ Validators.min(2), this.minLengthWithoutSpaces(2), Validators.maxLength(1000)]),
+      assignment_duration: new FormControl('',[ Validators.min(2),this.minLengthWithoutSpaces(2),  Validators.maxLength(50)]),
       employer: new FormControl('',[ Validators.min(2),  Validators.maxLength(100)]),
       required_experience: new FormControl('',[ Validators.maxLength(50)] ),
       start_salary: new FormControl('', [Validators.required, Validators.min(3),  Validators.maxLength(7),]),
       end_salary: new FormControl('', [Validators.required, Validators.min(3),  Validators.maxLength(8),]),
-      application_instruction: new FormControl('',[ Validators.min(2),  Validators.maxLength(1500)]),
+      application_instruction: new FormControl('',[ Validators.min(2), this.minLengthWithoutSpaces(2), Validators.maxLength(1500)]),
       country_code: new FormControl('', Validators.required),
-      address: new FormControl('',  [Validators.required, Validators.min(2),  Validators.maxLength(100)]),
+      address: new FormControl('',  [Validators.required, Validators.min(2), this.minLengthWithoutSpaces(2), Validators.maxLength(100)]),
       social_media_type: new FormControl([], Validators.required),
       posted_at: new FormControl('', Validators.required),
       jobpost_status: new FormControl('draft'),
@@ -201,6 +201,20 @@ export class CreateJobPostingComponent {
         return { maxSkills: { required: max, actual: skills.length } };
       }
       return null;
+    };
+  }
+  minLengthWithoutSpaces(minLength: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null; 
+      }
+  
+      const trimmedValue = control.value.trim();
+      if (trimmedValue.length < minLength) {
+        return { minLengthWithoutSpaces: { requiredLength: minLength, actualLength: trimmedValue.length } };
+      }
+  
+      return null; 
     };
   }
   postedAtValidator(): ValidatorFn {
