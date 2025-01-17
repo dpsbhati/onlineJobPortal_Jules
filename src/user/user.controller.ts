@@ -10,6 +10,7 @@ import {
   HttpStatus,
   Query,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
@@ -160,6 +161,8 @@ export class UserController {
     return this.userService.forgetPassword(forgetPasswordDto);
   }
 
+  
+  
   @Post('verify-email')
   @ApiBody({
     description: 'Payload for verifying email using a token',
@@ -176,5 +179,16 @@ export class UserController {
   })
   async verifyEmail(@Body('token') token: string) {
     return this.userService.verifyEmail(token);
+  }
+
+  @ApiOperation({ summary: 'Resend verification email' })
+  
+  @Post(':id/resend-email')
+  async resendEmail(@Param('id') userId: string) {
+    if (!userId) {
+      throw new BadRequestException('User ID is required.');
+    }
+  
+    return await this.userService.resendEmail(userId);
   }
 }
