@@ -526,4 +526,8 @@ export class UserProfileComponent implements OnInit {
       return null;
     };
   }
+
+  goBack(): void {
+    this.router.navigate(['/job-list']);
+  }
 }

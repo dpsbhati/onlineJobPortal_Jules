@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   ) { }
   ngOnInit(): void {
     this.initializeLoginForm();
-   
+    // Load remembered credentials after form initialization
     this.loadRememberedCredentials();
   }
   initializeLoginForm(): void {
@@ -39,6 +39,13 @@ export class LoginComponent implements OnInit {
       password: ["", [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
+
+    // Listen to rememberMe changes
+    this.loginForm.get('rememberMe')?.valueChanges.subscribe((checked: boolean) => {
+      if (!checked) {
+        this.clearSavedCredentials();
+      }
+    });
   }
 
   togglePasswordVisibility(): void {
@@ -46,7 +53,6 @@ export class LoginComponent implements OnInit {
   }
   
   async signIn(): Promise<void> {
-    // Validate form before proceeding
     if (this.loginForm.invalid) {
       this.notify.showWarning('Please fill in all required fields correctly.');
       return;
@@ -55,7 +61,8 @@ export class LoginComponent implements OnInit {
     this.spinner.show();
 
     try {
-      const response = await this._authService.login(this.loginForm.value).toPromise();
+      const { email, password, rememberMe } = this.loginForm.value;
+      const response = await this._authService.login({ email, password }).toPromise();
       
       if (response.statusCode === 200) {
         const userData = response.data.User;
@@ -67,14 +74,14 @@ export class LoginComponent implements OnInit {
         await this._authService.setCurrentUser(userData);
 
         // Handle remember me
-        if (this.loginForm.value.rememberMe) {
-          this.saveCredentials(this.loginForm.value.email, this.loginForm.value.password);
+        if (rememberMe) {
+          this.saveCredentials(email);
         } else {
           this.clearSavedCredentials();
         }
 
         // Navigate after ensuring user data is set
-        if (userData.role === 'ADMIN') {
+        if (userData.role === UserRole.ADMIN) {
           await this._router.navigate(['/job-list'], { replaceUrl: true });
         } else {
           await this._router.navigate(['/job-list'], { replaceUrl: true });
@@ -84,34 +91,45 @@ export class LoginComponent implements OnInit {
       }
     } catch (error) {
       console.error('Login error:', error);
-      this.notify.showError('Login failed.');
+      this.notify.showError('Login failed. Please check your credentials and try again.');
     } finally {
       this.spinner.hide();
     }
   }
 
   // Remember Me functionality
-  loadRememberedCredentials(): void {
-    const rememberedEmail = localStorage.getItem('rememberedEmail');
-    const rememberedPassword = localStorage.getItem('rememberedPassword');
-
-    if (rememberedEmail && rememberedPassword) {
-      this.loginForm.patchValue({
-        email: rememberedEmail,
-        password: rememberedPassword,
-        rememberMe: true
-      });
+  private saveCredentials(email: string): void {
+    try {
+      localStorage.setItem('rememberedEmail', email);
+      localStorage.setItem('rememberMe', 'true');
+    } catch (error) {
+      console.error('Error saving credentials:', error);
     }
   }
 
-  saveCredentials(email: string, password: string): void {
-    localStorage.setItem('rememberedEmail', email);
-    localStorage.setItem('rememberedPassword', password);
+  private clearSavedCredentials(): void {
+    try {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberMe');
+    } catch (error) {
+      console.error('Error clearing credentials:', error);
+    }
   }
 
-  clearSavedCredentials(): void {
-    localStorage.removeItem('rememberedEmail');
-    localStorage.removeItem('rememberedPassword');
+  private loadRememberedCredentials(): void {
+    try {
+      const rememberedEmail = localStorage.getItem('rememberedEmail');
+      const rememberMe = localStorage.getItem('rememberMe') === 'true';
+
+      if (rememberedEmail && rememberMe && this.loginForm) {
+        this.loginForm.patchValue({
+          email: rememberedEmail,
+          rememberMe: true
+        }, { emitEvent: false });
+      }
+    } catch (error) {
+      console.error('Error loading remembered credentials:', error);
+    }
   }
 
   navigateToForgotPassword(): void {

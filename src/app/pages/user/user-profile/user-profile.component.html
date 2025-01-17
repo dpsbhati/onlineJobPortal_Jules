@@ -1,6 +1,9 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
+      <button type="button" class="btn btn-secondary mb-3" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
       <div class="card">
         <div class="card-header">
           <h3>{{ isEditMode ? 'Edit User Profile' : 'Create User Profile' }}</h3>

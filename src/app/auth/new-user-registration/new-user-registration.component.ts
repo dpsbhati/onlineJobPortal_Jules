@@ -5,6 +5,13 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotifyService } from '../../core/services/notify.service';
 import { CommonModule, NgIf } from '@angular/common';
 import { NgxSpinnerService } from 'ngx-spinner';
+
+// Custom email validation pattern
+const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
+
+// Strong password pattern
+const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
+
 @Component({
   selector: 'app-new-user-registration',
   standalone: true,
@@ -32,16 +39,20 @@ export class NewUserRegistrationComponent {
     this.registrationForm = new FormGroup({
       firstName: new FormControl('', [
         Validators.required,
-        Validators.minLength(2), Validators.pattern('^[a-zA-Z]+$'), Validators.maxLength(50),
+        Validators.minLength(3), Validators.pattern('^[a-zA-Z]+$'), Validators.maxLength(20),
       ]),
       lastName: new FormControl('', [
         Validators.required,
-        Validators.minLength(2), Validators.pattern('^[a-zA-Z]+$'), Validators.maxLength(50),
+        Validators.minLength(3), Validators.pattern('^[a-zA-Z]+$'), Validators.maxLength(20),
       ]),
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [
+        Validators.required, 
+        Validators.pattern(EMAIL_PATTERN)
+      ]),
       password: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
+        Validators.minLength(8),
+        Validators.pattern(PASSWORD_PATTERN)
       ]),
       role: new FormControl('applicant', Validators.required), // Default role as 'applicant'
     });
@@ -59,6 +70,7 @@ export class NewUserRegistrationComponent {
   onSubmit(): void {
     this.spinner.show();
     if (this.registrationForm.invalid) {
+      this.spinner.hide();
       return;
     }
     this.trimFormValues();
@@ -71,20 +83,51 @@ export class NewUserRegistrationComponent {
         if (res.statusCode == 200 || res.statusCode == 201) {
           this.spinner.hide();
           this.router.navigate(['auth/login']);
-          this.notify.showSuccess(res.message
-          );
+          this.notify.showSuccess(res.message + ' Please check your email to verify your account.');
           this.loading = false;
         }
-        else{
-          this.notify.showWarning(res.message
-          );
+        else {
+          this.errorMessage = res.message;
+          this.notify.showWarning(res.message);
           this.spinner.hide();
-         
+          this.loading = false;
         }
       },
-       
+      error: (error: any) => {
+        this.errorMessage = error.error?.message || 'Registration failed. Please try again.';
+        this.notify.showError(this.errorMessage);
+        this.spinner.hide();
+      }
     });
   }
+
+  resendVerificationEmail(email: string): void {
+    this.spinner.show();
+    this.loading = true;
+    this.errorMessage = null;
+
+    this.authService.resendVerificationEmail(email).subscribe({
+      next: (res: any) => {
+        if (res.statusCode == 200 || res.statusCode == 201) {
+          this.spinner.hide();
+          this.notify.showSuccess('Verification email has been resent. Please check your inbox.');
+          this.loading = false;
+        } else {
+          this.errorMessage = res.message;
+          this.notify.showWarning(res.message);
+          this.spinner.hide();
+          this.loading = false;
+        }
+      },
+      error: (error: any) => {
+        this.errorMessage = error.error?.message || 'Failed to resend verification email. Please try again.';
+        this.notify.showError(this.errorMessage);
+        this.spinner.hide();
+        this.loading = false;
+      }
+    });
+  }
+
   back(){
     this.router.navigate(['auth/login']);
   }

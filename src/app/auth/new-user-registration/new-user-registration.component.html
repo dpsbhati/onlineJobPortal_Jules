@@ -19,7 +19,7 @@
         <small
           *ngIf="registrationForm.get('firstName')?.errors?.['minlength']"
           style="color: red"
-          >First Name must be at least 2 characters.</small
+          >First Name must be at least 3 characters.</small
         >
         <small
           *ngIf="registrationForm.get('firstName')?.errors?.['pattern']"
@@ -29,7 +29,7 @@
         <small
           *ngIf="registrationForm.get('firstName')?.errors?.['maxlength']"
           style="color: red"
-          >Last Name cannot exceed 50 characters.</small
+          >Last Name cannot exceed 20 characters.</small
         >
       </div>
     </div>
@@ -51,7 +51,7 @@
         <small
           *ngIf="registrationForm.get('lastName')?.errors?.['minlength']"
           style="color: red"
-          >Last Name must be at least 2 characters.</small
+          >Last Name must be at least 3 characters.</small
         >
         <small
           *ngIf="registrationForm.get('lastName')?.errors?.['pattern']"
@@ -61,7 +61,7 @@
         <small
           *ngIf="registrationForm.get('lastName')?.errors?.['maxlength']"
           style="color: red"
-          >Last Name cannot exceed 50 characters.</small
+          >Last Name cannot exceed 20 characters.</small
         >
       </div>
     </div>
@@ -81,34 +81,28 @@
           >Email is required.</small
         >
         <small
-          *ngIf="registrationForm.get('email')?.errors?.['email']"
+          *ngIf="registrationForm.get('email')?.errors?.['email'] || registrationForm.get('email')?.errors?.['pattern']"
           style="color: red"
-          >Invalid email format.</small
+          >Please enter a valid email address (e.g., user&#64;example.com)</small
         >
       </div>
     </div>
 
-    <label for="password">Password</label>
-    <div class="input-group mb-3">
-    
-      <input
-        type="text"
-        id="password"
-        formControlName="password"
-        [type]="showPassword ? 'text' : 'password'"
-        class="form-control"
-        placeholder="Username"
-        aria-label="Username"
-        aria-describedby="basic-addon1"
-      />
-      <span class="input-group-text" id="basic-addon1" (click)="togglePasswordVisibility()">
-          <i
-            [class]="showPassword ?'fas fa-eye': 'fas fa-eye-slash'  "
-            style="font-size: 1.2rem; color: #666"
-          ></i>
-      </span>
-    </div>
-    <div
+    <div>
+      <label for="password">Password</label>
+      <div class="password-container">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          class="form-control"
+          formControlName="password"
+        />
+        <i
+          [class]="showPassword ? 'fas fa-eye-slash eye-icon' : 'fas fa-eye eye-icon'"
+          (click)="togglePasswordVisibility()"
+        ></i>
+      </div>
+      <div
         *ngIf="
           registrationForm.get('password')?.touched &&
           registrationForm.get('password')?.invalid
@@ -120,11 +114,20 @@
           >Password is required.</small
         >
         <small
-          *ngIf="registrationForm.get('password')?.errors?.['minlength']"
+          *ngIf="registrationForm.get('password')?.errors?.['pattern']"
           style="color: red"
-          >Password must be at least 6 characters.</small
         >
+          Password must contain:
+          <ul>
+            <li>At least 8 characters</li>
+            <li>At least one uppercase letter (A-Z)</li>
+            <li>At least one lowercase letter (a-z)</li>
+            <li>At least one number (0-9)</li>
+            <li>At least one special character </li>
+          </ul>
+        </small>
       </div>
+    </div>
 
     <button type="submit" [disabled]="loading || registrationForm.invalid">
       Register
