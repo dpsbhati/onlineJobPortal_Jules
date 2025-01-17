@@ -47,7 +47,6 @@ export class UserService {
       if (userDto.id && !user) {
         return WriteResponse(404, {}, `User with ID ${userDto.id} not found.`);
       }
-
       if (userDto.id) {
         userDto.email = user.email;
 
@@ -369,15 +368,14 @@ export class UserService {
   }
 
   generateVerificationToken(userId: string): string {
-    // const secretKey = process.env.JWT_SECRET; // Ensure you have a secret key in your environment variables
     const token = this.jwtService.sign({ id: userId }, { expiresIn: '10m' }); // Token expires in 10 minutes
     return token;
   }
 
   async verifyEmail(token: string) {
     try {
-      const decoded = this.jwtService.verify(token); // Decode the token
-      const userId = decoded.id; // Extract user ID from the token
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.id; 
 
       const user = await this.userRepository.findOne({
         where: { id: userId, is_deleted: false },
@@ -397,5 +395,40 @@ export class UserService {
         error.message || 'An unexpected error occurred.',
       );
     }
+  }
+
+
+  async resendEmail(userId: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId, is_deleted: false, isEmailVerified: false },
+      });
+
+      if (!user) {
+        return WriteResponse(404, {}, 'User not found or email already verified.');
+      }
+
+      await this.sendVerificationEmail(user);
+
+      return WriteResponse(200, {}, 'Verification email resent successfully.');
+    } catch (error) {
+      console.error('Error resending verification email:', error.message);
+      return WriteResponse(
+        500,
+        {},
+        error.message || 'An unexpected error occurred while resending the email.',
+      );
+    }
+  }
+
+   private async sendVerificationEmail(user: any) {
+    const verificationToken = this.generateVerificationToken(user.id);
+    const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
+    await this.mailerService.sendEmail(
+      user.email,
+      'Verify Your Email Address',
+      { name: user.firstName, verificationUrl } as Record<string, any>,
+      'verify', // Assuming this is the email template name
+    );
   }
 }
