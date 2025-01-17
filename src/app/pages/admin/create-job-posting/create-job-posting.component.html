@@ -273,7 +273,7 @@
     </div>
 
     <div class="form-group">
-      <label for="application_instructions">Application Instruction</label>
+      <label for="application_instructions">Application Instruction<span class="text-danger">*</span></label>
       <textarea id="application_instruction" formControlName="application_instruction" type="text" class="form-control" ></textarea>
       <div *ngIf="jobForm.get('application_instruction')?.invalid && jobForm.get('application_instruction')?.touched" class="text-danger">
         <small *ngIf="jobForm.get('application_instruction')?.errors?.['required']">Application Instruction is required.</small>
