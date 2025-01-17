@@ -16,6 +16,7 @@ import { UserService } from './user.service';
 import {
   CreateUserDto,
   LoginDTO,
+  ResendEmailDto,
   ResetPasswordDto,
 } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -183,12 +184,14 @@ export class UserController {
 
   @ApiOperation({ summary: 'Resend verification email' })
   
-  @Post(':id/resend-email')
-  async resendEmail(@Param('id') userId: string) {
-    if (!userId) {
-      throw new BadRequestException('User ID is required.');
+  @Post('resend-email')
+  async resendEmail(@Body() body: ResendEmailDto) {
+    const { email } = body;
+
+    if (!email) {
+      throw new BadRequestException('Email address is required.');
     }
-  
-    return await this.userService.resendEmail(userId);
+
+    return await this.userService.resendEmailByEmail(email);
   }
 }

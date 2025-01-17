@@ -149,3 +149,12 @@ export class ResetPasswordDto {
   @Transform(({ value }) => value?.trim())
   newPassword: string;
 }
+export class ResendEmailDto {
+  @ApiProperty({
+    description: 'The email address to resend the verification email.',
+    example: 'john.doe@example.com',
+  })
+  @IsNotEmpty({ message: 'Email address is required.' })
+  @IsString({ message: 'Email must be a valid string.' })
+  email: string;
+}

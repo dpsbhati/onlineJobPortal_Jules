@@ -398,28 +398,44 @@ export class UserService {
   }
 
 
-  async resendEmail(userId: string) {
+  async resendEmailByEmail(email: string) {
     try {
+      // Find user by email
       const user = await this.userRepository.findOne({
-        where: { id: userId, is_deleted: false, isEmailVerified: false },
+        where: { email, is_deleted: false },
       });
-
+  
       if (!user) {
-        return WriteResponse(404, {}, 'User not found or email already verified.');
+        return WriteResponse(404, {}, 'User not found.');
       }
-
-      await this.sendVerificationEmail(user);
-
+  
+      if (user.isEmailVerified) {
+        return WriteResponse(400, {}, 'Email is already verified.');
+      }
+  
+      // Generate verification token
+      const verificationToken = this.generateVerificationToken(user.id);
+      const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
+  
+      // Resend the email
+      await this.mailerService.sendEmail(
+        user.email,
+        'Resend Email Verification',
+        { name:  verificationUrl } as Record<string, any>,
+        'verify',
+      );
+  
       return WriteResponse(200, {}, 'Verification email resent successfully.');
     } catch (error) {
-      console.error('Error resending verification email:', error.message);
+      console.error('Error resending email:', error.message);
       return WriteResponse(
         500,
         {},
-        error.message || 'An unexpected error occurred while resending the email.',
+        'An unexpected error occurred while resending the email.',
       );
     }
   }
+  
 
    private async sendVerificationEmail(user: any) {
     const verificationToken = this.generateVerificationToken(user.id);
@@ -428,7 +444,7 @@ export class UserService {
       user.email,
       'Verify Your Email Address',
       { name: user.firstName, verificationUrl } as Record<string, any>,
-      'verify', // Assuming this is the email template name
+      'verify', 
     );
   }
 }
