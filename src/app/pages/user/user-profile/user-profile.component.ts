@@ -46,7 +46,11 @@ export class UserProfileComponent implements OnInit {
     private router: Router,
     private notify: NotifyService,
     private spinner: NgxSpinnerService
-  ) { }
+  ) {
+    // Get role from localStorage
+    this.userRole = localStorage.getItem('role') || '';
+    console.log('Current user role:', this.userRole);
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -395,7 +399,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   navigateToEditMode(userId: string): void {
-    this.router.navigate(['/user-profile', userId]);
+    this.router.navigate(['/edit-profile', userId]);
   }
 
   loadUserData(userId: string): void {

@@ -69,6 +69,7 @@ export class JobListComponent {
     private spinner: NgxSpinnerService,
     private authService: AuthService
   ) {
+    // Get role from authService
     this.userRole = this.authService.getUserRole();
     console.log('Current user role:', this.userRole); // Debug log
   }
@@ -159,7 +160,7 @@ export class JobListComponent {
 
   edituser(userID: string) {
 
-    this.router.navigate(['/user-profile', userID]);
+    this.router.navigate(['/edit-profile', userID]);
   }
 
   // deleteJob(jobId: string) {
@@ -235,8 +236,16 @@ export class JobListComponent {
   }
 
   navigateToUserProfile(): void {
-
-    this.router.navigate(['/user-profile']);
+    // Log the current role for debugging
+    console.log('Navigating with role:', this.userRole);
+    
+    if (this.isAdmin()) {
+      console.log('Navigating as admin');
+    } else if (this.isApplicant()) {
+      console.log('Navigating as applicant');
+    }
+    
+    this.router.navigate(['/edit-profile']);
   }
 
   logout() {

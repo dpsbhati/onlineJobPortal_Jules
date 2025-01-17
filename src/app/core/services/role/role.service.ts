@@ -12,11 +12,11 @@ export class RoleService {
     'ADMIN': [
       '/create-job-posting',
       '/job-list',
-      '/user-profile'
+      '/edit-profile'
     ],
     'applicant': [
       '/job-list',
-      '/user-profile'
+      '/edit-profile'
     ]
   };
 

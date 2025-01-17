@@ -13,7 +13,7 @@ import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-d
 
 const routes: Routes = [
   { 
-    path: 'user-profile', 
+    path: 'edit-profile', 
     component: UserProfileComponent,
     canActivate: [() => roleGuard(['ADMIN', 'applicant'])]
   },
