@@ -1,20 +1,42 @@
 <!-- email-activation.component.html -->
 <div class="email-activation-container">
-    <h2>Email Activation</h2>
-  
-    <!-- Success Message -->
-    <div *ngIf="successMessage" class="alert alert-success">
-      <p>{{ successMessage }}</p>
+  <h2>Email Activation</h2>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-container">
+    <p class="error-message">Email verification failed. Please try again.</p>
+  </div>
+
+  <!-- Resend Section -->
+  <div *ngIf="errorMessage" class="resend-container">
+    <p>Would you like us to send a new verification link?</p>
+    <div class="input-container">
+      <input 
+        type="email" 
+        [(ngModel)]="email"
+        placeholder="Enter your email address"
+        class="form-control"
+        [disabled]="loading"
+      />
     </div>
-  
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="alert alert-danger">
-      <p>{{ errorMessage }}</p>
-    </div>
-  
-    <!-- Loading State -->
-    <div *ngIf="!successMessage && !errorMessage" class="loading">
-      <p>Processing your email activation...</p>
+    <div class="button-container">
+      <button 
+        (click)="resendVerificationEmail()"
+        [disabled]="loading || !email"
+        class="resend-button"
+      >
+        Resend Verification Link
+      </button>
     </div>
   </div>
-  
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!successMessage && !errorMessage" class="loading">
+    <p>Processing your email activation...</p>
+  </div>
+</div>

@@ -101,33 +101,7 @@ export class NewUserRegistrationComponent {
     });
   }
 
-  resendVerificationEmail(email: string): void {
-    this.spinner.show();
-    this.loading = true;
-    this.errorMessage = null;
-
-    this.authService.resendVerificationEmail(email).subscribe({
-      next: (res: any) => {
-        if (res.statusCode == 200 || res.statusCode == 201) {
-          this.spinner.hide();
-          this.notify.showSuccess('Verification email has been resent. Please check your inbox.');
-          this.loading = false;
-        } else {
-          this.errorMessage = res.message;
-          this.notify.showWarning(res.message);
-          this.spinner.hide();
-          this.loading = false;
-        }
-      },
-      error: (error: any) => {
-        this.errorMessage = error.error?.message || 'Failed to resend verification email. Please try again.';
-        this.notify.showError(this.errorMessage);
-        this.spinner.hide();
-        this.loading = false;
-      }
-    });
-  }
-
+  
   back(){
     this.router.navigate(['auth/login']);
   }

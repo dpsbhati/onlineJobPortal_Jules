@@ -144,6 +144,18 @@ export class AuthService {
     );
   }
 
+  resendVerificationEmail(email: string): Observable<any> {
+    return this.genericService.Post('user/register', { 
+      email: email,
+      isResend: true 
+    }).pipe(
+      catchError((error) => {
+        console.error('Error in resendVerificationEmail:', error);
+        return throwError(() => new Error('Failed to resend verification email.'));
+      })
+    );
+  }
+
   /**
    * Check the authentication status
    */
