@@ -1,38 +1,27 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
   Param,
-  Delete,
-  UseGuards,
-  UseInterceptors,
-  UploadedFile,
+  Post,
+  Put,
   Query,
   Req,
-  Put,
   Request,
+  UseGuards
 } from '@nestjs/common';
 import {
-  ApiTags,
+  ApiBearerAuth, ApiBody,
   ApiOperation,
   ApiParam,
-  ApiBearerAuth,
-  ApiConsumes,
-  ApiBody,
-  ApiQuery,
+  ApiTags
 } from '@nestjs/swagger';
-import { JobPostingService } from './job-posting.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 import {
   CreateJobPostingDto,
-  // FindAllJobPostingsQueryDto,
-  // FindOneJobPostingQueryDto,
 } from './dto/create-job-posting.dto';
-import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
+import { JobPostingService } from './job-posting.service';
 
 @ApiTags('Job-postings')
 @Controller('job-posting')

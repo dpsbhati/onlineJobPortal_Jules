@@ -151,7 +151,6 @@ export class JobPostingService {
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
   
-      // Only set job_opening during creation
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
         const datePublished = new Date(jobDto.date_published);
@@ -164,7 +163,6 @@ export class JobPostingService {
         }
       }
   
-      // Stringify social_media_type if it's an array
       if (Array.isArray(jobDto.social_media_type)) {
         jobDto.social_media_type = JSON.stringify(jobDto.social_media_type);
       }
@@ -218,7 +216,6 @@ export class JobPostingService {
       }
   
       if (Array.isArray(whereClause)) {
-        // Process whereClause for filtering
       }
   
       const skip = (curPage - 1) * perPage;
@@ -242,10 +239,7 @@ export class JobPostingService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
-  
-  
-  
-  
+ 
   async findAll() {
     try {
       const jobPostings = await this.jobPostingRepository.find({
@@ -256,7 +250,7 @@ export class JobPostingService {
       if (jobPostings.length > 0) {
         const enrichedJobPostings = jobPostings.map((job) => ({
           ...job,
-          job_type_post: job.job_type_post || 'Not Specified', // Ensure job_type_post is included
+          job_type_post: job.job_type_post || 'Not Specified',
         }));
   
         return WriteResponse(

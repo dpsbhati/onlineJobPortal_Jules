@@ -1,17 +1,15 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Not, Repository } from 'typeorm';
-import { Users } from './entities/user.entity';
-import { CreateUserDto, LoginDTO } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { forgetPasswordDto } from 'src/user/dto/create-user.dto'
-import { MailerService } from '@nestjs-modules/mailer';
-import { MailService } from 'src/utils/mail.service';
-import * as bcrypt from 'bcrypt';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { IPagination } from 'src/shared/paginationEum';
+import { paginateResponse, WriteResponse } from 'src/shared/response';
+import { forgetPasswordDto } from 'src/user/dto/create-user.dto';
+import { MailService } from 'src/utils/mail.service';
+import { Not, Repository } from 'typeorm';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { Users } from './entities/user.entity';
 
 
 

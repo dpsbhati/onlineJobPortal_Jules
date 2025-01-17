@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
+import { IPagination } from 'src/shared/paginationEum';
+import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { Repository } from 'typeorm';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { applications } from './entities/application.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { IPagination } from 'src/shared/paginationEum';
-import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 
 import * as nodemailer from 'nodemailer';
 
@@ -129,28 +129,33 @@ export class ApplicationService {
 
   async findOne(id: string) {
     try {
-      // Fetch the application with its relations
+      // Fetch the application with its relations and order by applied_at and created_at in descending order
       const application = await this.applicationRepository.findOne({
         where: { id, is_deleted: false },
-        relations: ['job', 'user', 'job.courses_and_certification','user.userProfile'],
+        relations: [
+          'job',
+          'user',
+          'job.courses_and_certification',
+          'user.userProfile',
+        ],
+        order: {
+          applied_at: 'DESC', // Order by applied_at descending
+          created_at: 'DESC', // Order by created_at descending
+        },
       });
-
+  
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
-
+  
       // Add comments and status to the response
       const response = {
         ...application,
         comments: application.comments || 'No comments available', // Fallback if comments are null/undefined
         status: application.status || 'No status available', // Fallback if status is null/undefined
       };
-
-      return WriteResponse(
-        200,
-        response,
-        'Application retrieved successfully.',
-      );
+  
+      return WriteResponse(200, response, 'Application retrieved successfully.');
     } catch (error) {
       console.error('Error fetching application:', error.message);
       return WriteResponse(
@@ -160,6 +165,7 @@ export class ApplicationService {
       );
     }
   }
+  
 
   async update(
     id: string,
@@ -194,7 +200,6 @@ export class ApplicationService {
         }
       }
 
-      // Validate the certification_path format, if provided
       if (
         updateApplicationDto.certification_path &&
         !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(
@@ -208,10 +213,8 @@ export class ApplicationService {
         );
       }
 
-      // Merge the DTO fields into the application
       Object.assign(application, updateApplicationDto);
 
-      // Save the updated application
       const updatedApplication =
         await this.applicationRepository.save(application);
 
@@ -243,19 +246,17 @@ export class ApplicationService {
   async paginateApplications(req: any, pagination: IPagination) {
     try {
       const { curPage = 1, perPage = 10, whereClause } = pagination;
-
-      // Default whereClause to filter out deleted applications
+  
       let lwhereClause = 'app.is_deleted = :is_deleted';
       const parameters: Record<string, any> = { is_deleted: false };
-
+  
       const isApplicant = req.user?.role === 'applicant';
-
-      // If applicant, ensure they can only see their own applications
+  
       if (isApplicant) {
         lwhereClause += ` AND app.user_id = :userId`;
         parameters.userId = req.user.id;
       }
-
+  
       const fieldsToSearch = [
         'status',
         'job_id',
@@ -263,15 +264,12 @@ export class ApplicationService {
         'comments',
         'additional_info',
         'certification_path',
-        'status',
         'applied_at',
         'job.title',
         'user.email',
         'userProfile.first_name',
-        // 'userProfile.last_name',
       ];
-
-      // Process whereClause if search filters are applied
+  
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
           const fieldValue = whereClause.find((p) => p.key === field)?.value;
@@ -280,7 +278,7 @@ export class ApplicationService {
             parameters[`${field}_search`] = `%${fieldValue}%`;
           }
         });
-
+  
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
           const searches = fieldsToSearch
@@ -290,30 +288,29 @@ export class ApplicationService {
           parameters.all_search = `%${allValues}%`;
         }
       }
-
+  
       const skip = (curPage - 1) * perPage;
-
-      // Fetch paginated application data
+  
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
-        .leftJoinAndSelect('app.job', 'job') // Join Job data
-        .leftJoinAndSelect('app.user', 'user') // Join User data
-        .leftJoinAndSelect('user.userProfile', 'userProfile') // Join UserProfile data
+        .leftJoinAndSelect('app.job', 'job') 
+        .leftJoinAndSelect('app.user', 'user') 
+        .leftJoinAndSelect('user.userProfile', 'userProfile') 
         .where(lwhereClause, parameters)
         .skip(skip)
         .take(perPage)
-        .orderBy('app.created_at', 'DESC')
+        .orderBy('app.applied_at', 'DESC') 
+        .addOrderBy('app.created_at', 'DESC') 
         .getManyAndCount();
-
+  
       if (!list.length) {
         return WriteResponse(404, [], `No records found.`);
       }
-
+  
       const enrichedApplications = list.map((application) => ({
         ...application,
-        // user_details removed
       }));
-
+  
       return paginateResponse(
         enrichedApplications,
         totalCount,
@@ -325,6 +322,7 @@ export class ApplicationService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+  
 
   private async sendConfirmationEmail(application: any) {
     const transporter = nodemailer.createTransport({
