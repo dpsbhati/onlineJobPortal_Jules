@@ -198,7 +198,7 @@ export class UserProfileComponent implements OnInit {
           }
         } else if (fieldName === 'expected_salary') {
           if (errors['maxDigits']) {
-            this.notify.showWarning('Expected Salary should not exceed 8 digits');
+            this.notify.showWarning('Expected Salary should not exceed 7 digits');
             this.scrollToTop();
           }
         }
@@ -236,8 +236,8 @@ export class UserProfileComponent implements OnInit {
       const expectedSalaryValue = this.userProfileForm?.get('expected_salary')?.value;
       if (expectedSalaryValue) {
         const numStr = expectedSalaryValue.toString().replace(/,/g, '');
-        if (numStr.length > 8) {
-          return true; // Disable button if more than 8 digits
+        if (numStr.length > 7) {
+          return true; // Disable button if more than 7 digits
         }
       }
 
@@ -522,8 +522,8 @@ export class UserProfileComponent implements OnInit {
       // Convert to string and remove any commas
       const numStr = value.toString().replace(/,/g, '');
       
-      // Check if it's more than 8 digits
-      if (numStr.length > 8) {
+      // Check if it's more than 7 digits
+      if (numStr.length > 7) {
         return { maxDigits: true };
       }
       

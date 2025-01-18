@@ -136,7 +136,7 @@ export class AuthService {
     // );
   }
   verifyEmail(payload: { token: string }): Observable<any> {
-    return this.genericService.Post('user/resend-email', payload).pipe(
+    return this.genericService.Post('user/verify-email', payload).pipe(
       catchError((error) => {
         console.error('Error in verifyEmail:', error);
         return throwError(() => new Error('Failed to verify email.'));
@@ -145,9 +145,8 @@ export class AuthService {
   }
 
   resendVerificationEmail(email: string): Observable<any> {
-    return this.genericService.Post('user/register', { 
+    return this.genericService.Post('user/resend-email', { 
       email: email,
-      isResend: true 
     }).pipe(
       catchError((error) => {
         console.error('Error in resendVerificationEmail:', error);
