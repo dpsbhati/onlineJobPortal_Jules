@@ -1,0 +1,80 @@
+<mat-toolbar class="topbar horizontal-topbar">
+  <div class="container gap-6">
+    <div class="d-none d-sm-flex">
+      <app-branding></app-branding>
+    </div>
+
+    <!-- Mobile Menu -->
+    <button
+      mat-icon-button
+      (click)="toggleMobileNav.emit()"
+      class="d-flex align-items-center justify-content-center d-lg-none"
+    >
+      <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
+    </button>
+
+
+
+
+    <!-- --------------------------------------------------------------- -->
+    <!-- profile Dropdown -->
+    <!-- --------------------------------------------------------------- -->
+    <button
+      mat-icon-button
+      extended
+      [matMenuTriggerFor]="profilemenu"
+      aria-label="Notifications"
+      class="position-relative d-flex align-items-center justify-content-center profile-btn-dd d-none d-lg-flex"
+    >
+      <img
+        src="/assets/images/profile/user-1.jpg"
+        class="rounded-circle icon-30 object-cover profile-dd d-flex align-items-center justify-content-center"
+        width="30"
+        height="30"
+      />
+    </button>
+    <mat-menu
+      #profilemenu="matMenu"
+      class="topbar-dd cardWithShadow dd-notifications"
+      xPosition="before"
+    >
+      <div class="p-x-16 p-y-20 b-b-1">
+        <div class="d-flex align-items-center">
+          <img
+            src="/assets/images/profile/user-1.jpg"
+            class="rounded-circle"
+            width="50"
+            height="50"
+          />
+          <div class="m-l-16">
+            <h6 class="f-s-14 f-w-600 m-0 d-flex align-items-center">
+              Markarn Doe
+              <span class="f-s-14 d-block text-success m-l-4">Pro</span>
+            </h6>
+            <span>markrarn&#64;wrappixel.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-16">
+        @for(profile of profiledd; track profile.title) {
+        <a
+          class="p-8 text-decoration-none d-block text-hover-primary"
+          [routerLink]="[profile.link]"
+        >
+          <div class="d-flex align-items-center">
+            <h5 class="f-s-14 f-w-500 m-0 textprimary hover-text">
+              {{ profile.title }}
+            </h5>
+            @if(profile.new) {
+            <span
+              class="bg-light-error text-error rounded p-x-8 p-y-2 f-w-500 f-s-12 m-l-8"
+              >5</span
+            >
+            }
+          </div>
+        </a>
+        }
+      </div>
+    </mat-menu>
+  </div>
+</mat-toolbar>
