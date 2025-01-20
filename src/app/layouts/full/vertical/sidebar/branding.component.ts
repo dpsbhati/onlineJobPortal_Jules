@@ -10,13 +10,45 @@ import { CoreService } from 'src/app/services/core.service';
     <div class="branding d-none d-lg-flex align-items-center">
       <a [routerLink]="['/']" class="d-flex">
         <img
-          src="./assets/images/logos/light-logo.svg"
+          src="./assets/images/logos/logo.jpg"
           class="align-middle m-2"
-          alt="logo"
+          alt="Navilands"
         />
+          <span class="branding-text ms-2">Navilands</span>
       </a>
     </div>
   `,
+  styles: [
+    `
+      .branding img {
+        max-width: 30px; /* Adjust as needed */
+        max-height: 30px;
+        object-fit: contain;
+      }
+         .branding-text {
+        font-size: 25px; 
+        color: #fff; 
+        font-weight: 500; /* Optional: make text slightly bold */
+      }
+
+      .branding a {
+        text-decoration: none; /* Remove underline from the link */
+      }
+
+      .d-flex {
+        display: flex;
+      }
+
+      .align-items-center {
+        align-items: center;
+      }
+
+      .ms-2 {
+        margin-left: 0.5rem; /* Add spacing between the image and the text */
+      }
+  
+    `,
+  ],
 })
 export class BrandingComponent {
   options = this.settings.getOptions();
