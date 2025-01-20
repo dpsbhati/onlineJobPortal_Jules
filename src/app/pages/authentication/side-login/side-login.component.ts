@@ -17,6 +17,21 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
   standalone: true,
   imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, CommonModule],
   templateUrl: './side-login.component.html',
+  styles: [`
+    ::ng-deep .success-snackbar {
+      background: #E8F5E9 !important;
+      color: #2E7D32 !important;
+      border-radius: 8px !important;
+    }
+    ::ng-deep .error-snackbar {
+      background: #FFEBEE !important;
+      color: #C62828 !important;
+      border-radius: 8px !important;
+    }
+    ::ng-deep .mat-mdc-snack-bar-action {
+      color: inherit !important;
+    }
+  `]
 })
 export class AppSideLoginComponent {
   options = this.settings.getOptions();
@@ -51,7 +66,7 @@ export class AppSideLoginComponent {
   private showMessage(message: string, isError: boolean = false): void {
     this._snackBar.open(message, 'Close', {
       duration: 5000,
-      horizontalPosition: 'end',
+      horizontalPosition: 'right',
       verticalPosition: 'top',
       panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
     });
@@ -59,7 +74,11 @@ export class AppSideLoginComponent {
 
   async submit(): Promise<void> {
     if (this.form.invalid) {
-      this.showMessage('Please fill in all required fields correctly.', true);
+      if (this.form.get('email')?.hasError('required') || this.form.get('password')?.hasError('required')) {
+        this.showMessage('Please fill in all required fields.', true);
+      } else if (this.form.get('email')?.hasError('email')) {
+        this.showMessage('Please enter a valid email address.', true);
+      }
       return;
     }
 
@@ -69,7 +88,7 @@ export class AppSideLoginComponent {
       const { email, password } = this.form.value;
       const response = await this._authService.login({ email, password }).toPromise();
       
-      if (response.statusCode === 200) {
+      if (response && response.statusCode === 200) {
         const userData = response.data.User;
         
         // Set token
@@ -78,7 +97,7 @@ export class AppSideLoginComponent {
         // Wait for user data to be set
         await this._authService.setCurrentUser(userData);
 
-        this.showMessage('Login successful!');
+        this.showMessage(response.message || 'Login successful!');
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
@@ -87,11 +106,17 @@ export class AppSideLoginComponent {
           await this._router.navigate(['/starter'], { replaceUrl: true });
         }
       } else {
-        this.showMessage(response.message, true);
+        // Handle error response
+        this.showMessage(response?.message || 'Invalid credentials. Please try again.', true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      this.showMessage('Login failed. Please check your credentials and try again.', true);
+      // Handle error response from the server
+      if (error.error && error.error.message) {
+        this.showMessage(error.error.message, true);
+      } else {
+        this.showMessage('Unable to connect to the server. Please try again later.', true);
+      }
     } finally {
       this.isLoading = false;
     }

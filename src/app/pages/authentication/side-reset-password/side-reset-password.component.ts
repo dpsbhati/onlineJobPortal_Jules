@@ -1,0 +1,161 @@
+import { Component, OnInit } from '@angular/core';
+import { CoreService } from 'src/app/services/core.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AppAuthBrandingComponent } from 'src/app/layouts/full/vertical/sidebar/auth-branding.component';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { NotifyService } from 'src/app/core/services/notify.service';
+import { finalize } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+@Component({
+  selector: 'app-side-reset-password',
+  standalone: true,
+  imports: [
+    RouterModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppAuthBrandingComponent,
+    CommonModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './side-reset-password.component.html',
+  styles: [`
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .loading-text {
+      color: white;
+      margin-top: 16px;
+    }
+    .highlight-message {
+      background-color: #E3F2FD;
+      color: #1565C0;
+      padding: 12px 16px;
+      border-radius: 4px;
+      border-left: 4px solid #1565C0;
+      margin: 16px 0;
+      display: inline-block;
+      width: 100%;
+    }
+  `]
+})
+export class SideResetPasswordComponent implements OnInit {
+  options = this.settings.getOptions();
+  isLoading: boolean = false;
+  form: FormGroup;
+  token: string = '';
+  hidePassword: boolean = true;
+  hideConfirmPassword: boolean = true;
+
+  constructor(
+    private settings: CoreService,
+    private _formBuilder: FormBuilder,
+    private _router: Router,
+    private _route: ActivatedRoute,
+    private _authService: AuthService,
+    private _notifyService: NotifyService
+  ) {}
+
+  ngOnInit(): void {
+    // Get token from URL
+    this._route.queryParams.subscribe(params => {
+      this.token = params['token'];
+      if (!this.token) {
+        this._notifyService.showError('Invalid or expired reset token');
+        this._router.navigate(['/authentication/login']);
+      }
+    });
+    this.initializeForm();
+  }
+
+  initializeForm(): void {
+    this.form = this._formBuilder.group({
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+      ]],
+      confirmPassword: ['', Validators.required]
+    }, {
+      validator: this.passwordMatchValidator
+    });
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : { 'mismatch': true };
+  }
+
+  get f() {
+    return this.form.controls;
+  }
+
+  getPasswordErrorMessage() {
+    if (this.f['password'].hasError('required')) {
+      return 'Password is required';
+    }
+    if (this.f['password'].hasError('minlength')) {
+      return 'Password must be at least 8 characters';
+    }
+    if (this.f['password'].hasError('pattern')) {
+      return 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character';
+    }
+    return '';
+  }
+
+  async submit(): Promise<void> {
+    if (this.form.invalid) {
+      if (this.form.errors?.['mismatch']) {
+        this._notifyService.showError('Passwords do not match');
+      }
+      return;
+    }
+
+    this.form.disable();
+    this.isLoading = true;
+
+    const password = this.form.get('password')?.value;
+
+    // Call reset password service
+    this._authService.resetPassword({ newPassword: password })
+      .pipe(
+        finalize(() => {
+          this.form.enable();
+          this.isLoading = false;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response.statusCode === 200) {
+            this._notifyService.showSuccess('Password reset successfully');
+            this._router.navigate(['/authentication/login']);
+          } else {
+            this._notifyService.showError(response.message);
+          }
+        },
+        error: (error) => {
+          console.error('Reset Password Error:', error);
+          this._notifyService.showError(error.error?.message || 'Failed to reset password');
+        }
+      });
+  }
+
+  navigateToLogin(): void {
+    this._router.navigate(['/authentication/login']);
+  }
+}
