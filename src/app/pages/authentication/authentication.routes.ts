@@ -9,18 +9,49 @@ export const AuthenticationRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'error',
-        component: AppErrorComponent,
-      },
-
-      {
         path: 'login',
-        component: AppSideLoginComponent,
+        loadComponent: () =>
+          import('./side-login/side-login.component').then(
+            (c) => c.AppSideLoginComponent
+          ),
       },
       {
         path: 'register',
-        component: AppSideRegisterComponent,
+        loadComponent: () =>
+          import('./side-register/side-register.component').then(
+            (c) => c.AppSideRegisterComponent
+          ),
       },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./side-forgot-password/side-forgot-password.component').then(
+            (c) => c.SideForgotPasswordComponent
+          ),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./side-reset-password/side-reset-password.component').then(
+            (c) => c.SideResetPasswordComponent
+          ),
+      },
+      {
+        path: 'error',
+        loadComponent: () =>
+          import('./error/error.component').then(
+            (c) => c.AppErrorComponent
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full',
+      },
+      {
+        path: '**',
+        redirectTo: 'error'
+      }
     ],
   },
 ];
