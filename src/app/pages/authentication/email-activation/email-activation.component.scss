@@ -1,0 +1,40 @@
+.email-activation-container {
+    max-width: 400px;
+    margin: 20px auto;
+    text-align: center;
+  
+    .mat-card-error,
+    .mat-card-resend,
+    .mat-card-success {
+      margin-bottom: 16px;
+    }
+  
+    .mat-card-error {
+      color: red;
+    }
+  
+    .mat-card-success {
+      color: green;
+    }
+  
+    .full-width {
+      width: 100%;
+    }
+  
+    .button-container {
+      margin-top: 16px;
+  
+      .resend-button {
+        width: 100%;
+      }
+    }
+  
+    .loading {
+      margin-top: 20px;
+  
+      p {
+        margin-top: 10px;
+      }
+    }
+  }
+  

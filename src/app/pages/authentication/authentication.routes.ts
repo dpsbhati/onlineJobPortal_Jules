@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 import { AppErrorComponent } from './error/error.component';
 import { AppSideLoginComponent } from './side-login/side-login.component';
 import { AppSideRegisterComponent } from './side-register/side-register.component';
-
+import { EmailActivationComponent } from './email-activation/email-activation.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -22,5 +22,9 @@ export const AuthenticationRoutes: Routes = [
         component: AppSideRegisterComponent,
       },
     ],
+  },
+  {
+    path: 'email-activation',
+    component: EmailActivationComponent,
   },
 ];
