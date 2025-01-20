@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { StarterComponent } from './starter/starter.component';
-
+import { CreateJobPostingComponent } from './admin/create-job-posting/create-job-posting.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -13,4 +13,8 @@ export const PagesRoutes: Routes = [
       ],
     },
   },
+  {
+    path: 'createjob',
+    component : CreateJobPostingComponent
+  }
 ];

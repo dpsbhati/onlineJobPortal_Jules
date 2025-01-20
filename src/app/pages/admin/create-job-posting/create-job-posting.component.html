@@ -1,1 +1,146 @@
-<p>create-job-posting works!</p>
+<div>
+    <button mat-button color="primary" (click)="navigate()">Back</button>
+  </div>
+  
+  <div class="container">
+    <h2>{{ isEditMode ? 'Edit Job Posting' : 'Create Job Posting' }}</h2>
+  
+    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+  
+      <!-- Job Title -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Job Title</mat-label>
+        <input matInput id="title" formControlName="title" />
+        <mat-error *ngIf="jobForm.get('title')?.touched && jobForm.get('title')?.invalid">
+          <span *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</span>
+          <span *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Title must contain only alphabets.</span>
+          <span *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</span>
+          <span *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
+            Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+          </span>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Job Type -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Job Type</mat-label>
+        <mat-select id="job_type" formControlName="job_type">
+          <mat-option value="">Select Job Type</mat-option>
+          <mat-option value="Full-Time">Full-Time</mat-option>
+          <mat-option value="Part-Time">Part-Time</mat-option>
+          <mat-option value="Flexible">Flexible</mat-option>
+        </mat-select>
+        <mat-error *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched">
+          <span *ngIf="jobForm.get('job_type')?.errors?.['required']">Job Type is required.</span>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Rank -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rank</mat-label>
+        <input matInput id="rank" formControlName="rank" />
+        <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
+          Rank is required.
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Skills -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Skills</mat-label>
+        <input
+          matInput
+          id="skills_input"
+          [(ngModel)]="newSkill"
+          placeholder="Enter a skill and press Enter"
+          (keyup.enter)="addSkill()"
+        />
+        <mat-hint>Press Enter to add skill</mat-hint>
+      </mat-form-field>
+      <div *ngFor="let skill of skillsArray; let i = index" class="chip-container">
+        <mat-chip-listbox>
+          <mat-chip
+         
+            [removable]="true"
+            (removed)="removeSkill(i)"
+          >
+            {{ skill }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
+      <mat-error *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched">
+        At least one skill is required.
+      </mat-error>
+  
+      <!-- Date Published -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date Published</mat-label>
+        <input matInput id="date_published" formControlName="date_published" type="date" [readonly]="isDatePublishedReadonly" />
+        <mat-error *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched">
+          Date published is required.
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Deadline -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Deadline</mat-label>
+        <input matInput id="deadline" formControlName="deadline" type="date" />
+        <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
+          <span *ngIf="jobForm.get('deadline')?.errors?.['required']">Deadline is required.</span>
+          <span *ngIf="jobForm.get('deadline')?.errors?.['deadlineInvalid']">
+            Deadline cannot be before today's date or the date published.
+          </span>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Address -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <input matInput id="address" formControlName="address" />
+        <mat-error *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched">
+          <span *ngIf="jobForm.get('address')?.errors?.['required']">Address is required.</span>
+          <span *ngIf="jobForm.get('address')?.errors?.['minLengthWithoutSpaces']">
+            Address must be at least {{ jobForm.get('address')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding spaces.
+          </span>
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Application Instructions -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Application Instructions</mat-label>
+        <textarea matInput id="application_instruction" formControlName="application_instruction"></textarea>
+        <mat-error *ngIf="jobForm.get('application_instruction')?.invalid && jobForm.get('application_instruction')?.touched">
+          Application instructions are required.
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Social Media -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Social Media</mat-label>
+        <mat-select
+          [multiple]="true"
+          formControlName="social_media_type"
+          placeholder="Select platforms"
+          [disabled]="isEditMode"
+        >
+          <mat-option *ngFor="let option of socialMediaOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched">
+          Social Media Type is required.
+        </mat-error>
+      </mat-form-field>
+  
+      <!-- Submit Button -->
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="!jobForm.valid && !isEditMode"
+      >
+        {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+      </button>
+    </form>
+  </div>
+  
