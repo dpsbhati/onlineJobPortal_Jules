@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-// import { NotifyService } from 'src/app/core/services/notify.service';
+import { NotifyService } from 'src/app/core/services/notify.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -27,8 +27,8 @@ export class EmailActivationComponent {
     private authService: AuthService,
     private router: Router,
     private spinner: NgxSpinnerService,
-    private _snackBar: MatSnackBar
-    // private notify: NotifyService
+    private _snackBar: MatSnackBar,
+    private notify: NotifyService
   ) {}
 
   ngOnInit(): void {
@@ -58,13 +58,13 @@ export class EmailActivationComponent {
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.successMessage = 'Email verified successfully!';
-          this.showMessage(this.successMessage);
+          this.notify.showSuccess(this.successMessage);
           setTimeout(() => {
             this.router.navigate(['authentication/login']);
           }, 2000);
         } else {
           this.errorMessage = 'Email verification failed. Please try again.';
-          this.showMessage(this.errorMessage);
+          this.notify.showWarning(this.errorMessage);
         }
         this.spinner.hide();
         this.loading = false;
@@ -80,7 +80,7 @@ export class EmailActivationComponent {
 
   resendVerificationEmail(): void {
     if (!this.email) {
-      this.showMessage('Please enter your email address');
+      this.notify.showWarning('Please enter your email address');
       return;
     }
 
@@ -90,16 +90,16 @@ export class EmailActivationComponent {
     this.authService.resendVerificationEmail(this.email).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200 || response.statusCode === 201) {
-          this.showMessage('A new verification email has been sent. Please check your inbox.');
+          this.notify.showSuccess('A new verification email has been sent. Please check your inbox.');
           this.email = ''; // Clear the email input
         } else {
-          this.showMessage(response.message || 'Failed to resend verification email');
+          this.notify.showWarning(response.message || 'Failed to resend verification email');
         }
         this.spinner.hide();
         this.loading = false;
       },
       error: (error:any) => {
-        this.showMessage(error.error?.message || 'Failed to resend verification email');
+        this.errorMessage =(error.error?.message || 'Failed to resend verification email');
         this.spinner.hide();
         this.loading = false;
       }
