@@ -19,7 +19,7 @@ export const PagesRoutes: Routes = [
   {
     path: 'createjob',
     component : CreateJobPostingComponent
-  }
+  },
   {
     path: 'edit-profile',
     component: EditProfileComponent,

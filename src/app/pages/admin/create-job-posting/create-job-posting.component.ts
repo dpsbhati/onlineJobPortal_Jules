@@ -8,7 +8,7 @@ import countries from '../../../core/helpers/country.json';
 
 // import { NotifyService } from '../../../core/services/notify.service';
 import { CommonModule, formatDate, NgFor, NgIf } from '@angular/common';
-import { NgLabelTemplateDirective, NgOptionTemplateDirective, NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+
 import {  ValidationErrors, ValidatorFn} from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MaterialModule } from 'src/app/material.module';
@@ -17,7 +17,6 @@ import { MatChip, } from '@angular/material/chips';
 @Component({
   selector: 'app-create-job-posting',
   imports: [ReactiveFormsModule, NgFor, NgIf,  FormsModule,
-    NgSelectModule,
     NgIf, MaterialModule, MatChipsModule, MatChip],
   templateUrl: './create-job-posting.component.html',
   styleUrl: './create-job-posting.component.scss'
