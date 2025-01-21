@@ -39,26 +39,13 @@ export const navItems: NavItem[] = [
       {
         displayName: 'All Job Postings',
         iconName: 'point',
-        route: '/job-list',
-        // children: [
-        //   {
-        //     displayName: 'Menu 1',
-        //     iconName: 'point',
-        //     route: '/menu-1',
-        //   },
-
-        //   {
-        //     displayName: 'Menu 2',
-        //     iconName: 'point',
-        //     route: '/menu-2',
-        //   },
-        // ],
+        route: 'starter/job-list',
       },
 
       {
         displayName: 'Add New Job',
         iconName: 'point',
-        route: '/menu-2',
+        route: 'starter/createjob',
       },
       {
         displayName: 'Categories',
@@ -87,7 +74,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'User',
     iconName: 'user',
-    route: '/edit-profile',
-    external: true,
+    route: 'starter/edit-profile',
+   
   },
 ];

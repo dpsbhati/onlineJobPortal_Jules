@@ -19,6 +19,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ToastrModule } from 'ngx-toastr';
+import { provideAuth } from './core/helpers/auth.provider';
 
 // icons
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi()),
+    provideAuth(),
     importProvidersFrom(
       NgScrollbarModule,
       MaterialModule,
