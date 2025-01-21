@@ -1,5 +1,5 @@
 import { NavItem } from './nav-item/nav-item';
-
+import { CreateJobPostingComponent } from 'src/app/pages/admin/create-job-posting/create-job-posting.component';
 export const navItems: NavItem[] = [
   {
     navCap: 'Dashbord',
