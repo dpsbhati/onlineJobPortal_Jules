@@ -4,6 +4,7 @@ import { AppErrorComponent } from './error/error.component';
 import { AppSideLoginComponent } from './side-login/side-login.component';
 import { AppSideRegisterComponent } from './side-register/side-register.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
+import { CreateJobPostingComponent } from '../admin/create-job-posting/create-job-posting.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -57,5 +58,9 @@ export const AuthenticationRoutes: Routes = [
   {
     path: 'email-activation',
     component: EmailActivationComponent,
+  },
+  {
+    path: 'create-job-posting',
+    component: CreateJobPostingComponent,
   },
 ];
