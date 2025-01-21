@@ -1,25 +1,38 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, NgSelectOption, FormsModule, AbstractControl, NgModel } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn, FormsModule } from '@angular/forms';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageCompressionService } from 'src/app/core/services/image/image-compression.service';
-import {  MatChipsModule } from '@angular/material/chips';
+import { CommonModule, formatDate } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import countries from '../../../core/helpers/country.json';
-
-// import { NotifyService } from '../../../core/services/notify.service';
-import { CommonModule, formatDate, NgFor, NgIf } from '@angular/common';
-
-import {  ValidationErrors, ValidatorFn} from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MaterialModule } from 'src/app/material.module';
-import { MatChip, } from '@angular/material/chips';
 
 @Component({
   selector: 'app-create-job-posting',
-  imports: [ReactiveFormsModule, NgFor, NgIf,  FormsModule,
-    NgIf, MaterialModule, MatChipsModule, MatChip],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    FormsModule
+  ],
   templateUrl: './create-job-posting.component.html',
-  styleUrl: './create-job-posting.component.scss'
+  styleUrls: ['./create-job-posting.component.scss']
 })
 export class CreateJobPostingComponent {
   jobForm: FormGroup;
@@ -38,7 +51,9 @@ export class CreateJobPostingComponent {
   todaysDate = new Date();
   
   private readonly allowedImageFormats = ['image/jpeg', 'image/png', 'image/webp'];
+  imagePreview: string | ArrayBuffer | null = null;
   constructor(
+    private fb: FormBuilder,
     private adminService: AdminService,
     private route: ActivatedRoute,
     private router : Router,
@@ -365,6 +380,14 @@ export class CreateJobPostingComponent {
     const file = (event.target as HTMLInputElement).files?.[0];
     this.spinner.show()
     if (file) {
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(file);
+
+      // Your existing compression and upload logic
       if (this.allowedImageFormats.includes(file.type)) {
         this.imageCompressionService.compressImage(file).then((compressedImageUrl: string) => {
           fetch(compressedImageUrl)
@@ -398,32 +421,19 @@ export class CreateJobPostingComponent {
               );
             });
         })
-      // } else {
-    
-      //   // this.jobForm.patchValue({ [controlName]: file });
-      //   const folderName = 'job-postings';
-      //   const user = JSON.parse(localStorage.getItem('user') || '{}');
-      //   const userId = user.id;
-      //   this.adminService.uploadFile({ folderName, file, userId }).subscribe(
-      //     (response) => {
-      //       if(response.statusCode ===200){
-      //         console.log(response);
-      //         this.jobForm.patchValue({
-      //           [controlName]: response.data.path
-      //         });
-            
-      //     }
-      //   })
-  
-
-      }
-      else {
+      } else {
         this.spinner.hide();
         // this.notify.showWarning("Invalid image format")
       }
     }
   }
-  
+
+  clearImage() {
+    this.jobForm.patchValue({
+      featured_image: null
+    });
+    this.imagePreview = null;
+  }
   onSubmit(): void {
     // debugger
     this.spinner.show();
@@ -526,6 +536,22 @@ export class CreateJobPostingComponent {
   }
   navigate(){
     this.router.navigate(['/job-list']);
+  }
+
+  getFileName(path: string | null): string {
+    if (!path) return '';
+    // Extract filename from path
+    const parts = path.split(/[\/\\]/);
+    return parts[parts.length - 1];
+  }
+
+  onDateTimeChange(event: any): void {
+    const selectedDate = event.value;
+    if (selectedDate) {
+      this.jobForm.patchValue({
+        posted_at: selectedDate
+      });
+    }
   }
 
 }

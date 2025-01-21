@@ -1,0 +1,167 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.mat-h2 {
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.job-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.skills-section {
+  margin: 1rem 0;
+}
+
+mat-chip-list {
+  margin-top: 0.5rem;
+}
+
+mat-chip {
+  margin: 0.25rem;
+}
+
+.form-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+button[type="submit"] {
+  min-width: 150px;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.image-preview {
+  position: relative;
+  margin: 1rem 0;
+  max-width: 300px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.clear-image {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.clear-image:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+
+/* Back button styling */
+button[mat-raised-button] {
+  margin: 1rem;
+}
+
+/* Error message styling */
+mat-error {
+  font-size: 12px;
+  margin-top: 0.25rem;
+}
+
+/* Datepicker styling */
+.mat-datepicker-toggle {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+/* Datetime picker styling */
+.ngx-mat-datetime-picker {
+  background-color: white;
+}
+
+.ngx-mat-datetime-picker .mat-calendar-body-selected {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.ngx-mat-timepicker-table {
+  font-size: 14px;
+}
+
+/* Select styling */
+mat-select {
+  width: 100%;
+}
+
+/* File input styling */
+input[type="file"] {
+  margin-top: 0.5rem;
+}
+
+.file-input-container {
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-input-container button {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-name {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+  margin-left: 0.5rem;
+}
+
+.post-at-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.post-at-container .date-field {
+  flex: 2;
+}
+
+.post-at-container .time-field {
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  
+  button[type="submit"] {
+    width: 100%;
+  }
+  
+  .post-at-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .post-at-container .date-field,
+  .post-at-container .time-field {
+    flex: 1;
+  }
+}
