@@ -8,7 +8,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { AppAuthBrandingComponent } from '../../../layouts/full/vertical/sidebar/auth-branding.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-// import { NotifyService } from 'src/app/core/services/notify.service';
+import { NotifyService } from 'src/app/core/services/notify.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
 
@@ -51,7 +51,7 @@ export class AppSideRegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    // private notify: NotifyService,
+    private notify: NotifyService,
     private spinner: NgxSpinnerService,
     private _snackBar: MatSnackBar
   ) {}
@@ -78,7 +78,6 @@ export class AppSideRegisterComponent {
   }
 
   onSubmit(): void {
-    // debugger
     this.spinner.show();
     if (this.registrationForm.invalid) {
       return;
@@ -92,15 +91,15 @@ export class AppSideRegisterComponent {
         if (res.statusCode === 200 || res.statusCode === 201) {
           this.spinner.hide();
           this.router.navigate(['authentication/login']);
-        this.showMessage(res.message)
+        this.notify.showSuccess(res.message)
           this.loading = false;
         } else {
-         this.showMessage(res.message)
+         this.notify.showWarning(res.message)
           this.spinner.hide();
         }
       },
-      error: (err: any) => {
-        this.errorMessage = 'An error occurred during registration.';
+      error: (error: any) => {
+        this.errorMessage = error.error?.message ||'An error occurred during registration.';
         this.spinner.hide();
       },
     });
