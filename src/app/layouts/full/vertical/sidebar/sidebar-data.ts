@@ -39,7 +39,7 @@ export const navItems: NavItem[] = [
       {
         displayName: 'All Job Postings',
         iconName: 'point',
-        route: '/menu-1',
+        route: '/job-list',
         // children: [
         //   {
         //     displayName: 'Menu 1',
@@ -88,7 +88,7 @@ export const navItems: NavItem[] = [
   {
     displayName: 'User',
     iconName: 'user',
-    route: 'https://www.google.com/',
+    route: '/edit-profile',
     external: true,
   },
 ];
