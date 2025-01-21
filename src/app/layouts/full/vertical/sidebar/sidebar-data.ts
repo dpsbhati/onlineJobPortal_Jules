@@ -45,7 +45,7 @@ export const navItems: NavItem[] = [
       {
         displayName: 'Add New Job',
         iconName: 'point',
-        route: 'starterstarter/createjob',
+        route: 'starter/create-job-posting',
       },
       {
         displayName: 'Categories',
