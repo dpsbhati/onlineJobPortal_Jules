@@ -1,14 +1,54 @@
 <!-- ============================================================== -->
 <!-- Simple four boxes Row -->
 <!-- ============================================================== -->
-<mat-card class="cardWithShadow outlined-card">
+<!-- <mat-card class="cardWithShadow outlined-card">
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Search applicant</mat-label>
       <input matInput placeholder="Filter by name, symbol, etc." />
     </mat-form-field>
 
+</mat-card> -->
+<mat-card class="cardWithShadow outlined-card">
+  <div class="filters-container">
+    <!-- Search Filter -->
+    <mat-form-field appearance="outline">
+      <mat-label>Search applicant</mat-label>
+      <input matInput placeholder="Filter by name, symbol, etc." />
+    </mat-form-field>
+
+    <!-- Status Filter -->
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select>
+        <mat-option value="approved">Approved</mat-option>
+        <mat-option value="in-review">In Review</mat-option>
+        <mat-option value="rejected">Rejected</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Job Type Filter -->
+    <mat-form-field appearance="outline">
+      <mat-label>Job Type</mat-label>
+      <mat-select>
+        <mat-option value="full-time">Full Time</mat-option>
+        <mat-option value="part-time">Part Time</mat-option>
+        <mat-option value="contract">Contract</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Rank Name Filter -->
+    <mat-form-field appearance="outline">
+      <mat-label>Rank Name</mat-label>
+      <mat-select>
+        <mat-option value="rank1">Rank 1</mat-option>
+        <mat-option value="rank2">Rank 2</mat-option>
+        <mat-option value="rank3">Rank 3</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 </mat-card>
+
 
 
 

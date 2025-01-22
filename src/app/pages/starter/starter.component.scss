@@ -4,3 +4,13 @@
     padding: 16px; 
   }
   
+  .filters-container {
+    display: flex;
+    gap: 16px; /* Space between filters */
+    flex-wrap: wrap; /* Wrap filters if there isn't enough space */
+  }
+
+  .filters-container mat-form-field {
+    flex: 1; /* Ensures filters take equal space */
+    min-width: 200px; /* Prevents filters from being too narrow */
+  }
