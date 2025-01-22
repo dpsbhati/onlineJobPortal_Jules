@@ -33,7 +33,7 @@ export class HelperService {
         if (filterObj[key] != "" && filterObj[key]) {
             PostFilter.push({
             key:key,
-              value: filterObj[key],
+            value: filterObj[key],
             operator:"="
             });
           }
