@@ -76,7 +76,7 @@ export class ApplicationController {
     @Req() req: any,
     @Body() pagination: IPagination, // Change @Query to @Body
   ) {
-    return this.applicationService.pagination(req, pagination);
+    return this.applicationService.pagination( pagination);
   }
   
 }
