@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { AdminService } from '../../../core/services/admin/admin.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -15,26 +15,46 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { TablerIconsModule } from 'angular-tabler-icons';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-job-list',
   standalone: true,
   imports: [
+    CommonModule,
     MaterialModule,
+    TablerIconsModule,
+    FormsModule,
     MatPaginatorModule,
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    FormsModule,
-    CommonModule,
-    TablerIconsModule,
+    MatProgressSpinnerModule,
     NgxSpinnerModule
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
+  styles: [`
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .loading-text {
+      color: white;
+      margin-top: 16px;
+    }
+  `],
   encapsulation: ViewEncapsulation.None
 })
-export class JobListComponent {
+export class JobListComponent implements OnInit {
   id: number = 0;
   userRole: string = '';
   errorMessage: string = '';
@@ -52,7 +72,8 @@ export class JobListComponent {
     title: "",
     job_type: "",
     employer: "",
-    status: ""
+    rank: "",
+    status: "",
   }
 
   total: number = 0;
@@ -75,14 +96,13 @@ export class JobListComponent {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.onPagination();
   }
 
   onPagination(): void {
     this.isLoading = true;
-    const filters = this.helperService.getAllFilters(this.filters);
-  
-
+    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         console.log('API Response:', res);
@@ -125,11 +145,14 @@ export class JobListComponent {
   }
 
   clearSearch(): void {
-    this.filters.all = '';
-    this.filters.title = "";
-    this.filters.job_type = "";
-    this.filters.employer = "";
-    this.filters.status = "";
+    this.filters = {
+      all: "",
+      title: "",
+      job_type: "",
+      employer: "",
+      rank: "",
+      status: ""
+    };
     this.pageConfig.whereClause = [];
     this.onSearch();
   }

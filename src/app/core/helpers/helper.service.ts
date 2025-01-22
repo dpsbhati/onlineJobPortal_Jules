@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { NotifyService } from '../services/notify.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class HelperService {
   emailPattern: string = '^(([a-zA-Z]+[\\w-]*\\.)+[a-zA-Z]+|([a-zA-Z]{1}|[a-zA-Z][\\w-]{2,100}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z0-9]+[\\w-]+\\.)+[a-zA-Z]{2,9})$'
+
   constructor(
     private notifyService: NotifyService
   ) { }
@@ -29,12 +31,12 @@ export class HelperService {
     if (filterObj) {
       Object.keys(filterObj).forEach((key: any) => {
         if (filterObj[key] != "" && filterObj[key]) {
-          PostFilter.push({
+            PostFilter.push({
             key:key,
-            value: filterObj[key],
+              value: filterObj[key],
             operator:"="
-          });
-        }
+            });
+          }
       });
     }
     return PostFilter;

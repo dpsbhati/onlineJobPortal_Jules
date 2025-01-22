@@ -5,6 +5,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { JobListComponent } from './admin/job-list/job-list.component';
 import { CreateJobPostingComponent } from './admin/create-job-posting/create-job-posting.component';
 import { Application, ApplicationsComponent } from './admin/applications/applications.component';
+
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -45,4 +46,32 @@ export const PagesRoutes: Routes = [
       title: 'Job Listings',
     },
   },
+    children: [
+      {
+        path: 'starter',
+        component: StarterComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'job-list',
+        component: JobListComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'create-job-posting',
+        component: CreateJobPostingComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'create-job-posting/:id',
+        component: CreateJobPostingComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'edit-profile',
+        component: EditProfileComponent,
+        canActivate: [AuthGuard]
+      }
+    ]
+  }
 ];

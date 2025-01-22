@@ -136,3 +136,10 @@
     </div>
   </div>
 </div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <div class="text-center">
+    <mat-spinner [diameter]="50"></mat-spinner>
+    <div class="loading-text">Please wait...</div>
+  </div>
+</div>
