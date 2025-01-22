@@ -8,7 +8,7 @@ import { NgClass, NgFor } from '@angular/common';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { MatOption } from '@angular/material/core';
 import { NotifyService } from 'src/app/core/services/notify.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 export interface Application {
   position: number;
   name: string;
@@ -22,7 +22,7 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor],
+  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
@@ -43,11 +43,11 @@ export class ApplicationsComponent {
   direction: string = 'desc';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
- 
+  isLoading: boolean = false;
 
   constructor(private adminService : AdminService,
               private notify : NotifyService,
-              private spinner : NgxSpinnerService
+              
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +71,7 @@ export class ApplicationsComponent {
 
 
   fetchApplications() {
-    this.spinner.show();
+    this.isLoading = true;
     const whereClause = [];
 
     if (this.selectedFilters.jobPostId) {
@@ -120,15 +120,15 @@ export class ApplicationsComponent {
             applications: app.application_count,
             status: app.status,
           }));
-          this.spinner.hide();
+          this.isLoading = false;
         } else {
-          this.spinner.hide();
+          this.isLoading = false;
           this.notify.showWarning('No matching records found.');
           this.dataSource.data = []; 
           this.totalApplications = 0; 
         }
       } else {
-        this.spinner.hide();
+        this.isLoading = false;
         this.notify.showWarning(response.message || 'Failed to fetch data.');
         this.dataSource.data = []; 
         this.totalApplications = 0; 
