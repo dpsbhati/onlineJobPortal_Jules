@@ -1,0 +1,163 @@
+import { Component } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { ViewChild } from '@angular/core';
+import { MaterialModule } from 'src/app/material.module';
+import { NgClass, NgFor } from '@angular/common';
+import { AdminService } from 'src/app/core/services/admin/admin.service';
+import { MatOption } from '@angular/material/core';
+import { NotifyService } from 'src/app/core/services/notify.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+export interface Application {
+  position: number;
+  name: string;
+  email: string;
+  mobile: string;
+  dateOfApplication: string;
+  jobPost: string;
+  applications: number;
+  status: string;
+}
+
+@Component({
+  selector: 'app-applications',
+  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor],
+  templateUrl: './applications.component.html',
+  styleUrl: './applications.component.scss'
+})
+export class ApplicationsComponent {
+  displayedColumns: string[] = ['position', 'name', 'email', 'mobile', 'dateOfApplication', 'jobPost', 'applications', 'status', 'action'];
+  dataSource = new MatTableDataSource<Application>([]);
+  totalApplications: number = 0;
+  pageSize: number = 5;
+  pageIndex: number = 0;
+  jobPosts: { id: string; title: string }[] = [];
+  selectedJobPostId: string | null = null; 
+  selectedFilters: any = {
+    jobPostId: null,
+    status: null,
+    rank: null,
+  };
+  sortBy: string = 'created_on';
+  direction: string = 'desc';
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+ 
+
+  constructor(private adminService : AdminService,
+              private notify : NotifyService,
+              private spinner : NgxSpinnerService
+  ) {}
+
+  ngOnInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.fetchJobPosts();
+    this.fetchApplications();
+  }
+  
+  fetchJobPosts() {
+    // debugger
+    this.adminService.getJobPostings().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        this.jobPosts = response.data.map((job: any) => ({
+          id: job.id,
+          title: job.title,
+        }));
+      }
+    });
+  }
+
+
+  fetchApplications() {
+    this.spinner.show();
+    const whereClause = [];
+
+    if (this.selectedFilters.jobPostId) {
+      whereClause.push({
+        key: 'job_id',
+        value: this.selectedFilters.jobPostId,
+        operator: '=',
+      });
+    }
+
+    if (this.selectedFilters.status) {
+      whereClause.push({
+        key: 'status',
+        value: this.selectedFilters.status,
+        operator: '=',
+      });
+    }
+
+    if (this.selectedFilters.rank) {
+      whereClause.push({
+        key: 'rank',
+        value: this.selectedFilters.rank,
+        operator: '=',
+      });
+    }
+
+    const payload = {
+      curPage: this.pageIndex + 1,
+      perPage: this.pageSize,
+      sortBy: this.sortBy,
+      direction: this.direction,
+      whereClause,
+    };
+   
+    this.adminService.applicationPagination(payload).subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        if (response.data && response.data.length > 0) {
+          this.totalApplications = response.total || response.data.length;
+          this.dataSource.data = response.data.map((app: any, index: number) => ({
+            position: index + 1 + this.pageIndex * this.pageSize,
+            name: `${app.first_name} ${app.last_name}`,
+            email: app.email,
+            mobile: app.mobile,
+            dateOfApplication: new Date(app.applied_at).toDateString(),
+            jobPost: app.title,
+            applications: app.application_count,
+            status: app.status,
+          }));
+          this.spinner.hide();
+        } else {
+          this.spinner.hide();
+          this.notify.showWarning('No matching records found.');
+          this.dataSource.data = []; 
+          this.totalApplications = 0; 
+        }
+      } else {
+        this.spinner.hide();
+        this.notify.showWarning(response.message || 'Failed to fetch data.');
+        this.dataSource.data = []; 
+        this.totalApplications = 0; 
+      }
+    });
+    
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  filterByJobPost() {
+    this.pageIndex = 0; 
+    this.fetchApplications();
+  }
+  onFilterChange(filterType: string, value: any) {
+    this.selectedFilters[filterType] = value;
+    this.pageIndex = 0;
+    this.fetchApplications();
+  }
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.fetchApplications();
+  }
+}

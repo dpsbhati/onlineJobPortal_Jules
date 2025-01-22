@@ -41,6 +41,9 @@ export class AdminService {
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
+  applicationPagination(payload: any): Observable<any> {
+    return this.genericService.Post<any>(`applications/pagination`, payload);
+  }
 
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);

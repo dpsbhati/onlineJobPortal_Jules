@@ -25,10 +25,10 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Applications',
     iconName: 'dashboard',
-    route: '/',
-    chip: true,
-    chipClass: 'bg-secondary text-white',
-    chipContent: '9',
+    route: 'starter/applications',
+    // chip: true,
+    // chipClass: 'bg-secondary text-white',
+    // chipContent: '9',
   },
  
   {

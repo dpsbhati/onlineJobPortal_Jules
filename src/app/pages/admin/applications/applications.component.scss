@@ -1,0 +1,60 @@
+.full-width {
+  width: 100%;
+}
+
+.filters-container {
+  display: flex;
+  /* grid-template-columns: repeat(12, 1fr); */
+  gap: 300px;
+  align-items: center;
+  /* margin-bottom: 16px; */
+  align-content: center;
+  justify-content: space-between;
+  height: 100%;
+  padding-top: 18px;
+  padding-right: 15px;
+  padding-left: 15px;
+
+}
+
+.filter.search-filter {
+  width: 40%;
+}
+
+.filter_right{
+    display: flex;
+    gap: 10px;
+}
+.filter {
+  width: 146px;
+}
+
+.filter .mat-mdc-form-field{
+    width: 100%;
+}
+
+.status {
+  font-weight: 600;
+  text-transform: capitalize;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.status.approved {
+  color: #388e3c;
+  background-color: #c8e6c9;
+}
+
+.status.rejected {
+  color: #d32f2f;
+  background-color: #ffcdd2;
+}
+
+.mat-elevation-z4 {
+  border-radius: 8px;
+}
+
+.mat-paginator {
+  margin-top: 20px;
+}

@@ -4,6 +4,7 @@ import { EditProfileComponent } from './user/edit-profile/edit-profile.component
 import { AuthGuard } from '../core/guards/auth.guard';
 import { JobListComponent } from './admin/job-list/job-list.component';
 import { CreateJobPostingComponent } from './admin/create-job-posting/create-job-posting.component';
+import { Application, ApplicationsComponent } from './admin/applications/applications.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -19,6 +20,10 @@ export const PagesRoutes: Routes = [
   {
     path: 'create-job-posting',
     component : CreateJobPostingComponent
+  },
+   {
+    path: 'applications',
+    component : ApplicationsComponent
   },
   {
     path: 'edit-profile',
