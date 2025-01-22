@@ -35,34 +35,36 @@ import { TablerIconsModule } from 'angular-tabler-icons';
   encapsulation: ViewEncapsulation.None
 })
 export class JobListComponent {
-  isLoading: boolean = false;
+  id: number = 0;
   userRole: string = '';
   errorMessage: string = '';
+
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
-    sortBy: "created_on",
+    sortBy: "created_at",
     direction: "desc",
-    whereClause: [],
+    whereClause: []
   }
 
   filters = {
     all: "",
     title: "",
     job_type: "",
-    deadline: "",
+    employer: "",
+    status: ""
   }
 
   total: number = 0;
   jobPostingList: any[] = [];
-  displayedColumns: string[] = ['position', 'title', 'job_type', 'salary', 'deadline', 'actions'];
+  isLoading: boolean = false;
+  displayedColumns: string[] = ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'status', 'actions'];
 
   constructor(
     private adminService: AdminService,
     private router: Router,
     private helperService: HelperService,
     private notify: NotifyService,
-    private spinner: NgxSpinnerService,
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
@@ -78,32 +80,36 @@ export class JobListComponent {
 
   onPagination(): void {
     this.isLoading = true;
-    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    const filters = this.helperService.getAllFilters(this.filters);
+  
 
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
-        if (res.statusCode == 200) {
-          this.isLoading = false;
+        console.log('API Response:', res);
+        if (res.statusCode === 200) {
           this.jobPostingList = res.data;
-          this.total = res.count;
-        }
-        else {
-          this.isLoading = false;   
+          this.total = res.count || 0;
+          console.log('Loaded jobs:', this.jobPostingList);
+        } else {
           this.jobPostingList = [];
           this.total = 0;
+          this.notify.showError(res.message || 'Failed to fetch jobs');
         }
+        this.isLoading = false;
       },
       error: (err: any) => {
+        console.error('API Error:', err);
         this.isLoading = false;
         this.notify.showError(err?.error?.message || "Something went wrong!!");
         this.jobPostingList = [];
         this.total = 0;
       }
-    })
+    });
   }
 
-  onFilterChange(): void {
-    this.pageConfig.curPage = 1;
+  onPageChange(event: any): void {
+    this.pageConfig.curPage = event.pageIndex + 1;
+    this.pageConfig.perPage = event.pageSize;
     this.onPagination();
   }
 
@@ -112,56 +118,55 @@ export class JobListComponent {
     this.onPagination();
   }
 
-  clearSearch(): void {
-    this.filters.all = '';
-    this.filters.title = "";
-    this.filters.job_type = "";
-    this.filters.deadline = "";
-    this.pageConfig.whereClause = [];
-    this.onSearch();
-  }
-
-  onInputChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    if (!value.trim()) {
+  onInputChange(event: any): void {
+    if (!this.filters.all) {
       this.clearSearch();
     }
   }
 
-  onPageChange(page: number): void {
-    if (page > 0) {
-      this.pageConfig.curPage = page;
-      this.onPagination();
-    }
+  clearSearch(): void {
+    this.filters.all = '';
+    this.filters.title = "";
+    this.filters.job_type = "";
+    this.filters.employer = "";
+    this.filters.status = "";
+    this.pageConfig.whereClause = [];
+    this.onSearch();
   }
 
-  viewJob(id: number) {
-    this.router.navigate(['/starter/view-job', id]);
+  viewJob(id: string) {
+    this.router.navigate(['/view-job', id]);
   }
 
-  editJob(jobId: string) {
-    this.router.navigate(['/starter/createjob', jobId]);
+  editJob(id: string) {
+    this.router.navigate(['/create-job-posting', id]);
   }
 
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
-      this.adminService.deleteJob(jobId).subscribe(
-        (response: any) => {
+      this.adminService.deleteJob(jobId).subscribe({
+        next: (response: any) => {
           this.notify.showSuccess(response.message);
+          // Refresh job data after deletion
           this.onPagination();
+          // If the current page becomes empty after deletion, navigate to the previous page
+          if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
+            this.pageConfig.curPage -= 1;
+            this.onPagination();
+          }
         },
-        (error: any) => {
+        error: (error: any) => {
           this.notify.showError(error?.message || "Failed to delete job.");
         }
-      );
+      });
     }
   }
 
-  viewJobApplications(jobId: string) {
-    this.router.navigate(['/starter/job-applicants-list', jobId]);
+  navigateToCreateJob() {
+    this.router.navigate(['/create-job-posting']);
   }
 
-  navigateToCreateJob() {
-    this.router.navigate(['/starter/createjob'])
+  formatSalary(value: number): string {
+    return '₹' + value.toLocaleString('en-IN');
   }
 }

@@ -26,7 +26,7 @@ export class AdminService {
   }
 
   getJobPostings(): Observable<any> {
-    return this.genericService.Get(`/job-posting`);
+    return this.genericService.Get(`job-posting`);
   }
 
   getJobById(jobId: string): Observable<any> {

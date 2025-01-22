@@ -1,98 +1,130 @@
 <!-- ============================================================== -->
 <!-- Simple four boxes Row -->
 <!-- ============================================================== -->
-<mat-card class="cardWithShadow outlined-card">
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Search Jobs</mat-label>
-      <input matInput [(ngModel)]="filters.all" (input)="onInputChange($event)" placeholder="Filter by title, type, etc." />
-      <button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="filters.all">
-        <i-tabler name="x" class="icon-sm"></i-tabler>
-      </button>
-    </mat-form-field>
-</mat-card>
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <mat-card class="cardWithShadow">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Search Jobs</mat-label>
+        <input matInput [(ngModel)]="filters.all" (input)="onInputChange($event)" placeholder="Search by title, type, employer..." />
+        <button mat-icon-button matSuffix (click)="clearSearch()" *ngIf="filters.all">
+          <i-tabler name="x" class="icon-sm"></i-tabler>
+        </button>
+      </mat-form-field>
+    </mat-card>
 
-<mat-card class="cardWithShadow overflow-hidden">
-  <div class="d-flex justify-content-end mb-3">
-    <button mat-raised-button color="primary" (click)="navigateToCreateJob()">
-      <i-tabler name="plus" class="icon-sm"></i-tabler>
-      Create Job
-    </button>
+    <mat-card class="cardWithShadow">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="m-0">Job Listings</h2>
+        <button mat-raised-button color="primary" (click)="navigateToCreateJob()">
+          <i-tabler name="plus" class="icon-sm"></i-tabler>
+          Create Job
+        </button>
+      </div>
+
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="jobPostingList" class="w-100">
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let element; let i = index">
+              {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
+            </td>
+          </ng-container>
+
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Job Title</th>
+            <td mat-cell *matCellDef="let element">{{element.title}}</td>
+          </ng-container>
+
+          <!-- Job Type Column -->
+          <ng-container matColumnDef="job_type">
+            <th mat-header-cell *matHeaderCellDef>Job Type</th>
+            <td mat-cell *matCellDef="let element">{{element.job_type}}</td>
+          </ng-container>
+
+          <!-- Employer Column -->
+          <ng-container matColumnDef="employer">
+            <th mat-header-cell *matHeaderCellDef>Employer</th>
+            <td mat-cell *matCellDef="let element">{{element.employer}}</td>
+          </ng-container>
+
+          <!-- Salary Column -->
+          <ng-container matColumnDef="salary">
+            <th mat-header-cell *matHeaderCellDef>Salary Range</th>
+            <td mat-cell *matCellDef="let element">
+              {{formatSalary(element.start_salary)}} - {{formatSalary(element.end_salary)}}
+            </td>
+          </ng-container>
+
+          <!-- Date Published Column -->
+          <ng-container matColumnDef="date_published">
+            <th mat-header-cell *matHeaderCellDef>Published Date</th>
+            <td mat-cell *matCellDef="let element">{{element.date_published | date:'mediumDate'}}</td>
+          </ng-container>
+
+          <!-- Deadline Column -->
+          <ng-container matColumnDef="deadline">
+            <th mat-header-cell *matHeaderCellDef>Deadline</th>
+            <td mat-cell *matCellDef="let element">{{element.deadline | date:'mediumDate'}}</td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let element">{{element.job_opening | titlecase}}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <i-tabler name="dots-vertical" class="icon-sm"></i-tabler>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="viewJob(element.id)">
+                  <i-tabler name="eye" class="icon-sm"></i-tabler>
+                  View
+                </button>
+                <button mat-menu-item (click)="editJob(element.id)">
+                  <i-tabler name="edit" class="icon-sm"></i-tabler>
+                  Edit
+                </button>
+                <button mat-menu-item (click)="deleteJob(element.id)">
+                  <i-tabler name="trash" class="icon-sm"></i-tabler>
+                  Delete
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+              No jobs found
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="total"
+          [pageSize]="pageConfig.perPage"
+          [pageIndex]="pageConfig.curPage - 1"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          [showFirstLastButtons]="true"
+          (page)="onPageChange($event)"
+          aria-label="Select page">
+        </mat-paginator>
+      </div>
+    </mat-card>
   </div>
-
-  <table mat-table [dataSource]="jobPostingList" class="mat-elevation-z8">
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let element; let i = index">
-        {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
-      </td>
-    </ng-container>
-
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Title</th>
-      <td mat-cell *matCellDef="let element">{{element.title}}</td>
-    </ng-container>
-
-    <!-- Job Type Column -->
-    <ng-container matColumnDef="job_type">
-      <th mat-header-cell *matHeaderCellDef>Job Type</th>
-      <td mat-cell *matCellDef="let element">{{element.job_type | titlecase}}</td>
-    </ng-container>
-
-    <!-- Salary Column -->
-    <ng-container matColumnDef="salary">
-      <th mat-header-cell *matHeaderCellDef>Salary</th>
-      <td mat-cell *matCellDef="let element">₹{{element.salary_min}} - ₹{{element.salary_max}}</td>
-    </ng-container>
-
-    <!-- Deadline Column -->
-    <ng-container matColumnDef="deadline">
-      <th mat-header-cell *matHeaderCellDef>Deadline</th>
-      <td mat-cell *matCellDef="let element">{{element.deadline | date}}</td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button color="primary" (click)="viewJob(element.id)" matTooltip="View Job">
-          <i-tabler name="eye" class="icon-sm"></i-tabler>
-        </button>
-        <button mat-icon-button color="accent" (click)="editJob(element.id)" matTooltip="Edit Job" *ngIf="isAdmin()">
-          <i-tabler name="edit" class="icon-sm"></i-tabler>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteJob(element.id)" matTooltip="Delete Job" *ngIf="isAdmin()">
-          <i-tabler name="trash" class="icon-sm"></i-tabler>
-        </button>
-        <button mat-icon-button color="primary" (click)="viewJobApplications(element.id)" matTooltip="View Applications" *ngIf="isAdmin()">
-          <i-tabler name="file-text" class="icon-sm"></i-tabler>
-        </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-    <!-- No Data Row -->
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center" colspan="6">No jobs found</td>
-    </tr>
-  </table>
-
-  <mat-paginator
-    [length]="total"
-    [pageSize]="pageConfig.perPage"
-    [pageIndex]="pageConfig.curPage - 1"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="onPageChange($event.pageIndex + 1)"
-    showFirstLastButtons>
-  </mat-paginator>
-</mat-card>
+</div>
 
 <div class="loading-overlay" *ngIf="isLoading">
-  <div class="text-center">
-    <mat-spinner [diameter]="50"></mat-spinner>
-    <div class="loading-text">Please wait...</div>
-  </div>
+  <mat-spinner></mat-spinner>
 </div>
