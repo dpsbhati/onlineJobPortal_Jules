@@ -11,8 +11,6 @@ import { UserProfile } from '../user-profile/entities/user-profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Users } from './entities/user.entity';
 
-
-
 @Injectable()
 export class UserService {
   constructor(
@@ -22,10 +20,10 @@ export class UserService {
     private userProfileRepository: Repository<UserProfile>,
     private readonly mailerService: MailService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async validateUserById(userId: any) {
-    console.log(userId)
+    console.log(userId);
     return this.userRepository.findOne({
       where: { id: userId },
     });
@@ -40,8 +38,8 @@ export class UserService {
 
       const user = userDto.id
         ? await this.userRepository.findOne({
-          where: { id: userDto.id, is_deleted: false },
-        })
+            where: { id: userDto.id, is_deleted: false },
+          })
         : null;
 
       if (userDto.id && !user) {
@@ -51,7 +49,11 @@ export class UserService {
         userDto.email = user.email;
 
         const existingUser = await this.userRepository.findOne({
-          where: { email: userDto.email, is_deleted: false, id: Not(userDto.id) },
+          where: {
+            email: userDto.email,
+            is_deleted: false,
+            id: Not(userDto.id),
+          },
         });
         if (existingUser) {
           return WriteResponse(
@@ -102,12 +104,21 @@ export class UserService {
       }
 
       if (!userDto.id && isTemporaryEmail(userDto.email)) {
-        return WriteResponse(400, {}, 'Temporary email addresses are not allowed.');
+        return WriteResponse(
+          400,
+          {},
+          'Temporary email addresses are not allowed.',
+        );
       }
 
       // Create a new object excluding role only when updating
-      const userData = userDto.id ? { ...userDto } : { role: userDto.role, ...userDto }; // Include role on create
-      const savedUser = await this.userRepository.save({ ...user, ...userData });
+      const userData = userDto.id
+        ? { ...userDto }
+        : { role: userDto.role, ...userDto }; // Include role on create
+      const savedUser = await this.userRepository.save({
+        ...user,
+        ...userData,
+      });
 
       // Insert data into user profile immediately after user creation
       if (!userDto.id) {
@@ -124,7 +135,7 @@ export class UserService {
       if (!userDto.id) {
         // Only send email if creating a new user
         const verificationToken = this.generateVerificationToken(savedUser.id);
-        const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
+        const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
 
         await this.mailerService.sendEmail(
           savedUser.email,
@@ -141,7 +152,9 @@ export class UserService {
           firstName: userDto.firstName,
           lastName: userDto.lastName,
         },
-        user ? 'User updated successfully.' : 'User created successfully. Please verify your email.',
+        user
+          ? 'User updated successfully.'
+          : 'User created successfully. Please verify your email.',
       );
     } catch (error) {
       return WriteResponse(
@@ -151,7 +164,6 @@ export class UserService {
       );
     }
   }
-
 
   async LogIn(email: string, password: string) {
     console.log('LogIn function called with email:', email);
@@ -170,7 +182,8 @@ export class UserService {
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
-    if (!User.isActive) { // Assuming 'isActive' is the field that indicates if the user is active
+    if (!User.isActive) {
+      // Assuming 'isActive' is the field that indicates if the user is active
       return WriteResponse(403, {}, 'User account is not active.');
     }
 
@@ -182,8 +195,6 @@ export class UserService {
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
   }
-
-
 
   async findOne(key: string, value: any) {
     try {
@@ -206,7 +217,9 @@ export class UserService {
 
   async findAll() {
     try {
-      const users = await this.userRepository.find({ where: { is_deleted: false } });
+      const users = await this.userRepository.find({
+        where: { is_deleted: false },
+      });
       if (users.length === 0) {
         return WriteResponse(404, [], 'No users found.');
       }
@@ -250,11 +263,7 @@ export class UserService {
       let lwhereClause = 'is_deleted = false'; // Ensure deleted users are not fetched
 
       // Fields to search
-      const fieldsToSearch = [
-        'email',
-        'isActive',
-        'role'
-      ];
+      const fieldsToSearch = ['email', 'isActive', 'role'];
 
       // Process whereClause
       if (Array.isArray(whereClause)) {
@@ -307,7 +316,7 @@ export class UserService {
       }
 
       const verificationToken = this.generateVerificationToken(user.id);
-      const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${verificationToken}`;
+      const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${verificationToken}`;
 
       // const message = `
       //   You are receiving this email because a request to reset your password was received for your account.
@@ -339,7 +348,7 @@ export class UserService {
     }
   }
 
-  async resetPassword(newPassword: string, token: string,) {
+  async resetPassword(newPassword: string, token: string) {
     try {
       const decoded = this.jwtService.verify(token);
       const userId = decoded.id;
@@ -349,11 +358,17 @@ export class UserService {
       });
 
       if (!user) {
-        return WriteResponse(400, false, 'User not found with the provided token.');
+        return WriteResponse(
+          400,
+          false,
+          'User not found with the provided token.',
+        );
       }
 
       // Update the user's password using update instead of save
-      await this.userRepository.update(userId, { password: await bcrypt.hash(newPassword, 10) });
+      await this.userRepository.update(userId, {
+        password: await bcrypt.hash(newPassword, 10),
+      });
 
       return WriteResponse(200, {
         message: 'Password reset successfully.',
@@ -375,7 +390,7 @@ export class UserService {
   async verifyEmail(token: string) {
     try {
       const decoded = this.jwtService.verify(token);
-      const userId = decoded.id; 
+      const userId = decoded.id;
 
       const user = await this.userRepository.findOne({
         where: { id: userId, is_deleted: false },
@@ -397,34 +412,33 @@ export class UserService {
     }
   }
 
-
   async resendEmailByEmail(email: string) {
     try {
       // Find user by email
       const user = await this.userRepository.findOne({
         where: { email, is_deleted: false },
       });
-  
+
       if (!user) {
         return WriteResponse(404, {}, 'User not found.');
       }
-  
+
       if (user.isEmailVerified) {
         return WriteResponse(400, {}, 'Email is already verified.');
       }
-  
+
       // Generate verification token
       const verificationToken = this.generateVerificationToken(user.id);
-      const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
-  
+      const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
+
       // Resend the email
       await this.mailerService.sendEmail(
         user.email,
         'Resend Email Verification',
-        { name:  verificationUrl } as Record<string, any>,
+        { name: verificationUrl } as Record<string, any>,
         'verify',
       );
-  
+
       return WriteResponse(200, {}, 'Verification email resent successfully.');
     } catch (error) {
       console.error('Error resending email:', error.message);
@@ -435,16 +449,15 @@ export class UserService {
       );
     }
   }
-  
 
-   private async sendVerificationEmail(user: any) {
+  private async sendVerificationEmail(user: any) {
     const verificationToken = this.generateVerificationToken(user.id);
-    const verificationUrl = `${process.env.FRONTEND_URL}/auth/email-activation?token=${verificationToken}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
     await this.mailerService.sendEmail(
       user.email,
       'Verify Your Email Address',
       { name: user.firstName, verificationUrl } as Record<string, any>,
-      'verify', 
+      'verify',
     );
   }
 }

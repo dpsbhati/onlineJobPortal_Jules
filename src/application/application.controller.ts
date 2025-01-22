@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
@@ -53,7 +53,7 @@ export class ApplicationController {
   }
 
 
-  @Post('pagination')
+  @Post('paginations')
   @ApiBody({
      schema: {
        type: 'object',
@@ -63,4 +63,20 @@ export class ApplicationController {
   async pagination(@Request() req: any,@Body() pagination: IPagination) {
     return this.applicationService.paginateApplications(req,pagination);
   }  
+
+  @Post('pagination')
+  @ApiOperation({ summary: 'Paginate Applications with filtered keys' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+  async paginateApplications(
+    @Req() req: any,
+    @Body() pagination: IPagination, // Change @Query to @Body
+  ) {
+    return this.applicationService.pagination(req, pagination);
+  }
+  
 }

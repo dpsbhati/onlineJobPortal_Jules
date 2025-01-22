@@ -322,6 +322,68 @@ export class ApplicationService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+
+  async pagination(req: any, pagination: IPagination) {
+  try {
+    const { curPage = 1, perPage = 10, whereClause } = pagination;
+
+    let lwhereClause = 'app.is_deleted = :is_deleted';
+    const parameters: Record<string, any> = { is_deleted: false };
+
+    // Add filtering dynamically
+    if (Array.isArray(whereClause)) {
+      whereClause.forEach(({ key, value, operator }) => {
+        if (key && value && operator) {
+          if (operator === 'LIKE') {
+            lwhereClause += ` AND app.${key} LIKE :${key}_search`;
+            parameters[`${key}_search`] = `%${value}%`;
+          } else {
+            lwhereClause += ` AND app.${key} = :${key}_search`;
+            parameters[`${key}_search`] = value;
+          }
+        }
+      });
+    }
+
+    const skip = (curPage - 1) * perPage;
+
+    const [list, totalCount] = await this.applicationRepository
+      .createQueryBuilder('app')
+      .leftJoinAndSelect('app.job', 'job')
+      .leftJoinAndSelect('app.user', 'user')
+      .leftJoinAndSelect('user.userProfile', 'userProfile')
+      .where(lwhereClause, parameters)
+      .skip(skip)
+      .take(perPage)
+      .orderBy('app.applied_at', 'DESC')
+      .getManyAndCount();
+
+    if (!list.length) {
+      return WriteResponse(404, [], 'No records found.');
+    }
+
+    const filteredApplications = list.map((application) => ({
+      status: application.status,
+      mobile: application.user?.userProfile?.mobile || null,
+      first_name: application.user?.userProfile?.first_name || null,
+      last_name: application.user?.userProfile?.last_name || null,
+      email: application.user?.email || null,
+      applied_at: application.applied_at,
+      title: application.job?.title || null,
+      job_id: application.job?.id || null,
+      application_count: totalCount,
+    }));
+
+    return paginateResponse(filteredApplications, totalCount, curPage, perPage);
+  } catch (error) {
+    console.error('Pagination Error:', error);
+    return WriteResponse(500, {}, 'An unexpected error occurred.');
+  }
+}
+
+  
+  
+  
   
 
   private async sendConfirmationEmail(application: any) {
