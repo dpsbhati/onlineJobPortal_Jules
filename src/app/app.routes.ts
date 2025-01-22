@@ -11,23 +11,6 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: FullComponent,
-    canActivate: [AuthGuard],
-    children: [
-      {
-        path: 'starter',
-        loadChildren: () =>
-          import('./pages/pages.routes').then((m) => m.PagesRoutes),
-      },
-      {
-        path: 'sample-page',
-        loadChildren: () =>
-          import('./pages/pages.routes').then((m) => m.PagesRoutes),
-      },
-    ],
-  },
-  {
-    path: '',
     component: BlankComponent,
     children: [
       {
@@ -37,6 +20,18 @@ export const routes: Routes = [
             (m) => m.AuthenticationRoutes
           ),
       },
+    ],
+  },
+  {
+    path: '',
+    component: FullComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./pages/pages.routes').then((m) => m.PagesRoutes),
+      }
     ],
   },
   {

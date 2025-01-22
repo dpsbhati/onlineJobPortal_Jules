@@ -39,13 +39,13 @@ export const navItems: NavItem[] = [
       {
         displayName: 'All Job Postings',
         iconName: 'point',
-        route: 'starter/job-list',
+        route: 'job-list',
       },
 
       {
         displayName: 'Add New Job',
         iconName: 'point',
-        route: 'starter/create-job-posting',
+        route: 'create-job-posting',
       },
       {
         displayName: 'Categories',

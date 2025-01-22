@@ -11,11 +11,20 @@ import { AppAuthBrandingComponent } from 'src/app/layouts/full/vertical/sidebar/
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserRole } from 'src/app/core/enums/roles.enum';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-side-login',
   standalone: true,
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, CommonModule],
+  imports: [
+    RouterModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppAuthBrandingComponent,
+    CommonModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './side-login.component.html',
   styles: [`
     ::ng-deep .success-snackbar {
@@ -30,6 +39,22 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
     }
     ::ng-deep .mat-mdc-snack-bar-action {
       color: inherit !important;
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .loading-text {
+      color: white;
+      margin-top: 16px;
     }
   `]
 })
