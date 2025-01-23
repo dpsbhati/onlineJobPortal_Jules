@@ -51,6 +51,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       color: white;
       margin-top: 16px;
     }
+    .no-records-message {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .text-danger {
+      color: #dc3545;
+    }
+    .ms-2 {
+      margin-left: 0.5rem;
+    }
   `],
   encapsulation: ViewEncapsulation.None
 })
@@ -123,14 +135,14 @@ export class JobListComponent implements OnInit {
         } else {
           this.jobPostingList = [];
           this.total = 0;
-          this.notify.showError(res.message || 'Failed to fetch jobs');
+          this.notify.showError(res.message);
         }
         this.isLoading = false;
       },
       error: (err: any) => {
         console.error('API Error:', err);
         this.isLoading = false;
-        this.notify.showError(err?.error?.message || "Something went wrong!!");
+        this.notify.showError(err?.error?.message);
         this.jobPostingList = [];
         this.total = 0;
       }
@@ -214,5 +226,11 @@ export class JobListComponent implements OnInit {
         this.uniqueRanks = [...new Set(this.jobList.map(job => job.rank))].filter(rank => rank);
       }
     });
+  }
+
+  clearFilter(event: Event, filterType: 'job_type' | 'rank' | 'status'): void {
+    event.stopPropagation();
+    this.filters[filterType] = '';
+    this.onSearch();
   }
 }

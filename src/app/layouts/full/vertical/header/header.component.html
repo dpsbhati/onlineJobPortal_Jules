@@ -273,7 +273,7 @@
     class="topbar-dd cardWithShadow dd-notifications"
   >
     <div class="p-x-24 p-y-16 bg-primary">
-      <h6 class="f-s-18 m-b-2 text-white f-w-500">Notifications</h6>
+      <h6 class="f-s-18 m-b-2 text-white f-s-18 f-w-500">Notifications</h6>
       <p class="m-0 text-white f-s-12 f-w-400">You have 4 Notifications</p>
     </div>
 
@@ -434,7 +434,8 @@
       @for(profile of profiledd; track profile.title) {
       <a
         class="p-8 text-decoration-none d-block text-hover-primary"
-        [routerLink]="[profile.link]"
+        href="javascript:void(0)"
+        (click)="signOut()"
       >
         <div class="d-flex align-items-center">
           <h5 class="f-s-14 f-w-500 m-0 textprimary hover-text">

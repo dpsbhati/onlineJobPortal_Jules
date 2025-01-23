@@ -14,23 +14,37 @@
         <mat-label>Job Type</mat-label>
         <mat-select [(ngModel)]="filters.job_type"
                     (selectionChange)="onSearch()">
-           <mat-option value="Full Time">Full Time</mat-option>
-           <mat-option value="Part Time">Part Time</mat-option>
+           <mat-option value="Full-Time">Full Time</mat-option>
+           <mat-option value="Part-Time">Part Time</mat-option>
            <mat-option value="Contract">Contract</mat-option>
         </mat-select>
+        <button *ngIf="filters.job_type" 
+                matSuffix 
+                mat-icon-button 
+                aria-label="Clear" 
+                (click)="clearFilter($event, 'job_type')">
+          <mat-icon>clear</mat-icon>
+        </button>
        </mat-form-field>
 
        <mat-form-field appearance="outline">
         <mat-label>Rank</mat-label>
         <mat-select [(ngModel)]="filters.rank"
                     (selectionChange)="onSearch()">
-           <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
+          <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
             {{rank}}
            </mat-option>
         </mat-select>
+        <button *ngIf="filters.rank" 
+                matSuffix 
+                mat-icon-button 
+                aria-label="Clear" 
+                (click)="clearFilter($event, 'rank')">
+          <mat-icon>clear</mat-icon>
+        </button>
        </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" *ngif="isAdmin()">
         <mat-label>Status</mat-label>
         <mat-select [(ngModel)]="filters.status"
                     (selectionChange)="onSearch()">
@@ -38,6 +52,13 @@
            <mat-option value="Closed">Closed</mat-option>
            <mat-option value="Draft">Draft</mat-option>
         </mat-select>
+        <button *ngIf="filters.status" 
+                matSuffix 
+                mat-icon-button 
+                aria-label="Clear" 
+                (click)="clearFilter($event, 'status')">
+          <mat-icon>clear</mat-icon>
+        </button>
        </mat-form-field>
     </div>
   </mat-card>
@@ -122,6 +143,14 @@
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+        <div class="no-records-message">
+          <mat-icon class="text-danger">error_outline</mat-icon>
+          <span class="text-danger ms-2">No records found</span>
+        </div>
+      </td>
+    </tr>
   </table>
    
   <!-- Pagination -->

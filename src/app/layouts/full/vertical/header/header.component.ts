@@ -18,6 +18,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BrandingComponent } from '../sidebar/branding.component';
 import { AppSettings } from 'src/app/config';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { Router } from '@angular/router';
+
 interface notifications {
   id: number;
   icon: string;
@@ -127,7 +129,8 @@ export class HeaderComponent {
     private vsidenav: CoreService,
     public dialog: MatDialog,
     private translate: TranslateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private _router: Router
   ) {
     translate.setDefaultLang('en');
     this.loadUserName();
@@ -257,6 +260,21 @@ export class HeaderComponent {
       link: '/authentication/login',
     },
   ];
+
+  signOut(): void {
+    // Clear all authentication data
+    localStorage.clear();
+    
+    // Clear specific items to ensure they're removed
+    localStorage.removeItem('rememberedEmail');
+    localStorage.removeItem('rememberedPassword');
+    localStorage.removeItem('rememberDevice');
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    
+    // Navigate to login
+    this._router.navigate(['/authentication/login']);
+  }
 
   apps: apps[] = [
     {

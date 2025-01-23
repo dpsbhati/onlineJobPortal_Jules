@@ -71,13 +71,41 @@ export class AppSideLoginComponent {
     private _snackBar: MatSnackBar
   ) {
     this.initializeForm();
+    this.loadSavedCredentials();
   }
 
   initializeForm(): void {
     this.form = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required]),
+      rememberDevice: new FormControl(false)
     });
+  }
+
+  private loadSavedCredentials(): void {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    const rememberDevice = localStorage.getItem('rememberDevice');
+
+    if (savedEmail && savedPassword && rememberDevice === 'true') {
+      this.form.patchValue({
+        email: savedEmail,
+        password: savedPassword,
+        rememberDevice: true
+      });
+    }
+  }
+
+  private saveCredentials(): void {
+    if (this.form.get('rememberDevice')?.value) {
+      localStorage.setItem('rememberedEmail', this.form.get('email')?.value);
+      localStorage.setItem('rememberedPassword', this.form.get('password')?.value);
+      localStorage.setItem('rememberDevice', 'true');
+    } else {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedPassword');
+      localStorage.removeItem('rememberDevice');
+    }
   }
 
   get f() {
@@ -88,12 +116,12 @@ export class AppSideLoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  private showMessage(message: string, isError: boolean = false): void {
+  showMessage(message: string, isError: boolean = false): void {
     this._snackBar.open(message, 'Close', {
       duration: 5000,
       horizontalPosition: 'right',
       verticalPosition: 'top',
-      panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
+      panelClass: isError ? 'error-snackbar' : 'success-snackbar',
     });
   }
 
@@ -114,6 +142,7 @@ export class AppSideLoginComponent {
       const response = await this._authService.login({ email, password }).toPromise();
       
       if (response && response.statusCode === 200) {
+        this.saveCredentials();
         const userData = response.data.User;
         
         // Set token
@@ -148,7 +177,7 @@ export class AppSideLoginComponent {
   }
 
   navigateToForgotPassword(): void {
-    this._router.navigate(['auth/forgot-password']);
+    this._router.navigate(['/auth/forgot-password']);
   }
 
   navigateToNewuserRegistartion(): void {
