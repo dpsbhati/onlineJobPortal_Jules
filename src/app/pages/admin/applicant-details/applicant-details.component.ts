@@ -55,7 +55,7 @@ export class ApplicantDetailsComponent {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
           this.adminComments = this.applicantDetails.comments ;
-           debugger
+           
           // Parse key skills
           if (response.data.userProfile?.key_skills) {
             try {
@@ -67,9 +67,7 @@ export class ApplicantDetailsComponent {
                 response.data.userProfile.key_skills : [];
             }
           }
-          Object.keys(this.applicantDetails).forEach((key) => {
-         
-          });
+        
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
