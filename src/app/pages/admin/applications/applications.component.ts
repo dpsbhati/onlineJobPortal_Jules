@@ -11,6 +11,8 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+// import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoaderService } from 'src/app/core/services/loader.service';
 export interface Application {
   position: number;
   name: string;
@@ -24,7 +26,9 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule],
+  imports: [MatPaginatorModule,MaterialModule,NgClass,
+      MatOption, NgFor, NgxSpinnerModule, FormsModule, 
+        NgIf],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
@@ -51,7 +55,8 @@ export class ApplicationsComponent {
   constructor(private adminService : AdminService,
               private notify : NotifyService,
               private router:  Router,
-              private route : ActivatedRoute
+              private route : ActivatedRoute,
+              private loader: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +81,8 @@ export class ApplicationsComponent {
 
 
   fetchApplications() {
-    this.isLoading = true;
+    // this.isLoading = true;
+    this.loader.show();
     const whereClause = [];
 
     if (this.selectedFilters.jobPostId) {
@@ -134,15 +140,18 @@ export class ApplicationsComponent {
             all : app.all,
             user_id : app.user_id
           }));
-          this.isLoading = false;
+          this.loader.hide();
+          // this.isLoading = false;
         } else {
-          this.isLoading = false;
+          // this.isLoading = false;
+          this.loader.hide();
           this.notify.showWarning('No matching records found.');
           this.dataSource.data = []; 
           this.totalApplications = 0; 
         }
       } else {
-        this.isLoading = false;
+        // this.isLoading = false;
+        this.loader.hide();
         this.notify.showWarning(response.message || 'Failed to fetch data.');
         this.dataSource.data = []; 
         this.totalApplications = 0; 
@@ -197,15 +206,18 @@ export class ApplicationsComponent {
 
   deleteApplicant(applicantId: any): void {
     // debugger
+    this.loader.show();
     const confirmed = confirm(`Are you sure you want to delete applicant: ${applicantId.name}?`);
     if (confirmed) {
       this.adminService.deleteApplicant(applicantId).subscribe({
         next: () => {
           this.notify.showSuccess('Applicant deleted successfully.');
           this.fetchApplications();
+          this.loader.hide();
         },
         error: () => {
           this.notify.showError('Failed to delete applicant.');
+          this.loader.hide();
         },
       });
     }
