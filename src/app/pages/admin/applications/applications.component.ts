@@ -4,11 +4,13 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ViewChild } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
-import { NgClass, NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { MatOption } from '@angular/material/core';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 export interface Application {
   position: number;
   name: string;
@@ -22,7 +24,7 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule],
+  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
@@ -35,6 +37,7 @@ export class ApplicationsComponent {
   jobPosts: { id: string; title: string }[] = [];
   selectedJobPostId: string | null = null; 
   selectedFilters: any = {
+    all:null,
     jobPostId: null,
     status: null,
     rank: null,
@@ -44,13 +47,15 @@ export class ApplicationsComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   isLoading: boolean = false;
-
+  applicantId: string | null = null;
   constructor(private adminService : AdminService,
               private notify : NotifyService,
-              
+              private router:  Router,
+              private route : ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.applicantId = this.route.snapshot.paramMap.get('id');
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.fetchJobPosts();
@@ -78,6 +83,13 @@ export class ApplicationsComponent {
       whereClause.push({
         key: 'job_id',
         value: this.selectedFilters.jobPostId,
+        operator: '=',
+      });
+    }
+    if (this.selectedFilters.all) {
+      whereClause.push({
+        key: 'all',
+        value: this.selectedFilters.all,
         operator: '=',
       });
     }
@@ -119,6 +131,8 @@ export class ApplicationsComponent {
             jobPost: app.title,
             applications: app.application_count,
             status: app.status,
+            all : app.all,
+            user_id : app.user_id
           }));
           this.isLoading = false;
         } else {
@@ -159,5 +173,42 @@ export class ApplicationsComponent {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.fetchApplications();
+  }
+
+  clearFilters() {
+ 
+    this.selectedFilters = {
+      all: null,
+      jobPostId: null,
+      status: null,
+      rank: null,
+    };
+    
+    this.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+    this.fetchApplications();
+  }
+  viewApplicantDetails(applicantId: any): void {
+    debugger
+    // Navigate to another component with the applicant ID
+    this.router.navigate(['/applicant-details', applicantId]);
+  }
+
+  deleteApplicant(applicantId: any): void {
+    // debugger
+    const confirmed = confirm(`Are you sure you want to delete applicant: ${applicantId.name}?`);
+    if (confirmed) {
+      this.adminService.deleteApplicant(applicantId).subscribe({
+        next: () => {
+          this.notify.showSuccess('Applicant deleted successfully.');
+          this.fetchApplications();
+        },
+        error: () => {
+          this.notify.showError('Failed to delete applicant.');
+        },
+      });
+    }
   }
 }

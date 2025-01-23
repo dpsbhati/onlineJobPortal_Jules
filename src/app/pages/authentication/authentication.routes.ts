@@ -6,6 +6,7 @@ import { AppSideRegisterComponent } from './side-register/side-register.componen
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { CreateJobPostingComponent } from '../admin/create-job-posting/create-job-posting.component';
 import { Application, ApplicationsComponent } from '../admin/applications/applications.component';
+import { ApplicantDetailsComponent } from '../admin/applicant-details/applicant-details.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -67,5 +68,9 @@ export const AuthenticationRoutes: Routes = [
   {
     path: 'applications',
     component: ApplicationsComponent,
+  },
+  {
+    path: 'applicant-details/:id',
+    component: ApplicantDetailsComponent,
   },
 ];
