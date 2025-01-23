@@ -62,6 +62,9 @@ export class AdminService {
   allApplicantDetails(applicantId: string): Observable<any> {
     return this.genericService.Get(`applications/get-one?id=${applicantId}`);
   }
+  userDetails(applicantId: string): Observable<any> {
+    return this.genericService.Get(`user/get-by-id/${applicantId}`);
+  }
 
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post('applications/update', { id, ...payload });

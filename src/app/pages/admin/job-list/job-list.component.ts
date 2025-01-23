@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { AdminService } from '../../../core/services/admin/admin.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
 import { NotifyService } from '../../../core/services/notify.service';
@@ -30,7 +30,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    NgIf
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
