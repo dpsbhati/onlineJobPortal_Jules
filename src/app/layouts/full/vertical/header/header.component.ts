@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BrandingComponent } from '../sidebar/branding.component';
 import { AppSettings } from 'src/app/config';
-
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 interface notifications {
   id: number;
   icon: string;
@@ -78,6 +78,7 @@ export class HeaderComponent {
   @Output() toggleMobileFilterNav = new EventEmitter<void>();
   @Output() toggleCollapsed = new EventEmitter<void>();
 
+  userName: string = '';
   isCollapse: boolean = false; // Initially hidden
 
   toggleCollpase() {
@@ -125,9 +126,11 @@ export class HeaderComponent {
     private settings: CoreService,
     private vsidenav: CoreService,
     public dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private authService: AuthService
   ) {
     translate.setDefaultLang('en');
+    this.loadUserName();
   }
 
   openDialog() {
@@ -150,6 +153,15 @@ export class HeaderComponent {
 
   private emitOptions() {
     this.optionsChange.emit(this.options);
+  }
+
+  private loadUserName() {
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser && currentUser.userProfile) {
+      const firstName = currentUser.userProfile.first_name;
+      const lastName = currentUser.userProfile.last_name;
+      this.userName = `${firstName} ${lastName}`.trim();
+    }
   }
 
   notifications: notifications[] = [

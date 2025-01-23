@@ -55,9 +55,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   encapsulation: ViewEncapsulation.None
 })
 export class JobListComponent implements OnInit {
+  jobList: any[] = [];
+  uniqueRanks: string[] = [];
   id: number = 0;
   userRole: string = '';
   errorMessage: string = '';
+  dataSource: any;
+  pageSize = 10;
+  pageIndex = 0;
+  totalApplications = 0;
 
   pageConfig: any = {
     curPage: 1,
@@ -73,13 +79,13 @@ export class JobListComponent implements OnInit {
     job_type: "",
     employer: "",
     rank: "",
-    status: "",
+    status: ""
   }
 
   total: number = 0;
   jobPostingList: any[] = [];
   isLoading: boolean = false;
-  displayedColumns: string[] = ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'status', 'actions'];
+  displayedColumns: string[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -89,6 +95,9 @@ export class JobListComponent implements OnInit {
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
+    this.displayedColumns = this.isAdmin() ? 
+      ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'status', 'actions'] :
+      ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'actions'];
   }
 
   isAdmin(): boolean {
@@ -97,6 +106,7 @@ export class JobListComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
+    this.allJobList();
     this.onPagination();
   }
 
@@ -191,5 +201,18 @@ export class JobListComponent implements OnInit {
 
   formatSalary(value: number): string {
     return '₹' + value.toLocaleString('en-IN');
+  }
+
+  allJobList() {
+    this.adminService.getJobPostings().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        this.jobList = response.data.map((job: any) => ({
+          id: job.id,
+          rank: job.rank,
+        }));
+        // Extract unique ranks
+        this.uniqueRanks = [...new Set(this.jobList.map(job => job.rank))].filter(rank => rank);
+      }
+    });
   }
 }

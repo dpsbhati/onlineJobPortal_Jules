@@ -191,8 +191,7 @@ export class ApplicationsComponent {
     this.fetchApplications();
   }
   viewApplicantDetails(applicantId: any): void {
-    debugger
-    // Navigate to another component with the applicant ID
+    // debugger
     this.router.navigate(['/applicant-details', applicantId]);
   }
 
