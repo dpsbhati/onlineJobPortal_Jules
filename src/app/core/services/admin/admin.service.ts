@@ -37,12 +37,16 @@ export class AdminService {
   deleteJob(id: string): Observable<any> {
     return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
   }
-
+  
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
   applicationPagination(payload: any): Observable<any> {
     return this.genericService.Post<any>(`applications/pagination`, payload);
+  }
+  
+  deleteApplicant(id: string): Observable<any> {
+    return this.http.post(`${this.BASE_URL}user/delete-by-id/${id}`, {});
   }
 
   applyJobs(payload: any): Observable<any> {

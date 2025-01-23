@@ -5,7 +5,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { JobListComponent } from './admin/job-list/job-list.component';
 import { CreateJobPostingComponent } from './admin/create-job-posting/create-job-posting.component';
 import { ApplicationsComponent } from './admin/applications/applications.component';
-
+import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-details.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -38,6 +38,11 @@ export const PagesRoutes: Routes = [
       {
         path:'applications',
         component:ApplicationsComponent,
+        canActivate:[AuthGuard]
+      },
+      {
+        path:'applicant-details/:id',
+        component:ApplicantDetailsComponent,
         canActivate:[AuthGuard]
       }
     ]

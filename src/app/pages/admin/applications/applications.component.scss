@@ -74,3 +74,19 @@
     color: white;
     margin-top: 16px;
   }
+
+.no-data-cell {
+  text-align: center;
+  padding: 2rem !important;
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.clear-btn {
+  margin-top: 5px;
+  height: 45px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}

@@ -1,17 +1,16 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { ViewChild } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
-import { CommonModule, NgClass, NgFor } from '@angular/common';
 import { MatOption } from '@angular/material/core';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import { TablerIconsModule } from 'angular-tabler-icons';
-
+import { ActivatedRoute, Router } from '@angular/router';
 export interface Application {
   position: number;
   name: string;
@@ -25,40 +24,9 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MaterialModule,
-    TablerIconsModule,
-    FormsModule,
-    MatPaginatorModule,
-    NgClass,
-    MatOption,
-    NgFor,
-    NgxSpinnerModule,
-    MatProgressSpinnerModule
-  ],
+  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule],
   templateUrl: './applications.component.html',
-  styleUrls: ['./applications.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  styles: [`
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .loading-text {
-      color: white;
-      margin-top: 16px;
-    }
-  `]
+  styleUrl: './applications.component.scss'
 })
 export class ApplicationsComponent {
   displayedColumns: string[] = ['position', 'name', 'email', 'mobile', 'dateOfApplication', 'jobPost', 'applications', 'status', 'action'];
@@ -69,6 +37,7 @@ export class ApplicationsComponent {
   jobPosts: { id: string; title: string }[] = [];
   selectedJobPostId: string | null = null; 
   selectedFilters: any = {
+    all:null,
     jobPostId: null,
     status: null,
     rank: null,
@@ -78,13 +47,15 @@ export class ApplicationsComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   isLoading: boolean = false;
-
+  applicantId: string | null = null;
   constructor(private adminService : AdminService,
               private notify : NotifyService,
-              
+              private router:  Router,
+              private route : ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.applicantId = this.route.snapshot.paramMap.get('id');
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.fetchJobPosts();
@@ -115,6 +86,13 @@ export class ApplicationsComponent {
         operator: '=',
       });
     }
+    if (this.selectedFilters.all) {
+      whereClause.push({
+        key: 'all',
+        value: this.selectedFilters.all,
+        operator: '=',
+      });
+    }
 
     if (this.selectedFilters.status) {
       whereClause.push({
@@ -140,40 +118,37 @@ export class ApplicationsComponent {
       whereClause,
     };
    
-    this.adminService.applicationPagination(payload).subscribe({
-      next: (response: any) => {
-        if (response.statusCode === 200) {
-          if (response.data && response.data.length > 0) {
-            this.totalApplications = response.total || response.data.length;
-            this.dataSource.data = response.data.map((app: any, index: number) => ({
-              position: index + 1 + this.pageIndex * this.pageSize,
-              name: `${app.first_name} ${app.last_name}`,
-              email: app.email,
-              mobile: app.mobile,
-              dateOfApplication: new Date(app.applied_at).toDateString(),
-              jobPost: app.title,
-              applications: app.application_count,
-              status: app.status,
-            }));
-          } else {
-            this.notify.showWarning('No matching records found.');
-            this.dataSource.data = []; 
-            this.totalApplications = 0; 
-          }
+    this.adminService.applicationPagination(payload).subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        if (response.data && response.data.length > 0) {
+          this.totalApplications = response.total || response.data.length;
+          this.dataSource.data = response.data.map((app: any, index: number) => ({
+            position: index + 1 + this.pageIndex * this.pageSize,
+            name: `${app.first_name} ${app.last_name}`,
+            email: app.email,
+            mobile: app.mobile,
+            dateOfApplication: new Date(app.applied_at).toDateString(),
+            jobPost: app.title,
+            applications: app.application_count,
+            status: app.status,
+            all : app.all,
+            user_id : app.user_id
+          }));
+          this.isLoading = false;
         } else {
-          this.notify.showWarning(response.message || 'Failed to fetch data.');
+          this.isLoading = false;
+          this.notify.showWarning('No matching records found.');
           this.dataSource.data = []; 
           this.totalApplications = 0; 
         }
+      } else {
         this.isLoading = false;
-      },
-      error: (error) => {
-        this.notify.showError('An error occurred while fetching applications.');
-        this.dataSource.data = [];
-        this.totalApplications = 0;
-        this.isLoading = false;
+        this.notify.showWarning(response.message || 'Failed to fetch data.');
+        this.dataSource.data = []; 
+        this.totalApplications = 0; 
       }
     });
+    
   }
 
   applyFilter(event: Event) {
@@ -198,5 +173,41 @@ export class ApplicationsComponent {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.fetchApplications();
+  }
+
+  clearFilters() {
+ 
+    this.selectedFilters = {
+      all: null,
+      jobPostId: null,
+      status: null,
+      rank: null,
+    };
+    
+    this.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+    this.fetchApplications();
+  }
+  viewApplicantDetails(applicantId: any): void {
+    // debugger
+    this.router.navigate(['/applicant-details', applicantId]);
+  }
+
+  deleteApplicant(applicantId: any): void {
+    // debugger
+    const confirmed = confirm(`Are you sure you want to delete applicant: ${applicantId.name}?`);
+    if (confirmed) {
+      this.adminService.deleteApplicant(applicantId).subscribe({
+        next: () => {
+          this.notify.showSuccess('Applicant deleted successfully.');
+          this.fetchApplications();
+        },
+        error: () => {
+          this.notify.showError('Failed to delete applicant.');
+        },
+      });
+    }
   }
 }
