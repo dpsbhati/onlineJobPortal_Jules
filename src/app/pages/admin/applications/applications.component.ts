@@ -1,14 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ViewChild } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
-import { NgClass, NgFor } from '@angular/common';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
+import { CommonModule, NgClass, NgFor } from '@angular/common';
 import { MatOption } from '@angular/material/core';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
+import { TablerIconsModule } from 'angular-tabler-icons';
+
 export interface Application {
   position: number;
   name: string;
@@ -22,9 +25,40 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    TablerIconsModule,
+    FormsModule,
+    MatPaginatorModule,
+    NgClass,
+    MatOption,
+    NgFor,
+    NgxSpinnerModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './applications.component.html',
-  styleUrl: './applications.component.scss'
+  styleUrls: ['./applications.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .loading-text {
+      color: white;
+      margin-top: 16px;
+    }
+  `]
 })
 export class ApplicationsComponent {
   displayedColumns: string[] = ['position', 'name', 'email', 'mobile', 'dateOfApplication', 'jobPost', 'applications', 'status', 'action'];
@@ -106,35 +140,40 @@ export class ApplicationsComponent {
       whereClause,
     };
    
-    this.adminService.applicationPagination(payload).subscribe((response: any) => {
-      if (response.statusCode === 200) {
-        if (response.data && response.data.length > 0) {
-          this.totalApplications = response.total || response.data.length;
-          this.dataSource.data = response.data.map((app: any, index: number) => ({
-            position: index + 1 + this.pageIndex * this.pageSize,
-            name: `${app.first_name} ${app.last_name}`,
-            email: app.email,
-            mobile: app.mobile,
-            dateOfApplication: new Date(app.applied_at).toDateString(),
-            jobPost: app.title,
-            applications: app.application_count,
-            status: app.status,
-          }));
-          this.isLoading = false;
+    this.adminService.applicationPagination(payload).subscribe({
+      next: (response: any) => {
+        if (response.statusCode === 200) {
+          if (response.data && response.data.length > 0) {
+            this.totalApplications = response.total || response.data.length;
+            this.dataSource.data = response.data.map((app: any, index: number) => ({
+              position: index + 1 + this.pageIndex * this.pageSize,
+              name: `${app.first_name} ${app.last_name}`,
+              email: app.email,
+              mobile: app.mobile,
+              dateOfApplication: new Date(app.applied_at).toDateString(),
+              jobPost: app.title,
+              applications: app.application_count,
+              status: app.status,
+            }));
+          } else {
+            this.notify.showWarning('No matching records found.');
+            this.dataSource.data = []; 
+            this.totalApplications = 0; 
+          }
         } else {
-          this.isLoading = false;
-          this.notify.showWarning('No matching records found.');
+          this.notify.showWarning(response.message || 'Failed to fetch data.');
           this.dataSource.data = []; 
           this.totalApplications = 0; 
         }
-      } else {
         this.isLoading = false;
-        this.notify.showWarning(response.message || 'Failed to fetch data.');
-        this.dataSource.data = []; 
-        this.totalApplications = 0; 
+      },
+      error: (error) => {
+        this.notify.showError('An error occurred while fetching applications.');
+        this.dataSource.data = [];
+        this.totalApplications = 0;
+        this.isLoading = false;
       }
     });
-    
   }
 
   applyFilter(event: Event) {

@@ -1,186 +1,202 @@
+.page-container {
+  padding: 20px;
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
+  }
+
+  .cardWithShadow {
+    margin-bottom: 20px;
+    border-radius: 8px;
+
+    &.outlined-card {
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px;
+
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+    }
+  }
+
+  .table-responsive {
+    position: relative;
+    min-height: 200px;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+      
+      th {
+        background-color: #f5f5f5;
+        color: rgba(0, 0, 0, 0.87);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      td {
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .mat-column-actions {
+        width: 80px;
+        text-align: center;
+      }
+    }
+  }
+
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+
+    &.active {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    &.closed {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    &.draft {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+  }
+
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .no-data-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: rgba(0, 0, 0, 0.54);
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  mat-paginator {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
 }
 
-.loading-text {
-  color: white;
-  margin-top: 16px;
+.full-width {
+  width: 100%;
 }
 
 .filters-container {
   display: flex;
-  gap: 16px; /* Space between filters */
-  flex-wrap: wrap; /* Wrap filters if there isn't enough space */
-  justify-content: flex-end; /* Align filters to the right */
-}
-
-.filters-container mat-form-field {
-  flex: 1; /* Ensures filters take equal space */
-  min-width: 200px; /* Prevents filters from being too narrow */
-}
-
-.search-field {
-  width: 300px;
-}
-
-.search-box {
-  position: relative;
-
-  .form-control {
-    height: 36px;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    padding: 0 16px 0 36px;
-    font-size: 14px;
-    background: #f8f9fa;
-
-    &:focus {
-      outline: none;
-      border-color: #2196f3;
-      background: white;
-    }
-
-    &::placeholder {
-      color: #9e9e9e;
-    }
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9e9e9e;
-    font-size: 20px;
-  }
-}
-
-.filters-label {
-  color: #616161;
-  margin-right: 16px;
-  font-size: 14px;
-}
-
-.filter-group {
-  display: flex;
-  gap: 8px;
-}
-
-.filter-btn {
-  height: 36px;
-  padding: 0 16px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background: white;
-  color: #616161;
-  font-size: 14px;
-  min-width: 100px;
-  display: flex;
+  /* grid-template-columns: repeat(12, 1fr); */
+  gap: 300px;
   align-items: center;
+  /* margin-bottom: 16px; */
+  align-content: center;
   justify-content: space-between;
+  height: 100%;
+  padding-top: 18px;
+  padding-right: 15px;
+  padding-left: 15px;
 
-  &:hover {
-    background: #f5f5f5;
-  }
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    margin-left: 4px;
-  }
 }
 
-::ng-deep {
-  .mat-mdc-form-field {
-    .mat-mdc-form-field-wrapper {
-      padding: 0;
-      margin: 0;
-    }
-
-    .mat-mdc-text-field-wrapper {
-      padding: 0 12px !important;
-      background-color: white !important;
-      border-radius: 4px;
-      height: 40px;
-    }
-
-    .mat-mdc-form-field-flex {
-      height: 40px;
-      min-height: 40px;
-      align-items: center;
-    }
-
-    .mat-mdc-form-field-infix {
-      padding: 0;
-      min-height: unset;
-    }
-
-    .mat-mdc-form-field-subscript-wrapper {
-      display: none;
-    }
-
-    .mat-mdc-select-value {
-      padding-top: 0;
-    }
-
-    .mat-mdc-select-arrow-wrapper {
-      transform: translateY(0);
-    }
-
-    .mat-mdc-form-field-icon-prefix > .mat-icon {
-      padding: 0;
-      margin-right: 8px;
-      color: #9e9e9e;
-    }
-  }
-
-  .filter-menu {
-    min-width: 120px !important;
-    
-    .mat-mdc-menu-content {
-      padding: 0;
-    }
-
-    .mat-mdc-menu-item {
-      height: 36px;
-      line-height: 36px;
-      font-size: 14px;
-      color: #616161;
-    }
-  }
-
-  .mat-mdc-snack-bar-action {
-    color: inherit !important;
-  }
-
-  .success-snackbar {
-    background: #E8F5E9 !important;
-    color: #2E7D32 !important;
-    border-radius: 8px !important;
-  }
-
-  .error-snackbar {
-    background: #FFEBEE !important;
-    color: #C62828 !important;
-    border-radius: 8px !important;
-  }
+.filter.search-filter {
+  width: 40%;
 }
 
-.highlight-message {
-  background-color: #E3F2FD;
-  color: #1565C0;
-  padding: 8px 16px;
+.filter_right{
+    display: flex;
+    gap: 10px;
+}
+.filter {
+  width: 146px;
+}
+
+.filter .mat-mdc-form-field{
+    width: 100%;
+}
+
+.status {
+  font-weight: 600;
+  text-transform: capitalize;
+  padding: 4px 8px;
   border-radius: 4px;
-  margin-bottom: 16px;
+  display: inline-block;
 }
+
+.status.approved {
+  color: #388e3c;
+  background-color: #c8e6c9;
+}
+
+.status.rejected {
+  color: #d32f2f;
+  background-color: #ffcdd2;
+}
+
+.mat-elevation-z4 {
+  border-radius: 8px;
+}
+
+.mat-paginator {
+  margin-top: 20px;
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .loading-text {
+    color: white;
+    margin-top: 16px;
+  }
