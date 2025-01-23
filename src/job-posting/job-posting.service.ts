@@ -207,6 +207,8 @@ export class JobPostingService {
       const { curPage = 1, perPage = 10, whereClause } = pagination;
   
       let lwhereClause = 'job.is_deleted = 0';
+      const parameters: Record<string, any> = { is_deleted: 0 };
+  
       const isAdmin = req.user?.role === 'admin';
       const isApplicant = req.user?.role === 'applicant';
   
@@ -215,14 +217,51 @@ export class JobPostingService {
         lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}' AND job.jobpost_status != 'draft'`;
       }
   
+      // Fields to search across when "all" is used
+      const fieldsToSearch = [
+        'job.title',
+        'job.short_description',
+        'job.full_description',
+        'job.employer',
+        'job.job_type',
+        'job.work_type',
+        'job.qualifications',
+        'job.skills_required',
+        'job.city',
+        'job.address',
+        'job.country_code',
+        'job.state_code',
+        'job.rank',
+      ];
+  
+      // Add dynamic filtering
       if (Array.isArray(whereClause)) {
+        whereClause.forEach(({ key, value, operator }) => {
+          if (key === 'all' && value) {
+            // Search across all fields when "all" is used
+            const searches = fieldsToSearch
+              .map((field) => `${field} LIKE :all_search`)
+              .join(' OR ');
+            lwhereClause += ` AND (${searches})`;
+            parameters['all_search'] = `%${value}%`;
+          } else if (key && value && operator) {
+            // Handle specific key-value searches
+            if (operator.toUpperCase() === 'LIKE') {
+              lwhereClause += ` AND ${key} LIKE :${key}_search`;
+              parameters[`${key}_search`] = `%${value}%`;
+            } else {
+              lwhereClause += ` AND ${key} ${operator} :${key}_search`;
+              parameters[`${key}_search`] = value;
+            }
+          }
+        });
       }
   
       const skip = (curPage - 1) * perPage;
   
       const [list, totalCount] = await this.jobPostingRepository
         .createQueryBuilder('job')
-        .where(lwhereClause)
+        .where(lwhereClause, parameters)
         .skip(skip)
         .take(perPage)
         .orderBy('job.created_at', 'DESC')
@@ -239,6 +278,7 @@ export class JobPostingService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+  
  
   async findAll() {
     try {
