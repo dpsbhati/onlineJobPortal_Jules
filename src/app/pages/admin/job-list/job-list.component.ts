@@ -127,7 +127,7 @@ export class JobListComponent implements OnInit {
     this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
-        console.log('API Response:', res);
+        // console.log('API Response:', res);
         if (res.statusCode === 200) {
           this.jobPostingList = res.data;
           this.total = res.count || 0;
