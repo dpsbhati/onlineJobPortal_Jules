@@ -46,27 +46,28 @@ export class ApplicantDetailsComponent {
       this.loadApplicantDetails();
     });
   }
-
+   
   loadApplicantDetails() {
     this.spinner.show();
-    this.adminService.allApplicantDetails(this.userId).subscribe({
+    this.adminService.userDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
           this.adminComments = this.applicantDetails.comments ;
-          
+           
           // Parse key skills
-          if (response.data.user?.userProfile?.key_skills) {
+          if (response.data.userProfile?.key_skills) {
             try {
               // Remove forward slashes from skills when displaying
-              this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
+              this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
             } catch (e) {
               console.warn('Error parsing key_skills:', e);
-              this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ? 
-                response.data.user.userProfile.key_skills : [];
+              this.keySkills = Array.isArray(response.data.userProfile.key_skills) ? 
+                response.data.userProfile.key_skills : [];
             }
           }
+        
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
@@ -103,9 +104,9 @@ export class ApplicantDetailsComponent {
             // Get jobId from localStorage for navigation
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
-              this.router.navigate(['/job-applicants-list', jobId]);
+              this.router.navigate(['/applicants-details', jobId]);
             } else {
-              this.router.navigate(['/job-list']);
+              this.router.navigate(['/applications']);
             }
           } else {
             this.notifyService.showError(response.message || 'Failed to update status');

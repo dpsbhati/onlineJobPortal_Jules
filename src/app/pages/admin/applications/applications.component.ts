@@ -11,6 +11,9 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+// import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoaderService } from 'src/app/core/services/loader.service';
 export interface Application {
   position: number;
   name: string;
@@ -24,7 +27,9 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule, NgIf],
+  imports: [MatPaginatorModule,MaterialModule,NgClass,
+      MatOption, NgFor, NgxSpinnerModule, FormsModule, 
+        NgIf, NgIf],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
@@ -51,7 +56,8 @@ export class ApplicationsComponent {
   constructor(private adminService : AdminService,
               private notify : NotifyService,
               private router:  Router,
-              private route : ActivatedRoute
+              private route : ActivatedRoute,
+              private loader: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +82,8 @@ export class ApplicationsComponent {
 
 
   fetchApplications() {
-    this.isLoading = true;
+    // this.isLoading = true;
+    this.loader.show();
     const whereClause = [];
 
     if (this.selectedFilters.jobPostId) {
@@ -134,16 +141,19 @@ export class ApplicationsComponent {
             all : app.all,
             user_id : app.user_id
           }));
-          this.isLoading = false;
+          this.loader.hide();
+          // this.isLoading = false;
         } else {
-          this.isLoading = false;
+          // this.isLoading = false;
+          this.loader.hide();
           this.notify.showWarning('No matching records found.');
           this.dataSource.data = []; 
           this.totalApplications = 0; 
         }
       } else {
-        this.isLoading = false;
-        this.notify.showWarning(response.message || 'Failed to fetch data.');
+        // this.isLoading = false;
+        this.loader.hide();
+        this.notify.showError(response.message || 'Failed to fetch data.');
         this.dataSource.data = []; 
         this.totalApplications = 0; 
       }
@@ -194,20 +204,55 @@ export class ApplicationsComponent {
     // debugger
     this.router.navigate(['/applicant-details', applicantId]);
   }
-
   deleteApplicant(applicantId: any): void {
-    // debugger
-    const confirmed = confirm(`Are you sure you want to delete applicant: ${applicantId.name}?`);
-    if (confirmed) {
-      this.adminService.deleteApplicant(applicantId).subscribe({
-        next: () => {
-          this.notify.showSuccess('Applicant deleted successfully.');
-          this.fetchApplications();
-        },
-        error: () => {
-          this.notify.showError('Failed to delete applicant.');
-        },
-      });
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete the applicant.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loader.show();
+        this.adminService.deleteApplicant(applicantId).subscribe((response :any)=>{
+          if(response.statusCode=200) {
+            this.notify.showSuccess(response.message);
+            this.fetchApplications();
+            this.loader.hide();
+          }else{
+            this.notify.showWarning(response.message);
+            this.loader.hide();
+          }
+          (err: any) => {
+            this.loader.hide();
+            this.notify.showError(err?.error?.message);
+            
+          }
+        });
+      }
+    });
   }
+  
+
+  // deleteApplicant(applicantId: any): void {
+  //   // debugger
+  //   this.loader.show();
+  //   const confirmed = confirm(`Are you sure you want to delete applicant: ${applicantId.name}?`);
+  //   if (confirmed) {
+  //     this.adminService.deleteApplicant(applicantId).subscribe({
+  //       next: () => {
+  //         this.notify.showSuccess('Applicant deleted successfully.');
+  //         this.fetchApplications();
+  //         this.loader.hide();
+  //       },
+  //       error: () => {
+  //         this.notify.showError('Failed to delete applicant.');
+  //         this.loader.hide();
+  //       },
+  //     });
+  //   }
+  // }
 }

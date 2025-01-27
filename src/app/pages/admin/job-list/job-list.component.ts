@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { AdminService } from '../../../core/services/admin/admin.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
 import { NotifyService } from '../../../core/services/notify.service';
@@ -14,6 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   selector: 'app-job-list',
@@ -28,6 +29,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    NgxSpinnerModule,
+    NgIf
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
@@ -153,7 +156,7 @@ export class JobListComponent implements OnInit {
     this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
-        console.log('API Response:', res);
+        // console.log('API Response:', res);
         if (res.statusCode === 200) {
           this.jobPostingList = res.data;
           this.total = res.count || 0;
