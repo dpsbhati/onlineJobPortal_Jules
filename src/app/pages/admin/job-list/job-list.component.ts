@@ -5,8 +5,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
 import { NotifyService } from '../../../core/services/notify.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { AuthService } from '../../../core/services/authentication/auth.service';
 import { UserRole } from '../../../core/enums/roles.enum';
 import { MaterialModule } from '../../../material.module';
@@ -30,40 +28,68 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    NgxSpinnerModule
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
-  styles: [`
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .loading-text {
-      color: white;
-      margin-top: 16px;
-    }
-    .no-records-message {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .text-danger {
-      color: #dc3545;
-    }
-    .ms-2 {
-      margin-left: 0.5rem;
-    }
-  `],
+  // styles: [`
+  //   .breadcrumb-container {
+  //     background-color: #fff;
+  //     padding: 10px 20px;
+  //     border-radius: 4px;
+  //     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  //   }
+  //   .breadcrumb {
+  //     margin: 0;
+  //     padding: 0;
+  //     list-style: none;
+  //     display: flex;
+  //     align-items: center;
+  //   }
+  //   .breadcrumb-item {
+  //     font-size: 14px;
+  //     color: #6c757d;
+  //   }
+  //   .breadcrumb-item:not(:last-child):after {
+  //     content: ">";
+  //     margin: 0 8px;
+  //     color: #6c757d;
+  //   }
+  //   .breadcrumb-item.active {
+  //     color: #495057;
+  //     font-weight: 500;
+  //   }
+  //   .mb-3 {
+  //     margin-bottom: 1rem;
+  //   }
+  //   .loading-overlay {
+  //     position: fixed;
+  //     top: 0;
+  //     left: 0;
+  //     right: 0;
+  //     bottom: 0;
+  //     background-color: rgba(0, 0, 0, 0.7);
+  //     display: flex;
+  //     justify-content: center;
+  //     align-items: center;
+  //     z-index: 9999;
+  //   }
+  //   .loading-text {
+  //     color: white;
+  //     margin-top: 16px;
+  //   }
+  //   .no-records-message {
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //     padding: 20px;
+  //   }
+  //   .text-danger {
+  //     color: #dc3545;
+  //   }
+  //   .ms-2 {
+  //     margin-left: 0.5rem;
+  //   }
+  // `],
   encapsulation: ViewEncapsulation.None
 })
 export class JobListComponent implements OnInit {

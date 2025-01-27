@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CoreService } from 'src/app/services/core.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,6 +12,12 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserRole } from 'src/app/core/enums/roles.enum';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+interface RememberMeData {
+  email: string;
+  password: string;
+  timestamp: number;
+}
 
 @Component({
   selector: 'app-side-login',
@@ -58,11 +64,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     }
   `]
 })
-export class AppSideLoginComponent {
+export class AppSideLoginComponent implements OnInit {
   options = this.settings.getOptions();
   showPassword: boolean = false;
   isLoading: boolean = false;
   form: FormGroup;
+  private readonly STORAGE_KEY = 'rememberMeData';
+  private readonly EXPIRY_DAYS = 7;
 
   constructor(
     private settings: CoreService,
@@ -71,6 +79,9 @@ export class AppSideLoginComponent {
     private _snackBar: MatSnackBar
   ) {
     this.initializeForm();
+  }
+
+  ngOnInit() {
     this.loadSavedCredentials();
   }
 
@@ -80,32 +91,62 @@ export class AppSideLoginComponent {
       password: new FormControl('', [Validators.required]),
       rememberDevice: new FormControl(false)
     });
+
+    // Subscribe to remember device changes
+    this.form.get('rememberDevice')?.valueChanges.subscribe(checked => {
+      console.log('Remember device changed:', checked);
+      this.handleRememberDeviceChange(checked);
+    });
   }
 
-  private loadSavedCredentials(): void {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    const savedPassword = localStorage.getItem('rememberedPassword');
-    const rememberDevice = localStorage.getItem('rememberDevice');
+  loadSavedCredentials(): void {
+    console.log('Loading saved credentials');
+    const savedData = localStorage.getItem(this.STORAGE_KEY);
 
-    if (savedEmail && savedPassword && rememberDevice === 'true') {
-      this.form.patchValue({
-        email: savedEmail,
-        password: savedPassword,
-        rememberDevice: true
-      });
+    if (savedData) {
+      try {
+        const data: RememberMeData = JSON.parse(savedData);
+        const expiryTime = data.timestamp + (this.EXPIRY_DAYS * 24 * 60 * 60 * 1000);
+        
+        if (new Date().getTime() < expiryTime) {
+          this.form.patchValue({
+            email: data.email,
+            password: data.password,
+            rememberDevice: true
+          });
+          console.log('Credentials loaded into form');
+        } else {
+          console.log('Saved credentials expired');
+          this.clearSavedCredentials();
+        }
+      } catch (error) {
+        console.error('Error loading saved credentials:', error);
+        this.clearSavedCredentials();
+      }
     }
   }
 
-  private saveCredentials(): void {
-    if (this.form.get('rememberDevice')?.value) {
-      localStorage.setItem('rememberedEmail', this.form.get('email')?.value);
-      localStorage.setItem('rememberedPassword', this.form.get('password')?.value);
-      localStorage.setItem('rememberDevice', 'true');
+  saveCredentials(): void {
+    console.log('Saving credentials');
+    const rememberDevice = this.form.get('rememberDevice')?.value;
+    
+    if (rememberDevice) {
+      const rememberMeData: RememberMeData = {
+        email: this.form.get('email')?.value,
+        password: this.form.get('password')?.value,
+        timestamp: new Date().getTime()
+      };
+      
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
+      console.log('Credentials saved to localStorage');
     } else {
-      localStorage.removeItem('rememberedEmail');
-      localStorage.removeItem('rememberedPassword');
-      localStorage.removeItem('rememberDevice');
+      this.clearSavedCredentials();
     }
+  }
+
+  clearSavedCredentials(): void {
+    console.log('Clearing saved credentials');
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 
   get f() {
@@ -142,16 +183,15 @@ export class AppSideLoginComponent {
       const response = await this._authService.login({ email, password }).toPromise();
       
       if (response && response.statusCode === 200) {
-        this.saveCredentials();
-        const userData = response.data.User;
+        console.log('Login successful, handling remember me');
+        this.saveCredentials(); // This will check rememberDevice value internally
         
-        // Set token
+        // Set token and user data
         this._authService.accessToken = response.data.token;
-        
-        // Wait for user data to be set
+        const userData = response.data.User;
         await this._authService.setCurrentUser(userData);
 
-        this.showMessage(response.message || 'Login successful!');
+        this.showMessage('Login successful!');
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
@@ -160,12 +200,10 @@ export class AppSideLoginComponent {
           await this._router.navigate(['/starter'], { replaceUrl: true });
         }
       } else {
-        // Handle error response
         this.showMessage(response?.message || 'Invalid credentials. Please try again.', true);
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      // Handle error response from the server
       if (error.error && error.error.message) {
         this.showMessage(error.error.message, true);
       } else {
@@ -173,6 +211,14 @@ export class AppSideLoginComponent {
       }
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  handleRememberDeviceChange(checked: boolean): void {
+    if (checked) {
+      this.saveCredentials();
+    } else {
+      this.clearSavedCredentials();
     }
   }
 

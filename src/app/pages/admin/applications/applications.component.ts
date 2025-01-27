@@ -24,7 +24,7 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule],
+  imports: [MatPaginatorModule,MaterialModule,NgClass, MatOption, NgFor, NgxSpinnerModule, FormsModule, NgIf],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
