@@ -5,7 +5,7 @@
 .filters-container {
   display: flex;
   /* grid-template-columns: repeat(12, 1fr); */
-  gap: 300px;
+  gap: 100px;
   align-items: center;
   /* margin-bottom: 16px; */
   align-content: center;
@@ -18,12 +18,14 @@
 }
 
 .filter.search-filter {
-  width: 40%;
+  width: 30%;
 }
 
 .filter_right{
     display: flex;
     gap: 10px;
+    align-items: center;
+
 }
 .filter {
   width: 146px;
@@ -89,4 +91,9 @@
   mat-icon {
     margin-right: 8px;
   }
+}
+
+
+.mat-mdc-header-cell{
+  font-weight: 600;
 }

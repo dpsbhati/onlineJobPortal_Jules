@@ -10,8 +10,8 @@ import { CoreService } from 'src/app/services/core.service';
     <div class="branding d-none d-lg-flex align-items-center">
       <a [routerLink]="['/']" class="d-flex">
         <img
-          src="./assets/images/logos/logo.jpg"
-          class="align-middle m-2"
+          src="./assets/images/logos/NavilandsFaci.svg"
+          class="align-middle m-2 bg-white rouned rounded-circle"
           alt="Navilands"
         />
           <span class="branding-text ms-2">Navilands</span>

@@ -3,19 +3,17 @@
     <div class="row">
       <div class="col-lg-8 col-sm-6">
         <h4 class="page-title m-b-4 f-s-18 f-w-500">
-          {{ pageInfo?.['title'] }}
+          Administration{{ pageInfo?.['title'] }}
         </h4>
         <div class="d-flex align-items-center overflow-hidden justify-content-start list-style-none">
           <ul class="breadcrumb">
-            @for (url of pageInfo?.['urls']; track url.url;let index = $index,last
-            = $last ) { @if(!last){
-            <li class="breadcrumb-item" [routerLink]="url.url">
-              <a [routerLink]="url.url">{{ url.title }}</a>
+           
+            <li class="breadcrumb-item" >
+              <a >Applications</a>
             </li>
-            }@else {
             
-            <li class="breadcrumb-item active f-s-14">{{ url.title }}</li>
-            } }
+            <li class="breadcrumb-item active f-s-14">Applications list</li>
+            
           </ul>
         </div>
       </div>

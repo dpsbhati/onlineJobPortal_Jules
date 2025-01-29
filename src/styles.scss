@@ -8,7 +8,10 @@ body {
 .user-profile .profile-img{
     margin: auto !important;
 }
-
+body {
+  
+  overflow-x: hidden;
+}
 /* Toastr styles */
 @import 'ngx-toastr/toastr';
 
@@ -87,4 +90,9 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.mb-20{
+  margin-bottom: 20px;
+
 }

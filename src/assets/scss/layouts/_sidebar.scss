@@ -272,7 +272,7 @@
 
         .mdc-list-item__start,
         .mdc-list-item__primary-text {
-          color: $secondary;
+          color: #3e5964;
         }
       }
 
@@ -299,14 +299,14 @@
       }
 
       &.activeMenu {
-        background-color: var(--mat-sys-secondary);
+        background-color: #e7f2f8;
 
         .mdc-list-item__primary-text {
-          color: $white !important;
+          color: #3e5964 !important;
         }
 
         .mat-mdc-list-item-icon {
-          color: $white !important;
+          color: #3e5964 !important;
         }
       }
 
