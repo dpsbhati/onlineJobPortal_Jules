@@ -88,7 +88,7 @@
               >
                 <input matInput type="password" formControlName="password" [type]="showPassword ? 'text' : 'password'" />
                 <mat-icon matSuffix class="cursor-pointer" (click)="togglePasswordVisibility()">
-                  {{showPassword ? 'visibility_off' : 'visibility'}}
+                  {{showPassword ? 'visibility' : 'visibility_off'}}
                 </mat-icon>
                 @if(f['password'].touched && f['password'].invalid){
                 <mat-hint class="m-b-16 error-msg">
@@ -100,9 +100,11 @@
               </mat-form-field>
 
               <div class="d-flex align-items-center m-b-12">
-                <mat-checkbox color="primary"
-                  >Remember this Device</mat-checkbox
-                >
+                <mat-checkbox 
+                  color="primary"
+                  formControlName="rememberDevice"
+                  (change)="handleRememberDeviceChange($event.checked)"
+                >Remember this Device</mat-checkbox>
                 <a
                   [routerLink]="['/authentication/forgot-password']"
                   class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14"
@@ -142,4 +144,4 @@
     <mat-spinner [diameter]="50"></mat-spinner>
     <div class="loading-text">Please wait...</div>
   </div>
-</div>
+</div>  

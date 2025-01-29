@@ -29,7 +29,7 @@ export interface Application {
   selector: 'app-applications',
   imports: [MatPaginatorModule,MaterialModule,NgClass,
       MatOption, NgFor, NgxSpinnerModule, FormsModule, 
-        NgIf],
+        NgIf, NgIf],
   templateUrl: './applications.component.html',
   styleUrl: './applications.component.scss'
 })
