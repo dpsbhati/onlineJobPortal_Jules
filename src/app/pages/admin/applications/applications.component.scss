@@ -97,3 +97,14 @@
 .mat-mdc-header-cell{
   font-weight: 600;
 }
+.profile-img {
+  width: 32px;  /* Reduce size */
+  height: 32px; /* Keep it square */
+  border-radius: 50%; /* Circular shape */
+  object-fit: cover; /* Ensure proper scaling */
+}
+
+.m-l-12 {
+  margin-left: 12px; /* Adjust spacing */
+}
+
