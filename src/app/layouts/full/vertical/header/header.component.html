@@ -134,13 +134,13 @@
     mat-icon-button
     class="m-r-5 d-none d-lg-flex align-items-center justify-content-center"
   >
-    <img
+    <!-- <img
       [src]="selectedLanguage.icon"
       class="rounded-circle object-cover icon-20"
-    />
+    /> -->
   </button>
   <mat-menu #flags="matMenu" class="cardWithShadow" xPosition="before">
-    @for(lang of languages; track lang.icon) {
+    <!-- @for(lang of languages; track lang.icon) {
     <button mat-menu-item (click)="changeLanguage(lang)">
       <div class="d-flex align-items-center">
         <img
@@ -150,7 +150,7 @@
         <span class="f-s-14">{{ lang.language }}</span>
       </div>
     </button>
-    }
+    } -->
   </mat-menu>
 
   @if(options.theme=='light'){

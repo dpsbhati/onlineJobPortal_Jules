@@ -48,6 +48,7 @@ export class ApplicantDetailsComponent {
   }
    
   loadApplicantDetails() {
+    // debugger
     this.spinner.show();
     this.adminService.userDetails(this.userId).subscribe({
       next: (response: any) => {
