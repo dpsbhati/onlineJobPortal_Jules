@@ -7,12 +7,15 @@ import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { NotifyService } from '../../../core/services/notify.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { MaterialModule } from 'src/app/material.module';
 @Component({
   selector: 'app-applicant-details',
   imports: [ CommonModule, 
     FormsModule, 
     RouterModule,
-    NgxSpinnerModule],
+    NgxSpinnerModule,
+  MaterialModule],
   templateUrl: './applicant-details.component.html',
   styleUrl: './applicant-details.component.scss'
 })
@@ -31,7 +34,8 @@ export class ApplicantDetailsComponent {
     private router: Router,
     private adminService: AdminService,
     private notifyService: NotifyService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private loader: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -48,41 +52,78 @@ export class ApplicantDetailsComponent {
   }
    
   loadApplicantDetails() {
-    // debugger
-    this.spinner.show();
-    this.adminService.userDetails(this.userId).subscribe({
+      this.loader.show();
+    this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
           this.adminComments = this.applicantDetails.comments ;
-           
+          
           // Parse key skills
-          if (response.data.userProfile?.key_skills) {
+          if (response.data.user?.userProfile?.key_skills) {
             try {
               // Remove forward slashes from skills when displaying
-              this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
+              this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
             } catch (e) {
               console.warn('Error parsing key_skills:', e);
-              this.keySkills = Array.isArray(response.data.userProfile.key_skills) ? 
-                response.data.userProfile.key_skills : [];
+              this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ? 
+                response.data.user.userProfile.key_skills : [];
             }
           }
-        
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
+          this.loader.hide();
         } else {
-          this.notifyService.showError('Failed to load applicant details');
+          this.notifyService.showError(response.message);
+          this.loader.hide();
         }
-        this.spinner.hide();
+        this.loader.hide();
       },
       error: (error) => {
         this.notifyService.showError('Error loading applicant details');
-        this.spinner.hide();
+        this.loader.hide();
       }
     });
   }
+
+  // loadApplicantDetails() {
+  //   // debugger
+  //   this.spinner.show();
+  //   this.adminService.allApplicantDetails(this.userId).subscribe({
+  //     next: (response: any) => {
+  //       if (response.statusCode === 200) {
+  //         this.applicantDetails = response.data;
+  //         this.selectedStatus = this.applicantDetails.status;
+  //         this.adminComments = this.applicantDetails.comments ;
+           
+  //         // Parse key skills
+  //         if (response.data.userProfile?.key_skills) {
+  //           try {
+  //             // Remove forward slashes from skills when displaying
+  //             this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
+  //           } catch (e) {
+  //             console.warn('Error parsing key_skills:', e);
+  //             this.keySkills = Array.isArray(response.data.userProfile.key_skills) ? 
+  //               response.data.userProfile.key_skills : [];
+  //           }
+  //         }
+        
+
+  //         // Get certifications from courses_and_certification array
+  //         this.certifications = this.applicantDetails.job?.courses_and_certification || [];
+  //       } else {
+  //         this.notifyService.showError('Failed to load applicant details');
+  //       }
+  //       this.spinner.hide();
+  //     },
+  //     error: (error) => {
+  //       this.notifyService.showError('Error loading applicant details');
+  //       this.spinner.hide();
+  //     }
+  //   });
+  // }
 
   updateStatus(): void {
     if (!this.userId || !this.selectedStatus) {

@@ -8,13 +8,13 @@ import { CoreService } from 'src/app/services/core.service';
   imports: [RouterModule],
   template: `
     <div class="branding d-none d-lg-flex align-items-center">
-      <a [routerLink]="['/']" class="d-flex">
+      <a [routerLink]="['/']" class="d-flex align-items-center">
         <img
           src="./assets/images/logos/NavilandsFaci.svg"
           class="align-middle m-2 bg-white rouned rounded-circle"
           alt="Navilands"
         />
-          <span class="branding-text ms-2">Navilands</span>
+          <span class="branding-text ms-2 mt-2 f-w-100">Navilands</span>
       </a>
     </div>
   `,

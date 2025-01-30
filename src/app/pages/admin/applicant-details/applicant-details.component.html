@@ -1,10 +1,12 @@
 <div class="container" *ngIf="applicantDetails">
-    <div class="header">
-      <button (click)="goBack()" class="back-button">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <h2>Applicant Details</h2>
-    </div>
+  <div class="header d-flex align-items-center">
+    <button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="m-l-12">Applicant Details</h2>
+  </div>
+  
+  
   
     <!-- Application Status -->
     <div class="section status-section">
@@ -43,23 +45,23 @@
       <div class="info-grid">
         <div class="info-item">
           <label>Name:</label>
-          <span>{{applicantDetails.userProfile?.first_name}} {{applicantDetails.userProfile?.last_name}}</span>
+          <span>{{applicantDetails.user.userProfile?.first_name}} {{applicantDetails.user.userProfile?.last_name}}</span>
         </div>
         <div class="info-item">
           <label>Email:</label>
-          <span>{{applicantDetails.email}}</span>
+          <span>{{applicantDetails.user.email}}</span>
         </div>
         <div class="info-item">
           <label>Gender:</label>
-          <span>{{applicantDetails.userProfile?.gender}}</span>
+          <span>{{applicantDetails.user.userProfile?.gender}}</span>
         </div>
         <div class="info-item">
           <label>Date of Birth:</label>
-          <span>{{applicantDetails.userProfile?.dob | date}}</span>
+          <span>{{applicantDetails.user.userProfile?.dob | date}}</span>
         </div>
         <div class="info-item">
           <label>Mobile:</label>
-          <span>{{applicantDetails.userProfile?.mobile}}</span>
+          <span>{{applicantDetails.user.userProfile?.mobile}}</span>
         </div>
       </div>
     </div>
@@ -70,15 +72,15 @@
       <div class="info-grid">
         <div class="info-item">
           <label>Current Company:</label>
-          <span>{{applicantDetails.userProfile?.current_company}}</span>
+          <span>{{applicantDetails.user.userProfile?.current_company}}</span>
         </div>
         <div class="info-item">
           <label>Work Experience:</label>
-          <span>{{applicantDetails.userProfile?.work_experiences}}</span>
+          <span>{{applicantDetails.user.userProfile?.work_experiences}}</span>
         </div>
         <div class="info-item">
           <label>Expected Salary:</label>
-          <span>{{applicantDetails.userProfile?.expected_salary}}</span>
+          <span>{{applicantDetails.user.userProfile?.expected_salary}}</span>
         </div>
         <div class="info-item">
           <label>Key Skills:</label>
@@ -159,7 +161,7 @@
       </div>
     </div>
   </div>
-  
+<!--   
   <ngx-spinner 
     bdColor="rgba(0, 0, 0, 0.8)" 
     size="medium" 
@@ -167,5 +169,5 @@
     type="ball-clip-rotate" 
     [fullScreen]="true">
     <p style="color: white">Loading...</p>
-  </ngx-spinner>
+  </ngx-spinner> -->
   

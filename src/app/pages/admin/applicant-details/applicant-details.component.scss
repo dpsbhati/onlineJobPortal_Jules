@@ -394,3 +394,15 @@
     }
   }
   
+  .back-button mat-icon {
+    font-size: 24px;
+    color: #333; /* Adjust color as needed */
+    border-radius: 50%;
+  }
+  
+  .back-button:hover {
+    background: #f0f0f0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  

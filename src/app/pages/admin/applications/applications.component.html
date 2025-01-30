@@ -99,8 +99,10 @@
             <div class="m-l-12">
               <h6 class="f-s-14 f-w-500">
                 {{ element.name }}
+                <span class="text-muted">2nd Engineer</span>
               </h6>
             </div>
+            
           </div>
         </td>
       </ng-container>
@@ -137,7 +139,12 @@
       <!-- Job Post Column -->
       <ng-container matColumnDef="jobPost">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Job Post</th>
-        <td mat-cell *matCellDef="let element" class="text-primary">{{ element.jobPost }}</td>
+        <td mat-cell *matCellDef="let element" class="text-primary"> <a 
+         (click)="viewApplicantDetails(element.user_id)"
+         class="text-primary job-post-link"
+          (click)="$event.stopPropagation()">
+          {{ element.jobPost }}
+        </a></td>
       </ng-container>
   
       <!-- Applications Column -->
