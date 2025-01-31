@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserRole } from 'src/app/core/enums/roles.enum';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 interface RememberMeData {
   email: string;
   password: string;
@@ -29,7 +29,8 @@ interface RememberMeData {
     ReactiveFormsModule,
     AppAuthBrandingComponent,
     CommonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    ToastrModule
   ],
   templateUrl: './side-login.component.html',
   styles: [`
@@ -76,7 +77,8 @@ export class AppSideLoginComponent implements OnInit {
     private settings: CoreService,
     private _router: Router,
     private _authService: AuthService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private toastr : ToastrService
   ) {
     this.initializeForm();
   }
@@ -169,9 +171,9 @@ export class AppSideLoginComponent implements OnInit {
   async submit(): Promise<void> {
     if (this.form.invalid) {
       if (this.form.get('email')?.hasError('required') || this.form.get('password')?.hasError('required')) {
-        this.showMessage('Please fill in all required fields.', true);
+        this.toastr.warning('Please fill in all required fields.');
       } else if (this.form.get('email')?.hasError('email')) {
-        this.showMessage('Please enter a valid email address.', true);
+        this.toastr.warning('Please enter a valid email address.');
       }
       return;
     }
@@ -185,29 +187,29 @@ export class AppSideLoginComponent implements OnInit {
       if (response && response.statusCode === 200) {
         console.log('Login successful, handling remember me');
         this.saveCredentials(); // This will check rememberDevice value internally
-        
+        this.toastr.success(response.message);
         // Set token and user data
         this._authService.accessToken = response.data.token;
         const userData = response.data.User;
         await this._authService.setCurrentUser(userData);
 
-        this.showMessage('Login successful!');
+        // this.showMessage('Login successful!');
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
-          await this._router.navigate(['/starter'], { replaceUrl: true });
+          await this._router.navigate(['/dashboard'], { replaceUrl: true });
         } else {
-          await this._router.navigate(['/starter'], { replaceUrl: true });
+          await this._router.navigate(['/dashboard'], { replaceUrl: true });
         }
       } else {
-        this.showMessage(response?.message || 'Invalid credentials. Please try again.', true);
+        this.toastr.warning(response?.message || 'Invalid credentials. Please try again.',);
       }
     } catch (error: any) {
       console.error('Login error:', error);
       if (error.error && error.error.message) {
-        this.showMessage(error.error.message, true);
+        this.toastr.error(error.error.message, );
       } else {
-        this.showMessage('Unable to connect to the server. Please try again later.', true);
+        this.toastr.warning('Unable to connect to the server. Please try again later.',);
       }
     } finally {
       this.isLoading = false;

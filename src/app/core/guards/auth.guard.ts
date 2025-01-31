@@ -11,9 +11,10 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const token = localStorage.getItem('accessToken');
     const user = this.authService.currentUserValue;
+    console.log(user);
 
     // Check if token exists and is not expired
-    if (!token || this.isTokenExpired(token) || !user) {
+    if (!token || !user) {
       // Clear any stored auth data
       this.authService.logout();
       this.router.navigate(['/authentication/login']);

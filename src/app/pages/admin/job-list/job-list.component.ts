@@ -15,7 +15,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgxSpinnerModule } from 'ngx-spinner';
-
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService, ToastrModule } from 'ngx-toastr';
 @Component({
   selector: 'app-job-list',
   standalone: true,
@@ -30,7 +31,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MatInputModule,
     MatProgressSpinnerModule,
     NgxSpinnerModule,
-    NgIf
+    NgIf,
+    ToastrModule
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
@@ -133,7 +135,9 @@ export class JobListComponent implements OnInit {
     private router: Router,
     private helperService: HelperService,
     private notify: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private loader : LoaderService,
+    private toastr : ToastrService
   ) {
     this.userRole = this.authService.getUserRole();
     this.displayedColumns = this.isAdmin() ? 
@@ -152,7 +156,8 @@ export class JobListComponent implements OnInit {
   }
 
   onPagination(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
+    this.loader.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
@@ -160,18 +165,21 @@ export class JobListComponent implements OnInit {
         if (res.statusCode === 200) {
           this.jobPostingList = res.data;
           this.total = res.count || 0;
+          this.loader.hide();
           console.log('Loaded jobs:', this.jobPostingList);
         } else {
           this.jobPostingList = [];
           this.total = 0;
-          this.notify.showError(res.message);
+          this.loader.hide();
+          this.toastr.warning(res.message);
         }
         this.isLoading = false;
       },
       error: (err: any) => {
         console.error('API Error:', err);
         this.isLoading = false;
-        this.notify.showError(err?.error?.message);
+        this.loader.hide();
+        this.toastr.error(err?.error?.message);
         this.jobPostingList = [];
         this.total = 0;
       }
@@ -217,10 +225,12 @@ export class JobListComponent implements OnInit {
   }
 
   deleteJob(jobId: string) {
+    this.loader.show();
     if (confirm('Are you sure you want to delete this job?')) {
       this.adminService.deleteJob(jobId).subscribe({
         next: (response: any) => {
-          this.notify.showSuccess(response.message);
+          this.toastr.success(response.message);
+          this.loader.hide();
           // Refresh job data after deletion
           this.onPagination();
           // If the current page becomes empty after deletion, navigate to the previous page
@@ -230,7 +240,8 @@ export class JobListComponent implements OnInit {
           }
         },
         error: (error: any) => {
-          this.notify.showError(error?.message || "Failed to delete job.");
+          this.loader.hide();
+          this.toastr.error(error?.message || "Failed to delete job.");
         }
       });
     }

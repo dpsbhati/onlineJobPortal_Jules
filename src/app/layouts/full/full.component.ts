@@ -19,8 +19,9 @@ import { HeaderComponent } from './vertical/header/header.component';
 import { AppHorizontalHeaderComponent } from './horizontal/header/header.component';
 import { AppHorizontalSidebarComponent } from './horizontal/sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
-import { CustomizerComponent } from './shared/customizer/customizer.component';
+// import { CustomizerComponent } from './shared/customizer/customizer.component';
 import { AppAuthBrandingComponent } from './vertical/sidebar/auth-branding.component';
+import { AppSideLoginComponent } from 'src/app/pages/authentication/side-login/side-login.component';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -57,8 +58,7 @@ interface quicklinks {
     AppHorizontalHeaderComponent,
     AppHorizontalSidebarComponent,
     AppBreadcrumbComponent,
-    CustomizerComponent,
-    AppAuthBrandingComponent,
+    // CustomizerComponent,
   ],
   templateUrl: './full.component.html',
   styleUrls: [],

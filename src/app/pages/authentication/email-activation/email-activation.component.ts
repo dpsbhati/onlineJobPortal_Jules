@@ -9,9 +9,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-email-activation',
-  imports: [NgIf, MatProgressSpinner, MaterialModule, FormsModule],
+  imports: [NgIf, MatProgressSpinner, MaterialModule, FormsModule, ToastrModule],
   templateUrl: './email-activation.component.html',
   styleUrl: './email-activation.component.scss'
 })
@@ -28,18 +29,17 @@ export class EmailActivationComponent {
     private router: Router,
     private spinner: NgxSpinnerService,
     private _snackBar: MatSnackBar,
-    private notify: NotifyService
+    private notify: NotifyService,
+    private toastr : ToastrService,
   ) {}
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.token = params['token']; 
+    this.token = this.activatedRoute.snapshot.queryParams['token'];
       if (this.token) {
         this.verifyEmail(this.token);
       } else {
         this.errorMessage = 'Invalid token.';
       }
-    });
   }
   private showMessage(message: string, isError: boolean = false): void {
     this._snackBar.open(message, 'Close', {
@@ -58,20 +58,20 @@ export class EmailActivationComponent {
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.successMessage = 'Email verified successfully!';
-          this.notify.showSuccess(this.successMessage);
+          this.toastr.success(this.successMessage);
           setTimeout(() => {
             this.router.navigate(['authentication/login']);
           }, 2000);
         } else {
           this.errorMessage = 'Email verification failed. Please try again.';
-          this.notify.showWarning(this.errorMessage);
+          this.toastr.warning(this.errorMessage);
         }
         this.spinner.hide();
         this.loading = false;
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Email verification failed. Please try again.';
-        this.showMessage(this.errorMessage ?? 'Email verification failed.');
+        this.toastr.error(this.errorMessage ?? 'Email verification failed.');
         this.spinner.hide();
         this.loading = false;
       }
@@ -80,7 +80,7 @@ export class EmailActivationComponent {
 
   resendVerificationEmail(): void {
     if (!this.email) {
-      this.notify.showWarning('Please enter your email address');
+      this.toastr.warning('Please enter your email address');
       return;
     }
 
@@ -90,16 +90,16 @@ export class EmailActivationComponent {
     this.authService.resendVerificationEmail(this.email).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200 || response.statusCode === 201) {
-          this.notify.showSuccess('A new verification email has been sent. Please check your inbox.');
+          this.toastr.success(response.message);
           this.email = ''; // Clear the email input
         } else {
-          this.notify.showWarning(response.message || 'Failed to resend verification email');
+          this.toastr.warning(response.message || 'Failed to resend verification email');
         }
         this.spinner.hide();
         this.loading = false;
       },
       error: (error:any) => {
-        this.errorMessage =(error.error?.message || 'Failed to resend verification email');
+        this.toastr.error =(error.error?.message || 'Failed to resend verification email');
         this.spinner.hide();
         this.loading = false;
       }

@@ -11,12 +11,12 @@ export const PagesRoutes: Routes = [
     path: '',
     children: [
       {
-        path: 'starter',
+        path: 'dashboard',
         component: StarterComponent,
         data: {
           title: 'Administration',
           urls: [
-            { title: 'Applications', url: '/starter' },
+            { title: 'Applications', url: '/' },
             { title: 'Applications List' },
           ],
         },

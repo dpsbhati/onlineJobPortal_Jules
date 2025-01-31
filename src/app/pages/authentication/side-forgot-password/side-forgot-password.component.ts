@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { finalize } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-side-forgot-password',
   standalone: true,
@@ -22,7 +22,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     ReactiveFormsModule, 
     AppAuthBrandingComponent, 
     CommonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    ToastrModule
+   
   ],
   templateUrl: './side-forgot-password.component.html',
   styles: [`
@@ -77,7 +79,8 @@ export class SideForgotPasswordComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _authService: AuthService,
-    private _notifyService: NotifyService
+    private _notifyService: NotifyService,
+    private toastr : ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -97,9 +100,9 @@ export class SideForgotPasswordComponent implements OnInit {
   async submit(): Promise<void> {
     if (this.form.invalid) {
       if (this.form.get('email')?.hasError('required')) {
-        this._notifyService.showWarning('Please enter your email address');
+        this.toastr.warning('Please enter your email address');
       } else if (this.form.get('email')?.hasError('email')) {
-        this._notifyService.showWarning('Please enter a valid email address');
+        this.toastr.warning('Please enter a valid email address');
       }
       return;
     }
@@ -121,15 +124,15 @@ export class SideForgotPasswordComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            this._notifyService.showSuccess(response.message);
+            this.toastr.success(response.message);
             this._router.navigate(['/authentication/login']);
           } else {
-            this._notifyService.showError(response.message);
+            this.toastr.warning(response.message);
           }
         },
         error: (error) => {
           console.error('Forgot Password Error:', error);
-          this._notifyService.showError(error.error?.message || 'Enter a valid email');
+          this.toastr.error(error.error?.message || 'Enter a valid email');
         }
       });
   }

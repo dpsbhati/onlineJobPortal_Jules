@@ -50,27 +50,12 @@ export const AuthenticationRoutes: Routes = [
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
+        
       },
       {
-        path: '**',
-        redirectTo: 'error'
-      }
+        path: 'email-activation',
+        component: EmailActivationComponent,
+      },
     ],
-  },
-  {
-    path: 'email-activation',
-    component: EmailActivationComponent,
-  },
-  {
-    path: 'create-job-posting',
-    component: CreateJobPostingComponent,
-  },
-  {
-    path: 'applications',
-    component: ApplicationsComponent,
-  },
-  {
-    path: 'applicant-details/:id',
-    component: ApplicantDetailsComponent,
   },
 ];

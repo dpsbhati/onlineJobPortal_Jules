@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 // import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService, ToastrModule } from 'ngx-toastr';
 export interface Application {
   position: number;
   name: string;
@@ -57,7 +58,8 @@ export class ApplicationsComponent {
               private notify : NotifyService,
               private router:  Router,
               private route : ActivatedRoute,
-              private loader: LoaderService
+              private loader: LoaderService,
+              private toaster: ToastrService
   ) {}
 
   ngOnInit(): void {

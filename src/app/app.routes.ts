@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AuthGuard } from './core/guards/auth.guard';
-
+import { EmailActivationComponent } from './pages/authentication/email-activation/email-activation.component';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/authentication/login',
+    redirectTo: '/dashboard',
     pathMatch: 'full'
   },
   {
@@ -20,6 +20,7 @@ export const routes: Routes = [
             (m) => m.AuthenticationRoutes
           ),
       },
+      
     ],
   },
   {
@@ -32,8 +33,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       }
+     
     ],
   },
+
   {
     path: '**',
     redirectTo: 'authentication/error',

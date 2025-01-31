@@ -11,14 +11,15 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
-
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 // Strong password pattern
 const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
 // import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-side-register',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, NgIf],
+  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, NgIf,ToastrModule],
   templateUrl: './side-register.component.html',
 })
 export class AppSideRegisterComponent {
@@ -53,7 +54,9 @@ export class AppSideRegisterComponent {
     private router: Router,
     private notify: NotifyService,
     private spinner: NgxSpinnerService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private loader : LoaderService,
+    private toastr : ToastrService,
   ) {}
 
   togglePasswordVisibility(event: Event): void {
@@ -78,7 +81,7 @@ export class AppSideRegisterComponent {
   }
 
   onSubmit(): void {
-    this.spinner.show();
+    this.loader.show();
     if (this.registrationForm.invalid) {
       return;
     }
@@ -89,18 +92,19 @@ export class AppSideRegisterComponent {
     this.authService.registerUser(this.registrationForm.value).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200 || res.statusCode === 201) {
-          this.spinner.hide();
+      
           this.router.navigate(['authentication/login']);
-        this.notify.showSuccess(res.message)
+        this.toastr.success(res.message)
+        this.loader.hide();
           this.loading = false;
         } else {
-         this.notify.showWarning(res.message)
-          this.spinner.hide();
+         this.toastr.warning(res.message)
+         this.loader.hide();
         }
       },
       error: (error: any) => {
-        this.errorMessage = error.error?.message ||'An error occurred during registration.';
-        this.spinner.hide();
+        this.toastr.error = error.error?.message ||'An error occurred during registration.';
+        this.loader.hide();
       },
     });
   }

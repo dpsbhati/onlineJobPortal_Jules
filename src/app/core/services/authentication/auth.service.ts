@@ -61,6 +61,10 @@ export class AuthService {
     });
   }
 
+  // get currentUserValue(): any {
+  //   return this.currentUserSubject.value ?? JSON.parse(localStorage.getItem('user') ?? "");
+  // }
+
   get currentUserValue(): any {
     return this.currentUserSubject.value;
   }

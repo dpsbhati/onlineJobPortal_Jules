@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { finalize } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-side-reset-password',
   standalone: true,
@@ -68,7 +68,8 @@ export class SideResetPasswordComponent implements OnInit {
     private _router: Router,
     private _route: ActivatedRoute,
     private _authService: AuthService,
-    private _notifyService: NotifyService
+    private _notifyService: NotifyService,
+    private toastr : ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -142,15 +143,15 @@ export class SideResetPasswordComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
-            this._notifyService.showSuccess('Password reset successfully');
+            this.toastr.success('Password reset successfully');
             this._router.navigate(['/authentication/login']);
           } else {
-            this._notifyService.showError(response.message);
+            this.toastr.warning(response.message);
           }
         },
         error: (error) => {
           console.error('Reset Password Error:', error);
-          this._notifyService.showError(error.error?.message || 'Failed to reset password');
+          this.toastr.error(error.error?.message || 'Failed to reset password');
         }
       });
   }
