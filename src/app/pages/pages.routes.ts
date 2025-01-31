@@ -16,15 +16,23 @@ export const PagesRoutes: Routes = [
         data: {
           title: 'Administration',
           urls: [
-            { title: 'Applications', url: '/' },
+            { title: 'Applications', url: '/applications' },
             { title: 'Applications List' },
           ],
         },
         canActivate: [AuthGuard]
       },
+     
       {
         path: 'job-list',
         component: JobListComponent,
+        data: {
+          title: 'JobList',
+          urls: [
+            { title: 'All Job List', url: '/job-list' },
+            { title: 'Job deatils' },
+          ],
+        },
         canActivate: [AuthGuard]
       },
       {
@@ -45,6 +53,13 @@ export const PagesRoutes: Routes = [
       {
         path:'applications',
         component:ApplicationsComponent,
+        data: {
+          title: 'Administration',
+          urls: [
+            { title: 'Applications', url: '/applications' },
+            { title: 'Applications List' },
+          ],
+        },
         canActivate:[AuthGuard]
       },
       {

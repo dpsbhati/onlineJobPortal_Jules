@@ -64,7 +64,7 @@ export class EditProfileComponent implements OnInit {
     private spinner: NgxSpinnerService
   ) {
     this.userRole = localStorage.getItem('role') || '';
-    console.log('Current user role:', this.userRole);
+    // console.log('Current user role:', this.userRole);
   }
 
   ngOnInit(): void {

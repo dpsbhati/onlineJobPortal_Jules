@@ -232,7 +232,7 @@ export class AppBreadcrumbComponent {
       // tslint:disable-next-line - Disables all
       .subscribe((event) => {
         // tslint:disable-next-line - Disables all
-        this.titleService.setTitle(event['title'] + ' OnlineJobApplications');
+        this.titleService.setTitle((event['title'] || '') + ' Navilands Job Applications Portal');
         this.pageInfo = event;
       });
   }

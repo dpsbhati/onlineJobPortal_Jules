@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 @import '@angular-material-components/datetime-picker/theme/default-theme';
-@import "@danielmoncada/angular-datetime-picker/assets/style/picker.min.css";
+
 html, body {
   height: 100%;
   margin: 0;

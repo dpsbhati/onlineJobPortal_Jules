@@ -76,7 +76,7 @@
     
     <!-- Table -->
      <div class="mat-mdc-card p-20">
-
+<div class="table-responsive">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
       <!-- Position Column -->
       <ng-container matColumnDef="position">
@@ -99,8 +99,9 @@
             <div class="m-l-12">
               <h6 class="f-s-14 f-w-500">
                 {{ element.name }}
-                <span class="text-muted">2nd Engineer</span>
+                
               </h6>
+              <span class="text-muted">2nd Engineer</span>
             </div>
             
           </div>
@@ -209,10 +210,10 @@
         </td>
       </tr>
     </table>
-
-    
+  </div>
     <!-- Pagination -->
     <mat-paginator
+    *ngIf="(dataSource?.data?.length || 0) > 0"
     [length]="totalApplications"
     [pageSize]="pageSize"
     [pageIndex]="pageIndex"

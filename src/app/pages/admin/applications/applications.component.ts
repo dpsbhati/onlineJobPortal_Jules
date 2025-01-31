@@ -28,22 +28,41 @@ export interface Application {
 
 @Component({
   selector: 'app-applications',
-  imports: [MatPaginatorModule,MaterialModule,NgClass,
-      MatOption, NgFor, NgxSpinnerModule, FormsModule, 
-        NgIf, NgIf],
+  imports: [
+    MatPaginatorModule,
+    MaterialModule,
+    NgClass,
+    MatOption,
+    NgFor,
+    NgxSpinnerModule,
+    FormsModule,
+    NgIf,
+    ToastrModule,
+  ],
+  providers: [ToastrService],
   templateUrl: './applications.component.html',
-  styleUrl: './applications.component.scss'
+  styleUrl: './applications.component.scss',
 })
 export class ApplicationsComponent {
-  displayedColumns: string[] = ['position', 'name', 'email', 'mobile', 'dateOfApplication', 'jobPost', 'applications', 'status', 'action'];
+  displayedColumns: string[] = [
+    'position',
+    'name',
+    'email',
+    'mobile',
+    'dateOfApplication',
+    'jobPost',
+    'applications',
+    'status',
+    'action',
+  ];
   dataSource = new MatTableDataSource<Application>([]);
   totalApplications: number = 0;
   pageSize: number = 5;
   pageIndex: number = 0;
   jobPosts: { id: string; title: string }[] = [];
-  selectedJobPostId: string | null = null; 
+  selectedJobPostId: string | null = null;
   selectedFilters: any = {
-    all:null,
+    all: null,
     jobPostId: null,
     status: null,
     rank: null,
@@ -54,12 +73,13 @@ export class ApplicationsComponent {
   @ViewChild(MatSort) sort!: MatSort;
   isLoading: boolean = false;
   applicantId: string | null = null;
-  constructor(private adminService : AdminService,
-              private notify : NotifyService,
-              private router:  Router,
-              private route : ActivatedRoute,
-              private loader: LoaderService,
-              private toaster: ToastrService
+  constructor(
+    private adminService: AdminService,
+    private notify: NotifyService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private loader: LoaderService,
+    private toaster: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +89,7 @@ export class ApplicationsComponent {
     this.fetchJobPosts();
     this.fetchApplications();
   }
-  
+
   fetchJobPosts() {
     // debugger
     this.adminService.getJobPostings().subscribe((response: any) => {
@@ -81,7 +101,6 @@ export class ApplicationsComponent {
       }
     });
   }
-
 
   fetchApplications() {
     // this.isLoading = true;
@@ -126,41 +145,53 @@ export class ApplicationsComponent {
       direction: this.direction,
       whereClause,
     };
-   
-    this.adminService.applicationPagination(payload).subscribe((response: any) => {
-      if (response.statusCode === 200) {
-        if (response.data && response.data.length > 0) {
-          this.totalApplications = response.total || response.data.length;
-          this.dataSource.data = response.data.map((app: any, index: number) => ({
-            position: index + 1 + this.pageIndex * this.pageSize,
-            name: `${app.first_name} ${app.last_name}`,
-            email: app.email,
-            mobile: app.mobile,
-            dateOfApplication: new Date(app.applied_at).toDateString(),
-            jobPost: app.title,
-            applications: app.application_count,
-            status: app.status,
-            all : app.all,
-            user_id : app.user_id
-          }));
-          this.loader.hide();
-          // this.isLoading = false;
+
+    this.adminService
+      .applicationPagination(payload)
+      .subscribe((response: any) => {
+        if (response.statusCode === 200) {
+          if (response.data && response.data.length > 0) {
+            this.totalApplications = response.total || response.data.length;
+            this.dataSource.data = response.data.map(
+              (app: any, index: number) => ({
+                position: index + 1 + this.pageIndex * this.pageSize,
+                name: `${app.first_name} ${app.last_name}`,
+                email: app.email,
+                mobile: app.mobile,
+                // dateOfApplication: new Date(app.applied_at).toDateString(),
+                dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                }),
+                
+                jobPost: app.title,
+                applications: app.application_count,
+                status: app.status,
+                all: app.all,
+                user_id: app.user_id,
+              })
+            );
+            // this.toaster.success(response.message);
+            this.loader.hide();
+
+            // this.isLoading = false;
+          } else {
+            // this.isLoading = false;
+            this.loader.hide();
+            this.toaster.warning(response.message);
+            this.dataSource.data = [];
+            this.totalApplications = 0;
+          }
         } else {
           // this.isLoading = false;
           this.loader.hide();
-          this.notify.showWarning('No matching records found.');
-          this.dataSource.data = []; 
-          this.totalApplications = 0; 
+          this.toaster.error(response.message || 'Failed to fetch data.');
+          this.dataSource.data = [];
+          this.totalApplications = 0;
         }
-      } else {
-        // this.isLoading = false;
-        this.loader.hide();
-        this.notify.showError(response.message || 'Failed to fetch data.');
-        this.dataSource.data = []; 
-        this.totalApplications = 0; 
-      }
-    });
-    
+      });
   }
 
   applyFilter(event: Event) {
@@ -173,7 +204,7 @@ export class ApplicationsComponent {
   }
 
   filterByJobPost() {
-    this.pageIndex = 0; 
+    this.pageIndex = 0;
     this.fetchApplications();
   }
   onFilterChange(filterType: string, value: any) {
@@ -188,14 +219,13 @@ export class ApplicationsComponent {
   }
 
   clearFilters() {
- 
     this.selectedFilters = {
       all: null,
       jobPostId: null,
       status: null,
       rank: null,
     };
-    
+
     this.pageIndex = 0;
     if (this.paginator) {
       this.paginator.firstPage();
@@ -219,25 +249,25 @@ export class ApplicationsComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.loader.show();
-        this.adminService.deleteApplicant(applicantId).subscribe((response :any)=>{
-          if(response.statusCode=200) {
-            this.notify.showSuccess(response.message);
-            this.fetchApplications();
-            this.loader.hide();
-          }else{
-            this.notify.showWarning(response.message);
-            this.loader.hide();
-          }
-          (err: any) => {
-            this.loader.hide();
-            this.notify.showError(err?.error?.message);
-            
-          }
-        });
+        this.adminService
+          .deleteApplicant(applicantId)
+          .subscribe((response: any) => {
+            if ((response.statusCode = 200)) {
+              this.toaster.success(response.message);
+              this.fetchApplications();
+              this.loader.hide();
+            } else {
+              this.toaster.warning(response.message);
+              this.loader.hide();
+            }
+            (err: any) => {
+              this.loader.hide();
+              this.toaster.error(err?.error?.message);
+            };
+          });
       }
     });
   }
-  
 
   // deleteApplicant(applicantId: any): void {
   //   // debugger

@@ -17,6 +17,10 @@
 
 }
 
+
+
+
+
 .filter.search-filter {
   width: 30%;
 }
@@ -116,3 +120,32 @@
   text-decoration: underline; 
 }
 
+@media screen and (max-width: 1200px) {
+  .filters-container{
+    gap: 0px;
+  }
+}
+@media screen and (max-width: 768.98px){
+  .filters-container{
+    flex-direction: column;
+  }
+  .filter.search-filter {
+    width: 100%;
+}
+.filter_right {
+  gap: 25px;
+}
+}
+
+@media screen and (max-width: 754.98px){
+  .filter_right {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 0px;
+}
+.filter_right .filter{
+  width: 100%;
+}
+}

@@ -32,12 +32,12 @@ export class LoadingService {
   }
   start() {
     this.loading = true;
-    console.log('Loading started:', this.isLoading()); // Log loading state
+    // console.log('Loading started:', this.isLoading()); // Log loading state
   }
 
   stop() {
     this.loading = false;
-    console.log('Loading stop:', this.isLoading());
+    // console.log('Loading stop:', this.isLoading());
   }
 
   isLoading(): boolean {
