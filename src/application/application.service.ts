@@ -241,10 +241,13 @@ export class ApplicationService {
     if (application.statusCode == 200) {
       const data = application.data;
       data.is_deleted = true;
-      return await this.applicationRepository.save(data);
+      await this.applicationRepository.save(data);
+      return WriteResponse(200, {}, `Application deleted successfully.`);
     }
     return application;
   }
+  
+  
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
@@ -328,7 +331,7 @@ export class ApplicationService {
 
   async pagination(req: any, pagination: IPagination) {
     try {
-      const { curPage = 1, perPage = 10, whereClause } = pagination;
+      const { curPage = 1, perPage = 10, whereClause,   } = pagination;
   
       let lwhereClause = 'app.is_deleted = :is_deleted';
       const parameters: Record<string, any> = { is_deleted: false };
@@ -339,12 +342,12 @@ export class ApplicationService {
         'app.comments',
         'app.additional_info',
         'user.email',
-        'userProfile.mobile', 
+        'userProfile.mobile',
         'userProfile.first_name',
         'userProfile.last_name',
         'job.title',
         'app.job_id',
-        'userProfile.user_id', 
+        'userProfile.user_id',
       ];
   
       if (Array.isArray(whereClause)) {
@@ -373,11 +376,10 @@ export class ApplicationService {
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
         .leftJoinAndSelect('app.user', 'user')
-        .leftJoinAndSelect('user.userProfile', 'userProfile') // Ensure userProfile is joined
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
         .where(lwhereClause, parameters)
         .skip(skip)
         .take(perPage)
-        .orderBy('app.applied_at', 'DESC')
         .getManyAndCount();
   
       if (!list.length) {
@@ -385,6 +387,7 @@ export class ApplicationService {
       }
   
       const filteredApplications = list.map((application) => ({
+        application_id: application.id, // ✅ Added application ID
         status: application.status,
         mobile: application.user?.userProfile?.mobile || null,
         first_name: application.user?.userProfile?.first_name || null,
@@ -397,17 +400,14 @@ export class ApplicationService {
         application_count: totalCount,
       }));
   
-      return paginateResponse(
-        filteredApplications,
-        totalCount,
-        curPage,
-        perPage,
-      );
+      return paginateResponse(filteredApplications, totalCount, curPage, perPage);
     } catch (error) {
       console.error('Pagination Error:', error);
       return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
+  
+
   
 
   private async sendConfirmationEmail(application: any) {
