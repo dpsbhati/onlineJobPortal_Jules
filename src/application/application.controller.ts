@@ -71,12 +71,15 @@ export class ApplicationController {
 
   @Post('delete')
   @ApiOperation({ summary: 'Soft delete a specific application by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'The ID of the application to delete',
-    example: 'uuid',
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', example: 'uuid' },
+      },
+    },
   })
-  remove(@Param('id') id: string) {
+  remove(@Body('id') id: string) {
     return this.applicationService.remove(id);
   }
 
