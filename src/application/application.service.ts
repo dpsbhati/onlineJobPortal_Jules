@@ -129,30 +129,30 @@ export class ApplicationService {
 
   async findOne(id: string) {
     try {
-      // Fetch the application with its relations and order by applied_at and created_at in descending order
-      const application = await this.applicationRepository.findOne({
-        where: { id, is_deleted: false },
-        relations: [
-          'job',
-          'user',
-          'job.courses_and_certification',
-          'user.userProfile',
-        ],
-        order: {
-          applied_at: 'DESC', // Order by applied_at descending
-          created_at: 'DESC', // Order by created_at descending
-        },
-      });
+      if (!id) {
+        return WriteResponse(400, {}, 'Application ID is required');
+      }
+
+      console.log('Searching for application with ID:', id);
+
+      const application = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        .leftJoinAndSelect('job.courses_and_certification', 'courses')
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
+        .where('app.id = :id', { id: id.toString() })
+        .andWhere('app.is_deleted = false')
+        .getOne();
 
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
 
-      // Add comments and status to the response
       const response = {
         ...application,
-        comments: application.comments || 'No comments available', // Fallback if comments are null/undefined
-        status: application.status || 'No status available', // Fallback if status is null/undefined
+        comments: application.comments || 'No comments available',
+        status: application.status || 'No status available',
       };
 
       return WriteResponse(
@@ -246,8 +246,6 @@ export class ApplicationService {
     }
     return application;
   }
-  
-  
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
@@ -331,11 +329,11 @@ export class ApplicationService {
 
   async pagination(req: any, pagination: IPagination) {
     try {
-      const { curPage = 1, perPage = 10, whereClause,   } = pagination;
-  
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
+
       let lwhereClause = 'app.is_deleted = :is_deleted';
       const parameters: Record<string, any> = { is_deleted: false };
-  
+
       const fieldsToSearch = [
         'app.status',
         'app.description',
@@ -349,7 +347,7 @@ export class ApplicationService {
         'app.job_id',
         'userProfile.user_id',
       ];
-  
+
       if (Array.isArray(whereClause)) {
         whereClause.forEach(({ key, value, operator }) => {
           if (key === 'all' && value) {
@@ -369,9 +367,9 @@ export class ApplicationService {
           }
         });
       }
-  
+
       const skip = (curPage - 1) * perPage;
-  
+
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
@@ -381,11 +379,11 @@ export class ApplicationService {
         .skip(skip)
         .take(perPage)
         .getManyAndCount();
-  
+
       if (!list.length) {
         return WriteResponse(404, [], 'No records found.');
       }
-  
+
       const filteredApplications = list.map((application) => ({
         application_id: application.id, // ✅ Added application ID
         status: application.status,
@@ -399,16 +397,18 @@ export class ApplicationService {
         job_id: application.job?.id || null,
         application_count: totalCount,
       }));
-  
-      return paginateResponse(filteredApplications, totalCount, curPage, perPage);
+
+      return paginateResponse(
+        filteredApplications,
+        totalCount,
+        curPage,
+        perPage,
+      );
     } catch (error) {
       console.error('Pagination Error:', error);
       return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
-  
-
-  
 
   private async sendConfirmationEmail(application: any) {
     const transporter = nodemailer.createTransport({

@@ -1,5 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Req, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Req,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiParam,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -19,50 +37,59 @@ export class ApplicationController {
     return this.applicationService.applyForJob(createApplicationDto);
   }
 
-  @Get("get-all")
+  @Get('get-all')
   @ApiOperation({ summary: 'Retrieve all applications' })
   findAll() {
     return this.applicationService.findAll();
   }
 
-  @Get('get-one')
+  @Get(':id')
   @ApiOperation({ summary: 'Retrieve a specific application by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the application to retrieve', example: 'uuid' })
-  findOne(@Param('id') id: string) {
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the application to retrieve',
+    example: 'uuid',
+  })
+  async findOne(@Param('id') id: string) {
     return this.applicationService.findOne(id);
   }
 
   @Post('update')
   @ApiOperation({ summary: 'Update a specific application by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the application to update', example: 'uuid' })
-  
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the application to update',
+    example: 'uuid',
+  })
   update(
     @Param('id') id: string,
-     @Body() updateApplicationDto: UpdateApplicationDto,
-     @Req() req: any,
-    )
-   {
+    @Body() updateApplicationDto: UpdateApplicationDto,
+    @Req() req: any,
+  ) {
     return this.applicationService.update(id, updateApplicationDto, req.user);
   }
 
   @Post('delete')
   @ApiOperation({ summary: 'Soft delete a specific application by ID' })
-  @ApiParam({ name: 'id', description: 'The ID of the application to delete', example: 'uuid' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the application to delete',
+    example: 'uuid',
+  })
   remove(@Param('id') id: string) {
     return this.applicationService.remove(id);
   }
 
-
   @Post('pagination')
   @ApiBody({
-     schema: {
-       type: 'object',
-       properties: IPaginationSwagger,
-     },
-   })
-  async pagination(@Request() req: any,@Body() pagination: IPagination) {
-    return this.applicationService.paginateApplications(req,pagination);
-  }  
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+  async pagination(@Request() req: any, @Body() pagination: IPagination) {
+    return this.applicationService.paginateApplications(req, pagination);
+  }
 
   @Post('paginations')
   @ApiOperation({ summary: 'Paginate Applications with filtered keys' })
@@ -76,7 +103,6 @@ export class ApplicationController {
     @Req() req: any,
     @Body() pagination: IPagination, // Change @Query to @Body
   ) {
-    return this.applicationService.pagination( req,pagination);
+    return this.applicationService.pagination(req, pagination);
   }
-  
 }
