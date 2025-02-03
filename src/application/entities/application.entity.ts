@@ -74,7 +74,7 @@ export class applications {
   
 
   
-  @ManyToOne(() => Users) // Define relation with User
+  @ManyToOne(() => Users,(user) => user.applications) // Define relation with User
   @JoinColumn({ name: 'user_id' }) // Map the relation to the existing user_id column
   user: Users;
   

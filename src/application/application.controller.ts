@@ -53,7 +53,7 @@ export class ApplicationController {
   }
 
 
-  @Post('paginations')
+  @Post('pagination')
   @ApiBody({
      schema: {
        type: 'object',
@@ -64,7 +64,7 @@ export class ApplicationController {
     return this.applicationService.paginateApplications(req,pagination);
   }  
 
-  @Post('pagination')
+  @Post('paginations')
   @ApiOperation({ summary: 'Paginate Applications with filtered keys' })
   @ApiBody({
     schema: {
