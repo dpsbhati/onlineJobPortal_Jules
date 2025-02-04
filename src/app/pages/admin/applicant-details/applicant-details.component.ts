@@ -126,6 +126,7 @@ export class ApplicantDetailsComponent {
   // }
 
   updateStatus(): void {
+    
     if (!this.userId || !this.selectedStatus) {
       this.notifyService.showError('Please select a status');
       return;
@@ -143,7 +144,7 @@ export class ApplicantDetailsComponent {
         next: (response: any) => {
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
-            // Get jobId from localStorage for navigation
+          
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
               this.router.navigate(['/applicants-details', jobId]);

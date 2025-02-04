@@ -102,11 +102,12 @@ flex-wrap: wrap;
   font-weight: 600;
 }
 .profile-img {
-  width: 32px;  /* Reduce size */
-  height: 32px; /* Keep it square */
-  border-radius: 50%; /* Circular shape */
-  object-fit: cover; /* Ensure proper scaling */
+  width: 40px; 
+  height: 40px; 
+  border-radius: 80%; 
+  object-fit: cover; 
 }
+
 
 .m-l-12 {
   margin-left: 12px; 
