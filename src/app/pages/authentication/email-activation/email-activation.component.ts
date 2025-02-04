@@ -3,7 +3,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+
 import { NgIf } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MaterialModule } from 'src/app/material.module';
@@ -27,7 +27,7 @@ export class EmailActivationComponent {
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-    private spinner: NgxSpinnerService,
+  
     private _snackBar: MatSnackBar,
     private notify: NotifyService,
     private toastr : ToastrService,
@@ -51,7 +51,7 @@ export class EmailActivationComponent {
   }
 
   verifyEmail(token: string): void {
-    this.spinner.show();
+ 
     this.loading = true;
     
     this.authService.verifyEmail({ token }).subscribe({
@@ -66,13 +66,13 @@ export class EmailActivationComponent {
           this.errorMessage = 'Email verification failed. Please try again.';
           this.toastr.warning(this.errorMessage);
         }
-        this.spinner.hide();
+       
         this.loading = false;
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Email verification failed. Please try again.';
         this.toastr.error(this.errorMessage ?? 'Email verification failed.');
-        this.spinner.hide();
+       
         this.loading = false;
       }
     });
@@ -84,7 +84,6 @@ export class EmailActivationComponent {
       return;
     }
 
-    this.spinner.show();
     this.loading = true;
 
     this.authService.resendVerificationEmail(this.email).subscribe({
@@ -95,12 +94,12 @@ export class EmailActivationComponent {
         } else {
           this.toastr.warning(response.message || 'Failed to resend verification email');
         }
-        this.spinner.hide();
+   
         this.loading = false;
       },
       error: (error:any) => {
         this.toastr.error =(error.error?.message || 'Failed to resend verification email');
-        this.spinner.hide();
+       
         this.loading = false;
       }
     });

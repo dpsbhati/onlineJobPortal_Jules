@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import countries from '../../../core/helpers/country.json';
-import { NgxSpinnerService } from 'ngx-spinner';
+
 
 @Component({
   selector: 'app-create-job-posting',
@@ -59,7 +59,7 @@ export class CreateJobPostingComponent {
     private router : Router,
     private imageCompressionService :ImageCompressionService,
     // private notify :NotifyService,
-    private spinner : NgxSpinnerService,
+   
   ) {
     this.jobForm = new FormGroup({
       id: new FormControl(''),
@@ -303,10 +303,10 @@ export class CreateJobPostingComponent {
   
   getJobPosting(jobId: string): void {
     
-    this.spinner.show();
+ 
     this.adminService.getJobById(jobId).subscribe((response: any) => {
       if (response.statusCode === 200 && response.data) {
-        this.spinner.hide()
+ 
         const data = response.data;
           //  console.log(data);
           // const formattedImageUrl = data.featured_image.replace(/\\/g, '/');
@@ -369,7 +369,7 @@ export class CreateJobPostingComponent {
         
         
       } else {
-        this.spinner.hide();
+    
         console.error('Failed to retrieve job posting data', response.message);
       }
     });
@@ -378,7 +378,7 @@ export class CreateJobPostingComponent {
  
   onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0];
-    this.spinner.show()
+
     if (file) {
       // Create preview
       const reader = new FileReader();
@@ -402,7 +402,7 @@ export class CreateJobPostingComponent {
               this.adminService.uploadFile({ folderName, file: compressedFile, userId }).subscribe(
                 (response:any) => {
                 if(response.statusCode ===200){
-                  this.spinner.hide();
+              
                   // this.notify.showSuccess(response.message);
                   this.jobForm.patchValue({
                     [controlName]: response.data.path
@@ -410,19 +410,19 @@ export class CreateJobPostingComponent {
                
                 }
                 else {
-                  this.spinner.hide();
+  
                   // this.notify.showWarning(response.message);
                 }
                 },
                 (error:any) => {
                   console.error('Error uploading file:', error);
-                  this.spinner.hide();
+          
                 }
               );
             });
         })
       } else {
-        this.spinner.hide();
+       
         // this.notify.showWarning("Invalid image format")
       }
     }
@@ -436,7 +436,7 @@ export class CreateJobPostingComponent {
   }
   onSubmit(): void {
     // debugger
-    this.spinner.show();
+    
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
@@ -490,10 +490,9 @@ export class CreateJobPostingComponent {
       //     }
       //   });
     
-        this.spinner.show();
         this.adminService.createOrUpdateJobPosting(formValues).subscribe({
           next: (response:any) => {
-            this.spinner.hide();
+
             if (response.statusCode === 200) {
               // this.notify.showSuccess(response.message);
               this.router.navigate(['/job-list']);
@@ -502,7 +501,7 @@ export class CreateJobPostingComponent {
             }
           },
           error: (error:any) => {
-            this.spinner.hide();
+       
             // this.notify.showError(error.error?.message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
@@ -529,10 +528,10 @@ export class CreateJobPostingComponent {
     
     } 
     else {
-      this.spinner.hide();
+    
       // this.notify.showWarning("Failed to update the form")
     }
-    this.spinner.hide()
+  
   }
   navigate(){
     this.router.navigate(['/job-list']);

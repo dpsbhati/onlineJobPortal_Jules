@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { AppAuthBrandingComponent } from '../../../layouts/full/vertical/sidebar/auth-branding.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
@@ -53,7 +53,7 @@ export class AppSideRegisterComponent {
     private authService: AuthService,
     private router: Router,
     private notify: NotifyService,
-    private spinner: NgxSpinnerService,
+   
     private _snackBar: MatSnackBar,
     private loader : LoaderService,
     private toastr : ToastrService,

@@ -15,7 +15,7 @@ import { UserService } from '../../../core/services/user/user.service';
 import { AdminService } from '../../../core/services/admin/admin.service';
 import { ImageCompressionService } from '../../../core/services/image/image-compression.service';
 import { NotifyService } from '../../../core/services/notify.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+
 import { UserRole } from '../../../core/enums/roles.enum';
 
 @Component({
@@ -61,7 +61,7 @@ export class EditProfileComponent implements OnInit {
     private imageCompressionService: ImageCompressionService,
     private router: Router,
     private notify: NotifyService,
-    private spinner: NgxSpinnerService
+   
   ) {
     this.userRole = localStorage.getItem('role') || '';
     // console.log('Current user role:', this.userRole);
@@ -337,10 +337,10 @@ export class EditProfileComponent implements OnInit {
   }
 
   loadUserData(userId: string): void {
-    this.spinner.show();
+    
     this.userService.getUserById(userId).subscribe({
       next: (response: any) => {
-        this.spinner.hide();
+       
         if (response.statusCode === 200 && response.data) {
           const data = response.data;
           
@@ -390,7 +390,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.spinner.hide();
+       
         console.error('Error fetching user profile data:', error);
         this.notify.showError(error.error?.message || 'An error occurred while fetching user profile data');
       }

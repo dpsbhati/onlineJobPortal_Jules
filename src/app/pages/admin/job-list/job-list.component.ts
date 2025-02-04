@@ -14,7 +14,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NgxSpinnerModule } from 'ngx-spinner';
+
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 @Component({
@@ -30,7 +30,7 @@ import { ToastrService, ToastrModule } from 'ngx-toastr';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    NgxSpinnerModule,
+
     NgIf,
     ToastrModule
   ],

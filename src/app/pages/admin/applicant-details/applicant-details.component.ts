@@ -5,17 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { NotifyService } from '../../../core/services/notify.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { MaterialModule } from 'src/app/material.module';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-applicant-details',
   imports: [ CommonModule, 
     FormsModule, 
     RouterModule,
-    NgxSpinnerModule,
-  MaterialModule],
+  MaterialModule,ToastrModule],
   templateUrl: './applicant-details.component.html',
   styleUrl: './applicant-details.component.scss'
 })
@@ -28,14 +26,14 @@ export class ApplicantDetailsComponent {
   statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
   keySkills: string[] = [];
   certifications: any[] = [];
-
+  isLoading: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private adminService: AdminService,
     private notifyService: NotifyService,
-    private spinner: NgxSpinnerService,
-    private loader: LoaderService
+    private loader: LoaderService,
+    private toastr :ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -44,7 +42,7 @@ export class ApplicantDetailsComponent {
       this.jobId = localStorage.getItem('currentJobId') || '';
       
       if (!this.userId) {
-        this.notifyService.showError('Required parameters not found');
+        this.toastr.error('Required parameters not found');
         return;
       }
       this.loadApplicantDetails();
@@ -52,7 +50,8 @@ export class ApplicantDetailsComponent {
   }
    
   loadApplicantDetails() {
-      this.loader.show();
+      // this.loader.show();
+      this.isLoading = true; 
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
@@ -74,16 +73,17 @@ export class ApplicantDetailsComponent {
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-          this.loader.hide();
+          this.isLoading = false;
+          // this.loader.hide();
         } else {
-          this.notifyService.showError(response.message);
-          this.loader.hide();
+          this.toastr.warning(response.message);
+          this.isLoading = false;
         }
-        this.loader.hide();
+        this.isLoading = false;
       },
       error: (error) => {
-        this.notifyService.showError('Error loading applicant details');
-        this.loader.hide();
+        this.toastr.error(error?.error?.message || 'Error loading applicant details');
+        this.isLoading = false;
       }
     });
   }
@@ -131,7 +131,7 @@ export class ApplicantDetailsComponent {
       return;
     }
 
-    this.spinner.show();
+    this.isLoading = true; 
     const updateData = {
       status: this.selectedStatus,
       comments: this.adminComments,
@@ -142,7 +142,7 @@ export class ApplicantDetailsComponent {
       .subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
-            this.notifyService.showSuccess('Application status updated successfully');
+            this.toastr.success(response.message);
             // Get jobId from localStorage for navigation
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
@@ -151,14 +151,14 @@ export class ApplicantDetailsComponent {
               this.router.navigate(['/applications']);
             }
           } else {
-            this.notifyService.showError(response.message || 'Failed to update status');
+            this.toastr.warning(response.message || 'Failed to update status');
           }
-          this.spinner.hide();
+          this.isLoading = false;
         },
         error: (error) => {
           console.error('Error updating status:', error);
-          this.notifyService.showError(error?.error?.message || 'Error updating status');
-          this.spinner.hide();
+          this.toastr.error(error?.error?.message || 'Error updating status');
+          this.isLoading = false;
         }
       });
   }

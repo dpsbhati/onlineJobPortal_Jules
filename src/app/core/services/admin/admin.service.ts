@@ -45,9 +45,10 @@ export class AdminService {
     return this.genericService.Post<any>(`applications/pagination`, payload);
   }
   
-  deleteApplicant(id: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}user/delete-by-id/${id}`, {});
+  deleteApplicant(payload: { id: string }): Observable<any> {
+    return this.http.post(`${this.BASE_URL}applications/delete`, payload);
   }
+  
 
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
@@ -60,7 +61,7 @@ export class AdminService {
   }
 
   allApplicantDetails(applicantId: string): Observable<any> {
-    return this.genericService.Get(`applications/get-one?id=${applicantId}`);
+    return this.genericService.Get(`applications/${applicantId}`);
   }
   userDetails(applicantId: string): Observable<any> {
     return this.genericService.Get(`user/get-by-id/${applicantId}`);
