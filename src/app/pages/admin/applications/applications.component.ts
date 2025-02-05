@@ -36,7 +36,7 @@ export interface Application {
     NgClass,
     MatOption,
     NgFor,
-
+    
     FormsModule,
     NgIf,
     ToastrModule,
@@ -121,7 +121,7 @@ export class ApplicationsComponent {
     // debugger
     this.loader.show();
     const whereClause = this.helper.getAllFilters(this.selectedFilters); 
-     console.log(whereClause);
+    //  console.log(whereClause);
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
@@ -129,7 +129,7 @@ export class ApplicationsComponent {
       direction: this.direction,
       whereClause,
     };
-    console.log(whereClause);
+    // console.log(whereClause);
     this.adminService.applicationPagination(payload).subscribe((response: any) => {
       this.loader.hide();
       if (response.statusCode === 200) {
