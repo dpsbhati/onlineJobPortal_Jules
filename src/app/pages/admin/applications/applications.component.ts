@@ -11,7 +11,6 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
-// import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { HelperService } from 'src/app/core/helpers/helper.service';
@@ -121,7 +120,6 @@ export class ApplicationsComponent {
     // debugger
     this.loader.show();
     const whereClause = this.helper.getAllFilters(this.selectedFilters); 
-    //  console.log(whereClause);
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
@@ -129,7 +127,6 @@ export class ApplicationsComponent {
       direction: this.direction,
       whereClause,
     };
-    // console.log(whereClause);
     this.adminService.applicationPagination(payload).subscribe((response: any) => {
       this.loader.hide();
       if (response.statusCode === 200) {
@@ -249,39 +246,6 @@ export class ApplicationsComponent {
     });
   }
   
-  // deleteApplicant(applicantId: any): void {
-  //   // debugger
-  //   Swal.fire({
-  //     title: 'Are you sure?',
-  //     text: `You are about to delete the applicant.`,
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonColor: '#3085d6',
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Yes, delete it!',
-  //     cancelButtonText: 'Cancel',
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       this.loader.show();
-  //       this.adminService
-  //         .deleteApplicant(applicantId)
-  //         .subscribe((response: any) => {
-  //           if ((response.statusCode = 200)) {
-  //             this.toaster.success(response.message);
-  //             this.fetchApplications();
-  //             this.loader.hide();
-  //           } else {
-  //             this.toaster.warning(response.message);
-  //             this.loader.hide();
-  //           }
-  //           (err: any) => {
-  //             this.loader.hide();
-  //             this.toaster.error(err?.error?.message);
-  //           };
-  //         });
-  //     }
-  //   });
-  // }
   //   fetchApplications() {
 //     // this.isLoading = true;
 //     // debugger
