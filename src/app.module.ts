@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+// import { ConfigModule,ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { JobPostingModule } from './job-posting/job-posting.module';
 import { ApplicationModule } from './application/application.module';
@@ -16,29 +16,35 @@ import { JobScheduler } from './linkedin/linkedin.service';
 import { FacebookModule } from './facebook/facebook.module';
 import { CoursesAndCertificationModule } from './courses_and_certification/courses_and_certification.module';
 import { AttachmentModule } from './attachment/attachment.module';
+import { ConfigService } from './config.service';
+import { ConfigModule } from './config.module';
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, 
-      // Ensures ConfigService is available globally
-    }),
+    // ConfigModule.forRoot({
+    //   isGlobal: true, 
+    //   // Ensures ConfigService is available globally
+    // }),
+    ConfigModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, MailModule,ScheduleModule.forRoot()],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DB_HOST', '103.195.4.8'),
-        port: configService.get<number>('DB_PORT', 3306),
-        username: configService.get<string>('DB_USERNAME', 'admin_onlinejobportal'),
-        password: configService.get<string>('DB_PASSWORD', 'esh@len$1'),
-        database: configService.get<string>('DB_NAME', 'admin_onlinejobportal'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Set to false for production
-        timezone: 'UTC',
-        autoLoadEntities: true,
-      }),
-      inject: [ConfigService],
+      // useFactory: async (configService: ConfigService) => ({
+      //   type: 'mysql',
+      //   host: configService.get<string>('DB_HOST', ''),
+      //   port: configService.get<number>('DB_PORT', 3306),
+      //   username: configService.get<string>('DB_USERNAME', ''),
+      //   password: configService.get<string>('DB_PASSWORD', ''),
+      //   database: configService.get<string>('DB_NAME', ''),
+      //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      //   synchronize: false, // Set to false for production
+      //   timezone: 'UTC',
+      //   autoLoadEntities: true,
+      // }),
+      useFactory: (configService: ConfigService) =>
+      configService.getTypeOrmConfig(),
+      inject: [ConfigService], // Inject ConfigService
+    
     }),
     UserModule,
     JobPostingModule,
