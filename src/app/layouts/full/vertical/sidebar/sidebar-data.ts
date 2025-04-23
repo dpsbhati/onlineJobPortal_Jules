@@ -30,7 +30,7 @@ export const navItems: NavItem[] = [
     // chipClass: 'bg-secondary text-white',
     // chipContent: '9',
   },
- 
+
   {
     displayName: 'Job Postings',
     iconName: 'folder',
@@ -47,6 +47,7 @@ export const navItems: NavItem[] = [
         iconName: '',
         route: 'create-job-posting',
       },
+      
       {
         displayName: 'Categories',
         iconName: '',
@@ -65,16 +66,16 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Notifications',
     iconName: 'notification',
-    
+
     route: '/',
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
-    
+
   },
   {
     displayName: 'User',
     iconName: 'user',
     route: 'starter/edit-profile',
-   
+
   },
 ];
