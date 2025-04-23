@@ -12,157 +12,149 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Job Type</mat-label>
-        <mat-select [(ngModel)]="filters.job_type"
-                    (selectionChange)="onSearch()">
-           <mat-option value="Full-Time">Full Time</mat-option>
-           <mat-option value="Part-Time">Part Time</mat-option>
-           <mat-option value="Contract">Contract</mat-option>
+        <mat-select [(ngModel)]="filters.job_type" (selectionChange)="onSearch()">
+          <mat-option value="Full-Time">Full Time</mat-option>
+          <mat-option value="Part-Time">Part Time</mat-option>
+          <mat-option value="Contract">Contract</mat-option>
         </mat-select>
-        <button *ngIf="filters.job_type" 
-                matSuffix 
-                mat-icon-button 
-                aria-label="Clear" 
-                (click)="clearFilter($event, 'job_type')">
+        <button *ngIf="filters.job_type" matSuffix mat-icon-button aria-label="Clear"
+          (click)="clearFilter($event, 'job_type')">
           <mat-icon>clear</mat-icon>
         </button>
-       </mat-form-field>
+      </mat-form-field>
 
-       <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline">
         <mat-label>Rank</mat-label>
-        <mat-select [(ngModel)]="filters.rank"
-                    (selectionChange)="onSearch()">
+        <mat-select [(ngModel)]="filters.rank" (selectionChange)="onSearch()">
           <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
             {{rank}}
-           </mat-option>
+          </mat-option>
         </mat-select>
-        <button *ngIf="filters.rank" 
-                matSuffix 
-                mat-icon-button 
-                aria-label="Clear" 
-                (click)="clearFilter($event, 'rank')">
+        <button *ngIf="filters.rank" matSuffix mat-icon-button aria-label="Clear" (click)="clearFilter($event, 'rank')">
           <mat-icon>clear</mat-icon>
         </button>
-       </mat-form-field>
+      </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Status</mat-label>
-        <mat-select [(ngModel)]="filters.status"
-                    (selectionChange)="onSearch()">
-           <mat-option value="Active">Active</mat-option>
-           <mat-option value="Closed">Closed</mat-option>
-           <mat-option value="Draft">Draft</mat-option>
+        <mat-select [(ngModel)]="filters.status" (selectionChange)="onSearch()">
+          <mat-option value="Active">Active</mat-option>
+          <mat-option value="Closed">Closed</mat-option>
+          <mat-option value="Draft">Draft</mat-option>
         </mat-select>
-        <button *ngIf="filters.status" 
-                matSuffix 
-                mat-icon-button 
-                aria-label="Clear" 
-                (click)="clearFilter($event, 'status')">
+        <button *ngIf="filters.status" matSuffix mat-icon-button aria-label="Clear"
+          (click)="clearFilter($event, 'status')">
           <mat-icon>clear</mat-icon>
         </button>
-       </mat-form-field>
+      </mat-form-field>
     </div>
   </mat-card>
+  <div class="mat-mdc-card p-20">
+    <!-- Table -->
+    <table mat-table [dataSource]="jobPostingList" matSort class="mat-elevation-z8">
 
-  <!-- Table -->
-  <table mat-table [dataSource]="jobPostingList" matSort class="mat-elevation-z8">
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
+        </td>
+      </ng-container>
+      <!-- Title Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef>Job Title</th>
+        <td mat-cell *matCellDef="let element">{{element.title}}</td>
+      </ng-container>
 
- <!-- Position Column -->
- <ng-container matColumnDef="position">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
-  <td mat-cell *matCellDef="let element; let i = index">
-    {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
-   </td>
-</ng-container>
-        <!-- Title Column -->
-        <ng-container matColumnDef="title">
-          <th mat-header-cell *matHeaderCellDef>Job Title</th>
-          <td mat-cell *matCellDef="let element">{{element.title}}</td>
-       </ng-container>                                                                                                                                                                                                                        
+      <!-- Job Type Column -->
+      <ng-container matColumnDef="job_type">
+        <th mat-header-cell *matHeaderCellDef>Job Type</th>
+        <td mat-cell *matCellDef="let element">{{element.job_type}}</td>
+      </ng-container>
 
-       <!-- Job Type Column -->
-       <ng-container matColumnDef="job_type">
-          <th mat-header-cell *matHeaderCellDef>Job Type</th>
-          <td mat-cell *matCellDef="let element">{{element.job_type}}</td>
-       </ng-container>
+      <!-- Employer Column -->
+      <ng-container matColumnDef="employer">
+        <th mat-header-cell *matHeaderCellDef>Employer</th>
+        <td mat-cell *matCellDef="let element">{{element.employer}}</td>
+      </ng-container>
 
-       <!-- Employer Column -->
-       <ng-container matColumnDef="employer">
-          <th mat-header-cell *matHeaderCellDef>Employer</th>
-          <td mat-cell *matCellDef="let element">{{element.employer}}</td>
-       </ng-container>
+      <!-- Salary Column -->
+      <ng-container matColumnDef="salary">
+        <th mat-header-cell *matHeaderCellDef>Salary Range</th>
+        <td mat-cell *matCellDef="let element">
+          {{formatSalary(element.start_salary)}} - {{formatSalary(element.end_salary)}}
+        </td>
+      </ng-container>
 
-       <!-- Salary Column -->
-       <ng-container matColumnDef="salary">
-          <th mat-header-cell *matHeaderCellDef>Salary Range</th>
-          <td mat-cell *matCellDef="let element">
-           {{formatSalary(element.start_salary)}} - {{formatSalary(element.end_salary)}}
-          </td>
-       </ng-container>
+      <!-- Date Published Column -->
+      <ng-container matColumnDef="date_published">
+        <th mat-header-cell *matHeaderCellDef>Published Date</th>
+        <td mat-cell *matCellDef="let element">{{element.date_published | date:'mediumDate'}}</td>
+      </ng-container>
 
-       <!-- Date Published Column -->
-       <ng-container matColumnDef="date_published">
-          <th mat-header-cell *matHeaderCellDef>Published Date</th>
-          <td mat-cell *matCellDef="let element">{{element.date_published | date:'mediumDate'}}</td>
-       </ng-container>
+      <!-- Deadline Column -->
+      <ng-container matColumnDef="deadline">
+        <th mat-header-cell *matHeaderCellDef>Deadline</th>
+        <td mat-cell *matCellDef="let element">{{element.deadline | date:'mediumDate'}}</td>
+      </ng-container>
 
-       <!-- Deadline Column -->
-       <ng-container matColumnDef="deadline">
-          <th mat-header-cell *matHeaderCellDef>Deadline</th>
-          <td mat-cell *matCellDef="let element">{{element.deadline | date:'mediumDate'}}</td>
-       </ng-container>
+      <!-- Status Column -->
+      <ng-container matColumnDef="status" *ngIf="isAdmin()">
 
-       <!-- Status Column -->
-       <ng-container matColumnDef="status" *ngIf="isAdmin()">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">{{element.jobpost_status | titlecase}}</td>
-       </ng-container>
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element">
 
-       <!-- Actions Column -->
-       <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef>Action</th>
-          <td mat-cell *matCellDef="let element">
-           <button mat-icon-button [matMenuTriggerFor]="menu">
-              <mat-icon>more_vert</mat-icon>
-           </button>
-           <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="viewJob(element.id)">
-               <mat-icon>visibility</mat-icon>
-               View
-              </button>
-              <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
-               <mat-icon>edit</mat-icon>
-               Edit
-              </button>
-              <button mat-menu-item (click)="deleteJob(element.id)" *ngIf="isAdmin()">
-               <mat-icon>delete</mat-icon>
-               Delete
-              </button>
-           </mat-menu>
-          </td>
-       </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
-        <div class="no-records-message">
-          <mat-icon class="text-danger">error_outline</mat-icon>
-          <span class="text-danger ms-2">No records found</span>
-        </div>
-      </td>
-    </tr>
-  </table>
-   
-  <!-- Pagination -->
-  <mat-paginator
-  [length]="total"
-  [pageSize]="pageConfig.perPage"
-  [pageIndex]="pageConfig.curPage - 1"
-  [pageSizeOptions]="[5, 10, 20, 50, 100]"
-  [showFirstLastButtons]="true"
-  (page)="onPageChange($event)"
-  aria-label="Select page">
- </mat-paginator>
+
+          <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted bg-light-secondary text-secondary" >
+            {{element.jobpost_status | titlecase}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="viewJob(element.id)">
+              <mat-icon>visibility</mat-icon>
+              View
+            </button>
+            <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-menu-item (click)="deleteJob(element.id)" *ngIf="isAdmin()">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+          <div class="no-records-message">
+            <mat-icon class="text-danger">error_outline</mat-icon>
+            <span class="text-danger ms-2">No records found</span>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Pagination -->
+    <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
+      aria-label="Select page">
+    </mat-paginator>
+  </div>
+
 </div>
 
 <!-- <div class="loading-overlay" *ngIf="isLoading">

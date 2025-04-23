@@ -77,4 +77,10 @@ export const navItems: NavItem[] = [
     route: 'starter/edit-profile',
    
   },
+  {
+    displayName: 'Job Postings',
+    iconName: 'user',
+    route: 'job-postings',
+   
+  },
 ];
