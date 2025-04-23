@@ -37,8 +37,12 @@ export const routes: Routes = [
     ],
   },
 
+  // {
+  //   path: '**',
+  //   redirectTo: 'authentication/error',
+  // },
   {
     path: '**',
-    redirectTo: 'authentication/error',
+    redirectTo: 'authentication/Development-page',
   },
 ];

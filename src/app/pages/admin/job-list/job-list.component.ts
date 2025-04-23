@@ -217,7 +217,7 @@ export class JobListComponent implements OnInit {
   }
 
   viewJob(id: string) {
-    this.router.navigate(['/view-job', id]);
+    this.router.navigate(['/authentication/Development-page', id]);
   }
 
   editJob(id: string) {
