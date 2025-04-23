@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { TablerIconsModule } from 'angular-tabler-icons'
 import { MaterialModule } from 'src/app/material.module'
 import { CommonModule } from '@angular/common'
+import { SidebarService } from 'src/app/core/services/sidebar.service'
 
 @Component({
   selector: 'app-nav-item',
@@ -33,7 +34,6 @@ import { CommonModule } from '@angular/common'
   ]
 })
 export class AppNavItemComponent implements OnChanges {
-  
   @Output() toggleMobileLink: any = new EventEmitter<void>()
   @Output() notify: EventEmitter<boolean> = new EventEmitter<boolean>()
 
@@ -44,10 +44,22 @@ export class AppNavItemComponent implements OnChanges {
   @Input() item: NavItem | any
   @Input() depth: any
 
-  constructor (public navService: NavService, public router: Router) {
+  isCollapsed: boolean = false
+
+  constructor (
+    public sidebarService: SidebarService,
+    public navService: NavService,
+    public router: Router
+  ) {
     if (this.depth === undefined) {
       this.depth = 0
     }
+  }
+
+  ngOnInit(): void {
+    this.sidebarService.isCollapsed$.subscribe(value => {
+      this.isCollapsed = value
+    });
   }
 
   ngOnChanges () {

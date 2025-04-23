@@ -4,8 +4,10 @@
   <span class="caption-text">{{ item.navCap }}</span>
 </div>
 } @if(!item.navCap && !item.external && !item.twoLines) {
-<a mat-list-item (click)="onItemSelected(item)" [matTooltip]="!expanded ? item.displayName : null"
-   [ngClass]="{
+<a mat-list-item (click)="onItemSelected(item)" 
+  [matTooltip]="isCollapsed ? item.displayName : null"
+  [matTooltipPosition]="isCollapsed ? 'right' : 'left'"
+  [ngClass]="{
       'activeMenu': item.route
         ? router.isActive(item.route, true)
         : false,

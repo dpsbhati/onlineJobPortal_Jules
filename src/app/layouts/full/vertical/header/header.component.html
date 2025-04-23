@@ -6,7 +6,7 @@
   @if(showToggle) {
   <button
     mat-icon-button
-    (click)="toggleCollapsed.emit()"
+    (click)="toggleCollapse(); toggleCollapsed.emit()"
     class="d-flex justify-content-center"
   >
     <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>

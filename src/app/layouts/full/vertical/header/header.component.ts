@@ -4,60 +4,63 @@ import {
   EventEmitter,
   Input,
   ViewEncapsulation,
-} from '@angular/core';
-import { CoreService } from 'src/app/services/core.service';
-import { MatDialog } from '@angular/material/dialog';
-import { navItems } from '../sidebar/sidebar-data';
-import { TranslateService } from '@ngx-translate/core';
-import { TablerIconsModule } from 'angular-tabler-icons';
-import { MaterialModule } from 'src/app/material.module';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NgScrollbarModule } from 'ngx-scrollbar';
-import { BrandingComponent } from '../sidebar/branding.component';
-import { AppSettings } from 'src/app/config';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { Router } from '@angular/router';
+  ViewChild
+} from '@angular/core'
+import { CoreService } from 'src/app/services/core.service'
+import { MatDialog } from '@angular/material/dialog'
+import { navItems } from '../sidebar/sidebar-data'
+import { TranslateService } from '@ngx-translate/core'
+import { TablerIconsModule } from 'angular-tabler-icons'
+import { MaterialModule } from 'src/app/material.module'
+import { RouterModule } from '@angular/router'
+import { CommonModule } from '@angular/common'
+import { FormsModule } from '@angular/forms'
+import { NgScrollbarModule } from 'ngx-scrollbar'
+import { BrandingComponent } from '../sidebar/branding.component'
+import { AppSettings } from 'src/app/config'
+import { AuthService } from 'src/app/core/services/authentication/auth.service'
+import { Router } from '@angular/router'
+import { AppNavItemComponent } from '../sidebar/nav-item/nav-item.component'
+import { SidebarService } from 'src/app/core/services/sidebar.service'
 
 interface notifications {
-  id: number;
-  icon: string;
-  color: string;
-  title: string;
-  time: string;
-  subtitle: string;
+  id: number
+  icon: string
+  color: string
+  title: string
+  time: string
+  subtitle: string
 }
 
 interface inbox {
-  id: number;
-  bgcolor: string;
-  imagePath: string;
-  title: string;
-  time: string;
-  subtitle: string;
+  id: number
+  bgcolor: string
+  imagePath: string
+  title: string
+  time: string
+  subtitle: string
 }
 
 interface profiledd {
-  id: number;
-  title: string;
-  link: string;
-  new?: boolean;
+  id: number
+  title: string
+  link: string
+  new?: boolean
 }
 
 interface apps {
-  id: number;
-  icon: string;
-  color: string;
-  title: string;
-  subtitle: string;
-  link: string;
+  id: number
+  icon: string
+  color: string
+  title: string
+  subtitle: string
+  link: string
 }
 
 interface quicklinks {
-  id: number;
-  title: string;
-  link: string;
+  id: number
+  title: string
+  link: string
 }
 
 @Component({
@@ -71,101 +74,111 @@ interface quicklinks {
     BrandingComponent
   ],
   templateUrl: './header.component.html',
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class HeaderComponent {
-  @Input() showToggle = true;
-  @Input() toggleChecked = false;
-  @Output() toggleMobileNav = new EventEmitter<void>();
-  @Output() toggleMobileFilterNav = new EventEmitter<void>();
-  @Output() toggleCollapsed = new EventEmitter<void>();
+  @Input() showToggle = true
+  @Input() toggleChecked = false
+  @Output() toggleMobileNav = new EventEmitter<void>()
+  @Output() toggleMobileFilterNav = new EventEmitter<void>()
+  @Output() toggleCollapsed = new EventEmitter<void>()
 
-  userName: string = '';
-  isCollapse: boolean = false; // Initially hidden
+  userName: string = ''
+  isCollapse: boolean = false // Initially hidden
 
-  @Output() isCollapsed: boolean = false; // Initially hidden
-
-  toggleCollpase() {
-    this.isCollapse = !this.isCollapse; // Toggle visibility
+  toggleCollpase () {
+    this.isCollapse = !this.isCollapse // Toggle visibility
   }
 
-  showFiller = false;
+  showFiller = false
 
   public selectedLanguage: any = {
     language: 'English',
     code: 'en',
     type: 'US',
-    icon: '/assets/images/flag/icon-flag-en.svg',
-  };
+    icon: '/assets/images/flag/icon-flag-en.svg'
+  }
 
   public languages: any[] = [
     {
       language: 'English',
       code: 'en',
       type: 'US',
-      icon: '/assets/images/flag/icon-flag-en.svg',
+      icon: '/assets/images/flag/icon-flag-en.svg'
     },
     {
       language: 'Español',
       code: 'es',
-      icon: '/assets/images/flag/icon-flag-es.svg',
+      icon: '/assets/images/flag/icon-flag-es.svg'
     },
     {
       language: 'Français',
       code: 'fr',
-      icon: '/assets/images/flag/icon-flag-fr.svg',
+      icon: '/assets/images/flag/icon-flag-fr.svg'
     },
     {
       language: 'German',
       code: 'de',
-      icon: '/assets/images/flag/icon-flag-de.svg',
-    },
-  ];
+      icon: '/assets/images/flag/icon-flag-de.svg'
+    }
+  ]
 
-  @Output() optionsChange = new EventEmitter<AppSettings>();
+  @Output() optionsChange = new EventEmitter<AppSettings>()
 
-  options = this.settings.getOptions();
+  options = this.settings.getOptions()
 
-  constructor(
+  isCollapsed: boolean = false // Initially hidden
+
+  constructor (
     private settings: CoreService,
     private vsidenav: CoreService,
     public dialog: MatDialog,
     private translate: TranslateService,
     private authService: AuthService,
-    private _router: Router
+    private _router: Router,
+    private sidebarService: SidebarService
   ) {
-    translate.setDefaultLang('en');
-    this.loadUserName();
+    translate.setDefaultLang('en')
+    this.loadUserName()
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(AppSearchDialogComponent);
+  ngOnInit () {
+    this.sidebarService.setCollapsed(this.isCollapsed);
+  }
 
-    dialogRef.afterClosed().subscribe((result) => {
+  toggleCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+    this.sidebarService.setCollapsed(this.isCollapsed); // Share value
+  }
+
+  openDialog () {
+    const dialogRef = this.dialog.open(AppSearchDialogComponent)
+
+    dialogRef.afterClosed().subscribe(result => {
       // console.log(`Dialog result: ${result}`);
-    });
+    })
   }
 
-  changeLanguage(lang: any): void {
-    this.translate.use(lang.code);
-    this.selectedLanguage = lang;
+  changeLanguage (lang: any): void {
+    this.translate.use(lang.code)
+    this.selectedLanguage = lang
   }
 
-  setlightDark(theme: string) {
-    this.options.theme = theme;
-    this.emitOptions();
+  setlightDark (theme: string) {
+    this.options.theme = theme
+    this.emitOptions()
   }
 
-  private emitOptions() {
-    this.optionsChange.emit(this.options);
+  private emitOptions () {
+    this.optionsChange.emit(this.options)
   }
 
-  private loadUserName() {
-    const currentUser = this.authService.currentUserValue;
+  private loadUserName () {
+    const currentUser = this.authService.currentUserValue
     if (currentUser && currentUser.userProfile) {
-      const firstName = currentUser.userProfile.first_name;
-      const lastName = currentUser.userProfile.last_name;
-      this.userName = `${firstName} ${lastName}`.trim();
+      const firstName = currentUser.userProfile.first_name
+      const lastName = currentUser.userProfile.last_name
+      this.userName = `${firstName} ${lastName}`.trim()
     }
   }
 
@@ -176,7 +189,7 @@ export class HeaderComponent {
       color: 'primary',
       time: '9:00 AM',
       title: 'Job Created',
-      subtitle: 'New job posting for “Chief Engineer” created.',
+      subtitle: 'New job posting for “Chief Engineer” created.'
     },
     {
       id: 2,
@@ -184,19 +197,17 @@ export class HeaderComponent {
       color: 'success',
       time: '8:45 AM',
       title: 'Application Received',
-      subtitle: 'You have received 3 new applications.',
+      subtitle: 'You have received 3 new applications.'
     },
-      {
+    {
       id: 4,
       icon: 'edit',
       color: 'warning',
       time: '8:00 AM',
       title: 'Job Updated',
-      subtitle: '“First Officer” job post details modified.',
-    },
-   
-  ];
-  
+      subtitle: '“First Officer” job post details modified.'
+    }
+  ]
 
   inbox: inbox[] = [
     {
@@ -205,7 +216,7 @@ export class HeaderComponent {
       imagePath: 'assets/images/profile/user-6.jpg',
       time: 'just now',
       title: 'Michell Flintoff',
-      subtitle: 'You: Yesterdy was great...',
+      subtitle: 'You: Yesterdy was great...'
     },
     {
       id: 2,
@@ -213,7 +224,7 @@ export class HeaderComponent {
       imagePath: 'assets/images/profile/user-2.jpg',
       time: '5 mins ago',
       title: 'Bianca Anderson',
-      subtitle: 'Nice looking dress you...',
+      subtitle: 'Nice looking dress you...'
     },
     {
       id: 3,
@@ -221,7 +232,7 @@ export class HeaderComponent {
       imagePath: 'assets/images/profile/user-3.jpg',
       time: '10 mins ago',
       title: 'Andrew Johnson',
-      subtitle: 'Sent a photo',
+      subtitle: 'Sent a photo'
     },
     {
       id: 4,
@@ -229,7 +240,7 @@ export class HeaderComponent {
       imagePath: 'assets/images/profile/user-4.jpg',
       time: 'days ago',
       title: 'Marry Strokes',
-      subtitle: 'If I don’t like something',
+      subtitle: 'If I don’t like something'
     },
     {
       id: 5,
@@ -237,31 +248,31 @@ export class HeaderComponent {
       imagePath: 'assets/images/profile/user-5.jpg',
       time: 'year ago',
       title: 'Josh Anderson',
-      subtitle: '$230 deducted from account',
-    },
-  ];
+      subtitle: '$230 deducted from account'
+    }
+  ]
 
   profiledd: profiledd[] = [
     {
       id: 6,
       title: 'Sign Out',
-      link: '/authentication/login',
-    },
-  ];
+      link: '/authentication/login'
+    }
+  ]
 
-  signOut(): void {
+  signOut (): void {
     // Clear all authentication data
-    localStorage.clear();
-    
+    localStorage.clear()
+
     // Clear specific items to ensure they're removed
-    localStorage.removeItem('rememberedEmail');
-    localStorage.removeItem('rememberedPassword');
-    localStorage.removeItem('rememberDevice');
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    
+    localStorage.removeItem('rememberedEmail')
+    localStorage.removeItem('rememberedPassword')
+    localStorage.removeItem('rememberDevice')
+    localStorage.removeItem('currentUser')
+    localStorage.removeItem('token')
+
     // Navigate to login
-    this._router.navigate(['/authentication/login']);
+    this._router.navigate(['/authentication/login'])
   }
 
   apps: apps[] = [
@@ -271,7 +282,7 @@ export class HeaderComponent {
       color: 'primary',
       title: 'Chat Application',
       subtitle: 'Messages & Emails',
-      link: '/',
+      link: '/'
     },
     {
       id: 2,
@@ -279,7 +290,7 @@ export class HeaderComponent {
       color: 'secondary',
       title: 'Todo App',
       subtitle: 'Completed task',
-      link: '/',
+      link: '/'
     },
     {
       id: 3,
@@ -287,7 +298,7 @@ export class HeaderComponent {
       color: 'success',
       title: 'Invoice App',
       subtitle: 'Get latest invoice',
-      link: '/',
+      link: '/'
     },
     {
       id: 4,
@@ -295,7 +306,7 @@ export class HeaderComponent {
       color: 'error',
       title: 'Calendar App',
       subtitle: 'Get Dates',
-      link: '/',
+      link: '/'
     },
     {
       id: 5,
@@ -303,7 +314,7 @@ export class HeaderComponent {
       color: 'warning',
       title: 'Contact Application',
       subtitle: '2 Unsaved Contacts',
-      link: '/',
+      link: '/'
     },
     {
       id: 6,
@@ -311,7 +322,7 @@ export class HeaderComponent {
       color: 'primary',
       title: 'Tickets App',
       subtitle: 'Create new ticket',
-      link: '/',
+      link: '/'
     },
     {
       id: 7,
@@ -319,7 +330,7 @@ export class HeaderComponent {
       color: 'secondary',
       title: 'Email App',
       subtitle: 'Get new emails',
-      link: '/',
+      link: '/'
     },
     {
       id: 8,
@@ -327,58 +338,58 @@ export class HeaderComponent {
       color: 'warning',
       title: 'Courses',
       subtitle: 'Create new course',
-      link: '/',
-    },
-  ];
+      link: '/'
+    }
+  ]
   quicklinks: quicklinks[] = [
     {
       id: 1,
       title: 'Pricing Page',
-      link: '/',
+      link: '/'
     },
     {
       id: 2,
       title: 'Authentication Design',
-      link: '/',
+      link: '/'
     },
     {
       id: 3,
       title: 'Register Now',
-      link: '/authentication/register',
+      link: '/authentication/register'
     },
     {
       id: 4,
       title: '404 Error Page',
-      link: '/authentication/error',
+      link: '/authentication/error'
     },
     {
       id: 5,
       title: 'Notes App',
-      link: '/',
+      link: '/'
     },
     {
       id: 6,
       title: 'Employee App',
-      link: '/',
+      link: '/'
     },
     {
       id: 7,
       title: 'Todo Application',
-      link: '/',
-    },
-  ];
+      link: '/'
+    }
+  ]
 }
 
 @Component({
   selector: 'search-dialog',
   imports: [RouterModule, MaterialModule, TablerIconsModule, FormsModule],
-  templateUrl: 'search-dialog.component.html',
+  templateUrl: 'search-dialog.component.html'
 })
 export class AppSearchDialogComponent {
-  searchText: string = '';
-  navItems = navItems;
+  searchText: string = ''
+  navItems = navItems
 
-  navItemsData = navItems.filter((navitem) => navitem.displayName);
+  navItemsData = navItems.filter(navitem => navitem.displayName)
 
   // filtered = this.navItemsData.find((obj) => {
   //   return obj.displayName == this.searchinput;
