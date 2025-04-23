@@ -47,7 +47,7 @@ export const navItems: NavItem[] = [
         iconName: 'point',
         route: 'create-job-posting',
       },
-      
+
       {
         displayName: 'Categories',
         iconName: 'point',
@@ -67,7 +67,7 @@ export const navItems: NavItem[] = [
     displayName: 'Notifications',
     iconName: 'notification',
 
-    route: '/',
+    route: '/authentication/Development-page',
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
 
@@ -82,6 +82,6 @@ export const navItems: NavItem[] = [
   //   displayName: 'Job Postings',
   //   iconName: 'user',
   //   route: 'job-postings',
-   
+
   // },
 ];
