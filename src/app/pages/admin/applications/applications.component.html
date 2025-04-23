@@ -1,210 +1,184 @@
 <div class="mat-elevation-z4 p-4">
-    <!-- Filters -->
-    <mat-card class="cardWithShadow outlined-card">
-        <div class="filters-container">
-          
-            <!-- Search Filter -->
-            <div class="filter search-filter">
-                <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Search Applicant</mat-label>
-                    
-                    <input
-                        matInput
-                        placeholder="Search Applicant"
-                        [(ngModel)]="selectedFilters.all"
-                        (keyup.enter)="onFilterChange('all', selectedFilters.all)"
-                    />
-                    <mat-icon matSuffix>search</mat-icon>
-                </mat-form-field>
-            </div>
-            
-          <div class="filter_right ">
-           <h4 class="mb-20">  Filters </h4>
-            <!-- Rank Filter -->
-            <div class="filter">
-              <mat-form-field appearance="outline">
-                <mat-label>Rank</mat-label>
-                <mat-select
-                  [(value)]="selectedFilters.rank"
-                  (selectionChange)="onFilterChange('rank', $event.value)"
-                >
-                  <mat-option value="rank1">Rank 1</mat-option>
-                  <mat-option value="rank2">Rank 2</mat-option>
-                  <mat-option value="rank3">Rank 3</mat-option>
-                </mat-select>
-                
-              </mat-form-field>
-              
-            </div>
-            <!-- Job Post Filter -->
-            <div class="filter">
-              <mat-form-field appearance="outline">
-                <mat-label>Job Post</mat-label>
-                <mat-select
-                  [(value)]="selectedFilters.job_id"
-                  (selectionChange)="onFilterChange('job_id', $event.value)"
-                >
-                  <mat-option *ngFor="let jobPost of jobPosts" [value]="jobPost.id">
-                    {{ jobPost.title }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-    
-            <!-- Status Filter -->
-            <div class="filter">
-              <mat-form-field appearance="outline">
-                <mat-label>Status</mat-label>
-                <mat-select
-                  [(value)]="selectedFilters.status"
-                  (selectionChange)="onFilterChange('status', $event.value)"
-                >
-                  <mat-option value="Hired">Approved</mat-option>
-                  <mat-option value="Pending">In Review</mat-option>
-                  <mat-option value="Rejected">Rejected</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-            
-          
-            <button mat-button color="primary" class="mb-20" (click)="clearFilters()">
-              Clear
-            </button>
-          </div>
+  <!-- Filters -->
+  <mat-card class="cardWithShadow outlined-card">
+    <div class="filters-container">
+
+      <!-- Search Filter -->
+      <div class="filter search-filter">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search Applicant</mat-label>
+
+          <input matInput placeholder="Search Applicant" [(ngModel)]="selectedFilters.all"
+            (keyup.enter)="onFilterChange('all', selectedFilters.all)" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="filter_right ">
+        <h4 class="mb-20"> Filters </h4>
+        <!-- Rank Filter -->
+        <div class="filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Rank</mat-label>
+            <mat-select [(value)]="selectedFilters.rank" (selectionChange)="onFilterChange('rank', $event.value)">
+              <mat-option value="rank1">Rank 1</mat-option>
+              <mat-option value="rank2">Rank 2</mat-option>
+              <mat-option value="rank3">Rank 3</mat-option>
+            </mat-select>
+
+          </mat-form-field>
+
         </div>
-      </mat-card>
-    
-    <!-- Table -->
- <div class="mat-mdc-card p-20">
-<div class="table-responsive">
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-        <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-      </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 p-l-0">
-          Name
-        </th>
-        <td mat-cell *matCellDef="let element" class="p-l-0">
-          <div class="d-flex align-items-center">
-            <img 
-              src="assets/images/profile/user.webp" 
-              alt="Profile" 
-              width="40" class="rounded-circle"
-            />
-            <div class="m-l-12">
-              <h6 class="f-s-14 f-w-500">
-                {{ element.name }}
-                
-              </h6>
-              <span class="text-muted">2nd Engineer</span>
+        <!-- Job Post Filter -->
+        <div class="filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Job Post</mat-label>
+            <mat-select [(value)]="selectedFilters.job_id" (selectionChange)="onFilterChange('job_id', $event.value)">
+              <mat-option *ngFor="let jobPost of jobPosts" [value]="jobPost.id">
+                {{ jobPost.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter">
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select [(value)]="selectedFilters.status" (selectionChange)="onFilterChange('status', $event.value)">
+              <mat-option value="Hired">Approved</mat-option>
+              <mat-option value="Pending">In Review</mat-option>
+              <mat-option value="Rejected">Rejected</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+
+        <button mat-button color="primary" class="mb-20" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Table -->
+  <div class="mat-mdc-card p-20">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14 p-l-0">
+            Name
+          </th>
+          <td mat-cell *matCellDef="let element" class="p-l-0">
+            <div class="d-flex align-items-center">
+              <img src="assets/images/profile/user.webp" alt="Profile" width="40" class="rounded-circle" />
+              <div class="m-l-12">
+                <h6 class="f-s-14 f-w-500">
+                  {{ element.name }}
+
+                </h6>
+                <span class="text-muted">2nd Engineer</span>
+              </div>
+
             </div>
-            
-          </div>
-        </td>
-      </ng-container>
-      
-  
-      <!-- Email Column -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
-      </ng-container>
-  
-      <!-- Mobile Column -->
-      <ng-container matColumnDef="mobile">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
-        <td mat-cell *matCellDef="let element">{{ element.mobile }}</td>
-      </ng-container>
-  
-      <!-- Date of Application Column -->
-      <ng-container matColumnDef="dateOfApplication">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Application</th>
-        <td mat-cell *matCellDef="let element">{{ element.dateOfApplication }}</td>
-      </ng-container>
-  
-      <!-- Job Post Column -->
-      <ng-container matColumnDef="jobPost">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Job Post</th>
-        <td mat-cell *matCellDef="let element" class="text-primary"> <a 
-         (click)="viewApplicantDetails(element.application_id)"
-         class="text-primary job-post-link"
-          (click)="$event.stopPropagation()">
-          {{ element.jobPost }}
-        </a></td>
-      </ng-container>
-  
-      <!-- Applications Column -->
-      <ng-container matColumnDef="applications">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Applications</th>
-        <td mat-cell *matCellDef="let element">{{ totalApplications }}</td>
-      </ng-container>
-  
-      <!-- Status Column -->
-       <ng-container matColumnDef="status">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-  <td mat-cell *matCellDef="let element">
-    <span 
-      class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" 
-      [ngClass]="{
+          </td>
+        </ng-container>
+
+
+        <!-- Email Column -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+          <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+        </ng-container>
+
+        <!-- Mobile Column -->
+        <ng-container matColumnDef="mobile">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
+          <td mat-cell *matCellDef="let element">{{ element.mobile }}</td>
+        </ng-container>
+
+        <!-- Date of Application Column -->
+        <ng-container matColumnDef="dateOfApplication">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Date of Application</th>
+          <td mat-cell *matCellDef="let element">{{ element.dateOfApplication }}</td>
+        </ng-container>
+
+        <!-- Job Post Column -->
+        <ng-container matColumnDef="jobPost">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Job Post</th>
+          <td mat-cell *matCellDef="let element" class="text-primary"> <a
+              (click)="viewApplicantDetails(element.application_id)" class="text-primary job-post-link"
+              (click)="$event.stopPropagation()">
+              {{ element.jobPost }}
+            </a></td>
+        </ng-container>
+
+        <!-- Applications Column -->
+        <ng-container matColumnDef="applications">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Applications</th>
+          <td mat-cell *matCellDef="let element">{{ totalApplications }}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
         'bg-light-secondary text-secondary': element.status.toLowerCase() === 'hired',
         'bg-light-warning text-warning': element.status.toLowerCase() === 'pending',
         'bg-light-danger text-danger': element.status.toLowerCase() === 'rejected',
         'bg-purple text-white': element.status.toLowerCase() === 'shortlisted'
       }">
-      {{ element.status }}
-    </span>
-  </td>
-</ng-container>
+              {{ element.status }}
+            </span>
+          </td>
+        </ng-container>
 
-      
-  
-      <!-- Action Column -->
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>Action</th>
-        <td mat-cell *matCellDef="let element">
+
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let element">
             <!-- Three-dot menu -->
             <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
+              <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="viewApplicantDetails(element.application_id)">
-                    <mat-icon>visibility</mat-icon>
-                    <span>View Details</span>
-                </button>
-                <button mat-menu-item (click)="deleteApplicant(element.application_id)">
-                    <mat-icon>delete</mat-icon>
-                    <span>Delete</span>
-                </button>
+              <button mat-menu-item (click)="viewApplicantDetails(element.application_id)">
+                <mat-icon>visibility</mat-icon>
+                <span>View Details</span>
+              </button>
+              <button mat-menu-item (click)="deleteApplicant(element.application_id)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+              </button>
             </mat-menu>
-        </td>
-    </ng-container>
-     
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      
-      <!-- No data row -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-          No Records Found
-        </td>
-      </tr>
-    </table>
-  </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <!-- No data row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+            No Records Found
+          </td>
+        </tr>
+      </table>
+    </div>
     <!-- Pagination -->
-    <mat-paginator #paginator  *ngIf="(dataSource?.data?.length || 0) > 0"
-      [length]="totalApplications"
-      [pageSize]="pageSize"
-      [pageIndex]="pageIndex"
-      [pageSizeOptions]="[5, 10, 25, 50, 100]"
-      showFirstLastButtons
-      (page)="onPageChange($event)"
-      aria-label="Select page">
+    <mat-paginator #paginator *ngIf="(dataSource?.data?.length || 0) > 0" [length]="totalApplications"
+      [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[5, 10, 25, 50, 100]" showFirstLastButtons
+      (page)="onPageChange($event)" aria-label="Select page">
     </mat-paginator>
   </div>
 </div>
-  

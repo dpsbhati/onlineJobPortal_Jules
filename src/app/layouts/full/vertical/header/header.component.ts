@@ -170,45 +170,31 @@ export class HeaderComponent {
   notifications: notifications[] = [
     {
       id: 1,
-      icon: 'layout-grid',
+      icon: 'briefcase',
       color: 'primary',
-      time: '8:30 AM',
-      title: 'Launch Admin',
-      subtitle: 'Just see the my new admin!',
+      time: '9:00 AM',
+      title: 'Job Created',
+      subtitle: 'New job posting for “Chief Engineer” created.',
     },
     {
       id: 2,
-      icon: 'calendar',
-      color: 'secondary',
-      time: '8:21 AM',
-      title: 'Event today',
-      subtitle: 'Just a reminder that you have event',
-    },
-    {
-      id: 3,
-      icon: 'settings',
-      color: 'warning',
-      time: '8:05 AM',
-      title: 'Settings',
-      subtitle: 'You can customize this template',
-    },
-    {
-      id: 4,
-      icon: 'circles-relation',
+      icon: 'user-check',
       color: 'success',
-      time: '7:30 AM',
-      title: 'Launch Templates',
-      subtitle: 'Just see the my new admin!',
+      time: '8:45 AM',
+      title: 'Application Received',
+      subtitle: 'You have received 3 new applications.',
     },
-    {
-      id: 5,
-      icon: 'list-check',
-      color: 'error',
-      time: '7:03 AM',
-      title: 'Event tomorrow',
-      subtitle: 'Just a reminder that you have event',
+      {
+      id: 4,
+      icon: 'edit',
+      color: 'warning',
+      time: '8:00 AM',
+      title: 'Job Updated',
+      subtitle: '“First Officer” job post details modified.',
     },
+   
   ];
+  
 
   inbox: inbox[] = [
     {
