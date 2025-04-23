@@ -83,6 +83,8 @@ export class HeaderComponent {
   userName: string = '';
   isCollapse: boolean = false; // Initially hidden
 
+  @Output() isCollapsed: boolean = false; // Initially hidden
+
   toggleCollpase() {
     this.isCollapse = !this.isCollapse; // Toggle visibility
   }

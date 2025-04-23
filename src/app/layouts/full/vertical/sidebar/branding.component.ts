@@ -11,7 +11,7 @@ import { CoreService } from 'src/app/services/core.service';
       <a [routerLink]="['/']" class="d-flex align-items-center">
         <img
           src="./assets/images/logos/NavilandsFaci.svg"
-         style="background-color: white; border-radius: 50%; max-width: 30px; max-height: 30px; object-fit: contain;"
+         style="background-color: white; border-radius: 50%; max-width: 36px; max-height: 40px; object-fit: contain;"
           alt="Navilands" 
         />
           <span class="branding-text ms-2 mt-2 f-w-100">Navilands</span>

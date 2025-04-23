@@ -38,24 +38,24 @@ export const navItems: NavItem[] = [
     children: [
       {
         displayName: 'All Job Postings',
-        iconName: '',
+        iconName: 'point',
         route: 'job-list',
       },
 
       {
         displayName: 'Add New Job',
-        iconName: '',
+        iconName: 'point',
         route: 'create-job-posting',
       },
       
       {
         displayName: 'Categories',
-        iconName: '',
+        iconName: 'point',
         route: '/menu-2',
       },
       {
         displayName: 'Expired Job Postings',
-        iconName: '',
+        iconName: 'point',
         route: '/menu-2',
       },
     ],

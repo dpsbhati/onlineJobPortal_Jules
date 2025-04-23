@@ -130,61 +130,61 @@
       }
     }
 
-    &:hover {
-      width: $sidenav-desktop;
+    // &:hover {
+    //   width: $sidenav-desktop;
 
-      .mini-scroll {
-        height: calc(100vh - 230px) !important;
-      }
+    //   .mini-scroll {
+    //     height: calc(100vh - 230px) !important;
+    //   }
 
-      .hide-menu {
-        overflow: hidden;
-        width: $sidenav-desktop;
-      }
+    //   .hide-menu {
+    //     overflow: hidden;
+    //     width: $sidenav-desktop;
+    //   }
 
-      .user-profile {
-        .profile-text {
-          display: block;
-        }
-      }
+    //   .user-profile {
+    //     .profile-text {
+    //       display: block;
+    //     }
+    //   }
 
-      .user-profile {
-        .profile-img {
-          margin-left: 30px;
-        }
-      }
+    //   .user-profile {
+    //     .profile-img {
+    //       margin-left: 30px;
+    //     }
+    //   }
 
-      .sidebar-list {
-        .menu-list-item {
-          padding: 8px 10px;
+    //   .sidebar-list {
+    //     .menu-list-item {
+    //       padding: 8px 10px;
 
-          .mdc-list-item__content {
-            display: inline-block;
-          }
+    //       .mdc-list-item__content {
+    //         display: inline-block;
+    //       }
 
-          .mdc-list-item__start {
-            margin-left: 0 !important;
-          }
-        }
+    //       .mdc-list-item__start {
+    //         margin-left: 0 !important;
+    //       }
+    //     }
 
-        &.mdc-list {
-          padding: 0 24px;
-          width: $sidenav-desktop;
+    //     &.mdc-list {
+    //       padding: 0 24px;
+    //       width: $sidenav-desktop;
 
-          .mdc-list-group__subheader {
-            text-align: left;
+    //       .mdc-list-group__subheader {
+    //         text-align: left;
 
-            .caption-icon {
-              display: none;
-            }
+    //         .caption-icon {
+    //           display: none;
+    //         }
 
-            .caption-text {
-              display: inline-block;
-            }
-          }
-        }
-      }
-    }
+    //         .caption-text {
+    //           display: inline-block;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   .hideMenu {

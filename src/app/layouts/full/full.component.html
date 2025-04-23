@@ -48,8 +48,8 @@
       <app-sidebar> </app-sidebar>
       <ng-scrollbar
         class="position-relative mini-scroll"
-        style="height: calc(100vh - 230px)"
-      >
+        >
+        <!-- style="height: calc(100vh - 230px)" -->
         <mat-nav-list class="sidebar-list">
           @for(item of navItems; track item) {
           <app-nav-item [item]="item" (notify)="sidenav.toggle()">
