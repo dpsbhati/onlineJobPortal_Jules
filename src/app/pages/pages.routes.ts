@@ -7,6 +7,7 @@ import { CreateJobPostingComponent } from './admin/create-job-posting/create-job
 import { ApplicationsComponent } from './admin/applications/applications.component';
 import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-details.component';
 import { JobPostingsComponent } from './job-postings/job-postings.component';
+import { ViewJobComponent } from './admin/view-job/view-job.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
