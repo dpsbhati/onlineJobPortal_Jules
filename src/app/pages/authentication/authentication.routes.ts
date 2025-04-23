@@ -7,6 +7,7 @@ import { EmailActivationComponent } from './email-activation/email-activation.co
 import { CreateJobPostingComponent } from '../admin/create-job-posting/create-job-posting.component';
 import { Application, ApplicationsComponent } from '../admin/applications/applications.component';
 import { ApplicantDetailsComponent } from '../admin/applicant-details/applicant-details.component';
+import { DevelopmentPageComponent } from './development-page/development-page.component';
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -47,10 +48,17 @@ export const AuthenticationRoutes: Routes = [
           ),
       },
       {
+        path: 'Development-page',
+        loadComponent: () =>
+          import('./development-page/development-page.component').then(
+            (c) => c.DevelopmentPageComponent
+          ),
+      },
+      {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
-        
+
       },
       {
         path: 'email-activation',
