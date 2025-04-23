@@ -154,3 +154,15 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: rotate(360deg); }
 }
 
+.filters-container {
+  display: flex;
+  gap: 100px;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+  height: 100%;
+  padding-top: 18px;
+  padding-right: 15px;
+  padding-left: 15px;
+flex-wrap: wrap;
+}
