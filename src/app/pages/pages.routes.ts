@@ -14,15 +14,15 @@ export const PagesRoutes: Routes = [
         path: 'dashboard',
         component: StarterComponent,
         data: {
-          title: 'Administration',
+          title: 'Overview',
           urls: [
-            { title: 'Applications', url: '/applications' },
-            { title: 'Applications List' },
+            { title: 'Applications List', url: '/applications' },
+            // { title: 'Applications List' },
           ],
         },
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
-     
+
       {
         path: 'job-list',
         component: JobListComponent,
@@ -33,22 +33,22 @@ export const PagesRoutes: Routes = [
             { title: 'Job deatils' },
           ],
         },
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'create-job-posting',
         component: CreateJobPostingComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'create-job-posting/:id',
         component: CreateJobPostingComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'edit-profile',
         component: EditProfileComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path:'applications',
@@ -60,12 +60,12 @@ export const PagesRoutes: Routes = [
             { title: 'Applications List' },
           ],
         },
-        canActivate:[AuthGuard]
+        // canActivate:[AuthGuard]
       },
       {
         path:'applicant-details/:id',
         component:ApplicantDetailsComponent,
-        canActivate:[AuthGuard]
+        // canActivate:[AuthGuard]
       }
     ]
   }

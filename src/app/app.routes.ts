@@ -20,7 +20,7 @@ export const routes: Routes = [
             (m) => m.AuthenticationRoutes
           ),
       },
-      
+
     ],
   },
   {
@@ -33,7 +33,7 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       }
-     
+
     ],
   },
 
