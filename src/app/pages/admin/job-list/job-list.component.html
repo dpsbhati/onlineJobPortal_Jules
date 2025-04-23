@@ -4,15 +4,15 @@
     <div class="filters-container">
       <!-- Search Filter -->
       <div class="filter search-filter">
-        <mat-form-field appearance="outline">
-          <mat-label>Search Jobs</mat-label>
-          <input matInput [(ngModel)]="filters.all" (keyup.enter)="onSearch()" placeholder="Search...">
-          <button *ngIf="filters.all" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
-            <mat-icon>close</mat-icon>
-          </button>
+       
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search Applicant</mat-label>
+
+          <input matInput  [(ngModel)]="filters.all" (keyup.enter)="onSearch()" placeholder="Search..." />
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
-
+     
       <div class="filter_right ">
         <h4 class="mb-20"> Filters </h4>
         <!-- Rank Filter -->
@@ -79,7 +79,7 @@
 
         <!-- Position Column -->
         <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>No.</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let element; let i = index">
             {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
           </td>
