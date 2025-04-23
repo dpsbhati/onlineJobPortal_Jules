@@ -15,41 +15,41 @@ export const PagesRoutes: Routes = [
         path: 'dashboard',
         component: StarterComponent,
         data: {
-          title: 'Administration',
+          title: 'Overview',
           urls: [
-            { title: 'Applications', url: '/applications' },
-            { title: 'Applications List' },
+            // { title: 'Applications List', url: '/applications' },
+            // { title: 'Applications List' },
           ],
         },
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
-     
+
       {
         path: 'job-list',
         component: JobListComponent,
         data: {
-          title: 'JobList',
+          title: 'Job Postings',
           urls: [
             { title: 'All Job List', url: '/job-list' },
-            { title: 'Job deatils' },
+            // { title: 'Job deatils' },
           ],
         },
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'create-job-posting',
         component: CreateJobPostingComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'create-job-posting/:id',
         component: CreateJobPostingComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path: 'edit-profile',
         component: EditProfileComponent,
-        canActivate: [AuthGuard]
+        // canActivate: [AuthGuard]
       },
       {
         path:'applications',
@@ -57,11 +57,11 @@ export const PagesRoutes: Routes = [
         data: {
           title: 'Administration',
           urls: [
-            { title: 'Applications', url: '/applications' },
-            { title: 'Applications List' },
+            { title: 'Applications List', url: '/applications' },
+            // { title: 'Applications List' },
           ],
         },
-        canActivate:[AuthGuard]
+        // canActivate:[AuthGuard]
       },
       {
         path:'applicant-details/:id',

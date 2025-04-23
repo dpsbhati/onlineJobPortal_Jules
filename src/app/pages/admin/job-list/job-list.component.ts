@@ -140,7 +140,7 @@ export class JobListComponent implements OnInit {
     private toastr : ToastrService
   ) {
     this.userRole = this.authService.getUserRole();
-    this.displayedColumns = this.isAdmin() ? 
+    this.displayedColumns = this.isAdmin() ?
       ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'status', 'actions'] :
       ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'actions'];
   }
@@ -252,7 +252,7 @@ export class JobListComponent implements OnInit {
   }
 
   formatSalary(value: number): string {
-    return '₹' + value.toLocaleString('en-IN');
+    return '$' + value.toLocaleString('en-IN');
   }
 
   allJobList() {
