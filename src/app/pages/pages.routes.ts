@@ -16,7 +16,7 @@ export const PagesRoutes: Routes = [
         data: {
           title: 'Overview',
           urls: [
-            { title: 'Applications List', url: '/applications' },
+            // { title: 'Applications List', url: '/applications' },
             // { title: 'Applications List' },
           ],
         },
@@ -27,10 +27,10 @@ export const PagesRoutes: Routes = [
         path: 'job-list',
         component: JobListComponent,
         data: {
-          title: 'JobList',
+          title: 'Job Postings',
           urls: [
             { title: 'All Job List', url: '/job-list' },
-            { title: 'Job deatils' },
+            // { title: 'Job deatils' },
           ],
         },
         // canActivate: [AuthGuard]
@@ -56,8 +56,8 @@ export const PagesRoutes: Routes = [
         data: {
           title: 'Administration',
           urls: [
-            { title: 'Applications', url: '/applications' },
-            { title: 'Applications List' },
+            { title: 'Applications List', url: '/applications' },
+            // { title: 'Applications List' },
           ],
         },
         // canActivate:[AuthGuard]
