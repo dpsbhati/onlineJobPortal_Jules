@@ -7,6 +7,7 @@ import { CreateJobPostingComponent } from './admin/create-job-posting/create-job
 import { ApplicationsComponent } from './admin/applications/applications.component';
 import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-details.component';
 import { JobPostingsComponent } from './job-postings/job-postings.component';
+import { ViewJobComponent } from './admin/view-job/view-job.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -36,6 +37,31 @@ export const PagesRoutes: Routes = [
         },
         // canActivate: [AuthGuard]
       },
+      {
+        path: 'view-job',
+        component: ViewJobComponent,
+        data: {
+          title: 'view-job',
+          urls: [
+            // { title: 'All Job List', url: '/job-list' },
+            // { title: 'Job deatils' },
+          ],
+        },
+        // canActivate: [AuthGuard]
+      },
+      {
+        path: 'view-job/:id',
+        component: ViewJobComponent,
+        data: {
+          title: 'view-job',
+          urls: [
+            // { title: 'All Job List', url: '/job-list' },
+            // { title: 'Job deatils' },
+          ],
+        },
+        // canActivate: [AuthGuard]
+      },
+
       {
         path: 'create-job-posting',
         component: CreateJobPostingComponent,
