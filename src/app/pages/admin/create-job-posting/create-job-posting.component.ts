@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatChipsModule } from '@angular/material/chips'
 import countries from '../../../core/helpers/country.json'
 import { MatCardModule } from '@angular/material/card'
+import { TablerIconsModule } from 'angular-tabler-icons'
 
 @Component({
   selector: 'app-create-job-posting',
@@ -40,7 +41,7 @@ import { MatCardModule } from '@angular/material/card'
     MatIconModule,
     MatChipsModule,
     MatCardModule,
-    FormsModule
+    FormsModule,TablerIconsModule
   ],
   templateUrl: './create-job-posting.component.html',
   styleUrls: ['./create-job-posting.component.scss']

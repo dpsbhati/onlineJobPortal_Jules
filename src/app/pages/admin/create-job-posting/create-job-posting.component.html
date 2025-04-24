@@ -1,9 +1,11 @@
-<div class="mat-elevation-z2">
-  <button mat-raised-button color="primary" (click)="navigate()">Back</button>
-</div>
 <mat-card>
   <div class="mat-mdc-card p-20">
-    <h2 class="mat-h2">{{ isEditMode ? 'Edit Job Posting' : 'Job Posting' }}</h2>
+    <h2 class="mat-h2 d-flex align-items-center  gap-2">
+      <button style="cursor: pointer;" class="bg-white m-r-6  icon-30 rounded-circle d-flex align-items-center justify-content-center" color="primary" (click)="navigate()"> <i-tabler name="chevron-left"
+          class="icon-18 m-l-auto"></i-tabler></button>
+      {{ isEditMode ? 'Edit Job Posting' :
+      'Job Posting' }}
+    </h2>
     <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row">
       <div class="col-xl-4 col-lg-4 col-md-6">
         <!-- Job Title -->
