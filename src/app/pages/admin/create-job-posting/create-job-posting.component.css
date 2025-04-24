@@ -165,3 +165,7 @@ input[type="file"] {
     flex: 1;
   }
 }
+/* Custom margin-bottom */
+.m-b-2 {
+  margin-bottom: 4rem;  /* Adjust to your preference (2px, 2em, 2rem, etc.) */
+}
