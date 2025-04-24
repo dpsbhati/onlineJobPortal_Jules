@@ -12,7 +12,7 @@ import { CoreService } from 'src/app/services/core.service';
         <img
           src="./assets/images/logos/Navilandslogo.svg"
           class="align-middle m-2"
-          alt="logo"
+          alt="logo" style="object-fit: contain; width: 150px; height: 40px;"
         />
       </a>
 

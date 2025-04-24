@@ -197,9 +197,9 @@ export class AppSideLoginComponent implements OnInit {
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
-          await this._router.navigate(['/dashboard'], { replaceUrl: true });
+          await this._router.navigate(['/applications'], { replaceUrl: true });
         } else {
-          await this._router.navigate(['/dashboard'], { replaceUrl: true });
+          await this._router.navigate(['/applications'], { replaceUrl: true });
         }
       } else {
         this.toastr.warning(response?.message || 'Invalid credentials. Please try again.',);

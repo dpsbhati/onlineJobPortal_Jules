@@ -111,3 +111,14 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
 }
+
+.sidebarNav-mini .mat-toolbar .branding-text .logo1 {
+  display: none !important;
+}
+.sidebarNav-mini .mat-toolbar .branding-text .logo2 {
+  display: block !important;
+}
+ .branding-text .logo2 {
+  display: none !important;
+  width: 30px;
+}
