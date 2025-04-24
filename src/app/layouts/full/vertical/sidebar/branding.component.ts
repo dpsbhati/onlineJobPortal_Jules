@@ -9,12 +9,14 @@ import { CoreService } from 'src/app/services/core.service';
   template: `
     <div class="branding d-none d-lg-flex align-items-center">
       <a [routerLink]="['/']" class="d-flex align-items-center">
-        <img
-          src="./assets/images/logos/NavilandsFaci.svg"
-         style="background-color: white; border-radius: 50%; max-width: 36px; max-height: 40px; object-fit: contain;"
-          alt="Navilands" 
-        />
-          <span class="branding-text ms-2 mt-2 f-w-100">Navilands</span>
+       
+     <span class="branding-text ms-2 mt-2 f-w-100">
+      <img
+        src="./assets/images/logos/Navilandslogo.svg"  
+        style="background-color: white; border-radius: 50%; max-width: 100px; max-height: 50px; object-fit: contain;"
+        alt="Navilands Logo" 
+      />
+    </span>
       </a>
     </div>
   `,
@@ -23,7 +25,7 @@ import { CoreService } from 'src/app/services/core.service';
       .branding img {
         max-width: 30px; /* Adjust as needed */
         max-height: 30px;
-        object-fit: contain;
+        object-fit: fill;
        
       }
          .branding-text {
