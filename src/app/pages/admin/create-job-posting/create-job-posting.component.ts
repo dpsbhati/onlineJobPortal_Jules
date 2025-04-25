@@ -25,6 +25,7 @@ import { MatChipsModule } from '@angular/material/chips'
 import countries from '../../../core/helpers/country.json'
 import { MatCardModule } from '@angular/material/card'
 import { TablerIconsModule } from 'angular-tabler-icons'
+import { LoaderService } from 'src/app/core/services/loader.service'
 
 @Component({
   selector: 'app-create-job-posting',
@@ -71,7 +72,8 @@ export class CreateJobPostingComponent {
     private adminService: AdminService,
     private route: ActivatedRoute,
     private router: Router,
-    private imageCompressionService: ImageCompressionService
+    private imageCompressionService: ImageCompressionService,
+     private loader: LoaderService,
   ) // private notify :NotifyService,
 
   {
@@ -394,9 +396,11 @@ export class CreateJobPostingComponent {
   }
 
   getJobPosting (jobId: string): void {
+    this.loader.show();
     this.adminService.getJobById(jobId).subscribe((response: any) => {
       if (response.statusCode === 200 && response.data) {
         const data = response.data
+        this.loader.hide();
         //  console.log(data);
         // const formattedImageUrl = data.featured_image.replace(/\\/g, '/');
         // this.jobForm.patchValue({featured_image: formattedImageUrl,});
@@ -464,7 +468,11 @@ export class CreateJobPostingComponent {
           // work_type: data.work_type || '',
           // file_path: data.file || null,
         })
-      } else {
+        if (data.featured_image) {
+          this.imagePreview = data.featured_image;
+        }else {
+          this.loader.hide();
+      }
         console.error('Failed to retrieve job posting data', response.message)
       }
     })
@@ -590,10 +598,12 @@ export class CreateJobPostingComponent {
       //       this.spinner.hide();
       //     }
       //   });
+      this.loader.show();
 
       this.adminService.createOrUpdateJobPosting(formValues).subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
+            this.loader.hide();
             // this.notify.showSuccess(response.message);
             this.router.navigate(['/job-list'])
           } else {
@@ -624,6 +634,7 @@ export class CreateJobPostingComponent {
       //     }
       //   });
     } else {
+      this.loader.hide();
       // this.notify.showWarning("Failed to update the form")
     }
   }
