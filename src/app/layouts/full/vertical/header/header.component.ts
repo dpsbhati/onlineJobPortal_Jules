@@ -143,12 +143,12 @@ export class HeaderComponent {
   }
 
   ngOnInit () {
-    this.sidebarService.setCollapsed(this.isCollapsed);
+    this.sidebarService.setCollapsed(this.isCollapsed)
   }
 
-  toggleCollapse() {
-    this.isCollapsed = !this.isCollapsed;
-    this.sidebarService.setCollapsed(this.isCollapsed); // Share value
+  toggleCollapse () {
+    this.isCollapsed = !this.isCollapsed
+    this.sidebarService.setCollapsed(this.isCollapsed) // Share value
   }
 
   openDialog () {

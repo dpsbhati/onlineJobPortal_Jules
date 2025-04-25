@@ -441,11 +441,11 @@ export class EditProfileComponent implements OnInit {
   }
 
   navigate() {
-    this.router.navigate(['/starter/job-list']);
+    this.router.navigate(['job-list']);
   }
 
   goBack(): void {
-    this.router.navigate(['/starter/job-list']);
+    this.router.navigate(['job-list']);
   }
 
   private scrollToTop(): void {

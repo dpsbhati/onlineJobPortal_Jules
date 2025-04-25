@@ -1,360 +1,374 @@
 <mat-card>
-  <div class="mat-mdc-card p-20">
-    <h2 class="mat-h2 d-flex align-items-center  gap-2">
-      <button style="cursor: pointer;" class="bg-white m-r-6  icon-30 rounded-circle d-flex align-items-center justify-content-center" color="primary" (click)="navigate()"> <i-tabler name="chevron-left"
-          class="icon-18 m-l-auto"></i-tabler></button>
-      {{ isEditMode ? 'Edit Job Posting' :
+  <mat-card-header>
+    <mat-card-title class="d-flex align-items-center gap-6">
+      <button mat-icon-button color="primary" (click)="navigate()">
+        <mat-icon>arrow_back</mat-icon>
+      </button> {{ isEditMode ? 'Edit Job Posting' :
       'Job Posting' }}
-    </h2>
-    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16">
-        <!-- Job Title -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Job Title</mat-label>
-          <input matInput id="title" formControlName="title" type="text">
-          <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
-            <span *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</span>
-            <span *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Title must contain only alphabets.</span>
-            <span *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</span>
-            <span *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
-              Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
-              characters excluding spaces.
-            </span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-
-        <!-- Job Type -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Job Type</mat-label>
-          <mat-select id="job_type" formControlName="job_type">
-            <mat-option value="">Select Job Type</mat-option>
-            <mat-option value="Full-Time">Full-Time</mat-option>
-            <mat-option value="Part-Time">Part-Time</mat-option>
-            <mat-option value="Flexible">Flexible</mat-option>
-          </mat-select>
-          <mat-error *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched">
-            Job Type is required.
-          </mat-error>
-        </mat-form-field>
-
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-        <!-- Rank -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Rank</mat-label>
-          <input matInput id="rank" formControlName="rank" type="text">
-          <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
-            Rank is required.
-          </mat-error>
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-
-        <!-- Date Published -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Date Published</mat-label>
-          <input matInput [matDatepicker]="publishedPicker" id="date_published" formControlName="date_published"
-            [readonly]="isDatePublishedReadonly">
-          <mat-datepicker-toggle matSuffix [for]="publishedPicker"></mat-datepicker-toggle>
-          <mat-datepicker #publishedPicker></mat-datepicker>
-          <mat-error *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched">
-            Date published is required.
-          </mat-error>
-        </mat-form-field>
-
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-
-        <!-- Deadline -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Deadline</mat-label>
-          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline">
-          <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
-          <mat-datepicker #deadlinePicker></mat-datepicker>
-          <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
-            <span *ngIf="jobForm.get('deadline')?.errors?.['required']">Deadline is required.</span>
-            <span *ngIf="jobForm.get('deadline')?.errors?.['deadlineInvalid']">Deadline cannot be before today's date or
-              the date published.</span>
-          </mat-error>
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Assignment Duration -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Assignment Duration</mat-label>
-          <input matInput id="assignment_duration" formControlName="assignment_duration" type="text">
-          <mat-error *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched">
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['required']">Assignment duration is
-              required.</span>
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50
-              characters.</span>
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces']">
-              Assignment duration must be at least {{
-              jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
-            </span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-        <!-- Employer -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Employer</mat-label>
-          <input matInput id="employer" formControlName="employer" type="text">
-          <mat-error *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched">
-            <span *ngIf="jobForm.get('employer')?.errors?.['required']">Employer is required.</span>
-            <span *ngIf="jobForm.get('employer')?.errors?.['maxlength']">Employer cannot exceed 50 characters.</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Required Experience -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Required Experience</mat-label>
-          <input matInput id="required_experience" formControlName="required_experience" type="text">
-          <mat-error *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched">
-            <span *ngIf="jobForm.get('required_experience')?.errors?.['required']">Experience is required.</span>
-            <span *ngIf="jobForm.get('required_experience')?.errors?.['maxlength']">Experience cannot exceed 50
-              characters.</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"><!-- Start Salary -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Start Salary</mat-label>
-          <input matInput id="start_salary" formControlName="start_salary" type="text"
-            (input)="formatSalary('start_salary')">
-          <mat-error *ngIf="jobForm.get('start_salary')?.invalid && jobForm.get('start_salary')?.touched">
-            <span *ngIf="jobForm.get('start_salary')?.errors?.['required']">Start salary is required.</span>
-            <span *ngIf="jobForm.get('start_salary')?.errors?.['min']">Start salary cannot be negative.</span>
-            <span *ngIf="jobForm.get('start_salary')?.errors?.['maxlength']">Start salary cannot exceed 7 digits.</span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- End Salary -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>End Salary</mat-label>
-          <input matInput id="end_salary" formControlName="end_salary" type="text" (input)="formatSalary('end_salary')">
-          <mat-error *ngIf="jobForm.get('end_salary')?.invalid && jobForm.get('end_salary')?.touched">
-            <span *ngIf="jobForm.get('end_salary')?.errors?.['required']">End salary is required.</span>
-            <span *ngIf="jobForm.get('end_salary')?.errors?.['min']">End salary cannot be negative.</span>
-            <span *ngIf="jobForm.get('end_salary')?.errors?.['maxlength']">End salary cannot exceed 8 digits.</span>
-          </mat-error>
-          <mat-error *ngIf="jobForm.errors?.['salaryMismatch'] && jobForm.get('end_salary')?.touched">
-            Start salary cannot exceed the end salary.
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16"><!-- Country Code -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Country Code</mat-label>
-          <mat-select id="country_code" formControlName="country_code">
-            <mat-option value="" disabled>Select a country</mat-option>
-            <mat-option *ngFor="let country of countryList" [value]="country.code">
-              {{ country.name }} ({{ country.code }})
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-        <!-- Address -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Address</mat-label>
-          <input matInput id="address" formControlName="address" type="text">
-          <mat-error *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched">
-            <span *ngIf="jobForm.get('address')?.errors?.['required']">Address is required.</span>
-            <span *ngIf="jobForm.get('address')?.errors?.['minlength']">Address must be at least {{
-              jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</span>
-            <span *ngIf="jobForm.get('address')?.errors?.['maxlength']">Address cannot exceed {{
-              jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</span>
-            <span *ngIf="jobForm.get('address')?.errors?.['minLengthWithoutSpaces']">
-              Address must be at least {{ jobForm.get('address')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
-              characters excluding spaces.
-            </span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Type of post</mat-label>
-          <mat-select id="job_type_post" formControlName="job_type_post" [disabled]="isEditMode">
-            <mat-option value="" disabled>Select a post</mat-option>
-            <mat-option value="postnow">Post now</mat-option>
-            <mat-option value="schedulelater">Schedule later</mat-option>
-          </mat-select>
-          <mat-error *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched">
-            Type of post is required.
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Social Media Type -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Social Media Type</mat-label>
-          <mat-select formControlName="social_media_type" [multiple]="true" [disabled]="isEditMode">
-            <mat-option *ngFor="let option of socialMediaOptions" [value]="option.value">
-              {{option.label}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched">
-            Social Media Type is required.
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
-        <!-- Post At -->
-
-        <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'schedulelater'">
-          <label for="posted_at">Post At<span class="text-danger">*</span></label>
-          <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
-          <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['minimumTime']">Please select a time at least 1 hour from
-              now.</small>
-          </div>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+      <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row">
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16">
+          <!-- Job Title -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Job Title</mat-label>
+            <input matInput id="title" formControlName="title" type="text">
+            <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
+              <span *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</span>
+              <span *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Title must contain only alphabets.</span>
+              <span *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</span>
+              <span *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
+                Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
+                characters excluding spaces.
+              </span>
+            </mat-error>
+          </mat-form-field>
         </div>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
-        <!-- Short Description -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Short Description</mat-label>
-          <textarea matInput id="short_description" formControlName="short_description" rows="6"></textarea>
-          <mat-error *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched">
-            <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Short description is required.</span>
-            <span *ngIf="jobForm.get('short_description')?.errors?.['minlength']">
-              Short Description must be at least {{
-              jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.
-            </span>
-            <span *ngIf="jobForm.get('short_description')?.errors?.['maxlength']">
-              Short Description cannot exceed {{ jobForm.get('short_description')?.errors?.['maxlength'].requiredLength
-              }} characters.
-            </span>
-            <span *ngIf="jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces']">
-              Short description must be at least {{
-              jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
-              excluding spaces.
-            </span>
-          </mat-error>
-        </mat-form-field>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
-        <!-- Full Description -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Full Description</mat-label>
-          <textarea matInput id="full_description" formControlName="full_description" rows="6"></textarea>
-          <mat-error *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched">
-            <span *ngIf="jobForm.get('full_description')?.errors?.['required']">Full description is required.</span>
-            <span *ngIf="jobForm.get('full_description')?.errors?.['minlength']">
-              Full Description must be at least {{ jobForm.get('full_description')?.errors?.['minlength'].requiredLength
-              }} characters.
-            </span>
-            <span *ngIf="jobForm.get('full_description')?.errors?.['maxlength']">
-              Full Description cannot exceed {{ jobForm.get('full_description')?.errors?.['maxlength'].requiredLength }}
-              characters.
-            </span>
-            <span *ngIf="jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces']">
-              Full description must be at least {{
-              jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters excluding
-              spaces.
-            </span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Application Instruction -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Application Instruction</mat-label>
-          <textarea matInput id="application_instruction" formControlName="application_instruction" rows="6"></textarea>
-          <mat-error
-            *ngIf="jobForm.get('application_instruction')?.invalid && jobForm.get('application_instruction')?.touched">
-            <span *ngIf="jobForm.get('application_instruction')?.errors?.['required']">Application Instruction is
-              required.</span>
-            <span *ngIf="jobForm.get('application_instruction')?.errors?.['minlength']">Application Instruction must be
-              at least {{ jobForm.get('application_instruction')?.errors?.['minlength'].requiredLength }}
-              characters.</span>
-            <span *ngIf="jobForm.get('application_instruction')?.errors?.['maxlength']">Application Instruction cannot
-              exceed {{ jobForm.get('application_instruction')?.errors?.['maxlength'].requiredLength }}
-              characters.</span>
-            <span *ngIf="jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces']">
-              Application Instruction must be at least {{
-              jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
-              excluding spaces.
-            </span>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Featured Image -->
-        <div class="file-input-container">
-          <button mat-stroked-button type="button" (click)="fileInput.click()">
-            <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
-            Choose Featured Image
-          </button>
-          <input #fileInput type="file" style="display: none" (change)="onFileSelected($event, 'featured_image')"
-            accept="image/jpeg,image/png,image/webp">
-
-          <!-- Image Preview -->
-          <div class="img-preview" *ngIf="imagePreview">
-            <img [src]="imagePreview" alt="Preview">
-          </div>
-
-          <span class="file-name" *ngIf="jobForm.get('featured_image')?.value">
-            {{ getFileName(jobForm.get('featured_image')?.value) }}
-          </span>
-          <mat-error *ngIf="jobForm.get('featured_image')?.invalid && jobForm.get('featured_image')?.touched">
-            Featured image is required.
-          </mat-error>
-        </div>
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
-        <!-- Skills Required -->
-        <div class="skills-section m-0">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Add Skills</mat-label>
-            <input matInput id="skills_input" type="text" [(ngModel)]="newSkill" (keyup.enter)="addSkill()"
-              [ngModelOptions]="{standalone: true}" placeholder="Enter a skill and press Enter">
-            <button mat-icon-button matSuffix (click)="addSkill()" [disabled]="!newSkill.trim()">
-              <mat-icon>add</mat-icon>
-            </button>
+          <!-- Job Type -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Job Type</mat-label>
+            <mat-select id="job_type" formControlName="job_type">
+              <mat-option value="">Select Job Type</mat-option>
+              <mat-option value="Full-Time">Full-Time</mat-option>
+              <mat-option value="Part-Time">Part-Time</mat-option>
+              <mat-option value="Flexible">Flexible</mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('job_type')?.invalid && jobForm.get('job_type')?.touched">
+              Job Type is required.
+            </mat-error>
           </mat-form-field>
 
-          <mat-chip-listbox #chipList aria-label="Skills selection">
-            <mat-chip *ngFor="let skill of skillsArray; let i = index" [removable]="true" (removed)="removeSkill(i)">
-              {{skill}}
-              <mat-icon matChipRemove>cancel</mat-icon>
-            </mat-chip>
-          </mat-chip-listbox>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+          <!-- Rank -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Rank</mat-label>
+            <input matInput id="rank" formControlName="rank" type="text">
+            <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
+              Rank is required.
+            </mat-error>
+          </mat-form-field>
 
-          <mat-error *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched">
-            At least one skill is required.
-          </mat-error>
-          <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['minLengthSkill']">
-            Each skill must be at least
-            {{ jobForm.get('skills_required')?.errors?.['minLengthSkill'].requiredLength }}
-            characters long.
-          </mat-error>
-          <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['maxLengthSkill']">
-            Each skill cannot exceed
-            {{ jobForm.get('skills_required')?.errors?.['maxLengthSkill'].requiredLength }}
-            characters.
-          </mat-error>
-          <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['maxSkills']">
-            No more than {{ jobForm.get('skills_required')?.errors?.['maxSkills'].required }} skills are allowed.
-          </mat-error>
         </div>
 
-      </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
-      <div class="form-actions col-12">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!jobForm.valid" >
-          {{ isEditMode ? 'Update' : 'Create' }} Job Posting
-        </button>
-      </div>
-    </form>
+          <!-- Date Published -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Date Published</mat-label>
+            <input matInput [matDatepicker]="publishedPicker" id="date_published" formControlName="date_published"
+              [readonly]="isDatePublishedReadonly">
+            <mat-datepicker-toggle matSuffix [for]="publishedPicker"></mat-datepicker-toggle>
+            <mat-datepicker #publishedPicker></mat-datepicker>
+            <mat-error *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched">
+              Date published is required.
+            </mat-error>
+          </mat-form-field>
 
-  </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+
+          <!-- Deadline -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Deadline</mat-label>
+            <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline">
+            <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
+            <mat-datepicker #deadlinePicker></mat-datepicker>
+            <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
+              <span *ngIf="jobForm.get('deadline')?.errors?.['required']">Deadline is required.</span>
+              <span *ngIf="jobForm.get('deadline')?.errors?.['deadlineInvalid']">Deadline cannot be before today's date
+                or
+                the date published.</span>
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Assignment Duration -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Assignment Duration</mat-label>
+            <input matInput id="assignment_duration" formControlName="assignment_duration" type="text">
+            <mat-error
+              *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched">
+              <span *ngIf="jobForm.get('assignment_duration')?.errors?.['required']">Assignment duration is
+                required.</span>
+              <span *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50
+                characters.</span>
+              <span *ngIf="jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces']">
+                Assignment duration must be at least {{
+                jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+          <!-- Employer -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Employer</mat-label>
+            <input matInput id="employer" formControlName="employer" type="text">
+            <mat-error *ngIf="jobForm.get('employer')?.invalid && jobForm.get('employer')?.touched">
+              <span *ngIf="jobForm.get('employer')?.errors?.['required']">Employer is required.</span>
+              <span *ngIf="jobForm.get('employer')?.errors?.['maxlength']">Employer cannot exceed 50 characters.</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Required Experience -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Required Experience</mat-label>
+            <input matInput id="required_experience" formControlName="required_experience" type="text">
+            <mat-error
+              *ngIf="jobForm.get('required_experience')?.invalid && jobForm.get('required_experience')?.touched">
+              <span *ngIf="jobForm.get('required_experience')?.errors?.['required']">Experience is required.</span>
+              <span *ngIf="jobForm.get('required_experience')?.errors?.['maxlength']">Experience cannot exceed 50
+                characters.</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"><!-- Start Salary -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Start Salary</mat-label>
+            <input matInput id="start_salary" formControlName="start_salary" type="text"
+              (input)="formatSalary('start_salary')">
+            <mat-error *ngIf="jobForm.get('start_salary')?.invalid && jobForm.get('start_salary')?.touched">
+              <span *ngIf="jobForm.get('start_salary')?.errors?.['required']">Start salary is required.</span>
+              <span *ngIf="jobForm.get('start_salary')?.errors?.['min']">Start salary cannot be negative.</span>
+              <span *ngIf="jobForm.get('start_salary')?.errors?.['maxlength']">Start salary cannot exceed 7
+                digits.</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- End Salary -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>End Salary</mat-label>
+            <input matInput id="end_salary" formControlName="end_salary" type="text"
+              (input)="formatSalary('end_salary')">
+            <mat-error *ngIf="jobForm.get('end_salary')?.invalid && jobForm.get('end_salary')?.touched">
+              <span *ngIf="jobForm.get('end_salary')?.errors?.['required']">End salary is required.</span>
+              <span *ngIf="jobForm.get('end_salary')?.errors?.['min']">End salary cannot be negative.</span>
+              <span *ngIf="jobForm.get('end_salary')?.errors?.['maxlength']">End salary cannot exceed 8 digits.</span>
+            </mat-error>
+            <mat-error *ngIf="jobForm.errors?.['salaryMismatch'] && jobForm.get('end_salary')?.touched">
+              Start salary cannot exceed the end salary.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16"><!-- Country Code -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Country Code</mat-label>
+            <mat-select id="country_code" formControlName="country_code">
+              <mat-option value="" disabled>Select a country</mat-option>
+              <mat-option *ngFor="let country of countryList" [value]="country.code">
+                {{ country.name }} ({{ country.code }})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+          <!-- Address -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Address</mat-label>
+            <input matInput id="address" formControlName="address" type="text">
+            <mat-error *ngIf="jobForm.get('address')?.invalid && jobForm.get('address')?.touched">
+              <span *ngIf="jobForm.get('address')?.errors?.['required']">Address is required.</span>
+              <span *ngIf="jobForm.get('address')?.errors?.['minlength']">Address must be at least {{
+                jobForm.get('address')?.errors?.['minlength'].requiredLength }} characters.</span>
+              <span *ngIf="jobForm.get('address')?.errors?.['maxlength']">Address cannot exceed {{
+                jobForm.get('address')?.errors?.['maxlength'].requiredLength }} characters.</span>
+              <span *ngIf="jobForm.get('address')?.errors?.['minLengthWithoutSpaces']">
+                Address must be at least {{ jobForm.get('address')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
+                characters excluding spaces.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Type of post</mat-label>
+            <mat-select id="job_type_post" formControlName="job_type_post" [disabled]="isEditMode">
+              <mat-option value="" disabled>Select a post</mat-option>
+              <mat-option value="postnow">Post now</mat-option>
+              <mat-option value="schedulelater">Schedule later</mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched">
+              Type of post is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Social Media Type -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Social Media Type</mat-label>
+            <mat-select formControlName="social_media_type" [multiple]="true" [disabled]="isEditMode">
+              <mat-option *ngFor="let option of socialMediaOptions" [value]="option.value">
+                {{option.label}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched">
+              Social Media Type is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
+          <!-- Post At -->
+
+          <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'schedulelater'">
+            <label for="posted_at">Post At<span class="text-danger">*</span></label>
+            <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
+            <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
+              <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
+              <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
+              <small *ngIf="jobForm.get('posted_at')?.errors?.['minimumTime']">Please select a time at least 1 hour from
+                now.</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
+          <!-- Short Description -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Short Description</mat-label>
+            <textarea matInput id="short_description" formControlName="short_description" rows="6"></textarea>
+            <mat-error *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched">
+              <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Short description is required.</span>
+              <span *ngIf="jobForm.get('short_description')?.errors?.['minlength']">
+                Short Description must be at least {{
+                jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.
+              </span>
+              <span *ngIf="jobForm.get('short_description')?.errors?.['maxlength']">
+                Short Description cannot exceed {{
+                jobForm.get('short_description')?.errors?.['maxlength'].requiredLength
+                }} characters.
+              </span>
+              <span *ngIf="jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces']">
+                Short description must be at least {{
+                jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
+                excluding spaces.
+              </span>
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+    
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Application Instruction -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Application Instruction</mat-label>
+            <textarea matInput id="application_instruction" formControlName="application_instruction"
+              rows="6"></textarea>
+            <mat-error
+              *ngIf="jobForm.get('application_instruction')?.invalid && jobForm.get('application_instruction')?.touched">
+              <span *ngIf="jobForm.get('application_instruction')?.errors?.['required']">Application Instruction is
+                required.</span>
+              <span *ngIf="jobForm.get('application_instruction')?.errors?.['minlength']">Application Instruction must
+                be
+                at least {{ jobForm.get('application_instruction')?.errors?.['minlength'].requiredLength }}
+                characters.</span>
+              <span *ngIf="jobForm.get('application_instruction')?.errors?.['maxlength']">Application Instruction cannot
+                exceed {{ jobForm.get('application_instruction')?.errors?.['maxlength'].requiredLength }}
+                characters.</span>
+              <span *ngIf="jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces']">
+                Application Instruction must be at least {{
+                jobForm.get('application_instruction')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
+                excluding spaces.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
+          <!-- Full Description -->
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Full Description</mat-label>
+            <textarea matInput id="full_description" formControlName="full_description" rows="6"></textarea>
+            <mat-error *ngIf="jobForm.get('full_description')?.invalid && jobForm.get('full_description')?.touched">
+              <span *ngIf="jobForm.get('full_description')?.errors?.['required']">Full description is required.</span>
+              <span *ngIf="jobForm.get('full_description')?.errors?.['minlength']">
+                Full Description must be at least {{
+                jobForm.get('full_description')?.errors?.['minlength'].requiredLength
+                }} characters.
+              </span>
+              <span *ngIf="jobForm.get('full_description')?.errors?.['maxlength']">
+                Full Description cannot exceed {{ jobForm.get('full_description')?.errors?.['maxlength'].requiredLength
+                }}
+                characters.
+              </span>
+              <span *ngIf="jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces']">
+                Full description must be at least {{
+                jobForm.get('full_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
+                excluding
+                spaces.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Featured Image -->
+          <div class="file-input-container">
+            <button mat-stroked-button type="button" (click)="fileInput.click()">
+              <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
+              Choose Featured Image
+            </button>
+            <input #fileInput type="file" style="display: none" (change)="onFileSelected($event, 'featured_image')"
+              accept="image/jpeg,image/png,image/webp">
+
+            <!-- Image Preview -->
+            <div class="img-preview" *ngIf="imagePreview">
+              <img [src]="imagePreview" alt="Preview">
+            </div>
+
+            <span class="file-name" *ngIf="jobForm.get('featured_image')?.value">
+              {{ getFileName(jobForm.get('featured_image')?.value) }}
+            </span>
+            <mat-error *ngIf="jobForm.get('featured_image')?.invalid && jobForm.get('featured_image')?.touched">
+              Featured image is required.
+            </mat-error>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
+          <!-- Skills Required -->
+          <div class="skills-section m-0">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Add Skills</mat-label>
+              <input matInput id="skills_input" type="text" [(ngModel)]="newSkill" (keyup.enter)="addSkill()"
+                [ngModelOptions]="{standalone: true}" placeholder="Enter a skill and press Enter">
+              <button mat-icon-button matSuffix (click)="addSkill()" [disabled]="!newSkill.trim()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-chip-listbox #chipList aria-label="Skills selection">
+              <mat-chip *ngFor="let skill of skillsArray; let i = index" [removable]="true" (removed)="removeSkill(i)">
+                {{skill}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            </mat-chip-listbox>
+
+            <mat-error *ngIf="skillsArray.length === 0 && jobForm.get('skills_required')?.touched">
+              At least one skill is required.
+            </mat-error>
+            <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['minLengthSkill']">
+              Each skill must be at least
+              {{ jobForm.get('skills_required')?.errors?.['minLengthSkill'].requiredLength }}
+              characters long.
+            </mat-error>
+            <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['maxLengthSkill']">
+              Each skill cannot exceed
+              {{ jobForm.get('skills_required')?.errors?.['maxLengthSkill'].requiredLength }}
+              characters.
+            </mat-error>
+            <mat-error *ngIf="jobForm.get('skills_required')?.errors?.['maxSkills']">
+              No more than {{ jobForm.get('skills_required')?.errors?.['maxSkills'].required }} skills are allowed.
+            </mat-error>
+          </div>
+
+        </div>
+
+        <div class="form-actions col-12">
+          <button mat-flat-button color="primary" [disabled]="!jobForm.valid">
+            {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+          </button>
+        </div>
+      </form>
+
+  </mat-card-content>
 </mat-card>
