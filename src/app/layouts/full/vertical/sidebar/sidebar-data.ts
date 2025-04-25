@@ -72,10 +72,18 @@ export const navItems: NavItem[] = [
     // chipClass: 'b-1 border-secondary text-secondary',
 
   },
+  // {
+  //   displayName: 'User',
+  //   iconName: 'user',
+  //   route: 'starter/edit-profile',
+
+  // },
   {
     displayName: 'User',
     iconName: 'user',
-    route: 'starter/edit-profile',
+    route: '/userlist',
+    // chip: true,
+    // chipClass: 'b-1 border-secondary text-secondary',
 
   },
   // {
