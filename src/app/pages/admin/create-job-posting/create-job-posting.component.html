@@ -5,27 +5,25 @@
         <mat-icon>arrow_back</mat-icon>
       </button> {{ isEditMode ? 'Edit Job Posting' :
       'Job Posting' }}
-    </mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-      <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row">
-        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16">
-          <!-- Job Title -->
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Job Title</mat-label>
-            <input matInput id="title" formControlName="title" type="text">
-            <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
-              <span *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</span>
-              <span *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Title must contain only alphabets.</span>
-              <span *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</span>
-              <span *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
-                Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
-                characters excluding spaces.
-              </span>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+    </h2>
+    <form [formGroup]="jobForm" enctype="multipart/form-data" class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16">
+        <!-- Job Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Job Title</mat-label>
+          <input matInput id="title" formControlName="title" type="text">
+          <mat-error *ngIf="jobForm.get('title')?.invalid && jobForm.get('title')?.touched">
+            <span *ngIf="jobForm.get('title')?.errors?.['required']">Job Title is required.</span>
+            <span *ngIf="jobForm.get('title')?.errors?.['pattern']">Job Title must contain only alphabets.</span>
+            <span *ngIf="jobForm.get('title')?.errors?.['maxlength']">Job Title cannot exceed 50 characters.</span>
+            <span *ngIf="jobForm.get('title')?.errors?.['minLengthWithoutSpaces']">
+              Title must be at least {{ jobForm.get('title')?.errors?.['minLengthWithoutSpaces'].requiredLength }}
+              characters excluding spaces.
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
           <!-- Job Type -->
           <mat-form-field appearance="outline" class="w-100">
@@ -363,12 +361,12 @@
 
         </div>
 
-        <div class="form-actions col-12">
-          <button mat-flat-button color="primary" [disabled]="!jobForm.valid">
-            {{ isEditMode ? 'Update' : 'Create' }} Job Posting
-          </button>
-        </div>
-      </form>
+      <div class="form-actions col-12">
+        <button mat-raised-button color="primary" type="submit"  [disabled]="!jobForm.valid" (click)="onSubmit()" >
+          {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+        </button>
+      </div>
+    </form>
 
   </mat-card-content>
 </mat-card>

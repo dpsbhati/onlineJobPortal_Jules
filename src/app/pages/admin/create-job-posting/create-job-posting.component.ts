@@ -473,7 +473,7 @@ export class CreateJobPostingComponent {
         }else {
           this.loader.hide();
       }
-        console.error('Failed to retrieve job posting data', response.message)
+        // console.error('Failed to retrieve job posting data', response.message)
       }
     })
   }
@@ -538,106 +538,148 @@ export class CreateJobPostingComponent {
     })
     this.imagePreview = null
   }
-  onSubmit (): void {
-    // debugger
+  // onSubmit (): void {
+  //   // debugger
 
+  //   if (this.jobForm.valid) {
+  //     this.sanitizeFormValues()
+  //     const formValues = this.jobForm.value
+  //     // if (formValues.posted_at) {
+  //     //   const localDate = new Date(formValues.posted_at);
+  //     //   formValues.posted_at = localDate.toISOString(); // Convert to UTC ISO format
+  //     // }
+  //     //     if (formValues.posted_at) {
+  //     //   const localDate = new Date(formValues.posted_at);
+  //     //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
+  //     // }
+  //     //  const jobTypeControl = this.jobForm.get('job_type');
+  //     //  if (jobTypeControl) {
+  //     //    formValues.job_type.setValue(jobTypeControl.value.toUpperCase(), { emitEvent: false });
+  //     //   }
+
+  //     if (formValues.start_salary) {
+  //       formValues.start_salary = parseInt(
+  //         formValues.start_salary.replace(/,/g, ''),
+  //         10
+  //       )
+  //     }
+  //     if (formValues.end_salary) {
+  //       formValues.end_salary = parseInt(
+  //         formValues.end_salary.replace(/,/g, ''),
+  //         10
+  //       )
+  //     }
+  //     if (!formValues.id) {
+  //       delete formValues.id
+  //     }
+
+  //     formValues.skills_required = JSON.stringify(formValues.skills_required)
+  //     // if (this.isEditMode) {
+
+  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+  //     //     if (response.statusCode === 200) {
+  //     //       this.notify.showSuccess(response.message);
+  //     //       this.router.navigate(['/job-list']);
+  //     //     }
+  //     //     else{
+  //     //       this.notify.showError(response.message);
+  //     //       this.spinner.hide();
+  //     //     }
+  //     //   });
+  //     // } else {
+
+  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
+  //     //     if (response.statusCode === 200) {
+  //     //       this.notify.showSuccess(response.message);
+  //     //       this.router.navigate(['/job-list']);
+  //     //     }
+  //     //     else{
+  //     //       this.notify.showWarning(response.message);
+  //     //       this.spinner.hide();
+  //     //     }
+  //     //   });
+  //     this.loader.show();
+
+  //     this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+  //       next: (response: any) => {
+  //         if (response.statusCode === 200) {
+  //           this.loader.hide();
+  //           // this.notify.showSuccess(response.message);
+  //           this.router.navigate(['/job-list'])
+  //         } else {
+  //           // this.notify.showError(response.message);
+  //         }
+  //       },
+  //       error: (error: any) => {
+  //         // this.notify.showError(error.error?.message);
+  //         window.scrollTo({ top: 0, behavior: 'smooth' })
+  //       }
+  //     })
+  //     // } else {
+  //     //   this.spinner.show();
+  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+  //     //     next: (response) => {
+  //     //       this.spinner.hide();
+  //     //       if (response.statusCode === 200) {
+  //     //         this.notify.showSuccess(response.message);
+  //     //         this.router.navigate(['/job-list']);
+  //     //       } else {
+  //     //         this.notify.showError(response.message );
+  //     //       }
+  //     //     },
+  //     //     error: (error) => {
+  //     //       this.spinner.hide();
+  //     //       this.notify.showError(error.error?.message );
+  //     //       window.scrollTo({ top: 0, behavior: 'smooth' });
+  //     //     }
+  //     //   });
+  //   } else {
+  //     this.loader.hide();
+  //     // this.notify.showWarning("Failed to update the form")
+  //   }
+  // }
+  onSubmit (): void {
     if (this.jobForm.valid) {
-      this.sanitizeFormValues()
-      const formValues = this.jobForm.value
-      // if (formValues.posted_at) {
-      //   const localDate = new Date(formValues.posted_at);
-      //   formValues.posted_at = localDate.toISOString(); // Convert to UTC ISO format
-      // }
-      //     if (formValues.posted_at) {
-      //   const localDate = new Date(formValues.posted_at);
-      //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
-      // }
-      //  const jobTypeControl = this.jobForm.get('job_type');
-      //  if (jobTypeControl) {
-      //    formValues.job_type.setValue(jobTypeControl.value.toUpperCase(), { emitEvent: false });
-      //   }
+      this.sanitizeFormValues();
+      const formValues = this.jobForm.value;
 
       if (formValues.start_salary) {
-        formValues.start_salary = parseInt(
-          formValues.start_salary.replace(/,/g, ''),
-          10
-        )
+        formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
       }
       if (formValues.end_salary) {
-        formValues.end_salary = parseInt(
-          formValues.end_salary.replace(/,/g, ''),
-          10
-        )
+        formValues.end_salary = parseInt(formValues.end_salary.replace(/,/g, ''), 10);
       }
       if (!formValues.id) {
-        delete formValues.id
+        delete formValues.id;
       }
 
-      formValues.skills_required = JSON.stringify(formValues.skills_required)
-      // if (this.isEditMode) {
-
-      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-      //     if (response.statusCode === 200) {
-      //       this.notify.showSuccess(response.message);
-      //       this.router.navigate(['/job-list']);
-      //     }
-      //     else{
-      //       this.notify.showError(response.message);
-      //       this.spinner.hide();
-      //     }
-      //   });
-      // } else {
-
-      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-      //     if (response.statusCode === 200) {
-      //       this.notify.showSuccess(response.message);
-      //       this.router.navigate(['/job-list']);
-      //     }
-      //     else{
-      //       this.notify.showWarning(response.message);
-      //       this.spinner.hide();
-      //     }
-      //   });
+      formValues.skills_required = JSON.stringify(formValues.skills_required);
       this.loader.show();
 
       this.adminService.createOrUpdateJobPosting(formValues).subscribe({
         next: (response: any) => {
+          this.loader.hide();
           if (response.statusCode === 200) {
-            this.loader.hide();
-            // this.notify.showSuccess(response.message);
-            this.router.navigate(['/job-list'])
+            this.router.navigate(['/job-list']);
           } else {
-            // this.notify.showError(response.message);
+            console.error(response.message);
           }
         },
         error: (error: any) => {
-          // this.notify.showError(error.error?.message);
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+          this.loader.hide();
+          console.error(error.error?.message);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-      })
-      // } else {
-      //   this.spinner.show();
-      //   this.adminService.createOrUpdateJobPosting(formValues).subscribe({
-      //     next: (response) => {
-      //       this.spinner.hide();
-      //       if (response.statusCode === 200) {
-      //         this.notify.showSuccess(response.message);
-      //         this.router.navigate(['/job-list']);
-      //       } else {
-      //         this.notify.showError(response.message );
-      //       }
-      //     },
-      //     error: (error) => {
-      //       this.spinner.hide();
-      //       this.notify.showError(error.error?.message );
-      //       window.scrollTo({ top: 0, behavior: 'smooth' });
-      //     }
-      //   });
+      });
+
     } else {
+      // Mark all fields as touched to show validation errors
+      this.jobForm.markAllAsTouched();
       this.loader.hide();
-      // this.notify.showWarning("Failed to update the form")
+      console.warn("Form is invalid", this.jobForm.errors);
     }
   }
+
   navigate () {
     this.router.navigate(['/job-list'])
   }
