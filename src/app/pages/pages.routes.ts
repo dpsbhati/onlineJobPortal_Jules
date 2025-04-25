@@ -8,6 +8,7 @@ import { ApplicationsComponent } from './admin/applications/applications.compone
 import { ApplicantDetailsComponent } from './admin/applicant-details/applicant-details.component';
 import { JobPostingsComponent } from './job-postings/job-postings.component';
 import { ViewJobComponent } from './admin/view-job/view-job.component';
+import { NotificationsComponent } from './Notifications/notifications/notifications.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -98,6 +99,18 @@ export const PagesRoutes: Routes = [
         path:'job-postings',
         component:JobPostingsComponent,
         canActivate:[AuthGuard]
+      },
+      {
+        path:'notifications',
+        component:NotificationsComponent,
+        canActivate:[AuthGuard],
+        data: {
+          title: 'Notifications',
+          // urls: [
+          //   { title: 'Applications List', url: '/applications' },
+          //   // { title: 'Applications List' },
+          // ],
+        },
       }
     ]
   }
