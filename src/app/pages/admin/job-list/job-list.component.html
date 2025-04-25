@@ -4,7 +4,7 @@
     <div class="filters-container">
       <!-- Search Filter -->
       <div class="filter search-filter">
-       
+
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Search Applicant</mat-label>
 
@@ -12,7 +12,7 @@
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
-     
+
       <div class="filter_right ">
         <h4 class="mb-20"> Filters </h4>
         <!-- Rank Filter -->
@@ -66,7 +66,7 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <button mat-button color="primary" class="mb-20">
+        <button mat-button color="primary" class="mb-20" (click)="clearSearch()">
           Clear
         </button>
       </div>

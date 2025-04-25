@@ -203,18 +203,7 @@ export class JobListComponent implements OnInit {
     }
   }
 
-  clearSearch(): void {
-    this.filters = {
-      all: "",
-      title: "",
-      job_type: "",
-      employer: "",
-      rank: "",
-      status: ""
-    };
-    this.pageConfig.whereClause = [];
-    this.onSearch();
-  }
+ 
 
   viewJob(id: string) {
     this.router.navigate(['/authentication/Development-page', id]);
@@ -255,6 +244,7 @@ export class JobListComponent implements OnInit {
     return '$' + value.toLocaleString('en-IN');
   }
 
+
   allJobList() {
     this.adminService.getJobPostings().subscribe((response: any) => {
       if (response.statusCode === 200) {
@@ -272,5 +262,18 @@ export class JobListComponent implements OnInit {
     event.stopPropagation();
     this.filters[filterType] = '';
     this.onSearch();
+  }
+  clearSearch(): void {
+    this.filters = {
+      all: "",
+      title: "",
+      job_type: "",
+      employer: "",
+      rank: "",
+      status: ""
+    };
+    this.pageConfig.curPage = 1; // reset pagination too
+    this.pageConfig.whereClause = [];
+    this.onPagination(); // fetch the cleared list
   }
 }
