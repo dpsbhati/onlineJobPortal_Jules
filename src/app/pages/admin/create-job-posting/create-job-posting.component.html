@@ -6,7 +6,7 @@
       {{ isEditMode ? 'Edit Job Posting' :
       'Job Posting' }}
     </h2>
-    <form [formGroup]="jobForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row">
+    <form [formGroup]="jobForm" enctype="multipart/form-data" class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16 m-b-16">
         <!-- Job Title -->
         <mat-form-field appearance="outline" class="full-width">
@@ -350,7 +350,7 @@
       </div>
 
       <div class="form-actions col-12">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!jobForm.valid" >
+        <button mat-raised-button color="primary" type="submit"  [disabled]="!jobForm.valid" (click)="onSubmit()" >
           {{ isEditMode ? 'Update' : 'Create' }} Job Posting
         </button>
       </div>
