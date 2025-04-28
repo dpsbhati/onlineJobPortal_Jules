@@ -17,6 +17,7 @@ import { ImageCompressionService } from '../../../core/services/image/image-comp
 import { NotifyService } from '../../../core/services/notify.service';
 
 import { UserRole } from '../../../core/enums/roles.enum';
+import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -60,8 +61,9 @@ export class EditProfileComponent implements OnInit {
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
+     private loader : LoaderService,
     private notify: NotifyService,
-   
+
   ) {
     this.userRole = localStorage.getItem('role') || '';
     // console.log('Current user role:', this.userRole);
@@ -307,10 +309,11 @@ export class EditProfileComponent implements OnInit {
       this.scrollToTop();
       return;
     }
+    this.loader.show();
 
     const formValues = this.userProfileForm.value;
     const formattedSkills = formValues.key_skills.map((skill: string) => `/${skill}`);
-    
+
     const payload = {
       ...formValues,
       key_skills: JSON.stringify(formattedSkills),
@@ -320,6 +323,7 @@ export class EditProfileComponent implements OnInit {
 
     this.userService.SaveUserProfile(payload).subscribe({
       next: (response: any) => {
+        this.loader.hide();
         if (response.statusCode === 200) {
           this.notify.showSuccess(response.message);
           this.router.navigate(['/starter']);
@@ -329,6 +333,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.loader.hide();
         console.error('Error updating profile:', error);
         this.notify.showError(error.error?.message || 'An error occurred while updating the profile');
         this.scrollToTop();
@@ -337,13 +342,15 @@ export class EditProfileComponent implements OnInit {
   }
 
   loadUserData(userId: string): void {
-    
+    this.loader.show();
+
     this.userService.getUserById(userId).subscribe({
       next: (response: any) => {
-       
+        this.loader.hide();
+
         if (response.statusCode === 200 && response.data) {
           const data = response.data;
-          
+
           let keySkills = [];
           if (data.key_skills) {
             try {
@@ -353,11 +360,11 @@ export class EditProfileComponent implements OnInit {
               keySkills = Array.isArray(data.key_skills) ? data.key_skills : [];
             }
           }
-          
+
           const dob = data.dob ? new Date(data.dob).toISOString().split('T')[0] : null;
-          const expectedSalary = data.expected_salary ? 
+          const expectedSalary = data.expected_salary ?
             data.expected_salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '';
-          
+
           this.userProfileForm.patchValue({
             first_name: data.first_name || '',
             last_name: data.last_name || '',
@@ -374,7 +381,7 @@ export class EditProfileComponent implements OnInit {
           this.userId = data.id || userId;
           this.skillsArray = keySkills;
           this.userProfileForm.markAsPristine();
-          
+
           if (this.isApplicant()) {
             const applicantControls = ['dob', 'gender', 'mobile', 'key_skills', 'work_experiences'];
             applicantControls.forEach(controlName => {
@@ -390,7 +397,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       error: (error: any) => {
-       
+        this.loader.hide();  
         console.error('Error fetching user profile data:', error);
         this.notify.showError(error.error?.message || 'An error occurred while fetching user profile data');
       }
