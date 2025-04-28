@@ -34,8 +34,7 @@ export interface Application {
     MaterialModule,
     NgClass,
     MatOption,
-    NgFor,
-    
+    NgFor,    
     FormsModule,
     NgIf,
     ToastrModule,
@@ -53,7 +52,6 @@ export class ApplicationsComponent {
     'mobile',
     'dateOfApplication',
     'jobPost',
-    'applications',
     'status',
     'action',
   ];

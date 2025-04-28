@@ -1,13 +1,13 @@
-import { NavItem } from './nav-item/nav-item';
-import { CreateJobPostingComponent } from 'src/app/pages/admin/create-job-posting/create-job-posting.component';
+import { NavItem } from './nav-item/nav-item'
+import { CreateJobPostingComponent } from 'src/app/pages/admin/create-job-posting/create-job-posting.component'
 export const navItems: NavItem[] = [
   {
-    navCap: 'Dashbord',
+    navCap: 'Dashbord'
   },
   {
     displayName: 'Overview',
     iconName: 'home',
-    route: '/dashboard',
+    route: '/dashboard'
   },
   // {
   //   displayName: 'Login',
@@ -20,15 +20,17 @@ export const navItems: NavItem[] = [
   //   route: '/authentication/register',
   // },
   {
-    navCap: 'ADMINISTRATION',
+    navCap: 'ADMINISTRATION'
+  },
+  {
+    displayName: 'Applicant',
+    iconName: 'dashboard',
+    route: 'applicant'
   },
   {
     displayName: 'Applications',
     iconName: 'dashboard',
-    route: 'applications',
-    // chip: true,
-    // chipClass: 'bg-secondary text-white',
-    // chipContent: '9',
+    route: 'applications'
   },
 
   {
@@ -39,44 +41,38 @@ export const navItems: NavItem[] = [
       {
         displayName: 'All Job Postings',
         iconName: 'point',
-        route: 'job-list',
+        route: 'job-list'
       },
 
       {
         displayName: 'Add New Job',
         iconName: 'point',
-        route: 'create-job-posting',
+        route: 'create-job-posting'
       },
 
       {
         displayName: 'Categories',
         iconName: 'point',
-        route: '/menu-2',
+        route: '/menu-2'
       },
       {
         displayName: 'Expired Job Postings',
         iconName: 'point',
-        route: '/menu-2',
-      },
-    ],
+        route: '/menu-2'
+      }
+    ]
   },
+ 
   {
-    displayName: 'Applicant',
-    iconName: 'user',
-    route: 'applicant',
-
-  },
-  {
-    navCap: 'Settings',
+    navCap: 'Settings'
   },
   {
     displayName: 'Notifications',
     iconName: 'notification',
 
-    route: '/notifications',
+    route: '/notifications'
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
-
   },
   // {
   //   displayName: 'User',
@@ -87,10 +83,8 @@ export const navItems: NavItem[] = [
   {
     displayName: 'User',
     iconName: 'user',
-    route: '/userlist',
+    route: '/userlist'
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
-
-  },
- 
-];
+  }
+]

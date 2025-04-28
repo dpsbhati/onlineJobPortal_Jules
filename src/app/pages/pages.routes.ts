@@ -80,13 +80,25 @@ export const PagesRoutes: Routes = [
         // canActivate: [AuthGuard]
       },
       {
+        path: 'applicant',
+        component: ApplicantComponent,
+        canActivate: [AuthGuard],
+        data: {
+          title: 'Applicant-list',
+          urls: [
+            { title: 'Applicant List' }
+            // { title: 'Applications List' },
+          ]
+        }
+      },
+      {
         path: 'applications',
         component: ApplicationsComponent,
         data: {
           title: 'Administration',
           urls: [
+            { title: 'Applicant List', url: '/applicant' },
             { title: 'Applications List', url: '/applications' }
-            // { title: 'Applications List' },
           ]
         }
         // canActivate:[AuthGuard]
@@ -96,7 +108,7 @@ export const PagesRoutes: Routes = [
         component: ApplicantDetailsComponent,
         canActivate: [AuthGuard]
       },
-     
+
       {
         path: 'notifications',
         component: NotificationsComponent,
@@ -120,19 +132,7 @@ export const PagesRoutes: Routes = [
           //   // { title: 'Applications List' },
           // ],
         }
-      },
-      {
-        path: 'applicant',
-        component: ApplicantComponent,
-        canActivate: [AuthGuard],
-        data: {
-          title: 'User-list',
-          urls: [
-            { title: 'Applications List', url: '/applications' },
-            // { title: 'Applications List' },
-          ],
-        }
-      },
+      }
     ]
   }
 ]
