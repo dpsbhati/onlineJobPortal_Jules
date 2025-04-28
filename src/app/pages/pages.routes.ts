@@ -10,6 +10,8 @@ import { ViewJobComponent } from './admin/view-job/view-job.component'
 import { NotificationsComponent } from './Notifications/notifications/notifications.component'
 import { UserComponent } from './admin/user/user.component'
 import { ApplicantComponent } from './admin/applicant/applicant.component'
+import { SocialMediaIntegrationComponent } from './admin/social-media-integration/social-media-integration.component'
+import { SocialMediaDetailsComponent } from './admin/social-media-details/social-media-details.component'
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -119,6 +121,27 @@ export const PagesRoutes: Routes = [
           //   { title: 'Applications List', url: '/applications' },
           //   // { title: 'Applications List' },
           // ],
+        }
+      },
+      {
+        path: 'social-media-integration',
+        component: SocialMediaIntegrationComponent,
+        canActivate: [AuthGuard],
+        data: {
+          title: 'social media integration'
+          // urls: [
+          //   { title: 'Applications List', url: '/applications' },
+          //   // { title: 'Applications List' },
+          // ],
+        }
+      },
+      {
+        path: 'social-media-Details',
+        component: SocialMediaDetailsComponent,
+        canActivate: [AuthGuard],
+        data: {
+          title: 'social media Details'
+         
         }
       },
       {

@@ -22,16 +22,21 @@ export const navItems: NavItem[] = [
   {
     navCap: 'ADMINISTRATION'
   },
-  {
-    displayName: 'Applicant',
-    iconName: 'dashboard',
-    route: 'applicant'
-  },
+  // {
+  //   displayName: 'Applicant',
+  //   iconName: 'dashboard',
+  //   route: 'applicant'
+  // },
   {
     displayName: 'Applications',
     iconName: 'dashboard',
     route: 'applications'
   },
+  // {
+  //   displayName: 'social media integration',
+  //   iconName: 'dashboard',
+  //   route: 'social-media-integration'
+  // },
 
   {
     displayName: 'Job Postings',
