@@ -10,6 +10,7 @@ import { ViewJobComponent } from './admin/view-job/view-job.component'
 import { NotificationsComponent } from './Notifications/notifications/notifications.component'
 import { UserComponent } from './admin/user/user.component'
 import { ApplicantComponent } from './admin/applicant/applicant.component'
+import { ApplicantJobComponent } from './applicant-job/applicant-job.component'
 import { SocialMediaIntegrationComponent } from './admin/social-media-integration/social-media-integration.component'
 import { SocialMediaDetailsComponent } from './admin/social-media-details/social-media-details.component'
 export const PagesRoutes: Routes = [
@@ -101,6 +102,17 @@ export const PagesRoutes: Routes = [
           urls: [
             { title: 'Applicant List', url: '/applicant' },
             { title: 'Applications List', url: '/applications' }
+          ]
+        }
+        // canActivate:[AuthGuard]
+      },
+      {
+        path: 'applicantjob',
+        component: ApplicantJobComponent,
+        data: {
+          title: 'Applicant',
+          urls: [
+            { title: 'Applicant List', url: '/applicant' },
           ]
         }
         // canActivate:[AuthGuard]

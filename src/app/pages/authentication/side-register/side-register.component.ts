@@ -53,7 +53,7 @@ export class AppSideRegisterComponent {
     private authService: AuthService,
     private router: Router,
     private notify: NotifyService,
-   
+
     private _snackBar: MatSnackBar,
     private loader : LoaderService,
     private toastr : ToastrService,
@@ -80,9 +80,39 @@ export class AppSideRegisterComponent {
     });
   }
 
+  // onSubmit(): void {
+  //   this.loader.show();
+  //   if (this.registrationForm.invalid) {
+  //     return;
+  //   }
+  //   this.trimFormValues();
+  //   this.loading = true;
+  //   this.errorMessage = null;
+
+  //   this.authService.registerUser(this.registrationForm.value).subscribe({
+  //     next: (res: any) => {
+  //       if (res.statusCode === 200 || res.statusCode === 201) {
+
+  //         this.router.navigate(['authentication/login']);
+  //       this.toastr.success(res.message)
+  //       this.loader.hide();
+  //         this.loading = false;
+  //       } else {
+  //        this.toastr.warning(res.message)
+  //        this.loader.hide();
+  //       }
+  //     },
+  //     error: (error: any) => {
+  //       this.toastr.error = error.error?.message ||'An error occurred during registration.';
+  //       this.loader.hide();
+  //     },
+  //   });
+  // }
+
   onSubmit(): void {
     this.loader.show();
     if (this.registrationForm.invalid) {
+      this.loader.hide();
       return;
     }
     this.trimFormValues();
@@ -91,21 +121,25 @@ export class AppSideRegisterComponent {
 
     this.authService.registerUser(this.registrationForm.value).subscribe({
       next: (res: any) => {
-        if (res.statusCode === 200 || res.statusCode === 201) {
-      
-          this.router.navigate(['authentication/login']);
-        this.toastr.success(res.message)
-        this.loader.hide();
+        console.log(res);
+        if (res.statusCode == 200 || res.statusCode == 201) {
+          this.loader.hide();
+          this.router.navigate(['auth/login']);
+          this.toastr.success(res.message + ' Please check your email to verify your account.');
           this.loading = false;
-        } else {
-         this.toastr.warning(res.message)
-         this.loader.hide();
+        }
+        else {
+          this.errorMessage = res.message;
+          this.toastr.warning(res.message)
+          this.loader.hide();
+          this.loading = false;
         }
       },
       error: (error: any) => {
-        this.toastr.error = error.error?.message ||'An error occurred during registration.';
+        this.toastr.error = error.error?.message || 'Registration failed. Please try again.';
+        // this.notify.showError(this.errorMessage);
         this.loader.hide();
-      },
+      }
     });
   }
 
