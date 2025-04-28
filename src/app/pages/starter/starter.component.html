@@ -1,10 +1,80 @@
-<div class="blank-layout-container justify-content-center">
-  <div class="row">
-    <div class="col-12 text-center">
-      <!-- <img src="/assets/images/backgrounds/errorimg.svg" alt="error-bg" class="img-fluid" /> -->
-      <!-- <h2 class="auth-title f-w-600">Opps!!!</h2> -->
-      <h6 class="f-s-20 f-w-500 m-b-30 m-t-15">Under Development</h6>
-      <a mat-flat-button >Go back to Home</a>
-    </div>
+<div class="row">
+  @for(productcard of productcard; track productcard.title) {
+  <div class="col-lg-3 col-sm-6">
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <mat-card-title class="f-s-24 f-w-500 m-b-8">
+          {{ productcard.title }}
+        </mat-card-title>
+        <mat-card-subtitle class="f-s-14 f-w-400 m-t-0 m-b-10">
+          {{ productcard.subtitle }}
+        </mat-card-subtitle>
+        <mat-progress-bar mode="determinate" class="{{ productcard.color }}"
+          value="{{productcard.value}}"></mat-progress-bar>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  }
+  <div class="col-lg-8">
+    <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <div class="d-sm-flex align-items-center justify-content-between">
+          <div>
+            <mat-card-title>Sales Overview</mat-card-title>
+            <mat-card-subtitle>Ample Admin Vs Pixel Admin</mat-card-subtitle>
+          </div>
+          <div>
+            <div class="hstack gap-12 align-items-center flex-row">
+              <div class="hstack gap-4 text-primary flex-row">
+                <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
+                <span class="f-s-14">Ample</span>
+              </div>
+              <div class="hstack gap-4 text-secondary flex-row">
+                <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
+                <span class="f-s-14">Pixel</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <apx-chart [series]="salesChart.series" [dataLabels]="salesChart.dataLabels" [chart]="salesChart.chart"
+          [legend]="salesChart.legend" [xaxis]="salesChart.xaxis" [yaxis]="salesChart.yaxis" [grid]="salesChart.grid"
+          [stroke]="salesChart.stroke" [fill]="salesChart.fill" [tooltip]="salesChart.tooltip"
+          [colors]="salesChart.colors" [responsive]="salesChart.responsive"
+          [plotOptions]="salesChart.plotOptions"></apx-chart>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow">
+      <mat-card-content class="p-b-30">
+        <mat-card-title>Our Visitors</mat-card-title>
+        <mat-card-subtitle>Different Devices Used to Visit</mat-card-subtitle>
+        <div id="visitor-chart" class="m-t-24 d-flex flex-col">
+          <apx-chart [series]="ourvisitorChart.series" [chart]="ourvisitorChart.chart" [labels]="ourvisitorChart.labels"
+            [responsive]="ourvisitorChart.responsive" [tooltip]="ourvisitorChart.tooltip"
+            [legend]="ourvisitorChart.legend" [colors]="ourvisitorChart.colors"
+            [dataLabels]="ourvisitorChart.dataLabels" [plotOptions]="ourvisitorChart.plotOptions"
+            [stroke]="ourvisitorChart.stroke" [responsive]="ourvisitorChart.responsive">
+          </apx-chart>
+        </div>
+      </mat-card-content>
+      <div class="b-t-1 p-x-30 p-y-24">
+        <div class="d-flex align-items-center justify-content-center gap-30">
+          <div class="hstack flex-row gap-12 align-items-center">
+            <i-tabler name="circle-filled" class="text-primary icon-12 d-flex"></i-tabler>
+            <span class="f-s-14 text-primary">Mobile</span>
+          </div>
+          <div class="hstack flex-row gap-12 align-items-center">
+            <i-tabler name="circle-filled" class="text-body icon-12 d-flex"></i-tabler>
+            <span class="f-s-14 text-body">Desktop</span>
+          </div>
+          <div class="hstack flex-row gap-12 align-items-center">
+            <i-tabler name="circle-filled" class="text-secondary icon-12 d-flex"></i-tabler>
+            <span class="f-s-14 text-secondary">Tablet</span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
   </div>
 </div>
