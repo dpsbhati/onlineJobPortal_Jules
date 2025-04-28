@@ -119,7 +119,48 @@ export class SideResetPasswordComponent implements OnInit {
     return '';
   }
 
+  // async submit(): Promise<void> {
+  //   if (this.form.invalid) {
+  //     if (this.form.errors?.['mismatch']) {
+  //       this._notifyService.showError('Passwords do not match');
+  //     }
+  //     return;
+  //   }
+
+  //   this.form.disable();
+  //   this.isLoading = true;
+
+  //   const password = this.form.get('password')?.value;
+
+  //   // Call reset password service
+  //   this._authService.resetPassword({ newPassword: password })
+  //     .pipe(
+  //       finalize(() => {
+  //         this.form.enable();
+  //         this.isLoading = false;
+  //       })
+  //     )
+  //     .subscribe({
+  //       next: (response) => {
+  //         if (response.statusCode === 200) {
+  //           this.toastr.success('Password reset successfully');
+  //           this._router.navigate(['/authentication/login']);
+  //         } else {
+  //           this.toastr.warning(response.message);
+  //         }
+  //       },
+  //       error: (error) => {
+  //         console.error('Reset Password Error:', error);
+  //         this.toastr.error(error.error?.message || 'Failed to reset password');
+  //       }
+  //     });
+  // }
   async submit(): Promise<void> {
+    if (!this.token) {
+      this.toastr.error('Reset token missing');
+      return;
+    }
+
     if (this.form.invalid) {
       if (this.form.errors?.['mismatch']) {
         this._notifyService.showError('Passwords do not match');
@@ -132,8 +173,13 @@ export class SideResetPasswordComponent implements OnInit {
 
     const password = this.form.get('password')?.value;
 
-    // Call reset password service
-    this._authService.resetPassword({ newPassword: password })
+    // ✅ Correct Payload with token
+    const payload = {
+      newPassword: password,
+      token: this.token
+    };
+
+    this._authService.resetPassword(payload)
       .pipe(
         finalize(() => {
           this.form.enable();
@@ -142,11 +188,11 @@ export class SideResetPasswordComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          if (response.statusCode === 200) {
+          if (response.statusCode === 200 || response.statusCode === 201) {
             this.toastr.success('Password reset successfully');
             this._router.navigate(['/authentication/login']);
           } else {
-            this.toastr.warning(response.message);
+            this.toastr.warning(response.message || 'Something went wrong');
           }
         },
         error: (error) => {
