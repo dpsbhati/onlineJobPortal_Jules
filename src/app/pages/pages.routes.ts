@@ -13,6 +13,7 @@ import { ApplicantComponent } from './admin/applicant/applicant.component'
 import { ApplicantJobComponent } from './applicant-job/applicant-job.component'
 import { SocialMediaIntegrationComponent } from './admin/social-media-integration/social-media-integration.component'
 import { SocialMediaDetailsComponent } from './admin/social-media-details/social-media-details.component'
+import { JobPostDetailComponent } from './job-post-detail/job-post-detail.component'
 export const PagesRoutes: Routes = [
   {
     path: '',
