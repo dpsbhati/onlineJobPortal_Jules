@@ -61,6 +61,12 @@ export const navItems: NavItem[] = [
     ],
   },
   {
+    displayName: 'Applicant',
+    iconName: 'user',
+    route: 'applicant',
+
+  },
+  {
     navCap: 'Settings',
   },
   {
@@ -86,10 +92,5 @@ export const navItems: NavItem[] = [
     // chipClass: 'b-1 border-secondary text-secondary',
 
   },
-  // {
-  //   displayName: 'Job Postings',
-  //   iconName: 'user',
-  //   route: 'job-postings',
-
-  // },
+ 
 ];
