@@ -1,0 +1,123 @@
+<!-- Filters -->
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+      <div class="row justify-content-between align-items-center">
+        <div class="col-xl-4 col-lg-4 col-md-12">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Search Applicant</mat-label>
+  
+            <input matInput placeholder="Search Applicant" 
+              />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-8 col-lg-8 col-md-12">
+          <div class="row align-items-center justify-content-end">
+            <div class="col-xl-1 col-lg-1 col-md-12">
+              <h4 class="mb-20"> Filters </h4>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Name</mat-label>
+                <mat-select >
+                  <mat-option value="rank1">Name 1</mat-option>
+                  <mat-option value="rank2">Name 2</mat-option>
+                  <mat-option value="rank3">Name 3</mat-option>
+                </mat-select>
+  
+              </mat-form-field>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>City</mat-label>
+                <mat-select >
+                  <mat-option value="rank1">City 1</mat-option>
+                  <mat-option value="rank2">City 2</mat-option>
+                  <mat-option value="rank3">City 3</mat-option>
+                </mat-select>
+  
+              </mat-form-field>
+            </div>
+          
+            <div class="col-xl-1 col-lg-2 col-md-3">
+              <button mat-button color="primary" class="mb-20">
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
+<mat-card class="cardWithShadow">
+    <mat-card-content>
+        <div class="table-responsive">
+            <table mat-table [dataSource]="dataSource" class="w-100">
+
+                <ng-container matColumnDef="#">
+                    <th mat-header-cell *matHeaderCellDef>#</th>
+                    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Name</th>
+                    <td mat-cell *matCellDef="let element">
+                        <div class="d-flex align-items-center">
+                            <div class="m-l-16">
+                                <p>{{ element.Name }}</p>
+                                <small class="f-s-14">{{ element.Position }}</small>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef>Email</th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.Email }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="mobile">
+                    <th mat-header-cell *matHeaderCellDef>Mobile</th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.Mobile }}</td>
+                </ng-container>
+                <ng-container matColumnDef="city">
+                    <th mat-header-cell *matHeaderCellDef>City</th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.City }}</td>
+                </ng-container>
+                <ng-container matColumnDef="applications">
+                    <th mat-header-cell *matHeaderCellDef>Applications</th>
+                    <td mat-cell *matCellDef="let element" class="f-s-14">{{ element.Applications }}</td>
+                </ng-container>
+
+
+                <!-- Action Column -->
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef>Action</th>
+                    <td mat-cell *matCellDef="let element">
+                        <!-- Three-dot menu -->
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <a mat-menu-item href="/applications">
+                                <mat-icon>visibility</mat-icon>
+                                <span>View Details</span>
+                            </a>
+                            <!-- <button mat-menu-item >
+                                <mat-icon>delete</mat-icon>
+                                <span>Delete</span>
+                            </button> -->
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>
