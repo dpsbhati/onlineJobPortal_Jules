@@ -10,6 +10,7 @@ import { ViewJobComponent } from './admin/view-job/view-job.component'
 import { NotificationsComponent } from './Notifications/notifications/notifications.component'
 import { UserComponent } from './admin/user/user.component'
 import { ApplicantComponent } from './admin/applicant/applicant.component'
+import { ApplicantJobComponent } from './applicant-job/applicant-job.component'
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -99,6 +100,17 @@ export const PagesRoutes: Routes = [
           urls: [
             { title: 'Applicant List', url: '/applicant' },
             { title: 'Applications List', url: '/applications' }
+          ]
+        }
+        // canActivate:[AuthGuard]
+      },
+      {
+        path: 'applicantjob',
+        component: ApplicantJobComponent,
+        data: {
+          title: 'Applicant',
+          urls: [
+            { title: 'Applicant List', url: '/applicant' },
           ]
         }
         // canActivate:[AuthGuard]
