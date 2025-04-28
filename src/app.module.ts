@@ -18,6 +18,7 @@ import { CoursesAndCertificationModule } from './courses_and_certification/cours
 import { AttachmentModule } from './attachment/attachment.module';
 import { ConfigService } from './config.service';
 import { ConfigModule } from './config.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 @Module({
@@ -55,6 +56,7 @@ import { ConfigModule } from './config.module';
     FacebookModule,
     CoursesAndCertificationModule,
     AttachmentModule,
+    NotificationsModule,
     
     
   ],

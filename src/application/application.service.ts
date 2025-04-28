@@ -9,6 +9,8 @@ import { UpdateApplicationDto } from './dto/update-application.dto';
 import { applications } from './entities/application.entity';
 
 import * as nodemailer from 'nodemailer';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { ApplicationStatus } from './enums/applications.-status';
 
 @Injectable()
 export class ApplicationService {
@@ -17,6 +19,8 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<applications>,
     @InjectRepository(CoursesAndCertification)
     private coursesRepository: Repository<CoursesAndCertification>,
+    private readonly notificationsService: NotificationsService
+
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
@@ -93,6 +97,19 @@ export class ApplicationService {
       // Send confirmation email
       await this.sendConfirmationEmail(jobDetails);
     }
+ // Send notification (you can pass relevant information like job title, user details, status)
+ const notificationData = {
+  application_id: savedApplication.id,
+  jobTitle: jobDetails.job.title,
+  userName: savedApplication.user.email,
+  status: ApplicationStatus[savedApplication.status as keyof typeof ApplicationStatus], // Ensure it's an enum value
+  to: jobDetails.user.email,
+  subject: 'New Application',
+  content: `Your application for the job ${jobDetails.job.title} has been ${savedApplication.status}.`,
+  
+
+ }
+ const savedNotification =  await this.notificationsService.create(notificationData);
 
     return WriteResponse(
       200,
@@ -176,10 +193,14 @@ export class ApplicationService {
     user: any,
   ) {
     try {
+      console.log('Updating application with ID:', id);
+      
       const application: any = await this.findOne(id);
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
+      console.log('Updating application with application:', application);
+
 
       const isAdmin = user?.role === 'admin';
 
@@ -220,6 +241,21 @@ export class ApplicationService {
 
       const updatedApplication =
         await this.applicationRepository.save(application);
+        console.log('Updating application with updatedApplication:', updatedApplication);
+
+
+         // Send notification (you can pass relevant information like job title, user details, status)
+ const notificationData = {
+  application_id: updatedApplication.data.id,  // Accessing the application ID from the 'data' field
+  jobTitle: updatedApplication.data.job.title,  // Accessing the job title correctly from 'job'
+  userName: updatedApplication.data.user.email,  // Accessing the user's email correctly
+  status: ApplicationStatus[updatedApplication.data.status as keyof typeof ApplicationStatus],  // Mapping status to enum
+  to: updatedApplication.data.user.email,  // Email of the user to send the notification to
+  subject: 'Application Status Update',  // Notification subject
+  content: `Your application for the job ${updatedApplication.data.job.title} has been ${updatedApplication.data.status}.`,  // Notification content
+
+ }
+ const savedNotification =  await this.notificationsService.create(notificationData);
 
       return WriteResponse(
         200,

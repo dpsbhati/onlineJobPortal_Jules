@@ -54,7 +54,7 @@ export class ApplicationController {
     return this.applicationService.findOne(id);
   }
 
-  @Post('update')
+  @Post('update/:id') 
   @ApiOperation({ summary: 'Update a specific application by ID' })
   @ApiParam({
     name: 'id',
