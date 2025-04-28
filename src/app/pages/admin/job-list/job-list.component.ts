@@ -32,7 +32,7 @@ import { ToastrService, ToastrModule } from 'ngx-toastr';
     MatProgressSpinnerModule,
 
     NgIf,
-    ToastrModule
+    ToastrModule,
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
@@ -95,7 +95,7 @@ import { ToastrService, ToastrModule } from 'ngx-toastr';
   //     margin-left: 0.5rem;
   //   }
   // `],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class JobListComponent implements OnInit {
   jobList: any[] = [];
@@ -111,19 +111,19 @@ export class JobListComponent implements OnInit {
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
-    sortBy: "created_at",
-    direction: "desc",
-    whereClause: []
-  }
+    sortBy: 'created_at',
+    direction: 'desc',
+    whereClause: [],
+  };
 
   filters = {
-    all: "",
-    title: "",
-    job_type: "",
-    employer: "",
-    rank: "",
-    status: ""
-  }
+    all: '',
+    title: '',
+    job_type: '',
+    employer: '',
+    rank: '',
+    status: '',
+  };
 
   total: number = 0;
   jobPostingList: any[] = [];
@@ -136,13 +136,34 @@ export class JobListComponent implements OnInit {
     private helperService: HelperService,
     private notify: NotifyService,
     private authService: AuthService,
-    private loader : LoaderService,
-    private toastr : ToastrService
+    private loader: LoaderService,
+    private toastr: ToastrService
   ) {
     this.userRole = this.authService.getUserRole();
-    this.displayedColumns = this.isAdmin() ?
-      ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'status', 'actions'] :
-      ['position', 'title', 'job_type', 'employer', 'salary', 'date_published', 'deadline', 'actions'];
+    this.displayedColumns = this.isAdmin()
+      ? [
+          'position',
+          'title',
+          'job_type',
+          'employer',
+          'salary',
+          'date_published',
+          'deadline',
+          'status',
+          'number_of_applicant',
+          'actions',
+        ]
+      : [
+          'position',
+          'title',
+          'job_type',
+          'employer',
+          'salary',
+          'date_published',
+          'number_of_applicant',
+          'deadline',
+          'actions',
+        ];
   }
 
   isAdmin(): boolean {
@@ -154,11 +175,17 @@ export class JobListComponent implements OnInit {
     this.allJobList();
     this.onPagination();
   }
+  
+  // viewJobPostDetails(): void {
+  //   this.router.navigate(['/app-applicant-details']);
+  // }
 
   onPagination(): void {
     // this.isLoading = true;
     this.loader.show();
-    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    this.pageConfig.whereClause = this.helperService.getAllFilters(
+      this.filters
+    );
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         // console.log('API Response:', res);
@@ -166,7 +193,7 @@ export class JobListComponent implements OnInit {
           this.jobPostingList = res.data;
           this.total = res.count || 0;
           this.loader.hide();
-          console.log('Loaded jobs:', this.jobPostingList);
+          console.log(this.jobPostingList);
         } else {
           this.jobPostingList = [];
           this.total = 0;
@@ -182,7 +209,7 @@ export class JobListComponent implements OnInit {
         this.toastr.error(err?.error?.message);
         this.jobPostingList = [];
         this.total = 0;
-      }
+      },
     });
   }
 
@@ -202,8 +229,6 @@ export class JobListComponent implements OnInit {
       this.clearSearch();
     }
   }
-
- 
 
   viewJob(id: string) {
     this.router.navigate(['/authentication/Development-page', id]);
@@ -230,8 +255,8 @@ export class JobListComponent implements OnInit {
         },
         error: (error: any) => {
           this.loader.hide();
-          this.toastr.error(error?.message || "Failed to delete job.");
-        }
+          this.toastr.error(error?.message || 'Failed to delete job.');
+        },
       });
     }
   }
@@ -244,7 +269,6 @@ export class JobListComponent implements OnInit {
     return '$' + value.toLocaleString('en-IN');
   }
 
-
   allJobList() {
     this.adminService.getJobPostings().subscribe((response: any) => {
       if (response.statusCode === 200) {
@@ -253,7 +277,9 @@ export class JobListComponent implements OnInit {
           rank: job.rank,
         }));
         // Extract unique ranks
-        this.uniqueRanks = [...new Set(this.jobList.map(job => job.rank))].filter(rank => rank);
+        this.uniqueRanks = [
+          ...new Set(this.jobList.map((job) => job.rank)),
+        ].filter((rank) => rank);
       }
     });
   }
@@ -265,12 +291,12 @@ export class JobListComponent implements OnInit {
   }
   clearSearch(): void {
     this.filters = {
-      all: "",
-      title: "",
-      job_type: "",
-      employer: "",
-      rank: "",
-      status: ""
+      all: '',
+      title: '',
+      job_type: '',
+      employer: '',
+      rank: '',
+      status: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
     this.pageConfig.whereClause = [];

@@ -6,7 +6,7 @@
       <div class="col-xl-4 col-lg-4 col-md-12">
 
         <mat-form-field appearance="outline">
-          <mat-label>Search Applicant</mat-label>
+          <mat-label>Search Appliacant</mat-label>
 
           <input matInput [(ngModel)]="filters.all" (keyup.enter)="onSearch()" placeholder="Search..." />
           <mat-icon matSuffix>search</mat-icon>
@@ -118,14 +118,19 @@
           <td mat-cell *matCellDef="let element">{{element.deadline | date:'mediumDate'}}</td>
         </ng-container>
 
+        <!-- Number of Applicant Column -->
+        <ng-container matColumnDef="number_of_applicant">
+          <th mat-header-cell *matHeaderCellDef>Applicant Number</th>
+          <td mat-cell *matCellDef="let element">
+            8
+          </td>
+        </ng-container>
+
         <!-- Status Column -->
         <ng-container matColumnDef="status" *ngIf="isAdmin()">
 
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let element">
-
-
-
             <span
               class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted bg-light-secondary text-secondary">
               {{element.jobpost_status | titlecase}}
@@ -141,10 +146,20 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="viewJob(element.id)">
+             
+              <!-- <button mat-menu-item (click)="viewJobPostDetails()">
                 <mat-icon>visibility</mat-icon>
-                View
-              </button>
+                <span>View Details</span>
+              </button> -->
+
+              <a mat-menu-item href="/job-post-details">
+                <mat-icon>visibility</mat-icon>
+                <span>View Details</span>
+              </a>
+              <a mat-menu-item href="/applications">
+                <mat-icon>visibility</mat-icon>
+                <span>View Application</span>
+              </a>
               <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
                 <mat-icon>edit</mat-icon>
                 Edit

@@ -105,10 +105,10 @@ export class ApplicationsComponent {
       if (response.statusCode === 200) {
         this.jobPosts = response.data
           .map((application: any) => ({
-            id: application.job.id,  
-            title: application.job.title,  
+            id: application.job?.id,  
+            title: application.job?.title,  
           }))
-          .filter((job: any) => job.title); 
+          .filter((job: any) => job?.title); 
       }
     });
   }
@@ -132,19 +132,19 @@ export class ApplicationsComponent {
         // this.totalApplications = response.total || response.data.length;
         this.dataSource.data = response.data.map((app: any, index: number) => ({
           position: index + 1 + this.pageIndex * this.pageSize,
-          name: `${app.user.userProfile?.first_name} ${app.user.userProfile?.last_name}`,
-          email: app.user.email,
-          mobile: app.user.userProfile?.mobile,
+          name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
+          email: app.user?.email,
+          mobile: app.user?.userProfile?.mobile,
           dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
           }),
-          application_id: app.id,
-          jobPost: app.job.title,
-          applications: app.count,
-          status: app.status,
-          all: app.all,
-          user_id: app.user_id,
-          job_id : app.job_id
+          application_id: app?.id,
+          jobPost: app.job?.title,
+          applications: app?.count,
+          status: app?.status,
+          all: app?.all,
+          user_id: app?.user_id,
+          job_id : app?.job_id
 
         }));
       } else {
