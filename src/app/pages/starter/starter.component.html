@@ -20,22 +20,23 @@
       <mat-card-content>
         <div class="d-sm-flex align-items-center justify-content-between">
           <div>
-            <mat-card-title>Sales Overview</mat-card-title>
-            <mat-card-subtitle>Ample Admin Vs Pixel Admin</mat-card-subtitle>
+            <mat-card-title>Job Application Overview</mat-card-title>
+            <mat-card-subtitle>Applied vs Shortlisted</mat-card-subtitle>
           </div>
           <div>
             <div class="hstack gap-12 align-items-center flex-row">
               <div class="hstack gap-4 text-primary flex-row">
                 <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
-                <span class="f-s-14">Ample</span>
+                <span class="f-s-14">Applied</span>
               </div>
               <div class="hstack gap-4 text-secondary flex-row">
                 <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
-                <span class="f-s-14">Pixel</span>
+                <span class="f-s-14">Shortlisted</span>
               </div>
             </div>
           </div>
         </div>
+        
 
         <apx-chart [series]="salesChart.series" [dataLabels]="salesChart.dataLabels" [chart]="salesChart.chart"
           [legend]="salesChart.legend" [xaxis]="salesChart.xaxis" [yaxis]="salesChart.yaxis" [grid]="salesChart.grid"
@@ -63,18 +64,19 @@
         <div class="d-flex align-items-center justify-content-center gap-30">
           <div class="hstack flex-row gap-12 align-items-center">
             <i-tabler name="circle-filled" class="text-primary icon-12 d-flex"></i-tabler>
-            <span class="f-s-14 text-primary">Mobile</span>
+            <span class="f-s-14 text-primary">Applied</span>
           </div>
           <div class="hstack flex-row gap-12 align-items-center">
             <i-tabler name="circle-filled" class="text-body icon-12 d-flex"></i-tabler>
-            <span class="f-s-14 text-body">Desktop</span>
+            <span class="f-s-14 text-body">Shortlisted</span>
           </div>
           <div class="hstack flex-row gap-12 align-items-center">
             <i-tabler name="circle-filled" class="text-secondary icon-12 d-flex"></i-tabler>
-            <span class="f-s-14 text-secondary">Tablet</span>
+            <span class="f-s-14 text-secondary">Rejected</span>
           </div>
         </div>
       </div>
+      
     </mat-card>
   </div>
 </div>
