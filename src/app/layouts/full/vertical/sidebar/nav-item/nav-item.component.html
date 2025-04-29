@@ -18,13 +18,13 @@
       disabled: item.disabled
     }"
     class="menu-list-item">
-    <i-tabler class="routeIcon" name="{{ item.iconName }}" matListItemIcon></i-tabler>
+    <i-tabler *ngIf="isVisibleForRole(item)" class="routeIcon" name="{{ item.iconName }}" matListItemIcon></i-tabler>
 
     <!-- Conditionally display the displayName based on the user role -->
     <span class="hide-menu" *ngIf="isVisibleForRole(item)">{{ item.displayName | translate }}</span>
 
     <ng-container *ngIf="item.children && item.children.length">
-      <span class="arrow-icon" fxFlex>
+      <span class="arrow-icon" fxFlex *ngIf="isVisibleForRole(item)">
         <span fxFlex></span>
         <mat-icon [@indicatorRotate]="expanded ? 'expanded' : 'collapsed'">expand_more</mat-icon>
       </span>

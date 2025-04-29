@@ -39,16 +39,24 @@ export const navItems: NavItem[] = [
   //   iconName: 'dashboard',
   //   route: 'social-media-integration'
   // },
+  // {
+  //   displayName: 'All Job Postings',
+  //   iconName: 'point',
+  //   route: 'job-list',
+  //   visibleForRoles: ['applicant']
+  // },
 
   {
     displayName: 'Job Postings',
     iconName: 'folder',
     route: '/menu-level',
+   visibleForRoles: ['admin'],
     children: [
       {
         displayName: 'All Job Postings',
         iconName: 'point',
-        route: 'job-list'
+        route: 'job-list',
+        visibleForRoles: ['admin']
       },
 
       {
@@ -61,12 +69,14 @@ export const navItems: NavItem[] = [
       {
         displayName: 'Categories',
         iconName: 'point',
-        route: '/menu-2'
+        route: '/menu-2',
+        visibleForRoles: ['admin']
       },
       {
         displayName: 'Expired Job Postings',
         iconName: 'point',
-        route: '/menu-2'
+        route: '/menu-2',
+        visibleForRoles: ['admin']
       }
     ]
   },
@@ -92,7 +102,8 @@ export const navItems: NavItem[] = [
   {
     displayName: 'User',
     iconName: 'user',
-    route: '/userlist'
+    route: '/userlist',
+    visibleForRoles: ['admin']
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
   }
@@ -104,7 +115,7 @@ const userRole = getUserRole(); // Retrieve the role
 
 // Dynamically modify navItems based on the role
 const filteredNavItems = navItems.filter(item => {
-  
+
   // If the item has the 'visibleForRoles' property, filter it based on the role
   if (item.visibleForRoles) {
     return item.visibleForRoles.includes(userRole); // Show only if the role is in the list
