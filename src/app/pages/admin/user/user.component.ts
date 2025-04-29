@@ -28,6 +28,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { UserRole } from 'src/app/core/enums/roles.enum';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-user',
@@ -40,6 +41,7 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
     MatIconModule,
     MatButtonModule,
     MatTableModule,
+    MatMenuModule,
     MatPaginatorModule
   ],
   templateUrl: './user.component.html',
@@ -80,8 +82,8 @@ export class UserComponent implements OnInit {
   ) {
     this.userRole = this.authService.getUserRole();
     this.displayedColumns = this.isAdmin() ?
-    ['#', 'name', 'email', 'mobile'] :
-    ['#', 'name', 'email', 'mobile'];
+    ['#', 'name', 'email', 'mobile', 'actions'] :
+    ['#', 'name', 'email', 'mobile', 'actions'];
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
