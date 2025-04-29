@@ -17,6 +17,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteComponent } from '../delete/delete.component'
 @Component({
   selector: 'app-job-list',
   standalone: true,
@@ -137,33 +139,34 @@ export class JobListComponent implements OnInit {
     private notify: NotifyService,
     private authService: AuthService,
     private loader: LoaderService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private dialog: MatDialog,
   ) {
     this.userRole = this.authService.getUserRole();
     this.displayedColumns = this.isAdmin()
       ? [
-          'position',
-          'title',
-          'job_type',
-          'employer',
-          'salary',
-          'date_published',
-          'deadline',
-          'status',
-          'number_of_applicant',
-          'actions',
-        ]
+        'position',
+        'title',
+        'job_type',
+        'employer',
+        'salary',
+        'date_published',
+        'deadline',
+        'status',
+        'number_of_applicant',
+        'actions',
+      ]
       : [
-          'position',
-          'title',
-          'job_type',
-          'employer',
-          'salary',
-          'date_published',
-          'number_of_applicant',
-          'deadline',
-          'actions',
-        ];
+        'position',
+        'title',
+        'job_type',
+        'employer',
+        'salary',
+        'date_published',
+        'number_of_applicant',
+        'deadline',
+        'actions',
+      ];
   }
 
   isAdmin(): boolean {
@@ -175,7 +178,7 @@ export class JobListComponent implements OnInit {
     this.allJobList();
     this.onPagination();
   }
-  
+
   // viewJobPostDetails(): void {
   //   this.router.navigate(['/app-applicant-details']);
   // }
@@ -239,26 +242,29 @@ export class JobListComponent implements OnInit {
   }
 
   deleteJob(jobId: string) {
-    this.loader.show();
-    if (confirm('Are you sure you want to delete this job?')) {
-      this.adminService.deleteJob(jobId).subscribe({
-        next: (response: any) => {
-          this.toastr.success(response.message);
-          this.loader.hide();
-          // Refresh job data after deletion
-          this.onPagination();
-          // If the current page becomes empty after deletion, navigate to the previous page
-          if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
-            this.pageConfig.curPage -= 1;
+    const dialogRef = this.dialog.open(DeleteComponent)
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.loader.show();
+        this.adminService.deleteJob(jobId).subscribe({
+          next: (response: any) => {
+            this.toastr.success(response.message);
+            this.loader.hide();
+            // Refresh job data after deletion
             this.onPagination();
-          }
-        },
-        error: (error: any) => {
-          this.loader.hide();
-          this.toastr.error(error?.message || 'Failed to delete job.');
-        },
-      });
-    }
+            // If the current page becomes empty after deletion, navigate to the previous page
+            if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
+              this.pageConfig.curPage -= 1;
+              this.onPagination();
+            }
+          },
+          error: (error: any) => {
+            this.loader.hide();
+            this.toastr.error(error?.message || 'Failed to delete job.');
+          },
+        });
+      }
+    });
   }
 
   navigateToCreateJob() {
