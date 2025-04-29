@@ -9,19 +9,38 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const roleService = inject(RoleService);
     const router = inject(Router);
 
-    const user = authService.currentUserValue;
-    
+    // const user = authService.currentUserValue;
+
+    // if (!user) {
+    //   router.navigate(['/auth/login']);
+    //   return false;
+    // }
+
+    // const currentRoute = route.url.map(segment => segment.path).join('/');
+    // if (roleService.canAccess(user.role, '/' + currentRoute)) {
+    //   return true;
+    // }
+
+    // router.navigate(['/job-list']);
+    // return false;
+    const user = authService.currentUserValue;  // Get current user from auth service
+
     if (!user) {
+      // If user is not logged in, redirect to login page
       router.navigate(['/auth/login']);
       return false;
     }
 
-    const currentRoute = route.url.map(segment => segment.path).join('/');
-    if (roleService.canAccess(user.role, '/' + currentRoute)) {
-      return true;
+    const currentRoute = route.url.map(segment => segment.path).join('/'); // Get the current route
+
+    // Check if the user has the role to access this route
+    if (allowedRoles.includes(user.role) || roleService.canAccess(user.role, currentRoute)) {
+      return true; // Allow access if role matches
     }
 
+    // If the user doesn't have access, navigate to a default route (e.g., job-list)
     router.navigate(['/job-list']);
     return false;
   };
-};
+  };
+

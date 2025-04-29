@@ -15,6 +15,7 @@ import { SocialMediaIntegrationComponent } from './admin/social-media-integratio
 import { SocialMediaDetailsComponent } from './admin/social-media-details/social-media-details.component'
 import { JobPostDetailComponent } from './job-post-detail/job-post-detail.component'
 import { AdduserComponent } from './admin/adduser/adduser.component'
+import { roleGuard } from '../core/guards/role.guard'
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -29,7 +30,7 @@ export const PagesRoutes: Routes = [
             // { title: 'Applications List' },
           ],
         },
-        // canActivate: [AuthGuard]
+        // canActivate: [roleGuard(['applicant','admin'])],
       },
 
       {
@@ -42,7 +43,7 @@ export const PagesRoutes: Routes = [
             // { title: 'Job deatils' },
           ],
         },
-        // canActivate: [AuthGuard]
+        canActivate: [roleGuard(['applicant', 'admin'])],
       },
       {
         path: 'view-job',
@@ -66,13 +67,13 @@ export const PagesRoutes: Routes = [
             // { title: 'Job deatils' },
           ],
         },
-        // canActivate: [AuthGuard]
+        canActivate: [roleGuard(['applicant', 'admin'])],
       },
 
       {
         path: 'create-job-posting',
         component: CreateJobPostingComponent,
-        // canActivate: [AuthGuard]
+        canActivate: [roleGuard(['admin'])],
       },
       {
         path: 'create-job-posting/:id',
@@ -158,7 +159,7 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           title: 'social media Details'
-         
+
         }
       },
       {
@@ -167,7 +168,7 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           title: 'Add User',
-         
+
         }
       },
       {

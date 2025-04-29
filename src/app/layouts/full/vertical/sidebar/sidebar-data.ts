@@ -67,7 +67,7 @@ export const navItems: NavItem[] = [
       }
     ]
   },
- 
+
   {
     navCap: 'Settings'
   },
@@ -92,4 +92,30 @@ export const navItems: NavItem[] = [
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
   }
-]
+
+
+];
+const userRole = getUserRole(); // Retrieve the role
+
+// Dynamically modify navItems based on the role
+const filteredNavItems = navItems.filter(item => {
+  if (userRole === 'admin') {
+    // Admin: show everything, or add specific admin routes
+    return true;
+  } else if (userRole === 'applicant') {
+    // Applicant: Hide 'Job Postings' and other admin items
+    if (item.displayName === 'Job Postings' || item.displayName === 'Applications') {
+      return true;
+    }
+    return false;
+  }
+  return true; // Default case: show everything
+});
+
+// Function to get role from localStorage
+function getUserRole(): string {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user.role || ''; // Return empty string if role is not found
+}
+
+console.log('test',filteredNavItems);
