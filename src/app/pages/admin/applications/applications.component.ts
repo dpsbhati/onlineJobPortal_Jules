@@ -25,7 +25,8 @@ import {
   MatDialogModule
 } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
-import { FileuploadComponent } from '../fileupload/fileupload.component';
+import { FileuploadComponent } from '../fileupload/fileupload.component'
+import { DeleteComponent } from '../delete/delete.component'
 export interface Application {
   position: number
   name: string
@@ -93,7 +94,8 @@ export class ApplicationsComponent {
   isLoading: boolean = false
   applicantId: string | null = null
   application_id: string | null = null
-  constructor ( private dialog: MatDialog,
+  constructor (
+    private dialog: MatDialog,
     private adminService: AdminService,
     private notify: NotifyService,
     private router: Router,
@@ -112,6 +114,12 @@ export class ApplicationsComponent {
   }
   openHeaderDialog () {
     const dialogRef = this.dialog.open(FileuploadComponent)
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog result: result')
+    })
+  }
+  deleteDialog () {
+    const dialogRef = this.dialog.open(DeleteComponent)
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result: result')
     })
