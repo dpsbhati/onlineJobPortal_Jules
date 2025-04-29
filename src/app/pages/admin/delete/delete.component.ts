@@ -24,5 +24,16 @@ import {
 })
 export class DeleteComponent {
 
-  
+  constructor(
+    public dialogRef: MatDialogRef<DeleteComponent>,
+  ) {}
+
+  onCancel(): void {
+    this.dialogRef.close(false); // Pass 'false' when the dialog is cancelled
+  }
+
+  onDelete(): void {
+    this.dialogRef.close(true); // Pass 'true' when the delete action is confirmed
+  }
+
 }
