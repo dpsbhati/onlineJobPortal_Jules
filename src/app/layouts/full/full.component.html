@@ -1,0 +1,127 @@
+<div
+  autosize
+  autoFocus
+  [ngClass]="{
+  'sidebarNav-mini': options.sidenavCollapsed && options.navPos !== 'top' &&  !resView,
+  'sidebarNav-horizontal': options.horizontal,
+  cardBorder: options.cardBorder,
+}" class="page-container"
+  [dir]="options.dir!"
+>
+  <!-- ============================================================== -->
+  <!-- VerticalHeader -->
+  <!-- ============================================================== -->
+  @if(!options.horizontal) {
+  <app-header
+    [showToggle]="!isOver"
+    (toggleCollapsed)="toggleCollapsed()"
+    (toggleMobileNav)="sidenav.toggle()"
+    (optionsChange)="receiveOptions($event)"
+  ></app-header>
+  } @else {
+  <!-- horizontal header -->
+  <app-horizontal-header
+    (toggleMobileNav)="sidenav.toggle()"
+    (optionsChange)="receiveOptions($event)"
+  ></app-horizontal-header>
+  }
+
+  <mat-sidenav-container class="mainWrapper">
+    <!-- ============================================================== -->
+    <!-- Vertical Sidebar -->
+    <!-- ============================================================== -->
+    @if(!options.horizontal) {
+    <mat-sidenav
+      align="start"
+      #leftsidenav
+      [mode]="isOver ? 'over' : 'side'"
+      [opened]="
+        options.navPos === 'side' &&
+        options.sidenavOpened &&
+        !isOver &&
+        !resView
+      "
+      (openedChange)="onSidenavOpenedChange($event)"
+      (closedStart)="onSidenavClosedStart()"
+      class="sidebarNav"
+    >
+      <app-sidebar> </app-sidebar>
+      <ng-scrollbar
+        class="position-relative mini-scroll"
+        >
+        <!-- style="height: calc(100vh - 230px)" -->
+        <mat-nav-list class="sidebar-list">
+          @for(item of navItems; track item) {
+          <app-nav-item [item]="item" (notify)="sidenav.toggle()">
+          </app-nav-item>
+          }
+        </mat-nav-list>
+      </ng-scrollbar>
+    </mat-sidenav>
+    }
+
+    <!-- ============================================================== -->
+    <!-- horizontal Sidebar -->
+    <!-- ============================================================== -->
+    @if(resView && options.horizontal) {
+    <mat-sidenav
+      #leftsidenav
+      [mode]="'over'"
+      [opened]="options.sidenavOpened && !isTablet"
+      (openedChange)="onSidenavOpenedChange($event)"
+      (closedStart)="onSidenavClosedStart()"
+      class="sidebarNav"
+    >
+      <app-sidebar> </app-sidebar>
+      <ng-scrollbar
+        class="position-relative mini-scroll"
+        style="height: calc(100vh - 230px)"
+      >
+        <mat-nav-list class="sidebar-list">
+          @for(item of navItems; track item) {
+          <app-nav-item [item]="item" (notify)="sidenav.toggle()">
+          </app-nav-item>
+          }
+        </mat-nav-list>
+      </ng-scrollbar>
+    </mat-sidenav>
+    }
+
+    <!-- ============================================================== -->
+    <!-- Main Content -->
+    <!-- ============================================================== -->
+    <mat-sidenav-content class="contentWrapper">
+      @if(options.horizontal) {
+      <app-horizontal-sidebar></app-horizontal-sidebar>
+      }
+
+      <main
+        class="pageWrapper"
+      
+      >
+        <app-breadcrumb></app-breadcrumb>
+        <!-- ============================================================== -->
+        <!-- Outlet -->
+        <!-- ============================================================== -->
+        <router-outlet></router-outlet>
+        <!-- <div class="customizerBtn">
+          <button
+            mat-fab
+            class="bg-primary text-white"
+            (click)="customizerRight.toggle()"
+          >
+            <mat-icon>settings</mat-icon>
+          </button>
+        </div> -->
+      </main>
+    </mat-sidenav-content>
+    <!-- ============================================================== -->
+    <!-- Customizer -->
+    <!-- ============================================================== -->
+   
+    
+  </mat-sidenav-container>
+  <!-- ------------------------------------------------------------------
+  Mobile Apps Sidebar
+  ------------------------------------------------------------------ -->
+</div>
