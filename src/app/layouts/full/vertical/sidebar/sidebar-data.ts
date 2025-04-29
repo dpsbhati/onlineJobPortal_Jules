@@ -7,7 +7,8 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Overview',
     iconName: 'home',
-    route: '/dashboard'
+    route: '/dashboard',
+    visibleForRoles: ['admin', 'applicant']
   },
   // {
   //   displayName: 'Login',
@@ -30,7 +31,8 @@ export const navItems: NavItem[] = [
   {
     displayName: 'Applications',
     iconName: 'dashboard',
-    route: 'applications'
+    route: 'applications',
+    visibleForRoles: ['admin', 'applicant']
   },
   // {
   //   displayName: 'social media integration',
@@ -52,7 +54,8 @@ export const navItems: NavItem[] = [
       {
         displayName: 'Add New Job',
         iconName: 'point',
-        route: 'create-job-posting'
+        route: 'create-job-posting',
+        visibleForRoles: ['admin']
       },
 
       {
@@ -75,7 +78,8 @@ export const navItems: NavItem[] = [
     displayName: 'Notifications',
     iconName: 'notification',
 
-    route: '/notifications'
+    route: '/notifications',
+    visibleForRoles: ['admin', 'applicant']
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
   },
@@ -95,21 +99,19 @@ export const navItems: NavItem[] = [
 
 
 ];
+// Get the user role dynamically (e.g., from localStorage)
 const userRole = getUserRole(); // Retrieve the role
 
 // Dynamically modify navItems based on the role
 const filteredNavItems = navItems.filter(item => {
-  if (userRole === 'admin') {
-    // Admin: show everything, or add specific admin routes
-    return true;
-  } else if (userRole === 'applicant') {
-    // Applicant: Hide 'Job Postings' and other admin items
-    if (item.displayName === 'Job Postings' || item.displayName === 'Applications') {
-      return true;
-    }
-    return false;
+  
+  // If the item has the 'visibleForRoles' property, filter it based on the role
+  if (item.visibleForRoles) {
+    return item.visibleForRoles.includes(userRole); // Show only if the role is in the list
   }
-  return true; // Default case: show everything
+
+  // If the 'visibleForRoles' property is not defined, show the item
+  return true;
 });
 
 // Function to get role from localStorage
@@ -118,4 +120,4 @@ function getUserRole(): string {
   return user.role || ''; // Return empty string if role is not found
 }
 
-console.log('test',filteredNavItems);
+console.log('Filtered NavItems:', filteredNavItems);

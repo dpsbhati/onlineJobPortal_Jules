@@ -45,6 +45,8 @@ export class AppNavItemComponent implements OnChanges {
   @Input() depth: any
 
   isCollapsed: boolean = false
+  userRole: any
+window: any
 
   constructor (
     public sidebarService: SidebarService,
@@ -57,11 +59,11 @@ export class AppNavItemComponent implements OnChanges {
   }
 
   ngOnInit(): void {
-    this.sidebarService.isCollapsed$.subscribe(value => {
-      this.isCollapsed = value
+    this.sidebarService.isCollapsed$.subscribe((value) => {
+      this.isCollapsed = value;
     });
+    this.userRole = this.getUserRole();  // Get user role when the component is initialized
   }
-
   ngOnChanges () {
     const url = this.navService.currentUrl()
     if (this.item.route && url) {
@@ -96,5 +98,23 @@ export class AppNavItemComponent implements OnChanges {
         this.notify.emit()
       }
     }
+  }
+  getUserRole(): string {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.role || ''; // Return role from localStorage
+  }
+
+  // Check if the item should be visible based on the user role
+  isVisibleForRole(item: NavItem): boolean {
+    if (item.visibleForRoles) {
+      return item.visibleForRoles.includes(this.userRole);
+    }
+    return true; // Default: visible for all roles
+  }
+  trackById(index: number, item: NavItem): string {
+    if (item.route) {
+      return item.route; // If route is not undefined, return it
+    }
+    return ''; // Or provide a fallback value, like an empty string
   }
 }
