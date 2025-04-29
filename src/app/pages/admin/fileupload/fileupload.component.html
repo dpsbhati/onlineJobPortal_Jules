@@ -1,10 +1,11 @@
 <!-- dialog view -->
 <h2 mat-dialog-title> File Upload </h2>
 <mat-dialog-content class="mat-typography">
-    <div class="upload-box">
-        <p>Drag and Drop Files Here</p>
+    <div class="upload-box" id="uploadBox">
+        <p>Drag and Drop Files Here<br>or Click to Upload</p>
+        <input type="file" id="fileInput" multiple>
       </div>
-      
+
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-flat-button color="primary">

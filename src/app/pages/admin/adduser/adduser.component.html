@@ -1,0 +1,60 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title class="d-flex align-items-center gap-6">
+            <button mat-icon-button color="primary" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>Add User
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <div class="row">
+            <!-- First Name -->
+            <div class="col-lg-4 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>First Name</mat-label>
+                    <input matInput formControlName="first_name" placeholder="Enter first name">
+                    <mat-error>
+                        First name is required
+                    </mat-error>
+                    <mat-error>
+                        First name can only contain letters, numbers, and spaces
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-4 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="first_name" placeholder="Enter Email">
+                    <mat-error>
+                        Email is required
+                    </mat-error>
+                    <mat-error>
+                        Email can only contain letters, numbers, and spaces
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-4 m-b-16">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Mobile</mat-label>
+                    <input matInput formControlName="first_name" placeholder="Enter Mobile">
+                    <mat-error>
+                        Mobile is required
+                    </mat-error>
+                    <mat-error>
+                        Mobile can only contain letters, numbers, and spaces
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-end mt-4">
+            <button mat-flat-button color="primary">
+                Save
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>
