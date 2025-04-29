@@ -11,7 +11,7 @@ import { CoreService } from 'src/app/services/core.service'
       <a [routerLink]="['/']" class="d-flex align-items-center">
         <span class="branding-text f-w-100">
           <img class="logo1"
-            src="./assets/images/logos/Navilands logo - Light.svg"
+            src="./assets/images/logos/Navilands logo - Light3.svg"
             style="object-fit: contain;"
           />
           <img class="logo2"
