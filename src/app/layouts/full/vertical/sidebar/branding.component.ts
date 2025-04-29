@@ -9,10 +9,11 @@ import { CoreService } from 'src/app/services/core.service'
   template: `
     <div class="branding d-none d-lg-flex align-items-center justify-content-center">
       <a [routerLink]="['/']" class="d-flex align-items-center">
-        <span class="branding-text ms-2 mt-2 f-w-100">
+        <span class="branding-text  mt-2 f-w-100">
           <img class="logo1"
-            src="./assets/images/logos/logo.png"
-            style="object-fit: contain;"
+            src="./assets/images/logos/Navilandslogo.svg" 
+            style="object-fit: contain; width: 250px; height: 40px;
+            "
           />
           <img class="logo2"
             src="./assets/images/logos/Navilands Faci.svg"
