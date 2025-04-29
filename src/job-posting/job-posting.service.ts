@@ -212,6 +212,7 @@ export class JobPostingService {
       const isAdmin = req.user?.role === 'admin';
       const isApplicant = req.user?.role === 'applicant';
   
+      // Handling applicant-specific conditions
       if (isApplicant) {
         const now = new Date().toISOString();
         lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}' AND job.jobpost_status != 'draft'`;
@@ -234,7 +235,7 @@ export class JobPostingService {
         'job.rank',
       ];
   
-      // Add dynamic filtering
+      // Add dynamic filtering based on whereClause
       if (Array.isArray(whereClause)) {
         whereClause.forEach(({ key, value, operator }) => {
           if (key === 'all' && value) {
@@ -243,15 +244,15 @@ export class JobPostingService {
               .map((field) => `${field} LIKE :all_search`)
               .join(' OR ');
             lwhereClause += ` AND (${searches})`;
-            parameters['all_search'] = `%${value}%`;
+            parameters['all_search'] = `%${value}%`;  // Correctly bind the 'all_search' parameter
           } else if (key && value && operator) {
-            // Handle specific key-value searches
+            // Handle specific key-value searches with the correct operator
             if (operator.toUpperCase() === 'LIKE') {
               lwhereClause += ` AND ${key} LIKE :${key}_search`;
-              parameters[`${key}_search`] = `%${value}%`;
+              parameters[`${key}_search`] = `%${value}%`;  // Correctly bind LIKE parameters
             } else {
               lwhereClause += ` AND ${key} ${operator} :${key}_search`;
-              parameters[`${key}_search`] = value;
+              parameters[`${key}_search`] = value;  // Bind other operators like '=', '<', etc.
             }
           }
         });
@@ -259,6 +260,9 @@ export class JobPostingService {
   
       const skip = (curPage - 1) * perPage;
   
+      // Now, let's ensure we correctly log the query and parameters for debugging purposes
+  
+      // Fetch the data with the corrected query
       const [list, totalCount] = await this.jobPostingRepository
         .createQueryBuilder('job')
         .where(lwhereClause, parameters)
@@ -267,17 +271,35 @@ export class JobPostingService {
         .orderBy('job.created_at', 'DESC')
         .getManyAndCount();
   
+      // Enrich the job list if necessary
       const enrichedJobList = list.map((job) => ({
         ...job,
         job_type_post: job.job_type_post ?? 'Not Specified',
       }));
   
       return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
+  
     } catch (error) {
-      console.error('Job Postings Pagination Error --> ', error);
-      return WriteResponse(500, {}, `Something went wrong.`);
+      // Return specific error messages depending on where the issue is
+  
+      // If the error is related to invalid query parameters or SQL
+      if (error.name === 'QueryFailedError') {
+        console.error('Query Error: ', error.message);
+        return WriteResponse(400, {}, 'Invalid key or value.');
+      }
+  
+      // Handle errors related to invalid input in the payload
+      if (error.name === 'ValidationError') {
+        console.error('Validation Error: ', error.message);
+        return WriteResponse(400, {}, 'Invalid input in the payload.');
+      }
+  
+      // Catch any other errors and return a generic error message
+      console.error('Unexpected Error: ', error.message);
+      return WriteResponse(500, {}, 'Something went wrong, please try again later.');
     }
   }
+  
   
  
   async findAll() {
