@@ -110,7 +110,7 @@ export const PagesRoutes: Routes = [
         // canActivate:[AuthGuard]
       },
       {
-        path: 'applicantjob',
+        path: 'applicant-job',
         component: ApplicantJobComponent,
         data: {
           title: 'Applicant',
