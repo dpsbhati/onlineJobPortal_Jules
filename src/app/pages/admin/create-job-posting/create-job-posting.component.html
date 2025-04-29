@@ -54,12 +54,23 @@
           <mat-label>Rank</mat-label>
           <mat-select id="rank" formControlName="rank">
             <mat-option value="">Select Rank</mat-option>
-            <mat-option value="rank1">Tester</mat-option>
-            <mat-option value="rank1">QA Manager</mat-option>
-            <mat-option value="rank1">Managerial</mat-option>
-            <mat-option value="rank1">Senior</mat-option>
-            <mat-option value="rank1">Team lead</mat-option>
-            <mat-option value="rank1">Managerial</mat-option>
+            <mat-option value="rank1">Captain</mat-option>
+            <mat-option value="rank1">Chief Engineer</mat-option>
+            <mat-option value="rank1">Chief Office</mat-option>
+            <mat-option value="rank1">Second Engineer</mat-option>
+            <mat-option value="rank1">Second Officer</mat-option>
+            <mat-option value="rank1">Third Engineer</mat-option>
+            <mat-option value="rank1">Third Officer </mat-option>
+            <mat-option value="rank1">Fourth Engineer</mat-option>
+            <mat-option value="rank1">Deck Cadet</mat-option>
+            <mat-option value="rank1">Engine Cadet</mat-option>
+            <mat-option value="rank1">Bosun Deck</mat-option>
+            <mat-option value="rank1">AB (Able Seaman)</mat-option>
+            <mat-option value="rank1">OS (Ordinary Seaman)</mat-option>
+            <mat-option value="rank1">Oiler</mat-option>
+            <mat-option value="rank1">Wiper</mat-option>
+            <mat-option value="rank1">Chief Cook</mat-option>
+            <mat-option value="rank1">Messman</mat-option>
           </mat-select>
           <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
             Rank is required.
