@@ -49,7 +49,7 @@ export const PagesRoutes: Routes = [
         path: 'view-job',
         component: ViewJobComponent,
         data: {
-          title: 'view-job',
+          // title: 'view-job',
           urls: [
             // { title: 'All Job List', url: '/job-list' },
             // { title: 'Job deatils' },
@@ -61,7 +61,7 @@ export const PagesRoutes: Routes = [
         path: 'view-job/:id',
         component: ViewJobComponent,
         data: {
-          title: 'view-job',
+          // title: 'view-job',
           urls: [
             // { title: 'All Job List', url: '/job-list' },
             // { title: 'Job deatils' },

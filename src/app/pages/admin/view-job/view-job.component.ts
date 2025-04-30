@@ -34,6 +34,7 @@ export class ViewJobComponent {
     private adminService: AdminService,
     private router: Router,
     private notifyService: NotifyService,
+     private loader: LoaderService,
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
@@ -67,7 +68,7 @@ export class ViewJobComponent {
   }
 
   loadJobDetails(id: string): void {
-    // this.spinner.show();
+    this.loader.show();
     this.adminService.getJobById(id).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
@@ -75,14 +76,14 @@ export class ViewJobComponent {
           if (this.jobDetails.skills_required) {
             this.formattedSkills = this.formatSkills(this.jobDetails.skills_required);
           }
-          // this.spinner.hide();
+          this.loader.hide();
         } else {
-          // this.spinner.hide();
+          this.loader.hide();
           this.notifyService.showError(response.message);
         }
       },
       error: (error) => {
-        // this.spinner.hide();
+        this.loader.hide();
         this.notifyService.showError(error?.error?.message);
         console.error('Error:', error);
       }

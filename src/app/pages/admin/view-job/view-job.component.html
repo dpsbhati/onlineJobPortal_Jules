@@ -1,85 +1,89 @@
+<div class="header d-flex align-items-center">
+  <button (click)="goBack()" class="back-button">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h2 class="m-l-12">Applicant Details</h2>
+</div>
 
-  <div class="header d-flex align-items-center">
-    <button (click)="goBack()" class="back-button">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h2 class="m-l-12">Applicant Details</h2>
+<div class="row">
+  <div class="col-lg-6">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title class="d-flex align-items-center gap-6">
+          Personal Information
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Employer Name:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.title }} </strong>
+          </div>
+        </div>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Rank:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.rank }} </strong>
+          </div>
+        </div>
+
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Employer:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.employer }}</strong>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
+  <div class="col-lg-6">
+    <mat-card class="cardWithShadow">
+      <mat-card-header>
+        <mat-card-title class="d-flex align-items-center gap-6">
+          Professional Details
+        </mat-card-title>
+      </mat-card-header>
 
-
-  <div class="row">
-    <div class="col-lg-6">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
-            Personal Information
-          </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Name:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.first_name}}
-                {{jobDetails.user.userProfile?.last_name}}</strong></div>
+      <mat-card-content>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Job Type:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.job_type }}</strong>
           </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Email:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.email}}</strong></div>
+        </div>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Start Salary:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.start_salary }}</strong>
           </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Gender:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.gender}}</strong></div>
+        </div>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>End Salary:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.end_salary }}</strong>
           </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Date of Birth:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.dob | date}}</strong></div>
+        </div>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Job Post:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.jobpost_status }}</strong>
           </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Mobile:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.mobile}}</strong></div>
+        </div>
+        <div class="row m-b-16">
+          <div class="col-lg-4"><label>Country:</label></div>
+          <div class="col-lg-8">
+            <strong>{{ jobDetails?.country_code }}</strong>
           </div>
-
-        </mat-card-content>
-      </mat-card>
-    </div>
-    <div class="col-lg-6">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
-            Professional Details
-          </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Current Company:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.current_company}}</strong></div>
-          </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Work Experience:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.work_experiences}}</strong></div>
-          </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Expected Salary:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.work_experiences}}</strong></div>
-          </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Key Skills:</label></div>
-            <div class="col-lg-8"> <strong>{{jobDetails.user.userProfile?.dob | date}}</strong></div>
-          </div>
-          <div class="row m-b-16">
-            <div class="col-lg-4"> <label>Mobile:</label></div>
-            <div class="col-lg-8"> <span class="skill-tag" >
-
-              </span></div>
-          </div>
-
-        </mat-card-content>
-      </mat-card>
-    </div>
-
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
-<!--
+  <div class="col-12">
+
+    <button mat-flat-button color="primary">Apply now</button>
+  </div>
+  <!--
   <ngx-spinner
     bdColor="rgba(0, 0, 0, 0.8)"
     size="medium"
@@ -88,3 +92,4 @@
     [fullScreen]="true">
     <p style="color: white">Loading...</p>
   </ngx-spinner> -->
+</div>
