@@ -65,6 +65,9 @@ export class ApplicantComponent implements OnInit {
   // }
   jobs: any[] = []; // To store job data
   userRole: string = '';
+  filters = {
+    job_type: ''
+  };
   errorMessage: string = '';
   searchQuery: string = '';
   pageConfig: any = {
@@ -131,60 +134,44 @@ export class ApplicantComponent implements OnInit {
     // this.initializeDeadlinePicker();
   }
   onSearch(): void {
-    this.pageConfig.curPage = 1; // Reset to first page
-    this.pageConfig.whereClause = [
-      { key: 'all', operator: '=', value: this.searchQuery.trim().toLowerCase() },
-    ]; // Push search query with 'all' as key
-    this.onPagination(); // Trigger the pagination API
+    if (this.searchQuery.trim()) {
+      this.pageConfig.curPage = 1; // Reset to the first page when a new search is made
+      this.pageConfig.whereClause = [
+        { key: 'all', operator: '=', value: this.searchQuery.trim().toLowerCase() },
+      ]; // Apply the search query as a filter
+    } else {
+      this.clearSearch(); // Reset search when query is cleared
+    }
+
+    this.onPagination(); // Trigger pagination
+  }
+  clearSearch(): void {
+    this.searchQuery = ''; // Clear search query
+    this.pageConfig.whereClause = []; // Reset whereClause to null or empty
+    this.pageConfig.curPage = 1; // Reset to the first page
+    this.onPagination(); // Trigger pagination again to show all data
+  }
+  onJobTypeChange(selectedJobType: string): void {
+    this.filters.job_type = selectedJobType;
+    this.pageConfig.curPage = 1;
+
+    if (this.filters.job_type) {
+      this.pageConfig.whereClause = [
+        { key: 'job_type', operator: '=', value: this.filters.job_type },
+      ];
+    } else {
+      this.pageConfig.whereClause = []; // No filter
+    }
+
+    this.onPagination();
   }
 
-  // onSalaryRangeChange(): void {
-  //   this.filters.salary_min = this.salaryRange.min;
-  //   this.filters.salary_max = this.salaryRange.max;
-  //   this.onPagination()
-  // }
-
-  // initializeDeadlinePicker(): void {
-  //   const datePickerElement = $('input[name="deadlineDatePicker"]');
-
-  //   datePickerElement.daterangepicker(
-  //     {
-  //       singleDatePicker: true,
-  //       autoUpdateInput: true, // Automatically update the input field
-  //       startDate: moment().format('YYYY-MM-DD'), // Set today's date as default
-  //       locale: {
-  //         format: 'YYYY-MM-DD',
-  //         cancelLabel: 'Clear',
-  //         applyLabel: 'Apply',
-  //       },
-  //     },
-  //     (selectedDate: any) => {
-  //       const selectedDateFormatted = selectedDate.format('YYYY-MM-DD');
-  //       if (this.filters.deadline !== selectedDateFormatted) {
-  //         this.filters.deadline = selectedDateFormatted;
-  //         this.onSearch(); // Trigger search only if the date changes
-  //       }
-  //     }
-  //   );
-
-  //   // Handle the 'Clear' button functionality
-  //   datePickerElement.on('cancel.daterangepicker', () => {
-  //     this.filters.deadline = '';
-  //     datePickerElement.val(''); // Clear the input field
-  //     this.onSearch(); // Trigger the search API call on clear
-  //   });
-
-  //   // Handle the 'Apply' button functionality explicitly
-  //   datePickerElement.on('apply.daterangepicker', () => {
-  //     const selectedDateFormatted = datePickerElement.data('daterangepicker').startDate.format('YYYY-MM-DD');
-  //     this.filters.deadline = selectedDateFormatted;
-  //     this.onSearch();
-  //   });
-  // }
-
-  // openDatePicker(name: string): void {
-  //   $(`input[name="${name}"]`).trigger('click');
-  // }
+  clearFilters(): void {
+    this.filters.job_type = ''; // Clear the dropdown
+    this.pageConfig.curPage = 1;
+    this.pageConfig.whereClause = []; // Clear filter conditions
+    this.onPagination(); // Refresh data
+  }
 
   fetchJobs(): void {
     this.adminService.getJobPostings().subscribe({

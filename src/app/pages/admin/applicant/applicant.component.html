@@ -18,11 +18,11 @@
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3">
               <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Name</mat-label>
-                <mat-select >
-                  <mat-option value="rank1">Name 1</mat-option>
-                  <mat-option value="rank2">Name 2</mat-option>
-                  <mat-option value="rank3">Name 3</mat-option>
+                <mat-label>All Job Types</mat-label>
+                <mat-select (selectionChange)="onJobTypeChange($event.value)" >
+                  <mat-option value="full-time">Full-Time</mat-option>
+                  <mat-option value="part-time">Part-Time</mat-option>
+                  <mat-option value="flexible">Flexible</mat-option>
                 </mat-select>
 
               </mat-form-field>
@@ -40,7 +40,7 @@
             </div>
 
             <div class="col-xl-1 col-lg-2 col-md-3">
-              <button mat-button color="primary" class="mb-20">
+              <button mat-button color="primary" class="mb-20" (click)="clearFilters()">
                 Clear
               </button>
             </div>
