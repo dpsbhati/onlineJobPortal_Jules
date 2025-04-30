@@ -27,6 +27,8 @@ import { Router } from '@angular/router';
 import { HelperService } from 'src/app/core/helpers/helper.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-applicant',
@@ -39,31 +41,13 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
     MatIconModule,
     MatButtonModule,
     MatTableModule,
-    MatPaginatorModule,MatMenuModule,MatSelectModule
+    MatPaginatorModule,MatMenuModule,MatSelectModule,FormsModule
   ],
   templateUrl: './applicant.component.html',
   styleUrl: './applicant.component.scss'
 })
 export class ApplicantComponent implements OnInit {
-  displayedColumns: string[] = ['#', 'name', 'email', 'mobile', 'city','applications', 'action'];
-  // dataSource = new MatTableDataSource<any>([
-  //   {
-  //     id: 1,
-  //     Name: 'Amit Sharma',
-  //     Email: 'amit.sharma@example.com',
-  //     Mobile: '9876543210',
-  //     City: 'new delhi',
-  //     Applications: '2',
-  //   },
-  //   {
-  //     id: 2,
-  //     Name: 'Neha Verma',
-  //     Email: 'neha.verma@example.com',
-  //     Mobile: '9123456780',
-  //     City: 'new delhi',
-  //     Applications: '2',
-  //   }
-  // ]);
+  displayedColumns: string[] = ['name', 'employer', 'jobType', 'publishedDate', 'deadline', 'startSalary','endSalary', 'jobPost','city', 'action'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -82,6 +66,7 @@ export class ApplicantComponent implements OnInit {
   jobs: any[] = []; // To store job data
   userRole: string = '';
   errorMessage: string = '';
+  searchQuery: string = '';
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -106,14 +91,14 @@ export class ApplicantComponent implements OnInit {
     // }
   };
 
-  filters = {
-    all: "",
-    title: "",
-    job_type: "",
-    deadline: "",
-    salary_min: this.salaryRange.min,
-    salary_max: this.salaryRange.max,
-  }
+  // filters = {
+  //   all: "",
+  //   title: "",
+  //   job_type: "",
+  //   deadline: "",
+  //   salary_min: this.salaryRange.min,
+  //   salary_max: this.salaryRange.max,
+  // }
 
   total: number = 0;
   jobPostingList: any[] = [];
@@ -123,6 +108,7 @@ export class ApplicantComponent implements OnInit {
     private router: Router,
     private helperService: HelperService,
     private notify: NotifyService,
+    private loader: LoaderService,
     // private spinner: NgxSpinnerService,
     private authService: AuthService
   ) {
@@ -144,12 +130,19 @@ export class ApplicantComponent implements OnInit {
     this.onPagination();
     // this.initializeDeadlinePicker();
   }
-
-  onSalaryRangeChange(): void {
-    this.filters.salary_min = this.salaryRange.min;
-    this.filters.salary_max = this.salaryRange.max;
-    this.onPagination()
+  onSearch(): void {
+    this.pageConfig.curPage = 1; // Reset to first page
+    this.pageConfig.whereClause = [
+      { key: 'all', operator: '=', value: this.searchQuery.trim().toLowerCase() },
+    ]; // Push search query with 'all' as key
+    this.onPagination(); // Trigger the pagination API
   }
+
+  // onSalaryRangeChange(): void {
+  //   this.filters.salary_min = this.salaryRange.min;
+  //   this.filters.salary_max = this.salaryRange.max;
+  //   this.onPagination()
+  // }
 
   // initializeDeadlinePicker(): void {
   //   const datePickerElement = $('input[name="deadlineDatePicker"]');
@@ -257,31 +250,35 @@ export class ApplicantComponent implements OnInit {
   }
 
   onPagination(): void {
-    // this.spinner.show();
-    this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    this.loader.show();
+    // this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
 
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
-          // this.spinner.hide()
+          this.loader.hide()
           this.jobPostingList = res.data;
           this.total = res.count;
           console.log('this', this.jobPostingList);
         }
         else {
-          // this.spinner.hide()
+          this.loader.hide()
           this.jobPostingList = [];
           this.total = 0;
         }
       },
       error: (err: any) => {
-        // this.spinner.hide();
+        this.loader.hide();
         this.notify.showError(err?.error?.message || "Something went wrong!!");
         this.jobPostingList = [];
         this.total = 0;
       }
     })
   }
+  // onPageChange(event: any): void {
+  //   this.pageConfig.curPage = event.pageIndex + 1;
+  //   this.onPagination();
+  // }
 
   onFilterChange(): void {
     this.pageConfig.curPage = 1; // Reset to the first page
@@ -321,44 +318,42 @@ export class ApplicantComponent implements OnInit {
   }
 
   // Handle search action
-  onSearch(): void {
-    this.pageConfig.curPage = 1; // Reset to the first page
-    this.onPagination(); // Trigger the pagination API
-  }
+  // onSearch(): void {
+  //   this.pageConfig.curPage = 1; // Reset to the first page
+  //   this.onPagination(); // Trigger the pagination API
+  // }
 
   // Clear the search field and trigger API
-  clearSearch(): void {
-    this.filters.all = '';
-    this.filters.title = "",
-      this.filters.job_type = "",
-      this.filters.deadline = "",
-      // Reset the salary range
-      this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
-    this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
+  // clearSearch(): void {
+  //   this.filters.all = '';
+  //   this.filters.title = "",
+  //     this.filters.job_type = "",
+  //     this.filters.deadline = "",
+  //     // Reset the salary range
+  //     this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
+  //   this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
 
-    this.filters.salary_min = this.salaryRange.min;
-    this.filters.salary_max = this.salaryRange.max;
+  //   this.filters.salary_min = this.salaryRange.min;
+  //   this.filters.salary_max = this.salaryRange.max;
 
-    // Reset whereClause
-    this.pageConfig.whereClause = []; // Clear all filters in whereClause
+  //   // Reset whereClause
+  //   this.pageConfig.whereClause = []; // Clear all filters in whereClause
 
-    // Trigger the UI update for the slider
-    this.onSalaryRangeChange();
-    this.onSearch();
-  }
+  //   // Trigger the UI update for the slider
+  //   this.onSalaryRangeChange();
+  //   this.onSearch();
+  // }
 
   // Trigger API if input becomes empty
   onInputChange(value: string): void {
     if (!value.trim()) {
-      this.clearSearch();
+      // this.clearSearch();
     }
   }
-
-  onPageChange(page: number): void {
-    if (page > 0 && page <= this.totalPages) {
-      this.pageConfig.curPage = page;
-      this.onPagination();
-    }
+  onPageChange(event: any): void {
+    this.pageConfig.curPage = event.pageIndex + 1;
+    this.pageConfig.perPage = event.pageSize;
+    this.onPagination();
   }
 
   get totalPages(): number {
@@ -380,8 +375,8 @@ export class ApplicantComponent implements OnInit {
   //   }
   // }
 
-  viewJob(id: number) {
-    this.router.navigate(['/view-job', id]);
+  viewJob() {
+    this.router.navigate(['/view-job']);
   }
 
   viewJobApplications(jobId: string) {
