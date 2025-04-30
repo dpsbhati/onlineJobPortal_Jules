@@ -375,8 +375,8 @@ export class ApplicantComponent implements OnInit {
   //   }
   // }
 
-  viewJob() {
-    this.router.navigate(['/view-job']);
+  viewJob(id:any) {
+    this.router.navigate(['/view-job',id]);
   }
 
   viewJobApplications(jobId: string) {

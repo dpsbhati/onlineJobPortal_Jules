@@ -22,159 +22,78 @@ import { MaterialModule } from 'src/app/material.module';
 
 })
 export class ViewJobComponent {
-  jobId: string = '';
-   userId: string = '';
-   applicantDetails: any = null;
-   selectedStatus: string = '';
-   adminComments: string = '';
-   statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
-   keySkills: string[] = [];
-   certifications: any[] = [];
-   isLoading: boolean = false;
-   constructor(
-     private route: ActivatedRoute,
-     private router: Router,
-     private adminService: AdminService,
-     private notifyService: NotifyService,
-     private loader: LoaderService,
-     private toastr :ToastrService
-   ) { }
+  jobDetails: any;
+  loading: boolean = true;
+  error: string = '';
+  id: any;
+  userRole: string = '';
+  formattedSkills: string[] = [];
 
-   ngOnInit(): void {
-     this.route.params.subscribe(params => {
-       this.userId = params['id'];
-       this.jobId = localStorage.getItem('currentJobId') || '';
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminService,
+    private router: Router,
+    private notifyService: NotifyService,
+    private authService: AuthService
+  ) {
+    this.userRole = this.authService.getUserRole();
+  }
 
-       if (!this.userId) {
-         this.toastr.error('Required parameters not found');
-         return;
-       }
-       this.loadApplicantDetails();
-     });
-   }
+  ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id') as string;
+    if (this.id) {
+      this.loadJobDetails(this.id);
+    }
+  }
 
-   loadApplicantDetails() {
-       // this.loader.show();
-       this.isLoading = true;
-     this.adminService.allApplicantDetails(this.userId).subscribe({
-       next: (response: any) => {
-         if (response.statusCode === 200) {
-           this.applicantDetails = response.data;
-           this.selectedStatus = this.applicantDetails.status;
-           this.adminComments = this.applicantDetails.comments ;
+  isAdmin(): boolean {
+    return this.userRole.toUpperCase() === UserRole.ADMIN;
+  }
 
-           // Parse key skills
-           if (response.data.user?.userProfile?.key_skills) {
-             try {
-               // Remove forward slashes from skills when displaying
-               this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
-             } catch (e) {
-               console.warn('Error parsing key_skills:', e);
-               this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ?
-                 response.data.user.userProfile.key_skills : [];
-             }
-           }
+  isApplicant(): boolean {
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
+  }
 
-           // Get certifications from courses_and_certification array
-           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-           this.isLoading = false;
-           // this.loader.hide();
-         } else {
-           this.toastr.warning(response.message);
-           this.isLoading = false;
-         }
-         this.isLoading = false;
-       },
-       error: (error) => {
-         this.toastr.error(error?.error?.message || 'Error loading applicant details');
-         this.isLoading = false;
-       }
-     });
-   }
+  formatSkills(skills: string): string[] {
+    try {
+      if (!skills) return [];
+      // Parse the JSON string and remove any special characters
+      const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
+      return parsedSkills.map((skill: string) => skill.replace(/["\[\]]/g, '').trim());
+    } catch (error) {
+      console.error('Error parsing skills:', error);
+      return [];
+    }
+  }
 
-   // loadApplicantDetails() {
-   //   // debugger
-   //   this.spinner.show();
-   //   this.adminService.allApplicantDetails(this.userId).subscribe({
-   //     next: (response: any) => {
-   //       if (response.statusCode === 200) {
-   //         this.applicantDetails = response.data;
-   //         this.selectedStatus = this.applicantDetails.status;
-   //         this.adminComments = this.applicantDetails.comments ;
+  loadJobDetails(id: string): void {
+    // this.spinner.show();
+    this.adminService.getJobById(id).subscribe({
+      next: (response: any) => {
+        if (response.statusCode === 200 && response.data) {
+          this.jobDetails = response.data;
+          if (this.jobDetails.skills_required) {
+            this.formattedSkills = this.formatSkills(this.jobDetails.skills_required);
+          }
+          // this.spinner.hide();
+        } else {
+          // this.spinner.hide();
+          this.notifyService.showError(response.message);
+        }
+      },
+      error: (error) => {
+        // this.spinner.hide();
+        this.notifyService.showError(error?.error?.message);
+        console.error('Error:', error);
+      }
+    });
+  }
 
-   //         // Parse key skills
-   //         if (response.data.userProfile?.key_skills) {
-   //           try {
-   //             // Remove forward slashes from skills when displaying
-   //             this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
-   //           } catch (e) {
-   //             console.warn('Error parsing key_skills:', e);
-   //             this.keySkills = Array.isArray(response.data.userProfile.key_skills) ?
-   //               response.data.userProfile.key_skills : [];
-   //           }
-   //         }
+  goBack() {
+    this.router.navigate(['/applicant']);
+  }
 
-
-   //         // Get certifications from courses_and_certification array
-   //         this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-   //       } else {
-   //         this.notifyService.showError('Failed to load applicant details');
-   //       }
-   //       this.spinner.hide();
-   //     },
-   //     error: (error) => {
-   //       this.notifyService.showError('Error loading applicant details');
-   //       this.spinner.hide();
-   //     }
-   //   });
-   // }
-
-   updateStatus(): void {
-
-     if (!this.userId || !this.selectedStatus) {
-       this.notifyService.showError('Please select a status');
-       return;
-     }
-
-     this.isLoading = true;
-     const updateData = {
-       status: this.selectedStatus,
-       comments: this.adminComments,
-       description: this.applicantDetails.description
-     };
-
-     this.adminService.updateApplicationStatus(this.userId, updateData)
-       .subscribe({
-         next: (response: any) => {
-           if (response.statusCode === 200) {
-             this.toastr.success(response.message);
-
-             const jobId = localStorage.getItem('currentJobId');
-             if (jobId) {
-               this.router.navigate(['/applicants-details', jobId]);
-             } else {
-               this.router.navigate(['/applications']);
-             }
-           } else {
-             this.toastr.warning(response.message || 'Failed to update status');
-           }
-           this.isLoading = false;
-         },
-         error: (error) => {
-           console.error('Error updating status:', error);
-           this.toastr.error(error?.error?.message || 'Error updating status');
-           this.isLoading = false;
-         }
-       });
-   }
-
-   goBack(): void {
-     // Get jobId from localStorage for back navigation
-     const jobId = localStorage.getItem('currentJobId');
-     if (jobId) {
-       this.router.navigate(['/applicant-details', jobId]);
-     } else {
-       this.router.navigate(['/applications']);
-     }
-   }
+  navigate() {
+    this.router.navigate([`/user-details/${this.id}`]);
+  }
   }
