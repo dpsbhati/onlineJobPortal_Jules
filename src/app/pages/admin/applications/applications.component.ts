@@ -109,7 +109,7 @@ export class ApplicationsComponent {
     this.applicantId = this.route.snapshot.paramMap.get('id')
     this.dataSource.paginator = this.paginator
     this.dataSource.sort = this.sort
-    this.fetchJobPosts()
+    // this.fetchJobPosts()
     this.fetchApplications()
   }
   openHeaderDialog () {
