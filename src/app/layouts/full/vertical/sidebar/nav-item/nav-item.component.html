@@ -8,7 +8,7 @@
 
 <!-- If the item does not have a navCap and is not an external link, display the menu item -->
 <ng-container *ngIf="!item.navCap && !item.external && !item.twoLines">
-  <a mat-list-item
+  <a mat-list-item *ngIf="isVisibleForRole(item)"
     (click)="onItemSelected(item)"
     [matTooltip]="isCollapsed ? item.displayName : null"
     [matTooltipPosition]="isCollapsed ? 'right' : 'left'"
@@ -41,7 +41,7 @@
 
 <!-- External Link -->
 <ng-container *ngIf="!item.navCap && item.external">
-  <mat-list-item (click)="window.open(item.route)" class="menu-list-item" target="_blank">
+  <mat-list-item  (click)="window.open(item.route)" class="menu-list-item" target="_blank">
     <i-tabler class="routeIcon" name="{{ item.iconName }}" matListItemIcon></i-tabler>
     <span class="hide-menu">{{ item.displayName | translate }}</span>
   </mat-list-item>
