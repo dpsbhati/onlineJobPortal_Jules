@@ -55,25 +55,25 @@ export class JobPostDetailComponent {
     this.route.params.subscribe(params => {
       this.userId = params['id'];
       this.jobId = localStorage.getItem('currentJobId') || '';
-      
-      if (!this.userId) {
-        this.toastr.error('Required parameters not found');
-        return;
-      }
-      this.loadApplicantDetails();
+
+      // if (!this.userId) {
+      //   this.toastr.error('Required parameters not found');
+      //   return;
+      // }
+      // this.loadApplicantDetails();
     });
   }
 
   loadApplicantDetails() {
     // this.loader.show();
-    this.isLoading = true; 
+    this.isLoading = true;
   this.adminService.allApplicantDetails(this.userId).subscribe({
     next: (response: any) => {
       if (response.statusCode === 200) {
         this.applicantDetails = response.data;
         this.selectedStatus = this.applicantDetails.status;
         this.adminComments = this.applicantDetails.comments ;
-        
+
         // Parse key skills
         if (response.data.user?.userProfile?.key_skills) {
           try {
@@ -81,7 +81,7 @@ export class JobPostDetailComponent {
             this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
           } catch (e) {
             console.warn('Error parsing key_skills:', e);
-            this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ? 
+            this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ?
               response.data.user.userProfile.key_skills : [];
           }
         }

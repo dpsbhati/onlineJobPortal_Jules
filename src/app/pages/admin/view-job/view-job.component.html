@@ -1,11 +1,13 @@
-<div class="header d-flex align-items-center">
-  <button (click)="goBack()" class="back-button">
+<div class="header d-flex align-items-center m-b-10">
+  <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <h2 class="m-l-12">Applicant Details</h2>
+
+
+  <h2 class="m-l-12">Job Details</h2>
 </div>
 
-<div class="row">
+<div class="row d-none">
   <div class="col-lg-6">
     <mat-card class="cardWithShadow">
       <mat-card-header>
@@ -81,7 +83,7 @@
   </div>
   <div class="col-12">
 
-    <button mat-flat-button color="primary">Apply now</button>
+
   </div>
   <!--
   <ngx-spinner
@@ -92,4 +94,100 @@
     [fullScreen]="true">
     <p style="color: white">Loading...</p>
   </ngx-spinner> -->
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <mat-card>
+      <mat-card-content>
+        <div class="row w-100 justify-content-between align-items-center">
+          <div class="col-lg-12">
+            <h2 class="m-b-0">Senior Frontend Developer</h2>
+            <p class="m-t-6 m-b-0">Frontend Developer</p>
+            <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center"> <i-tabler name="map-pin"
+                class="icon-18 caption-icon"></i-tabler> 8615 Terrace Esplanade, Thompsonburgh, Oklahoma - 98747, Mexico
+            </p>
+          </div>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-content>
+        <div class="row ">
+          <div class="col-lg-12 m-b-10">
+            <div class="row m-b-20">
+              <div class="col-lg-3"><strong>Assignment</strong> </div>
+              <div class="col-lg-8">We're looking for an experienced Frontend Developer to join our team. Work
+                with the latest technologies and
+                help us build amazing products.</div>
+            </div>
+            <div class="row m-b-20">
+              <div class="col-lg-3"><strong>Short Description</strong> </div>
+              <div class="col-lg-8">We're looking for an experienced Frontend Developer to join our team. Work
+                with the latest technologies and
+                help us build amazing products.</div>
+            </div>
+            <div class="row m-b-20">
+              <div class="col-lg-3"><strong>Full Description</strong></div>
+              <div class="col-lg-8"> We're looking for an experienced Frontend Developer to join our team. Work
+                with the latest technologies and
+                help us build amazing products.</div>
+            </div>
+            <div class="row m-b-20">
+              <div class="col-lg-3"><strong>Required Skills</strong> </div>
+              <div class="col-lg-8">
+                <div class="d-flex flex-wrap gap-6">
+                  <button mat-stroked-button color="primary">
+                    React.js
+                  </button>
+                  <button mat-stroked-button color="primary">
+                    TypeScript </button>
+                  <button mat-stroked-button color="primary">
+                    CSS/SCSS </button>
+                  <button mat-stroked-button color="primary">
+                    HTML5 </button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-lg-4">
+    <mat-card>
+      <img mat-card-image
+        src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
+        alt="Photo of a Shiba Inu">
+      <mat-card-content>
+        <div class="row ">
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Employment Type:</strong> Full-time
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Salary Range:</strong> $120,000 - $150,000
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Deadline:</strong> May 1, 2025
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Experience:</strong> 5
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Position Level:</strong> 5 years
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Easy to apply:</strong> <span>Posted on: May 1, 2025</span>
+          </div>
+          <div class="col-lg-12 m-b-16">
+            <strong class="m-r-6">Posted on:</strong> <span>Facebook, LinkedIn</span>
+          </div>
+        </div>
+        <div> <button class="w-100" mat-flat-button color="primary">Apply now</button></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

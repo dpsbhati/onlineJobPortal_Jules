@@ -90,9 +90,9 @@ export const PagesRoutes: Routes = [
         component: ApplicantComponent,
         canActivate: [AuthGuard],
         data: {
-          title: 'Applicant-list',
+          title: 'Job List',
           urls: [
-            { title: 'Applicant List' },
+            { title: 'Job List' },
             // { title: 'Applications List' },
           ],
         },
