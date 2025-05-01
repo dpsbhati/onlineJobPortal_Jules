@@ -124,6 +124,11 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'job-post-details/:id',
+        component: JobPostDetailComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'applicant-details/:id',
         component: ApplicantDetailsComponent,
         canActivate: [AuthGuard],
