@@ -24,7 +24,7 @@ export const navItems: NavItem[] = [
     navCap: 'ADMINISTRATION'
   },
   {
-    displayName: 'Applicant',
+    displayName: 'Job List',
     iconName: 'dashboard',
     route: 'applicant',
     visibleForRoles: ['applicant']

@@ -10,15 +10,14 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 // import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module';
-
+import { TablerIconsModule } from 'angular-tabler-icons'
 @Component({
   selector: 'app-view-job',
   imports: [CommonModule,
       FormsModule,
-      RouterModule,
+      RouterModule,TablerIconsModule,
     MaterialModule,ToastrModule],
   templateUrl: './view-job.component.html',
-  styleUrl: '../applicant-details/applicant-details.component.scss'
 
 })
 export class ViewJobComponent {
