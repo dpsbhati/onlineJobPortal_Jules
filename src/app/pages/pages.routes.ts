@@ -43,7 +43,7 @@ export const PagesRoutes: Routes = [
             // { title: 'Job deatils' },
           ],
         },
-        canActivate: [roleGuard(['applicant', 'admin'])],
+        canActivate: [roleGuard(['admin'])],
       },
       {
         path: 'view-job',

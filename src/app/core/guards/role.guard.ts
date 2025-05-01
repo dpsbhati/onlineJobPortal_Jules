@@ -39,7 +39,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     }
 
     // If the user doesn't have access, navigate to a default route (e.g., job-list)
-    router.navigate(['/job-list']);
+    router.navigate(['/dashboard']);
     return false;
   };
   };
