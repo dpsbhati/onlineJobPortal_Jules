@@ -5,9 +5,9 @@ import {
   MatDialog,
   MatDialogRef,
   MatDialogActions,
-  MatDialogClose,
+  
   MatDialogTitle,
-  MatDialogContent,
+  
   MatDialogModule
 } from '@angular/material/dialog'
 @Component({
@@ -15,7 +15,7 @@ import {
   imports: [
     MatDialogActions,
     MatDialogTitle,
-    MatDialogContent,
+    
     MatDialogModule,
     MatButtonModule
   ],

@@ -19,9 +19,9 @@ import {
   MatDialog,
   MatDialogRef,
   MatDialogActions,
-  MatDialogClose,
+  
   MatDialogTitle,
-  MatDialogContent,
+  
   MatDialogModule
 } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
@@ -52,10 +52,6 @@ export interface Application {
     ToastrModule,
     MatProgressSpinnerModule,
     MatButtonModule,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
     MatDialogModule
   ],
   providers: [ToastrService],
