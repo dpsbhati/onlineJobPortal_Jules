@@ -26,7 +26,8 @@ export class ViewJobComponent {
   error: string = '';
   id: any;
   userRole: string = '';
-  formattedSkills: string[] = [];
+  formattedSkills: any;
+  formattedSocialMedia:any;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,7 +74,10 @@ export class ViewJobComponent {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
           if (this.jobDetails.skills_required) {
-            this.formattedSkills = this.formatSkills(this.jobDetails.skills_required);
+            this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
+          }
+          if(this.jobDetails.social_media_type){
+            this.formattedSocialMedia=JSON.parse(this.jobDetails.social_media_type);
           }
           this.loader.hide();
         } else {

@@ -152,10 +152,10 @@
                 <span>View Details</span>
               </button> -->
 
-              <a mat-menu-item href="/job-post-details ">
+              <button mat-menu-item (click)="viewJobPostDetails(element.id)">
                 <mat-icon>visibility</mat-icon>
                 <span>View Details</span>
-              </a>
+              </button>
               <a mat-menu-item href="/applications">
                 <mat-icon>visibility</mat-icon>
                 <span>View Application</span>

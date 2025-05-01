@@ -127,6 +127,11 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'job-post-details/:id',
+        component: JobPostDetailComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'Applied-Applications',
         component: AppliedApplicationsComponent,
         canActivate: [AuthGuard],
@@ -201,7 +206,7 @@ export const PagesRoutes: Routes = [
           // ],
         },
       },
-      
+
     ],
   },
 ];
