@@ -1,0 +1,67 @@
+<div class="header d-flex align-items-center m-b-10">
+    <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="m-l-12">Apply for Job</h2>
+    
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <mat-card>
+
+            <mat-card-content>
+
+
+                <form class="profile-form">
+
+                    <div class="">
+                        <!-- Experience -->
+                            <mat-form-field appearance="outline" class="w-100 m-b-10">
+                                <mat-label>Experience</mat-label>
+                                <input matInput formControlName="first_name" placeholder="Enter Experience">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100 m-b-10">
+                                <mat-label>Comments</mat-label>
+                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100 m-b-10">
+                                <mat-label>Description</mat-label>
+                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="w-100 m-b-10">
+                                <mat-label>Additional Information
+                                </mat-label>
+                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                            </mat-form-field>
+
+                            <!-- <label class="m-b-8">CV Upload</label> -->
+                            <div class="upload-box m-b-20" id="uploadBox">
+                                <p>Upload CV </p>
+                                <input type="file" id="fileInput" multiple>
+                            </div>
+
+
+                            <!-- <label class="m-b-8">CV Upload</label> -->
+                            <div class="upload-box m-b-20" id="uploadBox">
+                                <p>Upload Certification</p>
+                                <input type="file" id="fileInput" multiple>
+                            </div>
+
+                        </div>
+
+
+
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button mat-flat-button color="primary">Submit
+                        </button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+
+    </div>
+</div>

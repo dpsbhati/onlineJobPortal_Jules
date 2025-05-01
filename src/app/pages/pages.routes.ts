@@ -16,6 +16,8 @@ import { SocialMediaDetailsComponent } from './admin/social-media-details/social
 import { JobPostDetailComponent } from './job-post-detail/job-post-detail.component'
 import { AdduserComponent } from './admin/adduser/adduser.component'
 import { roleGuard } from '../core/guards/role.guard'
+import { ApplyJobComponent } from './admin/apply-job/apply-job.component'
+import { AppliedApplicationsComponent } from './admin/applied-applications/applied-applications.component'
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -124,6 +126,16 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'Applied-Applications',
+        component: AppliedApplicationsComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'Apply-Job',
+        component: ApplyJobComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'applicant-details/:id',
         component: ApplicantDetailsComponent,
         canActivate: [AuthGuard],
@@ -183,6 +195,7 @@ export const PagesRoutes: Routes = [
           // ],
         },
       },
+      
     ],
   },
 ];
