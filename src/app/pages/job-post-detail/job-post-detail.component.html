@@ -1,142 +1,268 @@
-<div class="container" *ngIf="applicantDetails">
-    <div class="header d-flex align-items-center">
-        <button (click)="goBack()" class="back-button">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h2 class="m-l-12">Applicant Details</h2>
-    </div>
+<div class="header d-flex align-items-center m-b-10">
+    <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
 
-    <!-- Application Status -->
-    <div class="section status-section">
-        <h3>Application Status</h3>
-        <div class="status-controls">
-            <div class="current-status">
-                <label>Current Status:</label>
-                <span class="status-badge" [ngClass]="applicantDetails.status?.toLowerCase()">
-                    {{applicantDetails.status}}
-                </span>
-            </div>
-            <div class="status-change">
-                <label>Change Status:</label>
-                <select [(ngModel)]="selectedStatus" class="status-select">
-                    <option value="">Select Status</option>
-                    <option *ngFor="let status of statusOptions" [value]="status">{{status}}</option>
-                </select>
-            </div>
-        </div>
-    </div>
 
-    <!-- Personal Information -->
-    <div class="section">
-        <h3>Personal Information</h3>
-        <div class="info-grid">
-            <div class="info-item">
-                <label>Name:</label>
-                <span>{{applicantDetails.user.userProfile?.first_name}}
-                    {{applicantDetails.user.userProfile?.last_name}}</span>
-            </div>
-            <div class="info-item">
-                <label>Email:</label>
-                <span>{{applicantDetails.user.email}}</span>
-            </div>
-            <div class="info-item">
-                <label>Gender:</label>
-                <span>{{applicantDetails.user.userProfile?.gender}}</span>
-            </div>
-            <div class="info-item">
-                <label>Date of Birth:</label>
-                <span>{{applicantDetails.user.userProfile?.dob | date}}</span>
-            </div>
-            <div class="info-item">
-                <label>Mobile:</label>
-                <span>{{applicantDetails.user.userProfile?.mobile}}</span>
-            </div>
-        </div>
-    </div>
+    <h2 class="m-l-12">Job Details</h2>
+  </div>
 
-    <!-- Professional Information -->
-    <div class="section">
-        <h3>Professional Details</h3>
-        <div class="info-grid">
-            <div class="info-item">
-                <label>Current Company:</label>
-                <span>{{applicantDetails.user.userProfile?.current_company}}</span>
+  <div class="row d-none">
+    <div class="col-lg-6">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title class="d-flex align-items-center gap-6">
+            Personal Information
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Employer Name:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.title }} </strong>
             </div>
-            <div class="info-item">
-                <label>Work Experience:</label>
-                <span>{{applicantDetails.user.userProfile?.work_experiences}}</span>
+          </div>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Rank:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.rank }} </strong>
             </div>
-            <div class="info-item">
-                <label>Expected Salary:</label>
-                <span>{{applicantDetails.user.userProfile?.expected_salary}}</span>
+          </div>
+
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Employer:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.employer }}</strong>
             </div>
-            <div class="info-item">
-                <label>Key Skills:</label>
-                <div class="skills-container">
-                    <span class="skill-tag" *ngFor="let skill of keySkills">
-                        {{skill}}
-                    </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-lg-6">
+      <mat-card class="cardWithShadow">
+        <mat-card-header>
+          <mat-card-title class="d-flex align-items-center gap-6">
+            Professional Details
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Job Type:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.job_type }}</strong>
+            </div>
+          </div>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Start Salary:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.start_salary }}</strong>
+            </div>
+          </div>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>End Salary:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.end_salary }}</strong>
+            </div>
+          </div>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Job Post:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.jobpost_status }}</strong>
+            </div>
+          </div>
+          <div class="row m-b-16">
+            <div class="col-lg-4"><label>Country:</label></div>
+            <div class="col-lg-8">
+              <strong>{{ jobDetails?.country_code }}</strong>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-12">
+
+
+    </div>
+    <!--
+    <ngx-spinner
+      bdColor="rgba(0, 0, 0, 0.8)"
+      size="medium"
+      color="#fff"
+      type="ball-clip-rotate"
+      [fullScreen]="true">
+      <p style="color: white">Loading...</p>
+    </ngx-spinner> -->
+  </div>
+
+  <!-- <div class="row">
+    <div class="col-lg-8">
+      <mat-card>
+        <mat-card-content>
+          <div class="row w-100 justify-content-between align-items-center">
+            <div class="col-lg-12">
+              <h2 class="m-b-0">Senior Frontend Developer</h2>
+              <p class="m-t-6 m-b-0">Frontend Developer</p>
+              <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center"> <i-tabler name="map-pin"
+                  class="icon-18 caption-icon"></i-tabler> 8615 Terrace Esplanade, Thompsonburgh, Oklahoma - 98747, Mexico
+              </p>
+            </div>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="row ">
+            <div class="col-lg-12 m-b-10">
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Assignment</strong> </div>
+                <div class="col-lg-8">We're looking for an experienced Frontend Developer to join our team. Work
+                  with the latest technologies and
+                  help us build amazing products.</div>
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Short Description</strong> </div>
+                <div class="col-lg-8">We're looking for an experienced Frontend Developer to join our team. Work
+                  with the latest technologies and
+                  help us build amazing products.</div>
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Full Description</strong></div>
+                <div class="col-lg-8"> We're looking for an experienced Frontend Developer to join our team. Work
+                  with the latest technologies and
+                  help us build amazing products.</div>
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Required Skills</strong> </div>
+                <div class="col-lg-8">
+                  <div class="d-flex flex-wrap gap-6">
+                    <button mat-stroked-button color="primary">
+                      React.js
+                    </button>
+                    <button mat-stroked-button color="primary">
+                      TypeScript </button>
+                    <button mat-stroked-button color="primary">
+                      CSS/SCSS </button>
+                    <button mat-stroked-button color="primary">
+                      HTML5 </button>
+
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
+    <div class="col-lg-4">
+      <mat-card>
+        <img mat-card-image
+          src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D"
+          alt="Photo of a Shiba Inu">
+        <mat-card-content>
+          <div class="row ">
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Employment Type:</strong> Full-time
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Salary Range:</strong> $120,000 - $150,000
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Deadline:</strong> May 1, 2025
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Experience:</strong> 5
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Position Level:</strong> 5 years
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Easy to apply:</strong> <span>Posted on: May 1, 2025</span>
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Posted on:</strong> <span>Facebook, LinkedIn</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div> -->
 
-    <!-- Certifications -->
-    <div class="section" *ngIf="certifications.length > 0">
-        <h3>Courses & Certifications</h3>
-        <div class="certifications-list">
-            <div class="certification-item" *ngFor="let cert of certifications">
-                <h4>{{cert.organization_name}}</h4>
-                <div class="cert-details">
-                    <p><strong>Description:</strong> {{cert.certification_description}}</p>
-                    <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank"
-                        class="cert-file-link">
-                        <i class="fas fa-file-pdf"></i> View Certificate
-                    </a>
+  <div class="row">
+    <div class="col-lg-8">
+      <mat-card>
+        <mat-card-content>
+          <div class="row w-100 justify-content-between align-items-center">
+            <div class="col-lg-12">
+              <h2 class="m-b-0">{{ jobDetails?.title }}</h2> <!-- Dynamic title -->
+              <p class="m-t-6 m-b-0">{{ jobDetails?.employer }}</p> <!-- Dynamic job type -->
+              <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center">
+                <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
+                {{ jobDetails?.address }}
+              </p> <!-- Dynamic address -->
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-12 m-b-10">
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Assignment</strong></div>
+                <div class="col-lg-8">{{ jobDetails?.assignment_duration }}</div> <!-- Dynamic assignment -->
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Short Description</strong></div>
+                <div class="col-lg-8">{{ jobDetails?.short_description }}</div> <!-- Dynamic short description -->
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Full Description</strong></div>
+                <div class="col-lg-8">{{ jobDetails?.full_description }}</div> <!-- Dynamic full description -->
+              </div>
+              <div class="row m-b-20">
+                <div class="col-lg-3"><strong>Required Skills</strong></div>
+                <div class="col-lg-8">
+                  <div class="d-flex flex-wrap gap-6">
+                    <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
+                      {{ skill }}
+                    </button>
+                  </div> <!-- Dynamic skills list -->
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
 
-    <!-- Documents -->
-    <div class="section">
-        <h3>Documents</h3>
-        <div class="documents-grid">
-            <div class="document-item" *ngIf="applicantDetails.cv_path">
-                <i class="fas fa-file-pdf"></i>
-                <span>CV/Resume</span>
-                <a [href]="applicantDetails.cv_path" target="_blank" class="btn btn-primary btn-sm">
-                    <i class="fas fa-download"></i> Download CV
-                </a>
+    <div class="col-lg-4">
+      <mat-card>
+        <img mat-card-image [src]="jobDetails?.featured_image" alt="Job Image">
+        <!-- Dynamically bind image URL from `jobDetails.featured_image` -->
+        <mat-card-content>
+          <div class="row">
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Employment Type:</strong> {{ jobDetails?.job_type }} <!-- Dynamic job type -->
             </div>
-
-        </div>
-    </div>
-
-    <!-- Additional Information -->
-    <div class="section" *ngIf="applicantDetails.additional_info || applicantDetails.description">
-        <h3>Additional Information</h3>
-        <div class="info-grid">
-            <div class="info-item full-width" *ngIf="applicantDetails.description">
-                <label>Description:</label>
-                <p>{{applicantDetails.description}}</p>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Salary Range:</strong> {{ jobDetails?.start_salary | currency }} - {{ jobDetails?.end_salary | currency }} <!-- Dynamic salary -->
             </div>
-            <div class="info-item full-width" *ngIf="applicantDetails.additional_info">
-                <label>Additional Info:</label>
-                <p>{{applicantDetails.additional_info}}</p>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }} <!-- Dynamic deadline -->
             </div>
-        </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} years <!-- Dynamic experience -->
+            </div>
+            <div class="col-lg-12 m-b-16">
+              <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_at ? (jobDetails?.posted_at | date:'mediumDate') : '-' }}</span> <!-- Dynamic posted date -->
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-
-    <!-- Admin Comments -->
-    <div class="section">
-        <h3>Admin Comments</h3>
-        <div class="comments-section">
-            <textarea [(ngModel)]="adminComments" class="comments-input" placeholder="Add your comments here..."
-                rows="3"></textarea>
-            <button class="btn btn-primary" (click)="updateStatus()">
-                Save
-            </button>
-        </div>
-    </div>
-</div>
+  </div>

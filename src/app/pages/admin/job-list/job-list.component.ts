@@ -230,9 +230,8 @@ export class JobListComponent implements OnInit {
       this.clearSearch();
     }
   }
-
-  viewJob(id: string) {
-    this.router.navigate(['/authentication/Development-page', id]);
+  viewJobPostDetails(jobId: string): void {
+    this.router.navigate(['/job-post-details', jobId]);
   }
 
   editJob(id: string) {
