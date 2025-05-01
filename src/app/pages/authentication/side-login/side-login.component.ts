@@ -109,7 +109,7 @@ export class AppSideLoginComponent implements OnInit {
       try {
         const data: RememberMeData = JSON.parse(savedData);
         const expiryTime = data.timestamp + (this.EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-        
+
         if (new Date().getTime() < expiryTime) {
           this.form.patchValue({
             email: data.email,
@@ -131,14 +131,14 @@ export class AppSideLoginComponent implements OnInit {
   saveCredentials(): void {
     // console.log('Saving credentials');
     const rememberDevice = this.form.get('rememberDevice')?.value;
-    
+
     if (rememberDevice) {
       const rememberMeData: RememberMeData = {
         email: this.form.get('email')?.value,
         password: this.form.get('password')?.value,
         timestamp: new Date().getTime()
       };
-      
+
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
       // console.log('Credentials saved to localStorage');
     } else {
@@ -183,7 +183,7 @@ export class AppSideLoginComponent implements OnInit {
     try {
       const { email, password } = this.form.value;
       const response = await this._authService.login({ email, password }).toPromise();
-      
+
       if (response && response.statusCode === 200) {
         // console.log('Login successful, handling remember me');
         this.saveCredentials(); // This will check rememberDevice value internally
@@ -198,8 +198,8 @@ export class AppSideLoginComponent implements OnInit {
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
           await this._router.navigate(['/applications'], { replaceUrl: true });
-        } else {
-          await this._router.navigate(['/applications'], { replaceUrl: true });
+        } else if (userData.role === UserRole.APPLICANT) {
+          await this._router.navigate(['/applicant'], { replaceUrl: true }); // Assuming /applicant-dashboard for Applicant
         }
       } else {
         this.toastr.warning(response?.message || 'Invalid credentials. Please try again.',);
