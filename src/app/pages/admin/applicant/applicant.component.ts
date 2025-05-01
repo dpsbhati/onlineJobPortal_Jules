@@ -29,6 +29,9 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core'; // And this
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-applicant',
@@ -40,8 +43,9 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatTableModule,
-    MatPaginatorModule,MatMenuModule,MatSelectModule,FormsModule
+    MatTableModule,    MatPaginatorModule,MatMenuModule,MatSelectModule,FormsModule,MatFormFieldModule, MatInputModule, MatDatepickerModule,MatNativeDateModule,MatSliderModule
+
+    ,MatMenuModule,MatSelectModule,FormsModule
   ],
   templateUrl: './applicant.component.html',
   styleUrl: './applicant.component.scss'

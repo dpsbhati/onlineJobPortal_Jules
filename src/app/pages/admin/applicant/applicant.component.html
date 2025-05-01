@@ -29,13 +29,10 @@
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3">
               <mat-form-field appearance="outline" class="w-100">
-                <mat-label>City</mat-label>
-                <mat-select >
-                  <mat-option value="rank1">City 1</mat-option>
-                  <mat-option value="rank2">City 2</mat-option>
-                  <mat-option value="rank3">City 3</mat-option>
-                </mat-select>
-
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker" />
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
             </div>
 
