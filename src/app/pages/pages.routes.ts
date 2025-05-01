@@ -18,6 +18,7 @@ import { AdduserComponent } from './admin/adduser/adduser.component'
 import { roleGuard } from '../core/guards/role.guard'
 import { ApplyJobComponent } from './admin/apply-job/apply-job.component'
 import { AppliedApplicationsComponent } from './admin/applied-applications/applied-applications.component'
+import { AppliedStatusComponent } from './admin/applied-status/applied-status.component'
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -133,6 +134,11 @@ export const PagesRoutes: Routes = [
       {
         path: 'Apply-Job',
         component: ApplyJobComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'Applied-Status',
+        component: AppliedStatusComponent,
         canActivate: [AuthGuard],
       },
       {
