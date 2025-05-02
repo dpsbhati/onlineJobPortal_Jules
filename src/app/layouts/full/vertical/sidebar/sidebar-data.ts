@@ -137,5 +137,3 @@ function getUserRole(): string {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   return user.role || ''; // Return empty string if role is not found
 }
-
-console.log('Filtered NavItems:', filteredNavItems);

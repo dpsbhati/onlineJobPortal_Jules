@@ -124,7 +124,9 @@ export class JobListComponent implements OnInit {
     job_type: '',
     employer: '',
     rank: '',
-    status: '',
+jobpost_status
+: '',
+
   };
 
   total: number = 0;
@@ -287,7 +289,7 @@ export class JobListComponent implements OnInit {
     });
   }
 
-  clearFilter(event: Event, filterType: 'job_type' | 'rank' | 'status'): void {
+  clearFilter(event: Event, filterType: 'job_type' | 'rank' | 'jobpost_status'): void {
     event.stopPropagation();
     this.filters[filterType] = '';
     this.onSearch();
@@ -299,7 +301,9 @@ export class JobListComponent implements OnInit {
       job_type: '',
       employer: '',
       rank: '',
-      status: '',
+
+jobpost_status
+: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
     this.pageConfig.whereClause = [];
