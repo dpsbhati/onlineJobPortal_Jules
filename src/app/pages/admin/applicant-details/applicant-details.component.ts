@@ -10,8 +10,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-applicant-details',
-  imports: [ CommonModule, 
-    FormsModule, 
+  imports: [ CommonModule,
+    FormsModule,
     RouterModule,
   MaterialModule,ToastrModule],
   templateUrl: './applicant-details.component.html',
@@ -40,7 +40,7 @@ export class ApplicantDetailsComponent {
     this.route.params.subscribe(params => {
       this.userId = params['id'];
       this.jobId = localStorage.getItem('currentJobId') || '';
-      
+
       if (!this.userId) {
         this.toastr.error('Required parameters not found');
         return;
@@ -48,17 +48,17 @@ export class ApplicantDetailsComponent {
       this.loadApplicantDetails();
     });
   }
-   
+
   loadApplicantDetails() {
       // this.loader.show();
-      this.isLoading = true; 
+      this.isLoading = true;
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
           this.adminComments = this.applicantDetails.comments ;
-          
+
           // Parse key skills
           if (response.data.user?.userProfile?.key_skills) {
             try {
@@ -66,7 +66,7 @@ export class ApplicantDetailsComponent {
               this.keySkills = JSON.parse(response.data.user.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
             } catch (e) {
               console.warn('Error parsing key_skills:', e);
-              this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ? 
+              this.keySkills = Array.isArray(response.data.user.userProfile.key_skills) ?
                 response.data.user.userProfile.key_skills : [];
             }
           }
@@ -97,7 +97,7 @@ export class ApplicantDetailsComponent {
   //         this.applicantDetails = response.data;
   //         this.selectedStatus = this.applicantDetails.status;
   //         this.adminComments = this.applicantDetails.comments ;
-           
+
   //         // Parse key skills
   //         if (response.data.userProfile?.key_skills) {
   //           try {
@@ -105,11 +105,11 @@ export class ApplicantDetailsComponent {
   //             this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
   //           } catch (e) {
   //             console.warn('Error parsing key_skills:', e);
-  //             this.keySkills = Array.isArray(response.data.userProfile.key_skills) ? 
+  //             this.keySkills = Array.isArray(response.data.userProfile.key_skills) ?
   //               response.data.userProfile.key_skills : [];
   //           }
   //         }
-        
+
 
   //         // Get certifications from courses_and_certification array
   //         this.certifications = this.applicantDetails.job?.courses_and_certification || [];
@@ -126,13 +126,13 @@ export class ApplicantDetailsComponent {
   // }
 
   updateStatus(): void {
-    
+
     if (!this.userId || !this.selectedStatus) {
       this.notifyService.showError('Please select a status');
       return;
     }
 
-    this.isLoading = true; 
+    this.isLoading = true;
     const updateData = {
       status: this.selectedStatus,
       comments: this.adminComments,
@@ -144,7 +144,7 @@ export class ApplicantDetailsComponent {
         next: (response: any) => {
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
-          
+
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
               this.router.navigate(['/applicants-details', jobId]);

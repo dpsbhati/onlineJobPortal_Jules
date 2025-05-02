@@ -37,18 +37,18 @@ export class AdminService {
   deleteJob(id: string): Observable<any> {
     return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
   }
-  
+
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
   applicationPagination(payload: any): Observable<any> {
     return this.genericService.Post<any>(`applications/pagination`, payload);
   }
-  
+
   deleteApplicant(payload: { id: string }): Observable<any> {
     return this.http.post(`${this.BASE_URL}applications/delete`, payload);
   }
-  
+
 
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
@@ -56,7 +56,7 @@ export class AdminService {
 
   deleteCertification(jobId: string): Observable<any> {
     const url = `${this.BASE_URL}courses-and-certification/delete`;
-    const payload = { job_id: jobId }; 
+    const payload = { job_id: jobId };
     return this.http.post(url, payload);
   }
 
@@ -68,6 +68,9 @@ export class AdminService {
   }
 
   updateApplicationStatus(id: string, payload: any): Observable<any> {
-    return this.genericService.Post('applications/update', { id, ...payload });
+    return this.genericService.Post(`applications/update/${id}`, payload);
   }
+  // updateApplicationStatus(id: string, payload: any): Observable<any> {
+  //   return this.genericService.Post('applications/update', { id, ...payload });
+  // }
 }
