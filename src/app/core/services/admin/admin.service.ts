@@ -69,6 +69,7 @@ export class AdminService {
 
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post(`applications/update/${id}`, payload);
+    
   }
   // updateApplicationStatus(id: string, payload: any): Observable<any> {
   //   return this.genericService.Post('applications/update', { id, ...payload });
