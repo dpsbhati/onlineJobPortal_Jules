@@ -147,6 +147,11 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'Applied-Status/:id',
+        component: AppliedStatusComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'applicant-details/:id',
         component: ApplicantDetailsComponent,
         canActivate: [AuthGuard]
