@@ -44,6 +44,9 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatSelectModule } from '@angular/material/select'
+import { ActivatedRoute, Router } from '@angular/router'
+import { AuthService } from 'src/app/core/services/authentication/auth.service'
+
 
 @Component({
   standalone: true,
@@ -87,7 +90,7 @@ export class AppliedApplicationsComponent implements OnInit {
       endSalary: '₹5,37,000',
       city: 'New Delhi',
       jobPost: 'Frontend Developer',
-  
+
     },
     {
       title: 'Neha Verma',
@@ -103,6 +106,14 @@ export class AppliedApplicationsComponent implements OnInit {
   ])
 
   @ViewChild(MatPaginator) paginator!: MatPaginator
+  userRole: string
+   constructor(
+      private route: ActivatedRoute,
+         private router: Router,
+      private authService: AuthService
+    ) {
+      this.userRole = this.authService.getUserRole();
+    }
 
   ngOnInit () {
     this.dataSource.paginator = this.paginator
@@ -111,6 +122,10 @@ export class AppliedApplicationsComponent implements OnInit {
   applyFilter (filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase()
   }
+  viewappliedstatus(jobId: string): void {
+    this.router.navigate(['/Applied-Status', jobId]);
+  }
+
 
   openDialog (action: string, element: any) {
     console.log(action, element)
