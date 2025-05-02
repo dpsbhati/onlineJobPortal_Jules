@@ -53,7 +53,6 @@ import { NotifyService } from 'src/app/core/services/notify.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { UserService } from 'src/app/core/services/user/user.service'
 import { FormsModule } from '@angular/forms'
-import { Router } from '@angular/router'
 
 @Component({
   standalone: true,
@@ -104,21 +103,18 @@ export class AppliedApplicationsComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator
   userRole: string
-   constructor(
-      private route: ActivatedRoute,
-         private router: Router,
-      private authService: AuthService
-    ) {
-      this.userRole = this.authService.getUserRole();
-    }
 
-  constructor(
-    private userService: UserService,
-    private router: Router,
-    private helperService: HelperService,
-    private notify: NotifyService,
-    private loader: LoaderService,
-  ) { }
+    constructor(
+      private authService: AuthService,
+      private route: ActivatedRoute,
+      private userService: UserService,
+      private router: Router,
+      private helperService: HelperService,
+      private notify: NotifyService,
+      private loader: LoaderService,
+    ) {
+    this.userRole = this.authService.getUserRole();
+   }
 
   ngOnInit() {
     this.getAllData();
@@ -129,10 +125,6 @@ export class AppliedApplicationsComponent implements OnInit {
   applyFilter(filterValue: string) {
     // this.dataSource.filter = filterValue.trim().toLowerCase()
   }
-  viewappliedstatus(jobId: string): void {
-    this.router.navigate(['/Applied-Status', jobId]);
-  }
-
 
   openDialog(action: string, element: any) {
     console.log(action, element)
