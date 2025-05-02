@@ -32,7 +32,7 @@ export class JobListComponent {
     direction: "desc",
     whereClause: [],
   }
-  // salaryRange = { min: 0, max: 1000000 }; // Default salary range
+  salaryRange = { min: 0, max: 1000000 }; // Default salary range
   salarySliderOptions: any = {
     floor: 0,
     ceil: 1000000,
@@ -54,8 +54,8 @@ export class JobListComponent {
     title: "",
     job_type: "",
     deadline: "",
-    // salary_min: this.salaryRange.min,
-    // salary_max: this.salaryRange.max,
+    salary_min: this.salaryRange.min,
+    salary_max: this.salaryRange.max,
   }
 
   total: number = 0;
@@ -88,11 +88,11 @@ export class JobListComponent {
     this.initializeDeadlinePicker();
   }
 
-  // onSalaryRangeChange(): void {
-  //   this.filters.salary_min = this.salaryRange.min;
-  //   this.filters.salary_max = this.salaryRange.max;
-  //   this.onPagination()
-  // }
+  onSalaryRangeChange(): void {
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
+    this.onPagination()
+  }
 
   initializeDeadlinePicker(): void {
     const datePickerElement = $('input[name="deadlineDatePicker"]');
@@ -275,18 +275,18 @@ export class JobListComponent {
     this.filters.title = "",
       this.filters.job_type = "",
       this.filters.deadline = "",
-    //   // Reset the salary range
-    //   this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
-    // this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
+      // Reset the salary range
+      this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
+    this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
 
-    // this.filters.salary_min = this.salaryRange.min;
-    // this.filters.salary_max = this.salaryRange.max;
+    this.filters.salary_min = this.salaryRange.min;
+    this.filters.salary_max = this.salaryRange.max;
 
     // Reset whereClause
     this.pageConfig.whereClause = []; // Clear all filters in whereClause
 
     // Trigger the UI update for the slider
-    // this.onSalaryRangeChange();
+    this.onSalaryRangeChange();
     this.onSearch();
   }
 
