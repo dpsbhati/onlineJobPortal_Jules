@@ -135,6 +135,12 @@ export const PagesRoutes: Routes = [
         path: 'Applied-Applications',
         component: AppliedApplicationsComponent,
         canActivate: [AuthGuard],
+        data: {
+          title: 'Applied Applications',
+          urls: [
+            { title: 'JApplied Applications' },
+          ],
+        },
       },
       {
         path: 'Apply-Job',
