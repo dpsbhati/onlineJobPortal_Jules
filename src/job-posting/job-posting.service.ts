@@ -20,7 +20,7 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
-  ) {}
+  ) { }
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
@@ -144,29 +144,29 @@ export class JobPostingService {
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
-            where: { id: jobDto.id, is_deleted: false },
-          })
+          where: { id: jobDto.id, is_deleted: false },
+        })
         : null;
-  
+
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
-  
+
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
         const datePublished = new Date(jobDto.date_published);
         const deadline = new Date(jobDto.deadline);
-  
+
         if (now >= datePublished && now <= deadline) {
           job_opening = 'open';
         } else if (now > deadline) {
           job_opening = 'close';
         }
       }
-  
+
       if (Array.isArray(jobDto.social_media_type)) {
         jobDto.social_media_type = JSON.stringify(jobDto.social_media_type);
       }
-  
+
       // Create or update job posting
       const updatedJobPosting = this.jobPostingRepository.create({
         ...jobPosting,
@@ -178,16 +178,16 @@ export class JobPostingService {
         created_by: jobPosting ? jobPosting.created_by : userId,
         updated_by: userId,
       });
-  
+
       // Save the job posting
       const savedJobPosting = await this.jobPostingRepository.save(updatedJobPosting);
-  
+
       console.log(
         jobPosting
           ? `Updated Job Posting with ID: ${savedJobPosting.id}`
           : `Created Job Posting with ID: ${savedJobPosting.id}`,
       );
-  
+
       return WriteResponse(
         200,
         savedJobPosting,
@@ -200,24 +200,24 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
-  
+
+
   // async paginateJobPostings(req: any, pagination: IPagination) {
   //   try {
   //     const { curPage = 1, perPage = 10, whereClause } = pagination;
-  
+
   //     let lwhereClause = 'job.is_deleted = 0';
   //     const parameters: Record<string, any> = { is_deleted: 0 };
-  
+
   //     const isAdmin = req.user?.role === 'admin';
   //     const isApplicant = req.user?.role === 'applicant';
-  
+
   //     // Handling applicant-specific conditions
   //     if (isApplicant) {
   //       const now = new Date().toISOString();
   //       lwhereClause += ` AND job_opening = 'open' AND job.deadline >= '${now}' AND job.jobpost_status != 'draft'`;
   //     }
-  
+
   //     // Fields to search across when "all" is used
   //     const fieldsToSearch = [
   //       'job.title',
@@ -234,7 +234,7 @@ export class JobPostingService {
   //       'job.state_code',
   //       'job.rank',
   //     ];
-  
+
   //     // Add dynamic filtering based on whereClause
   //     if (Array.isArray(whereClause)) {
   //       whereClause.forEach(({ key, value, operator }) => {
@@ -257,11 +257,11 @@ export class JobPostingService {
   //         }
   //       });
   //     }
-  
+
   //     const skip = (curPage - 1) * perPage;
-  
+
   //     // Now, let's ensure we correctly log the query and parameters for debugging purposes
-  
+
   //     // Fetch the data with the corrected query
   //     const [list, totalCount] = await this.jobPostingRepository
   //       .createQueryBuilder('job')
@@ -270,30 +270,30 @@ export class JobPostingService {
   //       .take(perPage)
   //       .orderBy('job.created_at', 'DESC')
   //       .getManyAndCount();
-  
+
   //     // Enrich the job list if necessary
   //     const enrichedJobList = list.map((job) => ({
   //       ...job,
   //       job_type_post: job.job_type_post ?? 'Not Specified',
   //     }));
-  
+
   //     return paginateResponse(enrichedJobList, totalCount, curPage, perPage);
-  
+
   //   } catch (error) {
   //     // Return specific error messages depending on where the issue is
-  
+
   //     // If the error is related to invalid query parameters or SQL
   //     if (error.name === 'QueryFailedError') {
   //       console.error('Query Error: ', error.message);
   //       return WriteResponse(400, {}, 'Invalid key or value.');
   //     }
-  
+
   //     // Handle errors related to invalid input in the payload
   //     if (error.name === 'ValidationError') {
   //       console.error('Validation Error: ', error.message);
   //       return WriteResponse(400, {}, 'Invalid input in the payload.');
   //     }
-  
+
   //     // Catch any other errors and return a generic error message
   //     console.error('Unexpected Error: ', error.message);
   //     return WriteResponse(500, {}, 'Something went wrong, please try again later.');
@@ -319,26 +319,26 @@ export class JobPostingService {
   //     .getManyAndCount();
   //   return paginateResponse(data, count);
   // }
-  
+
   async paginateJobPostings(req, IPagination) {
     let { curPage, perPage, sortBy, direction, whereClause } = IPagination;
     let skip = (curPage - 1) * perPage;
-  
+
     // Set default sorting if not provided
     sortBy = 'created_at';
     direction = direction || 'DESC'; // Default to DESC
-  
+
     // Start with the basic whereClause (always include these conditions)
     let queryWhereClause = `f.isActive = true AND f.is_deleted = false`;
-  
+
     // Define the queryParams object with a more flexible structure
     let queryParams: { [key: string]: any } = {};  // This allows any string key and any value type
-  
+
     // Apply dynamic "all" search filter if 'all' is provided
     if (whereClause && Array.isArray(whereClause)) {
       whereClause.forEach(filter => {
         const { key, value, operator } = filter;
-  
+
         // If the key is 'all', perform a search across multiple fields
         if (key === 'all' && value) {
           const searchTerm = `%${value}%`; // Add wildcards for LIKE search
@@ -362,7 +362,7 @@ export class JobPostingService {
             f.jobpost_status LIKE :searchTerm OR
             f.job_opening LIKE :searchTerm
           )`;
-  
+
           // Add the searchTerm to queryParams
           queryParams.searchTerm = searchTerm;
         } else if (key && value !== undefined) {
@@ -370,12 +370,22 @@ export class JobPostingService {
           queryWhereClause += ` AND f.${key} ${operator} :${key}`;
           queryParams[key] = value; // Add the filter value to queryParams
         }
+
+        if (key === 'jobpost_status' && value) {
+          const searchTerm = `%${value}%`; // Add wildcards for LIKE search
+          queryWhereClause += ` AND (
+            f.jobpost_status LIKE :searchTerm 
+          )`;
+
+          // Add the searchTerm to queryParams
+          queryParams.searchTerm = searchTerm;
+        }
       });
     }
-  
+
     // Handle Sorting (if provided)
     queryWhereClause += ` ORDER BY f.${sortBy} ${direction}`;
-  
+
     // Execute query with dynamic filters
     let [data, count] = await this.jobPostingRepository
       .createQueryBuilder('f')
@@ -383,87 +393,87 @@ export class JobPostingService {
       .skip(skip)
       .take(perPage)
       .getManyAndCount();
-  
+
     return paginateResponse(data, count);
   }
-  
- 
+
+
   async findAll() {
     try {
       const jobPostings = await this.jobPostingRepository.find({
         where: { is_deleted: false },
         order: { created_at: 'DESC' },
       });
-  
+
       if (jobPostings.length > 0) {
         const enrichedJobPostings = jobPostings.map((job) => ({
           ...job,
           job_type_post: job.job_type_post || 'Not Specified',
         }));
-  
+
         return WriteResponse(
           200,
           enrichedJobPostings,
           'Job postings retrieved successfully.',
         );
       }
-  
+
       return WriteResponse(404, [], 'No job postings found.');
     } catch (error) {
       console.error('Error fetching job postings:', error.message);
       return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
-  
-  
+
+
   async findOne(key: string, value: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { [key]: value, is_deleted: false },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(404, {}, `Job posting not found.`);
       }
-  
+
       const response = {
         ...jobPosting,
         job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
       };
-  
+
       return WriteResponse(200, response, 'Job posting retrieved successfully.');
     } catch (error) {
       console.error('Error fetching job posting:', error.message);
       return WriteResponse(500, {}, 'An unexpected error occurred.');
     }
   }
-  
-  
+
+
   async remove(id: string) {
     if (!id) {
       return WriteResponse(400, false, 'Job posting ID is required.');
     }
-  
+
     const result = await this.jobPostingRepository.update(id, {
       is_deleted: true,
     });
-  
+
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
-  
+
   async toggleJobStatus(id: string, isActive: boolean) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { id, is_deleted: false },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(404, {}, `Job posting with ID ${id} not found.`);
       }
-  
+
       jobPosting.isActive = isActive;
       await this.jobPostingRepository.save(jobPosting);
-  
+
       return WriteResponse(
         200,
         jobPosting,
@@ -477,13 +487,13 @@ export class JobPostingService {
       );
     }
   }
-  
+
   async postScheduledJob(jobId: string, userId: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { id: jobId, is_deleted: false, jobpost_status: 'draft' },
       });
-  
+
       if (!jobPosting) {
         return WriteResponse(
           404,
@@ -491,13 +501,13 @@ export class JobPostingService {
           `Job with ID ${jobId} not found or is not in draft status.`,
         );
       }
-  
+
       jobPosting.jobpost_status = 'posted';
       jobPosting.updated_by = userId;
-  
+
       const updatedJobPosting =
         await this.jobPostingRepository.save(jobPosting);
-  
+
       return WriteResponse(
         200,
         updatedJobPosting,
@@ -507,5 +517,5 @@ export class JobPostingService {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
-  
+
 }

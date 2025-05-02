@@ -56,6 +56,9 @@ export class JobPosting {
   salary: number;
 
   @Column({ type: 'int', nullable: true })
+  applicant_number: number;
+
+  @Column({ type: 'int', nullable: true })
   country_code: string;
 
   @Column({ type: 'int', nullable: true })

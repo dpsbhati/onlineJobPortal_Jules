@@ -156,6 +156,8 @@ export class CreateJobPostingDto {
   @Min(0, { message: 'Starting salary must be at least 0.' })
   start_salary: number;
 
+  applicant_number: number;
+
   @ApiProperty({
     description: 'The ending salary',
     example: 100000,
