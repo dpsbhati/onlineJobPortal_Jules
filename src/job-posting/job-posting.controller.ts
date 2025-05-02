@@ -65,16 +65,16 @@ export class JobPostingController {
     return this.jobPostingService.remove(id);
   }
 
-  @Post('getOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.jobPostingService.findOne(id);
-  }
-
-  // @Get('find-one')
-  // @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
-  // async findOne(@Query() query: { key: string; value: string }) {
-  //   return this.jobPostingService.findOne(query.key, query.value);
+  // @Post('getOne/:id')
+  // findOne(@Param('id') id: string) {
+  //   return this.jobPostingService.findOne(id);
   // }
+
+  @Get('find-one')
+  @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
+  async findOne(@Query() query: { key: string; value: string }) {
+    return this.jobPostingService.findOne(query.key, query.value);
+  }
 
   @Post(':id/status')
   @ApiOperation({

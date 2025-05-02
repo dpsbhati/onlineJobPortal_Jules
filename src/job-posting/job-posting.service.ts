@@ -426,10 +426,10 @@ export class JobPostingService {
   }
 
 
-  async findOne(id:string) {
+  async findOne(key: string, value: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
-        where: { id: id, is_deleted: false },
+        where: { [key]: value, is_deleted: false },
         relations: ['user'], // Automatically load the related user entity
       });
 
