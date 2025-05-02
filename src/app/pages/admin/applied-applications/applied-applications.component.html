@@ -88,7 +88,7 @@
                 <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef>Action</th>
                     <td mat-cell *matCellDef="let element">
-                      <button mat-menu-item (click)="viewappliedstatus('5071299c-3d13-4f47-b223-2c22cba9b648')">
+                      <button mat-menu-item (click)="viewappliedstatus(element.job_id)">
                             <mat-icon>visibility</mat-icon>
 
                       </button>
