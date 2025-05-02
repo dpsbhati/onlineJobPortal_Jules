@@ -94,8 +94,8 @@ export class JobPosting {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Users, (user) => user.id, { nullable: true })
-  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  @ManyToOne(() => Users, (user) => user.jobPosting,)
+  @JoinColumn({ name: 'created_by'})
   user: Users;
 
   @Column({

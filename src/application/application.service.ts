@@ -314,7 +314,18 @@ export class ApplicationService {
         'user.email',
         'userProfile.first_name',
       ];
-
+      const email = pagination.whereClause.find(
+        (p: any) => p.key === "email" && p.value,
+    );
+    if (email) {
+        lwhereClause += ` AND user.email LIKE '%${email.value}%'`;
+    }
+      const first_name = pagination.whereClause.find(
+        (p: any) => p.key === "first_name" && p.value,
+    );
+    if (first_name) {
+        lwhereClause += ` AND userProfile.first_name LIKE '%${first_name.value}%'`;
+    }
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
           const fieldValue = whereClause.find((p) => p.key === field)?.value;

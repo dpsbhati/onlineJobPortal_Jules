@@ -18,6 +18,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 import { applications } from 'src/application/entities/application.entity';
 import { Application } from 'express';
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 
 @Entity('users')
 export class Users {
@@ -84,5 +85,8 @@ export class Users {
   
   @OneToMany(() => applications, (application) => application.user) // Relation with applications
   applications: applications[]; 
+
+  @OneToMany(() => JobPosting, (jobPosting) => jobPosting.user) // Relation with applications
+  jobPosting: JobPosting[]; 
   
 }
