@@ -36,7 +36,7 @@ export const navItems: NavItem[] = [
     visibleForRoles: ['applicant']
   },
   {
-    displayName: 'Applications',
+    displayName: 'View Applications',
     iconName: 'dashboard',
     route: 'applications',
     visibleForRoles: ['admin']

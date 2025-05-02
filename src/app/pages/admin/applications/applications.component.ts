@@ -19,9 +19,7 @@ import {
   MatDialog,
   MatDialogRef,
   MatDialogActions,
-  
   MatDialogTitle,
-  
   MatDialogModule
 } from '@angular/material/dialog'
 import { MatButtonModule } from '@angular/material/button'
@@ -63,8 +61,8 @@ export class ApplicationsComponent {
     'position',
     'name',
     'email',
-    'mobile',
-    'dateOfApplication',
+    'experience',
+    'appliedDate',
     'jobPost',
     'status',
     'action'
@@ -163,7 +161,6 @@ export class ApplicationsComponent {
               position: index + 1 + this.pageIndex * this.pageSize,
               name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
               email: app.user?.email,
-              mobile: app.user?.userProfile?.mobile,
               dateOfApplication: new Date(app.applied_at).toLocaleDateString(
                 'en-US',
                 {
@@ -174,6 +171,7 @@ export class ApplicationsComponent {
                 }
               ),
               application_id: app?.id,
+              experience: app?.work_experiences,
               jobPost: app.job?.title,
               applications: app?.count,
               status: app?.status,
