@@ -15,20 +15,20 @@ import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-applied-status',
- imports: [
-     CommonModule,
-     FormsModule,
-     RouterModule,
-     TablerIconsModule,
-     MaterialModule,
-     ToastrModule,
-     MatButtonModule,
-     MatInputModule
-   ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    TablerIconsModule,
+    MaterialModule,
+    ToastrModule,
+    MatButtonModule,
+    MatInputModule,
+  ],
   //  imports: [MatButtonModule, MatIconModule, TablerIconsModule],
 
   templateUrl: './applied-status.component.html',
-  styleUrl: './applied-status.component.scss'
+  styleUrl: './applied-status.component.scss',
 })
 export class AppliedStatusComponent {
   jobDetails: any;
@@ -37,14 +37,16 @@ export class AppliedStatusComponent {
   id: any;
   userRole: string = '';
   formattedSkills: any;
-  formattedSocialMedia:any;
+  formattedSocialMedia: any;
+  userProfile: any;
+  user: any;
 
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
     private router: Router,
     private notifyService: NotifyService,
-     private loader: LoaderService,
+    private loader: LoaderService,
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
@@ -70,7 +72,9 @@ export class AppliedStatusComponent {
       if (!skills) return [];
       // Parse the JSON string and remove any special characters
       const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
-      return parsedSkills.map((skill: string) => skill.replace(/["\[\]]/g, '').trim());
+      return parsedSkills.map((skill: string) =>
+        skill.replace(/["\[\]]/g, '').trim()
+      );
     } catch (error) {
       console.error('Error parsing skills:', error);
       return [];
@@ -83,11 +87,19 @@ export class AppliedStatusComponent {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
+          this.user = this.jobDetails.user;
+          console.log(this.user, 'user--------------------------1');
+
+          this.userProfile = this.jobDetails.user?.userProfile;
+          console.log(this.userProfile, 'userProfile1------------------------------------2');
+
           if (this.jobDetails.skills_required) {
             this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
           }
-          if(this.jobDetails.social_media_type){
-            this.formattedSocialMedia=JSON.parse(this.jobDetails.social_media_type);
+          if (this.jobDetails.social_media_type) {
+            this.formattedSocialMedia = JSON.parse(
+              this.jobDetails.social_media_type
+            );
           }
           this.loader.hide();
         } else {
@@ -99,7 +111,7 @@ export class AppliedStatusComponent {
         this.loader.hide();
         this.notifyService.showError(error?.error?.message);
         console.error('Error:', error);
-      }
+      },
     });
   }
 

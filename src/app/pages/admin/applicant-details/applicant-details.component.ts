@@ -50,8 +50,8 @@ export class ApplicantDetailsComponent {
   }
 
   loadApplicantDetails() {
-      // this.loader.show();
-      this.isLoading = true;
+      this.loader.show();
+      // this.isLoading = true;
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
@@ -73,8 +73,8 @@ export class ApplicantDetailsComponent {
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-          this.isLoading = false;
-          // this.loader.hide();
+          // this.isLoading = false;
+          this.loader.hide();
         } else {
           this.toastr.warning(response.message);
           this.isLoading = false;
