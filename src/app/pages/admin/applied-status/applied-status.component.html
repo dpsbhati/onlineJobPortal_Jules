@@ -4,11 +4,11 @@
   </button>
 
 
-  <h2 class="m-l-12">Applied</h2>
+  <h2 class="m-l-12">Applied Application Detail</h2>
 
 </div>
 
- <div class="row">
+<div class="row">
   <div class="col-lg-8">
     <mat-card>
       <mat-card-content>
@@ -20,6 +20,38 @@
               <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
               {{ jobDetails?.address }}
             </p> <!-- Dynamic address -->
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-content>
+        <div class="m-b-16">
+          <span style="font-size: 1.5em; font-weight: 500;">User Detail</span>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-6 m-b-16">
+            <strong>Name:</strong> {{ userProfile?.first_name }} {{ userProfile?.last_name }}
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <strong>Email:</strong> {{ user?.email }}
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <strong>Role:</strong> {{ user?.role }}
+          </div>
+
+          <div class="col-md-4 col-sm-6" *ngIf="userProfile?.mobile">
+            <strong>Mobile:</strong> {{ userProfile?.mobile }}
+          </div>
+
+          <div class="col-md-4 col-sm-6 " *ngIf="userProfile?.dob">
+            <strong>DOB:</strong> {{ userProfile?.dob | date: 'mediumDate' }}
+          </div>
+
+          <div class="col-md-4 col-sm-6" *ngIf="userProfile?.gender">
+            <strong>Gender:</strong> {{ userProfile?.gender }}
           </div>
         </div>
       </mat-card-content>
@@ -84,16 +116,20 @@
             <strong class="m-r-6">Employment Type:</strong> {{ jobDetails?.job_type }} <!-- Dynamic job type -->
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Salary Range:</strong> {{ jobDetails?.start_salary | currency }} - {{ jobDetails?.end_salary | currency }} <!-- Dynamic salary -->
+            <strong class="m-r-6">Salary Range:</strong> {{ jobDetails?.start_salary | currency }} - {{
+            jobDetails?.end_salary | currency }} <!-- Dynamic salary -->
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }} <!-- Dynamic deadline -->
+            <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }}
+            <!-- Dynamic deadline -->
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} years <!-- Dynamic experience -->
+            <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} years
+            <!-- Dynamic experience -->
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_at ? (jobDetails?.posted_at | date:'mediumDate') : '-' }}</span> <!-- Dynamic posted date -->
+            <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_at ? (jobDetails?.posted_at |
+              date:'mediumDate') : '-' }}</span> <!-- Dynamic posted date -->
           </div>
         </div>
       </mat-card-content>
