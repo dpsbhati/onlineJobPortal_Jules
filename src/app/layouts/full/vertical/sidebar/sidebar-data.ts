@@ -82,7 +82,7 @@ export const navItems: NavItem[] = [
       {
         displayName: 'Expired Job Postings',
         iconName: 'point',
-        route: '/menu-2',
+        route: 'expired-job-posting',
         visibleForRoles: ['admin']
       }
     ]
