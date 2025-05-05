@@ -14,6 +14,7 @@ import {
   ApiBearerAuth, ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -70,11 +71,19 @@ export class JobPostingController {
   //   return this.jobPostingService.findOne(id);
   // }
 
+  // @Get('find-one')
+  // @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
+  // async findOne(@Query() query: { key: string; value: string }) {
+  //   return this.jobPostingService.findOne(query.key, query.value);
+  // }
+
   @Get('find-one')
-  @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
-  async findOne(@Query() query: { key: string; value: string }) {
-    return this.jobPostingService.findOne(query.key, query.value);
-  }
+@ApiOperation({ summary: 'Find a job posting by a key-value pair' })
+@ApiQuery({ name: 'key', type: String, description: 'The key to search for in the job posting' })
+@ApiQuery({ name: 'value', type: String, description: 'The value to search for in the job posting' })
+async findOne(@Query() query: { key: string; value: string }) {
+  return this.jobPostingService.findOne(query.key, query.value);
+}
 
   @Post(':id/status')
   @ApiOperation({

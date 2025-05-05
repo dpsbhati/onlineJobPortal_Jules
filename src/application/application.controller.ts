@@ -43,7 +43,7 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  @Get(':id')
+  @Get('getOne/:id')
   @ApiOperation({ summary: 'Retrieve a specific application by ID' })
   @ApiParam({
     name: 'id',
@@ -53,6 +53,14 @@ export class ApplicationController {
   async findOne(@Param('id') id: string) {
     return this.applicationService.findOne(id);
   }
+
+  @Get('getAllByJobId')
+  findOneByJobId(@Query('job_id') job_id: string) {
+   return this.applicationService.findOneByJobId(job_id);
+ }
+
+
+
 
   @Post('update/:id') 
   @ApiOperation({ summary: 'Update a specific application by ID' })

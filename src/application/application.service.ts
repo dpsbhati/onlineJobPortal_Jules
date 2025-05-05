@@ -152,6 +152,7 @@ export class ApplicationService {
       }
 
       console.log('Searching for application with ID:', id);
+      console.log('Searching for 4333333333333 with ID:', id);
 
       const application = await this.applicationRepository
         .createQueryBuilder('app')
@@ -187,6 +188,38 @@ export class ApplicationService {
       );
     }
   }
+  async findOneByJobId(job_id: string) {
+    try {
+     
+      const [application, count] = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        // .leftJoinAndSelect('job.courses_and_certification', 'courses')
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
+        .where('job.id = :job_id', { job_id: job_id.toString() })
+        .andWhere('app.is_deleted = false')
+        // .getMany();
+        .getManyAndCount();
+     
+      if (application.length>0) {
+        return WriteResponse(200,{application, count},'Applications found successfully.');
+      }
+      else{
+        return WriteResponse(404, false, 'Applications not found.');
+      }
+    } catch (error) {
+      console.error('Error fetching application:', error.message);
+      return WriteResponse(
+        500,
+        {},
+        'An unexpected error occurred while fetching the application.',
+      );
+    }
+  }
+
+
+  
 
   async update(
     id: string,
