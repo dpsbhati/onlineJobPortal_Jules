@@ -3,7 +3,7 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
     <h2 class="m-l-12">Apply for Job</h2>
-    
+
 </div>
 <div class="row">
     <div class="col-lg-6">
@@ -12,43 +12,56 @@
             <mat-card-content>
 
 
-                <form class="profile-form">
+                <form class="profile-form" [formGroup]="userDetailsForm">
 
                     <div class="">
                         <!-- Experience -->
                             <mat-form-field appearance="outline" class="w-100 m-b-10">
                                 <mat-label>Experience</mat-label>
-                                <input matInput formControlName="first_name" placeholder="Enter Experience">
+                                <input matInput formControlName="first_name" placeholder="Enter Experience" formControlName="work_experiences">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" class="w-100 m-b-10">
                                 <mat-label>Comments</mat-label>
-                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                                <input matInput formControlName="first_name" placeholder="Enter Comments" formControlName="comments">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" class="w-100 m-b-10">
                                 <mat-label>Description</mat-label>
-                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                                <input matInput formControlName="first_name" placeholder="Enter Description" formControlName="description">
                             </mat-form-field>
 
                             <mat-form-field appearance="outline" class="w-100 m-b-10">
                                 <mat-label>Additional Information
                                 </mat-label>
-                                <input matInput formControlName="first_name" placeholder="Enter Comments">
+                                <input matInput formControlName="first_name" placeholder="Additional Information" formControlName="additional_info">
                             </mat-form-field>
 
                             <!-- <label class="m-b-8">CV Upload</label> -->
                             <div class="upload-box m-b-20" id="uploadBox">
                                 <p>Upload CV </p>
-                                <input type="file" id="fileInput" multiple>
-                            </div>
+                                <input type="file" id="fileInput" (change)="onFileChange($event, 'cv_path')" accept=".pdf, .doc">
+                                <div *ngIf="fileError" class="error">{{ fileError }}</div>
+                                <div *ngIf="uploadedFileName" class="filename"> {{ uploadedFileName }}
+                                  <!-- <button (click)="deleteFile('cv_path')" type="button" class="delete-button">X</button> -->
+                                </div>
+                              </div>
 
 
                             <!-- <label class="m-b-8">CV Upload</label> -->
                             <div class="upload-box m-b-20" id="uploadBox">
                                 <p>Upload Certification</p>
-                                <input type="file" id="fileInput" multiple>
-                            </div>
+                                <input type="file" id="fileInput" (change)="onFileChange($event, 'courses_and_certification')" multiple accept=".pdf, .doc">
+                                <div *ngIf="certificationFiles.length > 0">
+                                  <h5>Selected Files:</h5>
+                                  <ul>
+                                    <li *ngFor="let file of certificationFiles  let i = index">{{ file.name }}
+                                      <!-- <button (click)="deleteFile('courses_and_certification', i)" type="button" class="delete-button">X</button> -->
+                                    </li>
+
+                                  </ul>
+                                </div>
+                              </div>
 
                         </div>
 
@@ -56,7 +69,7 @@
 
                     <!-- Submit Button -->
                     <div class="d-flex justify-content-end mt-4">
-                        <button mat-flat-button color="primary">Submit
+                        <button mat-flat-button color="primary" [disabled]="userDetailsForm.invalid || !fileUploaded" (click)="Submit()">Submit
                         </button>
                     </div>
                 </form>
