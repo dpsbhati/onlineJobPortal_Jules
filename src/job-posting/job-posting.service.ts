@@ -320,82 +320,186 @@ export class JobPostingService {
   //   return paginateResponse(data, count);
   // }
 
-  async paginateJobPostings(req, IPagination) {
-    let { curPage, perPage, sortBy, direction, whereClause } = IPagination;
+  async paginateJobPostings(req, pagination: IPagination) {
+    let { curPage, perPage, direction,whereClause, sortBy } = pagination;
     let skip = (curPage - 1) * perPage;
 
-    // Set default sorting if not provided
-    sortBy = 'created_at';
-    direction = direction || 'DESC'; // Default to DESC
+     // Set default sorting if not provided
+     sortBy = 'created_at';
+     direction = direction || 'DESC'; // Default to DESC
 
+    //      // Sorting logic
+    // let sortBy = pagination.sortBy || 'created_at';
+    // let direction = pagination.direction || 'DESC'; // Default to DESC
+  
     // Start with the basic whereClause (always include these conditions)
-    let queryWhereClause = `f.isActive = true AND f.is_deleted = false`;
-
-    // Define the queryParams object with a more flexible structure
-    let queryParams: { [key: string]: any } = {};  // This allows any string key and any value type
-
-    // Apply dynamic "all" search filter if 'all' is provided
-    if (whereClause && Array.isArray(whereClause)) {
-      whereClause.forEach(filter => {
-        const { key, value, operator } = filter;
-
-        // If the key is 'all', perform a search across multiple fields
-        if (key === 'all' && value) {
-          const searchTerm = `%${value}%`; // Add wildcards for LIKE search
-          queryWhereClause += ` AND (
-            f.job_type LIKE :searchTerm OR
-            f.qualifications LIKE :searchTerm OR
-            f.skills_required LIKE :searchTerm OR
-            f.title LIKE :searchTerm OR
-            f.short_description LIKE :searchTerm OR
-            f.full_description LIKE :searchTerm OR
-            f.assignment_duration LIKE :searchTerm OR
-            f.employer LIKE :searchTerm OR
-            f.rank LIKE :searchTerm OR
-            f.required_experience LIKE :searchTerm OR
-            f.salary LIKE :searchTerm OR
-            f.address LIKE :searchTerm OR
-            f.work_type LIKE :searchTerm OR
-            f.application_instruction LIKE :searchTerm OR
-            f.employee_experience LIKE :searchTerm OR
-            f.job_type_post LIKE :searchTerm OR
-            f.jobpost_status LIKE :searchTerm OR
-            f.job_opening LIKE :searchTerm
-          )`;
-
-          // Add the searchTerm to queryParams
-          queryParams.searchTerm = searchTerm;
-        } else if (key && value !== undefined) {
-          // For other filters, apply dynamically using the provided operator
-          queryWhereClause += ` AND f.${key} ${operator} :${key}`;
-          queryParams[key] = value; // Add the filter value to queryParams
-        }
-
-        if (key === 'jobpost_status' && value) {
-          const searchTerm = `%${value}%`; // Add wildcards for LIKE search
-          queryWhereClause += ` AND (
-            f.jobpost_status LIKE :searchTerm 
-          )`;
-
-          // Add the searchTerm to queryParams
-          queryParams.searchTerm = searchTerm;
-        }
-      });
+    let lwhereClause = `f.is_deleted = false`;
+  
+    // Fields to search (dynamic search on specific fields)
+    const fieldsToSearch = [
+      'job_type', 'qualifications', 'skills_required', 'title', 'short_description',
+      'full_description', 'assignment_duration', 'employer', 'rank', 'required_experience',
+      'salary', 'address', 'work_type', 'application_instruction', 'employee_experience',
+      'job_type_post', 'jobpost_status', 'job_opening'
+    ];
+  
+    // Apply dynamic filters for each field in fieldsToSearch
+    fieldsToSearch.forEach((field) => {
+      const fieldValues = whereClause
+        .filter((p) => p.key === field)
+        .map((p) => p.value);
+      if (fieldValues.length > 0) {
+        const conditions = fieldValues.map((value) => `f.${field} LIKE '%${value}%'`).join(' OR ');
+        lwhereClause += ` AND (${conditions})`;
+      }
+    });
+  
+    // Handle start and end date range filtering dynamically
+    const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
+    const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
+    const startDate = startDateObj?.value;
+    const endDate = endDateObj?.value;
+  
+    if (startDate && endDate) {
+      lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
+    } else if (startDate) {
+      lwhereClause += ` AND DATE(f.date_published) >= '${startDate}'`;
+    } else if (endDate) {
+      lwhereClause += ` AND DATE(f.date_published) <= '${endDate}'`;
     }
+  
+    // Handle dynamic search across all fields
+    const allValue = whereClause.find((p) => p.key === 'all')?.value;
+    if (allValue) {
+      const conditions = fieldsToSearch
+        .map((field) => `f.${field} LIKE '%${allValue}%'`)
+        .join(' OR ');
+      lwhereClause += ` AND (${conditions})`;
+    }
+  
 
-    // Handle Sorting (if provided)
-    queryWhereClause += ` ORDER BY f.${sortBy} ${direction}`;
-
-    // Execute query with dynamic filters
-    let [data, count] = await this.jobPostingRepository
+  
+    lwhereClause += ` ORDER BY f.${sortBy} ${direction}`;
+  
+    // Query the database with dynamic filters, pagination (skip, take)
+    let queryBuilder = await this.jobPostingRepository
       .createQueryBuilder('f')
-      .where(queryWhereClause, queryParams) // Use the dynamically built where clause and parameters
+      .where(lwhereClause)  // Use dynamically built where clause
       .skip(skip)
-      .take(perPage)
-      .getManyAndCount();
-
+      .take(perPage);
+  
+    const [data, count] = await queryBuilder.getManyAndCount();
+  
+    // Return paginated response
     return paginateResponse(data, count);
   }
+  
+
+  // async paginateJobPostings(req, IPagination) {
+  //   let { curPage, perPage, sortBy, direction, whereClause } = IPagination;
+  //   let skip = (curPage - 1) * perPage;
+
+  //   // Set default sorting if not provided
+  //   sortBy = 'created_at';
+  //   direction = direction || 'DESC'; // Default to DESC
+
+  //   // Start with the basic whereClause (always include these conditions)
+  //   let queryWhereClause = `f.isActive = true AND f.is_deleted = false`;
+
+  //   // Define the queryParams object with a more flexible structure
+  //   let queryParams: { [key: string]: any } = {};  // This allows any string key and any value type
+
+  //   // Apply dynamic "all" search filter if 'all' is provided
+  //   if (whereClause && Array.isArray(whereClause)) {
+  //     whereClause.forEach(filter => {
+  //       const { key, value, operator } = filter;
+
+  //       // If the key is 'all', perform a search across multiple fields
+  //       if (key === 'all' && value) {
+  //         const searchTerm = `%${value}%`; // Add wildcards for LIKE search
+  //         queryWhereClause += ` AND (
+  //           f.job_type LIKE :searchTerm OR
+  //           f.qualifications LIKE :searchTerm OR
+  //           f.skills_required LIKE :searchTerm OR
+  //           f.title LIKE :searchTerm OR
+  //           f.short_description LIKE :searchTerm OR
+  //           f.full_description LIKE :searchTerm OR
+  //           f.assignment_duration LIKE :searchTerm OR
+  //           f.employer LIKE :searchTerm OR
+  //           f.rank LIKE :searchTerm OR
+  //           f.required_experience LIKE :searchTerm OR
+  //           f.salary LIKE :searchTerm OR
+  //           f.address LIKE :searchTerm OR
+  //           f.work_type LIKE :searchTerm OR
+  //           f.application_instruction LIKE :searchTerm OR
+  //           f.employee_experience LIKE :searchTerm OR
+  //           f.job_type_post LIKE :searchTerm OR
+  //           f.jobpost_status LIKE :searchTerm OR
+  //           f.job_opening LIKE :searchTerm
+  //         )`;
+
+  //         // Add the searchTerm to queryParams
+  //         queryParams.searchTerm = searchTerm;
+  //       } else if (key && value !== undefined) {
+  //         // For other filters, apply dynamically using the provided operator
+  //         queryWhereClause += ` AND f.${key} ${operator} :${key}`;
+  //         queryParams[key] = value; // Add the filter value to queryParams
+  //       }
+
+  //       if (key === 'jobpost_status' && value) {
+  //         const searchTerm = `%${value}%`; // Add wildcards for LIKE search
+  //         queryWhereClause += ` AND (
+  //           f.jobpost_status LIKE :searchTerm 
+  //         )`;
+
+  //         // Add the searchTerm to queryParams
+  //         queryParams.searchTerm = searchTerm;
+  //       }
+  //         // Handling date_published filter dynamically
+  //     if (key === 'date_published' && value) {
+  //       const dateOnly = value.split(' ')[0];  // Ensure only the date part is used (ignoring time)
+  //       queryWhereClause += ` AND DATE(f.date_published) = :date_published`;
+  //       queryParams.date_published = dateOnly; // Add date filter to queryParams
+  //     }
+  // // Handling date range filter (startDate and endDate)
+  // const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
+  // const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
+
+  // const startDate = startDateObj?.value; // Extracting the value
+  // const endDate = endDateObj?.value; // Extracting the value
+
+  // if (startDate && endDate) {
+  //   // If both startDate and endDate are provided, use BETWEEN
+  //   queryWhereClause += ` AND DATE(f.date_published) BETWEEN :startDate AND :endDate`;
+  //   queryParams.startDate = startDate; // Add startDate to queryParams
+  //   queryParams.endDate = endDate; // Add endDate to queryParams
+  // } else if (startDate) {
+  //   // If only startDate is provided, filter greater than or equal to startDate
+  //   queryWhereClause += ` AND DATE(f.date_published) >= :startDate`;
+  //   queryParams.startDate = startDate; // Add startDate to queryParams
+  // } else if (endDate) {
+  //   // If only endDate is provided, filter less than or equal to endDate
+  //   queryWhereClause += ` AND DATE(f.date_published) <= :endDate`;
+  //   queryParams.endDate = endDate; // Add endDate to queryParams
+  // }
+      
+  //     });
+  //   }
+    
+
+  //   // Handle Sorting (if provided)
+  //   queryWhereClause += ` ORDER BY f.${sortBy} ${direction}`;
+
+  //   // Execute query with dynamic filters
+  //   let [data, count] = await this.jobPostingRepository
+  //     .createQueryBuilder('f')
+  //     .where(queryWhereClause, queryParams) // Use the dynamically built where clause and parameters
+  //     .skip(skip)
+  //     .take(perPage)
+  //     .getManyAndCount();
+
+  //   return paginateResponse(data, count);
+  // }
 
 
   async findAll() {

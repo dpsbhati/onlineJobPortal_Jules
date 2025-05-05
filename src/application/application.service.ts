@@ -218,7 +218,82 @@ export class ApplicationService {
     }
   }
 
-
+  async paginateApplicationsByJobId(req: any, pagination: IPagination, job_id: string) {
+    try {
+      const { curPage = 1, perPage = 10, whereClause } = pagination;
+  
+      let lwhereClause = 'app.is_deleted = :is_deleted AND job.id = :job_id';
+      const parameters: Record<string, any> = { 
+        is_deleted: false,
+        job_id: job_id // Filter by the provided job_id
+      };
+  
+      // const isApplicant = req.user?.role === 'applicant';
+      // if (isApplicant) {
+      //   lwhereClause += ` AND app.user_id = :userId`;
+      //   parameters.userId = req.user.id;
+      // }
+  
+      const fieldsToSearch = [
+        'status',
+        'description',
+        'comments',
+        'additional_info',
+        'certification_path',
+        'applied_at',
+        'job.title',
+        'user.email',
+        'userProfile.first_name',
+      ];
+  
+      // Dynamically adding search filters
+      if (Array.isArray(whereClause)) {
+        fieldsToSearch.forEach((field) => {
+          const fieldValue = whereClause.find((p) => p.key === field)?.value;
+          if (fieldValue) {
+            lwhereClause += ` AND ${field} LIKE :${field}_search`;
+            parameters[`${field}_search`] = `%${fieldValue}%`;
+          }
+        });
+  
+        const allValues = whereClause.find((p) => p.key === 'all')?.value;
+        if (allValues) {
+          const searches = fieldsToSearch
+            .map((field) => `${field} LIKE :all_search`)
+            .join(' OR ');
+          lwhereClause += ` AND (${searches})`;
+          parameters.all_search = `%${allValues}%`;
+        }
+      }
+  
+      const skip = (curPage - 1) * perPage;
+  
+      // Fetch the applications for the current page based on job_id
+      const applications = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
+        .where(lwhereClause, parameters)
+        .skip(skip)
+        .take(perPage)
+        .orderBy('app.applied_at', 'DESC')
+        .addOrderBy('app.created_at', 'DESC')
+        .getMany();
+  
+      // If no applications are found
+      if (!applications.length) {
+        return WriteResponse(404, [], `No records found.`);
+      }
+  
+      // Return only the count of applications in the response
+      return WriteResponse(200, { applications,count: applications.length }, "Applications found successfully.");
+    } catch (error) {
+      console.error('Application Pagination Error --> ', error);
+      return WriteResponse(500, {}, `Something went wrong.`);
+    }
+  }
+  
   
 
   async update(
