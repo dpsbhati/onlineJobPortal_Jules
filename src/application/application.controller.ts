@@ -58,7 +58,20 @@ export class ApplicationController {
   findOneByJobId(@Query('job_id') job_id: string) {
    return this.applicationService.findOneByJobId(job_id);
  }
-
+ @Post('getApplicationsByJobId')
+ @ApiBody({
+   schema: {
+     type: 'object',
+     properties: IPaginationSwagger, // Use the Swagger definition for pagination schema
+   },
+ })
+ async paginateApplicationsByJobId(
+   @Request() req: any, 
+   @Body() pagination: IPagination,
+   @Body('job_id') job_id: string // Receiving job_id separately from pagination
+ ) {
+   return this.applicationService.paginateApplicationsByJobId(req, pagination, job_id);
+ }
 
 
 
