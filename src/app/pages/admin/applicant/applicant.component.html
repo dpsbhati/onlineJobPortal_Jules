@@ -19,7 +19,7 @@
             <div class="col-xl-3 col-lg-3 col-md-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>All Job Types</mat-label>
-                <mat-select (selectionChange)="onJobTypeChange($event.value)" >
+                <mat-select [(ngModel)]="filters.job_type" (selectionChange)="onJobTypeChange($event.value)">
                   <mat-option value="full-time">Full-Time</mat-option>
                   <mat-option value="part-time">Part-Time</mat-option>
                   <mat-option value="flexible">Flexible</mat-option>
@@ -30,10 +30,12 @@
             <div class="col-xl-3 col-lg-3 col-md-3">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Choose a date</mat-label>
-                <input matInput [matDatepicker]="picker" />
+                <input matInput [matDatepicker]="picker" [(ngModel)]="filters.date"
+                       (dateChange)="onDateChange($event)" />
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
               </mat-form-field>
+
             </div>
 
             <div class="col-xl-1 col-lg-2 col-md-3">
