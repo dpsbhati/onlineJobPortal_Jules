@@ -83,7 +83,8 @@ export class HeaderComponent {
   @Output() toggleMobileFilterNav = new EventEmitter<void>()
   @Output() toggleCollapsed = new EventEmitter<void>()
 
-  userName: string = ''
+  userName: string = '';
+  userEmail: string = '';
   isCollapse: boolean = false // Initially hidden
 
   toggleCollpase () {
@@ -144,6 +145,18 @@ export class HeaderComponent {
 
   ngOnInit () {
     this.sidebarService.setCollapsed(this.isCollapsed)
+    const userString = localStorage.getItem('user');
+
+    if (userString) {
+      try {
+        const parsedUser = JSON.parse(userString);
+        this.userName = parsedUser?.userProfile?.first_name || 'User';
+        this.userEmail = parsedUser?.email || '';
+      } catch (e) {
+        console.error('Error parsing user from localStorage:', e);
+      }
+    }
+
   }
 
   toggleCollapse () {
