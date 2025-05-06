@@ -14,9 +14,9 @@ import { TablerIconsModule } from 'angular-tabler-icons'
 @Component({
   selector: 'app-view-job',
   imports: [CommonModule,
-      FormsModule,
-      RouterModule,TablerIconsModule,
-    MaterialModule,ToastrModule],
+    FormsModule,
+    RouterModule, TablerIconsModule,
+    MaterialModule, ToastrModule],
   templateUrl: './view-job.component.html',
 
 })
@@ -27,14 +27,14 @@ export class ViewJobComponent {
   id: any;
   userRole: string = '';
   formattedSkills: any;
-  formattedSocialMedia:any;
+  formattedSocialMedia: any;
 
   constructor(
     private route: ActivatedRoute,
     private adminService: AdminService,
     private router: Router,
     private notifyService: NotifyService,
-     private loader: LoaderService,
+    private loader: LoaderService,
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
@@ -76,8 +76,8 @@ export class ViewJobComponent {
           if (this.jobDetails.skills_required) {
             this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
           }
-          if(this.jobDetails.social_media_type){
-            this.formattedSocialMedia=JSON.parse(this.jobDetails.social_media_type);
+          if (this.jobDetails.social_media_type) {
+            this.formattedSocialMedia = JSON.parse(this.jobDetails.social_media_type);
           }
           this.loader.hide();
         } else {
@@ -100,4 +100,8 @@ export class ViewJobComponent {
   navigate() {
     this.router.navigate([`/user-details/${this.id}`]);
   }
+
+  applyNow() {
+    this.router.navigate(['/Apply-Job', this.id]);
   }
+}

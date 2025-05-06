@@ -20,7 +20,7 @@
               <mat-label>Name</mat-label>
               <mat-select [(ngModel)]="filters.name" (selectionChange)="onSearch()">
                 <mat-option *ngFor="let name of allData"
-                  [value]="name?.user?.userProfile?.first_name + ' ' +name?.user?.userProfile?.last_name">{{name?.user?.userProfile?.first_name + ' ' + name?.user?.userProfile?.last_name}}
+                  [value]="name?.user?.id">{{name?.user?.userProfile?.first_name + ' ' + name?.user?.userProfile?.last_name}}
                   </mat-option>
               </mat-select>
 

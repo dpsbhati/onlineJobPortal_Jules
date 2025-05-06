@@ -387,6 +387,9 @@ export class ApplicantComponent implements OnInit {
     this.router.navigate(['/job-applicants-list', jobId]);
   }
 
+  applyNow(jobId: string){
+    this.router.navigate(['/Apply-Job', jobId]);
+  }
 
   formatDateToLocalISO(date: Date): string {
     const year = date.getFullYear();

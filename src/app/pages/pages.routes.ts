@@ -158,7 +158,7 @@ export const PagesRoutes: Routes = [
         },
       },
       {
-        path: 'Apply-Job',
+        path: 'Apply-Job/:id',
         component: ApplyJobComponent,
         canActivate: [AuthGuard],
       },

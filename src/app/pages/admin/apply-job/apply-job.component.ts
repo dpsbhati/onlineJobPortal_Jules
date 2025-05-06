@@ -123,7 +123,7 @@ export class ApplyJobComponent {
           this.loader.hide();
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
-            this.router.navigate(['/job-list']);
+            this.router.navigate(['/applicant']);
           } else {
             this.toastr.warning(response.message);
             window.scrollTo({ top: 0, behavior: 'smooth' });

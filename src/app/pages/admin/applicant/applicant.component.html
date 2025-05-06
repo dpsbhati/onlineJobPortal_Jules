@@ -6,7 +6,7 @@
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Search Job</mat-label>
 
-            <input matInput placeholder="Search Job" [(ngModel)]="searchQuery" (ngModelChange)="onSearch()"
+            <input matInput placeholder="Search Job" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
               />
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
@@ -131,10 +131,10 @@
                   <!-- <mat-icon>visibility</mat-icon> -->
                   <span>View Details</span>
                 </a>
-                <a mat-menu-item href="/Apply-Job">
+                <button mat-menu-item (click)="applyNow(element.id)">
                   <!-- <mat-icon>abacus-off</mat-icon> -->
                   <span>Apply Now</span>
-                </a>
+                </button>
               </mat-menu>
             </td>
           </ng-container>
