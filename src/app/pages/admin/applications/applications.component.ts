@@ -123,6 +123,7 @@ export class ApplicationsComponent {
     //     this.onjobviewapplicationPagination(); // Load data once jobId is available
     //   }
     // });
+    this.allrankslist()
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
