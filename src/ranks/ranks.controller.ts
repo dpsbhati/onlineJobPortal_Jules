@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { RanksService } from './ranks.service';
 import { CreateRankDto } from './dto/create-rank.dto';
 import { UpdateRankDto } from './dto/update-rank.dto';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IPaginationSwagger } from 'src/shared/paginationEum';
 
 @Controller('ranks')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class RanksController {
+  manualsService: any;
   constructor(private readonly ranksService: RanksService) {}
 
   @Post('create-or-update')
@@ -30,5 +32,11 @@ export class RanksController {
   @Post('delete/:id')
   remove(@Param('id') id: string) {
     return this.ranksService.remove(id);
+  }
+
+  @Post('/pagination')
+  @ApiBody({ schema: { properties: IPaginationSwagger } })
+   pagination(@Body() IPagination: any, @Req() req) {
+    return  this.ranksService.pagination(IPagination, req.user);
   }
 }

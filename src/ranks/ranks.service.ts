@@ -5,10 +5,11 @@ import { Rank } from './entities/rank.entity';
 import { CreateRankDto } from './dto/create-rank.dto';
 import { UpdateRankDto } from './dto/update-rank.dto';
 import { write } from 'fs';
-import { WriteResponse } from 'src/shared/response';
+import { paginateResponse, WriteResponse } from 'src/shared/response';
 
 @Injectable()
 export class RanksService {
+ 
   constructor(
     @InjectRepository(Rank)
     private readonly rankRepo: Repository<Rank>,
@@ -78,6 +79,29 @@ export class RanksService {
     });
 
     return WriteResponse(200, true, 'Rank deleted successfully.');
+  }
+
+
+  async pagination(IPagination, req) {
+    let { curPage, perPage, sortBy } = IPagination;
+    let skip = (curPage - 1) * perPage;
+    let all = IPagination.whereClause.find((i) => i.key == 'all' && i.value);
+    let lwhereClause = `f.is_deleted = false`;
+    if (all) {
+      lwhereClause += ` and f.rank_name like '%${all.value}%'`;
+    }
+    let [data, count] = await this.rankRepo
+      .createQueryBuilder('f')
+      .where(lwhereClause)
+      .skip(skip)
+      .take(perPage)
+      .orderBy('f.created_at', 'DESC')
+      .getManyAndCount();
+    if (data.length > 0) {
+      return paginateResponse(data, count);
+    } else {
+      return WriteResponse(400, false, 'Data not found!');
+    }
   }
 
 }
