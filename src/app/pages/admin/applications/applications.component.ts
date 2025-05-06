@@ -139,7 +139,6 @@ export class ApplicationsComponent {
     })
   }
   fetchJobPosts() {
-  fetchJobPosts() {
     // debugger
     const payload = {
       curPage: 1,
@@ -290,7 +289,6 @@ export class ApplicationsComponent {
     this.router.navigate(['/applicant-details', application_id]);
   }
 
-  deleteApplicant(application_id: any): void {
   deleteApplicant(application_id: any): void {
     // debugger
     Swal.fire({
