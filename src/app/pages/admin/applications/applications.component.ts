@@ -109,17 +109,36 @@ export class ApplicationsComponent {
   ) {}
 
   ngOnInit (): void {
-    this.applicantId = this.route.snapshot.paramMap.get('id')
-    this.dataSource.paginator = this.paginator
-    this.dataSource.sort = this.sort
-    // this.fetchJobPosts()
-    this.fetchApplications()
+    // this.applicantId = this.route.snapshot.paramMap.get('id')
+    // this.dataSource.paginator = this.paginator
+    // this.dataSource.sort = this.sort
+    // // this.fetchJobPosts()
+    // this.fetchApplications()
+    // this.route.paramMap.subscribe(params => {
+    //   const jobId = params.get('id');
+    //   // console.log('mus',jobId);
+    //   if (jobId) {
+    //     this.pageConfig.job_id = jobId;
+    //     this.onjobviewapplicationPagination(); // Load data once jobId is available
+    //   }
+    // });
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
     this.route.paramMap.subscribe(params => {
       const jobId = params.get('id');
-      // console.log('mus',jobId);
+      this.applicantId = jobId;
+
       if (jobId) {
+        // Job-based view
+        this.selectedJobPostId = jobId;
         this.pageConfig.job_id = jobId;
-        this.onjobviewapplicationPagination(); // Load data once jobId is available
+        this.pageConfig.curPage = this.pageIndex + 1;
+        this.pageConfig.perPage = this.pageSize;
+        this.onjobviewapplicationPagination();
+      } else {
+        // Normal application listing
+        this.fetchApplications();
       }
     });
   }
@@ -394,25 +413,56 @@ export class ApplicationsComponent {
 
   onjobviewapplicationPagination(): void {
     this.loader.show();
+
+    const whereClause = this.helper.getAllFilters(this.selectedFilters);
+
+    this.pageConfig.curPage = this.pageIndex + 1;
+    this.pageConfig.perPage = this.pageSize;
+    this.pageConfig.sortBy = this.sortBy;
+    this.pageConfig.direction = this.direction;
+    this.pageConfig.whereClause = whereClause;
+
     this.adminService.jobviewapplicationPagination(this.pageConfig).subscribe({
       next: (res: any) => {
-        if (res.statusCode === 200) {
-          this.viewapplicationlist = res.data;
-          this.total = res.count || 0;
-        } else {
-          this.viewapplicationlist = [];
-          this.total = 0;
-          this.toaster.warning(res.message);
-        }
         this.loader.hide();
+
+        if (res.statusCode === 200 && res.data?.applications) {
+          this.totalApplications = res.data.count || 0;
+
+          this.dataSource.data = res.data.applications.map(
+            (app: any, index: number) => ({
+              position: index + 1 + this.pageIndex * this.pageSize,
+              name: `${app.user?.userProfile?.first_name || ''} ${app.user?.userProfile?.last_name || ''}`,
+              email: app.user?.email || '',
+              dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }),
+              application_id: app?.id,
+              experience: app?.work_experiences || '',
+              jobPost: app.job?.title || '',
+              applications: app?.count || 0,
+              status: app?.status || '',
+              all: app?.all,
+              user_id: app?.user?.id || '',
+              job_id: app?.job_id || ''
+            })
+          );
+        } else {
+          this.toaster.warning(res.message || 'No applications found');
+          this.dataSource.data = [];
+          this.totalApplications = 0;
+        }
       },
       error: (err: any) => {
-        // console.error('API Error:', err);
-        this.viewapplicationlist = [];
-        this.total = 0;
-        this.toaster.error(err?.error?.message || 'Something went wrong');
         this.loader.hide();
-      },
+        this.dataSource.data = [];
+        this.totalApplications = 0;
+        this.toaster.error(err?.error?.message || 'Something went wrong');
+      }
     });
   }
+
 }
