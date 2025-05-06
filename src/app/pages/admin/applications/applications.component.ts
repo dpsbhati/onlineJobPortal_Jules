@@ -175,13 +175,30 @@ export class ApplicationsComponent {
       });
   }
 
+
   fetchApplications() {
-    // debugger
-    this.loader.show()
+    this.loader.show();
+  
     if (this.applicantId) {
       this.selectedFilters.job_id = this.applicantId;
     }
-    const whereClause = this.helper.getAllFilters(this.selectedFilters)
+  
+    // Step 1: Get filters from helper
+    let whereClause = this.helper.getAllFilters(this.selectedFilters);
+  
+    // ✅ Step 2: Replace "rank" filter with "all" (like) filter
+    if (this.selectedFilters.rank) {
+      // Remove original rank filter if it exists
+      whereClause = whereClause.filter(clause => clause.key !== 'rank');
+  
+      // Push custom 'all' filter for rank
+      whereClause.push({
+        key: 'all',
+        value: this.selectedFilters.rank,
+        operator: 'like',
+      });
+    }
+  
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
@@ -189,12 +206,12 @@ export class ApplicationsComponent {
       direction: this.direction,
       whereClause,
     };
+  
     this.adminService.applicationPagination(payload).subscribe(
       (response: any) => {
         this.loader.hide();
         if (response.statusCode === 200) {
           this.totalApplications = response.count || 0;
-          // this.totalApplications = response.total || response.data.length;
           this.dataSource.data = response.data.map(
             (app: any, index: number) => ({
               position: index + 1 + this.pageIndex * this.pageSize,
@@ -233,6 +250,7 @@ export class ApplicationsComponent {
       }
     );
   }
+  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
