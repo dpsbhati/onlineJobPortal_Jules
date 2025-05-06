@@ -20,9 +20,9 @@ export class applications {
   @Column({ type: 'text', nullable: true })
   job_id: string;
 
-  @ManyToOne(() => JobPosting) // Define relation with JobPosting
-  @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
-  job: JobPosting;
+  // @ManyToOne(() => JobPosting) // Define relation with JobPosting
+  // @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
+  // job: JobPosting;
 
   
   @Column({
@@ -77,5 +77,9 @@ export class applications {
   @ManyToOne(() => Users,(user) => user.applications) // Define relation with User
   @JoinColumn({ name: 'user_id' }) // Map the relation to the existing user_id column
   user: Users;
+
+  @ManyToOne(() => JobPosting, (job) => job.applications) // Define relation with JobPosting
+  @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
+  job: JobPosting;
   
 }
