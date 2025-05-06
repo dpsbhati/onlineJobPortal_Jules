@@ -31,9 +31,9 @@
                     <div class="col-xl-3 col-lg-3 col-md-3">
                         <mat-form-field class="w-100" appearance="outline">
                             <mat-label>Rank</mat-label>
-                            <mat-select [(ngModel)]="filters.rank" (selectionChange)="onSearch()">
+                            <mat-select [(ngModel)]="filters.rank">
                                 <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
-                                    {{rank}}
+                                    {{ rank }}
                                 </mat-option>
                             </mat-select>
                             <button *ngIf="filters.rank" matSuffix mat-icon-button aria-label="Clear"

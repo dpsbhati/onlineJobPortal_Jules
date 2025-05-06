@@ -113,12 +113,14 @@ export class ExpiredJobPostingComponent implements OnInit {
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.allJobList();
-    this.onPagination();
+  allrankslist() {
+    this.adminService.getallranks().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        const allRanks = response.data.map((rank: any) => rank.rank_name);
+        this.uniqueRanks = [...new Set(allRanks)] as string[];
+      }
+    });
   }
-
   onPagination(): void {
     // this.isLoading = true;
     this.loader.show();
@@ -149,7 +151,12 @@ export class ExpiredJobPostingComponent implements OnInit {
       },
     });
   }
-
+  ngOnInit(): void {
+    this.isLoading = true;
+    this.allJobList();
+    this.allrankslist(); // 🔧 Add this line
+    this.onPagination();
+  }
   onPageChange(event: any): void {
     this.pageConfig.curPage = event.pageIndex + 1;
     this.pageConfig.perPage = event.pageSize;
@@ -219,9 +226,9 @@ export class ExpiredJobPostingComponent implements OnInit {
           rank: job.rank,
         }));
         // Extract unique ranks
-        this.uniqueRanks = [
-          ...new Set(this.jobList.map((job) => job.rank)),
-        ].filter((rank) => rank);
+      //   this.uniqueRanks = [
+      //     ...new Set(this.jobList.map((job) => job.rank)),
+      //   ].filter((rank) => rank);
       }
     });
   }

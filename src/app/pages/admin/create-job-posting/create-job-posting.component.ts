@@ -67,6 +67,7 @@ export class CreateJobPostingComponent {
     'image/webp'
   ]
   imagePreview: string | ArrayBuffer | null = null
+  uniqueRanks: string[]
   constructor (
     private fb: FormBuilder,
     private adminService: AdminService,
@@ -164,6 +165,7 @@ export class CreateJobPostingComponent {
   }
 
   ngOnInit (): void {
+    this.allrankslist();
     const jobId = this.route.snapshot.paramMap.get('id') as string
     if (jobId) {
       this.isEditMode = true
@@ -679,7 +681,15 @@ export class CreateJobPostingComponent {
       console.warn("Form is invalid", this.jobForm.errors);
     }
   }
-
+  allrankslist() {
+    this.adminService.getallranks().subscribe((res: any) => {
+      if (res.statusCode === 200) {
+        const allRanks = res.data.map((r: any) => r.rank_name).filter(Boolean);
+        this.uniqueRanks = [...new Set(allRanks)] as string[];
+      }
+    });
+  }
+  
   navigate () {
     this.router.navigate(['/job-list'])
   }
