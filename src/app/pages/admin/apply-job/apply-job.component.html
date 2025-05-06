@@ -52,15 +52,15 @@
                             <div class="upload-box m-b-20" id="uploadBox">
                                 <p>Upload Certification</p>
                                 <input type="file" id="fileInput" (change)="onFileChange($event, 'courses_and_certification')" multiple accept=".pdf, .doc">
-                                <div *ngIf="certificationFiles.length > 0">
-                                  <h5>Selected Files:</h5>
-                                  <ul>
-                                    <li *ngFor="let file of certificationFiles  let i = index">{{ file.name }}
-                                      <!-- <button (click)="deleteFile('courses_and_certification', i)" type="button" class="delete-button">X</button> -->
-                                    </li>
+                              </div>
+                              <div *ngIf="certificationFiles.length > 0">
+                                <h5>Selected Files:</h5>
+                                <ul>
+                                  <li *ngFor="let file of certificationFiles  let i = index">{{ file.name }}
+                                    <!-- <button (click)="deleteFile('courses_and_certification', i)" type="button" class="delete-button">X</button> -->
+                                  </li>
 
-                                  </ul>
-                                </div>
+                                </ul>
                               </div>
 
                         </div>
