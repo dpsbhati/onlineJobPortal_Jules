@@ -380,18 +380,17 @@ export class ApplicationService {
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
-      const { curPage = 1, perPage = 10, whereClause } = pagination;
-
+      const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
+  
       let lwhereClause = 'app.is_deleted = :is_deleted';
       const parameters: Record<string, any> = { is_deleted: false };
-
+  
       const isApplicant = req.user?.role === 'applicant';
-
       if (isApplicant) {
         lwhereClause += ` AND app.user_id = :userId`;
         parameters.userId = req.user.id;
       }
-
+  
       const fieldsToSearch = [
         'status',
         'job_id',
@@ -403,40 +402,60 @@ export class ApplicationService {
         'job.title',
         'user.email',
         'userProfile.first_name',
+        'userProfile.last_name',
       ];
-      const email = pagination.whereClause.find(
-        (p: any) => p.key === 'email' && p.value,
-      );
+  
+      // Specific field filters
+      const email = whereClause.find(p => p.key === 'email' && p.value);
       if (email) {
-        lwhereClause += ` AND user.email LIKE '%${email.value}%'`;
+        lwhereClause += ` AND user.email LIKE :email`;
+        parameters.email = `%${email.value}%`;
       }
-      const first_name = pagination.whereClause.find(
-        (p: any) => p.key === 'first_name' && p.value,
-      );
+  
+      const first_name = whereClause.find(p => p.key === 'first_name' && p.value);
       if (first_name) {
-        lwhereClause += ` AND userProfile.first_name LIKE '%${first_name.value}%'`;
+        lwhereClause += ` AND userProfile.first_name LIKE :first_name`;
+        parameters.first_name = `%${first_name.value}%`;
       }
+  
+      const last_name = whereClause.find(p => p.key === 'last_name' && p.value);
+      if (last_name) {
+        lwhereClause += ` AND userProfile.last_name LIKE :last_name`;
+        parameters.last_name = `%${last_name.value}%`;
+      }
+  
+      // Field-wise filters (safe binding)
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
           const fieldValue = whereClause.find((p) => p.key === field)?.value;
           if (fieldValue) {
-            lwhereClause += ` AND ${field} LIKE :${field}_search`;
-            parameters[`${field}_search`] = `%${fieldValue}%`;
+            const paramKey = `${field.replace('.', '_')}_search`;
+            lwhereClause += ` AND ${field} LIKE :${paramKey}`;
+            parameters[paramKey] = `%${fieldValue}%`;
           }
         });
-
+  
+        // ALL SEARCH - dynamic fields
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
-          const searches = fieldsToSearch
-            .map((field) => `${field} LIKE :all_search`)
+          const allSearchConditions = fieldsToSearch
+            .map((field, idx) => `${field} LIKE :all_search_${idx}`)
             .join(' OR ');
-          lwhereClause += ` AND (${searches})`;
-          parameters.all_search = `%${allValues}%`;
+        
+          // Add full name concatenation match
+          lwhereClause += ` AND (CONCAT(userProfile.first_name, ' ', userProfile.last_name) LIKE :full_name_search OR ${allSearchConditions})`;
+        
+          parameters['full_name_search'] = `%${allValues}%`;
+        
+          fieldsToSearch.forEach((_, idx) => {
+            parameters[`all_search_${idx}`] = `%${allValues}%`;
+          });
         }
+        
       }
-
+  
       const skip = (curPage - 1) * perPage;
-
+  
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
@@ -448,26 +467,18 @@ export class ApplicationService {
         .orderBy('app.applied_at', 'DESC')
         .addOrderBy('app.created_at', 'DESC')
         .getManyAndCount();
-
+  
       if (!list.length) {
-        return WriteResponse(404, [], `No records found.`);
+        return WriteResponse(404, [], 'No records found.');
       }
-
-      const enrichedApplications = list.map((application) => ({
-        ...application,
-      }));
-
-      return paginateResponse(
-        enrichedApplications,
-        totalCount,
-        curPage,
-        perPage,
-      );
+  
+      return paginateResponse(list, totalCount, curPage, perPage);
     } catch (error) {
       console.error('Application Pagination Error --> ', error);
-      return WriteResponse(500, {}, `Something went wrong.`);
+      return WriteResponse(500, {}, 'Something went wrong.');
     }
   }
+  
 
   async pagination(req: any, pagination: IPagination) {
     try {
