@@ -116,7 +116,7 @@ export class ApplicationsComponent {
     this.fetchApplications()
     this.route.paramMap.subscribe(params => {
       const jobId = params.get('id');
-      console.log('mus',jobId);
+      // console.log('mus',jobId);
       if (jobId) {
         this.pageConfig.job_id = jobId;
         this.onjobviewapplicationPagination(); // Load data once jobId is available
@@ -126,13 +126,13 @@ export class ApplicationsComponent {
   openHeaderDialog () {
     const dialogRef = this.dialog.open(FileuploadComponent)
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
+      // console.log('Dialog result: result')
     })
   }
   deleteDialog () {
     const dialogRef = this.dialog.open(DeleteComponent)
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
+      // console.log('Dialog result: result')
     })
   }
   fetchJobPosts () {
@@ -407,7 +407,7 @@ export class ApplicationsComponent {
         this.loader.hide();
       },
       error: (err: any) => {
-        console.error('API Error:', err);
+        // console.error('API Error:', err);
         this.viewapplicationlist = [];
         this.total = 0;
         this.toaster.error(err?.error?.message || 'Something went wrong');
