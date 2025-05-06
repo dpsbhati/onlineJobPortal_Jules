@@ -235,6 +235,9 @@ jobpost_status
   viewJobPostDetails(jobId: string): void {
     this.router.navigate(['/job-post-details', jobId]);
   }
+  viewapplicationDetails(jobId: string): void {
+    this.router.navigate(['/applications', jobId]);
+  }
 
   editJob(id: string) {
     this.router.navigate(['/create-job-posting', id]);

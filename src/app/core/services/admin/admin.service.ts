@@ -41,6 +41,9 @@ export class AdminService {
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
+  jobviewapplicationPagination(data: any): Observable<any> {
+    return this.genericService.Post<any>(`applications/getApplicationsByJobId`, data);
+  }
   applicationPagination(payload: any): Observable<any> {
     return this.genericService.Post<any>(`applications/pagination`, payload);
   }
@@ -61,7 +64,7 @@ export class AdminService {
   }
 
   allApplicantDetails(applicantId: string): Observable<any> {
-    return this.genericService.Get(`applications/${applicantId}`);
+    return this.genericService.Get(`applications/getOne/${applicantId}`);
   }
   userDetails(applicantId: string): Observable<any> {
     return this.genericService.Get(`user/get-by-id/${applicantId}`);
@@ -69,7 +72,7 @@ export class AdminService {
 
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post(`applications/update/${id}`, payload);
-    
+
   }
   // updateApplicationStatus(id: string, payload: any): Observable<any> {
   //   return this.genericService.Post('applications/update', { id, ...payload });

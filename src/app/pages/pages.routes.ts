@@ -122,6 +122,14 @@ export const PagesRoutes: Routes = [
         // canActivate:[AuthGuard]
       },
       {
+        path: 'applications/:id',
+        component: ApplicationsComponent,
+        data: {
+          title: 'View Applications',
+        },
+        // canActivate:[AuthGuard]
+      },
+      {
         path: 'applicant-job',
         component: ApplicantJobComponent,
         data: {
