@@ -1,3 +1,4 @@
+import { applications } from 'src/application/entities/application.entity';
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { Users } from 'src/user/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
@@ -137,5 +138,8 @@ export class JobPosting {
   enum:['postnow','schedulelater'],
   nullable:true})
   job_type_post:string
+
+  @OneToMany(() => applications, (application) => application.job) // Relation with applications
+  applications: applications[]; 
 
 }

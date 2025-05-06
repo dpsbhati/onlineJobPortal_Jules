@@ -54,10 +54,7 @@ export class ApplicationController {
     return this.applicationService.findOne(id);
   }
 
-  @Get('getAllByJobId')
-  findOneByJobId(@Query('job_id') job_id: string) {
-   return this.applicationService.findOneByJobId(job_id);
- }
+
  @Post('getApplicationsByJobId')
  @ApiBody({
    schema: {

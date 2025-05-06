@@ -3,6 +3,8 @@ import { CreateApplicationDto } from './create-application.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateApplicationDto extends PartialType(CreateApplicationDto) {
+  id:string;
+  
   @ApiPropertyOptional({
     description: 'The status of the application.',
     example: 'Shortlisted',
