@@ -1,40 +1,40 @@
-import { Component } from '@angular/core'
-import { MatTableDataSource } from '@angular/material/table'
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'
-import { MatSort } from '@angular/material/sort'
-import { ViewChild } from '@angular/core'
-import { MaterialModule } from 'src/app/material.module'
-import { NgClass, NgFor, NgIf } from '@angular/common'
-import { AdminService } from 'src/app/core/services/admin/admin.service'
-import { MatOption } from '@angular/material/core'
-import { NotifyService } from 'src/app/core/services/notify.service'
-import { FormsModule } from '@angular/forms'
-import { ActivatedRoute, Router } from '@angular/router'
-import Swal from 'sweetalert2'
-import { LoaderService } from 'src/app/core/services/loader.service'
-import { ToastrService, ToastrModule } from 'ngx-toastr'
-import { HelperService } from 'src/app/core/helpers/helper.service'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { Component } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { ViewChild } from '@angular/core';
+import { MaterialModule } from 'src/app/material.module';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { AdminService } from 'src/app/core/services/admin/admin.service';
+import { MatOption } from '@angular/material/core';
+import { NotifyService } from 'src/app/core/services/notify.service';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService, ToastrModule } from 'ngx-toastr';
+import { HelperService } from 'src/app/core/helpers/helper.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   MatDialog,
   MatDialogRef,
   MatDialogActions,
   MatDialogTitle,
-  MatDialogModule
-} from '@angular/material/dialog'
-import { MatButtonModule } from '@angular/material/button'
-import { FileuploadComponent } from '../fileupload/fileupload.component'
-import { DeleteComponent } from '../delete/delete.component'
+  MatDialogModule,
+} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { FileuploadComponent } from '../fileupload/fileupload.component';
+import { DeleteComponent } from '../delete/delete.component';
 export interface Application {
-  position: number
-  name: string
-  email: string
-  mobile: string
-  dateOfApplication: string
-  jobPost: string
-  job_id: string
-  applications: number
-  status: string
+  position: number;
+  name: string;
+  email: string;
+  mobile: string;
+  dateOfApplication: string;
+  jobPost: string;
+  job_id: string;
+  applications: number;
+  status: string;
 }
 
 @Component({
@@ -50,11 +50,11 @@ export interface Application {
     ToastrModule,
     MatProgressSpinnerModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   providers: [ToastrService],
   templateUrl: './applications.component.html',
-  styleUrl: './applications.component.scss'
+  styleUrl: './applications.component.scss',
 })
 export class ApplicationsComponent {
   displayedColumns: string[] = [
@@ -65,19 +65,20 @@ export class ApplicationsComponent {
     'appliedDate',
     'jobPost',
     'status',
-    'action'
-  ]
-  dataSource = new MatTableDataSource<Application>([])
-  totalApplications: number = 0
-  pageSize: number = 10
-  pageIndex: number = 0
-  jobPosts: { id: string; title: string }[] = []
-  selectedJobPostId: string | null = null
+    'action',
+  ];
+  uniqueRanks: string[] = [];
+  dataSource = new MatTableDataSource<Application>([]);
+  totalApplications: number = 0;
+  pageSize: number = 10;
+  pageIndex: number = 0;
+  jobPosts: { id: string; title: string }[] = [];
+  selectedJobPostId: string | null = null;
   selectedFilters: any = {
     all: null,
     jobPostId: null,
     status: null,
-    rank: null
+    rank: null,
   };
   pageConfig: any = {
     curPage: 1,
@@ -85,19 +86,19 @@ export class ApplicationsComponent {
     sortBy: 'created_on',
     direction: 'desc',
     whereClause: [],
-    job_id: '' // <-- Add job_id here
+    job_id: '', // <-- Add job_id here
   };
-  total: number = 0
+  total: number = 0;
   data: any;
-  viewapplicationlist:any;
-  sortBy: string = 'created_on'
-  direction: string = 'desc'
-  @ViewChild(MatPaginator) paginator!: MatPaginator
-  @ViewChild(MatSort) sort!: MatSort
-  isLoading: boolean = false
-  applicantId: string | null = null
-  application_id: string | null = null
-  constructor (
+  viewapplicationlist: any;
+  sortBy: string = 'created_on';
+  direction: string = 'desc';
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  isLoading: boolean = false;
+  applicantId: string | null = null;
+  application_id: string | null = null;
+  constructor(
     private dialog: MatDialog,
     private adminService: AdminService,
     private notify: NotifyService,
@@ -108,39 +109,40 @@ export class ApplicationsComponent {
     private helper: HelperService
   ) {}
 
-  ngOnInit (): void {
-    this.applicantId = this.route.snapshot.paramMap.get('id')
-    this.dataSource.paginator = this.paginator
-    this.dataSource.sort = this.sort
+  ngOnInit(): void {
+    this.applicantId = this.route.snapshot.paramMap.get('id');
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
     // this.fetchJobPosts()
-    this.fetchApplications()
-    this.route.paramMap.subscribe(params => {
+    this.allrankslist(); // 👈 Add this
+    this.fetchApplications();
+    this.route.paramMap.subscribe((params) => {
       const jobId = params.get('id');
-      console.log('mus',jobId);
+      console.log('mus', jobId);
       if (jobId) {
         this.pageConfig.job_id = jobId;
         this.onjobviewapplicationPagination(); // Load data once jobId is available
       }
     });
   }
-  openHeaderDialog () {
-    const dialogRef = this.dialog.open(FileuploadComponent)
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
-    })
+  openHeaderDialog() {
+    const dialogRef = this.dialog.open(FileuploadComponent);
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('Dialog result: result');
+    });
   }
-  deleteDialog () {
-    const dialogRef = this.dialog.open(DeleteComponent)
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
-    })
+  deleteDialog() {
+    const dialogRef = this.dialog.open(DeleteComponent);
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('Dialog result: result');
+    });
   }
-  fetchJobPosts () {
+  fetchJobPosts() {
     // debugger
     const payload = {
       curPage: 1,
-      perPage: 10
-    }
+      perPage: 10,
+    };
 
     this.adminService
       .applicationPagination(payload)
@@ -149,29 +151,29 @@ export class ApplicationsComponent {
           this.jobPosts = response.data
             .map((application: any) => ({
               id: application.job?.id,
-              title: application.job?.title
+              title: application.job?.title,
             }))
-            .filter((job: any) => job?.title)
+            .filter((job: any) => job?.title);
         }
-      })
+      });
   }
 
-  fetchApplications () {
+  fetchApplications() {
     // debugger
-    this.loader.show()
-    const whereClause = this.helper.getAllFilters(this.selectedFilters)
+    this.loader.show();
+    const whereClause = this.helper.getAllFilters(this.selectedFilters);
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
       sortBy: this.sortBy,
       direction: this.direction,
-      whereClause
-    }
+      whereClause,
+    };
     this.adminService.applicationPagination(payload).subscribe(
       (response: any) => {
-        this.loader.hide()
+        this.loader.hide();
         if (response.statusCode === 200) {
-          this.totalApplications = response.count || 0
+          this.totalApplications = response.count || 0;
           // this.totalApplications = response.total || response.data.length;
           this.dataSource.data = response.data.map(
             (app: any, index: number) => ({
@@ -184,7 +186,7 @@ export class ApplicationsComponent {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
-                  day: 'numeric'
+                  day: 'numeric',
                 }
               ),
               application_id: app?.id,
@@ -194,68 +196,96 @@ export class ApplicationsComponent {
               status: app?.status,
               all: app?.all,
               user_id: app?.user_id,
-              job_id: app?.job_id
+              job_id: app?.job_id,
             })
-          )
+          );
         } else {
-          this.toaster.warning(response.message)
-          this.dataSource.data = []
-          this.totalApplications = 0
+          this.toaster.warning(response.message);
+          this.dataSource.data = [];
+          this.totalApplications = 0;
         }
       },
       (error: any) => {
-        this.loader.hide()
-        this.toaster.error(error?.error?.message || 'Failed to fetch data.')
-        this.dataSource.data = []
-        this.totalApplications = 0
+        this.loader.hide();
+        this.toaster.error(error?.error?.message || 'Failed to fetch data.');
+        this.dataSource.data = [];
+        this.totalApplications = 0;
       }
-    )
+    );
   }
 
-  applyFilter (event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value
-    this.dataSource.filter = filterValue.trim().toLowerCase()
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage()
+      this.dataSource.paginator.firstPage();
     }
   }
 
-  filterByJobPost () {
-    this.pageIndex = 0
-    this.fetchApplications()
-  }
-  onFilterChange (filterType: string, value: any) {
-    this.selectedFilters[filterType] = value
-    this.pageIndex = 0
-    this.fetchApplications()
-  }
-  onPageChange (event: any) {
-    this.pageIndex = event.pageIndex
-    this.pageSize = event.pageSize
-    this.fetchApplications()
+  allrankslist() {
+    this.adminService.getallranks().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        const allRanks = response.data
+          .map((rank: any) => rank.rank_name)
+          .filter(Boolean);
+        this.uniqueRanks = [...new Set(allRanks)] as string[];
+      }
+    });
   }
 
-  clearFilters () {
+  filterByJobPost() {
+    this.pageIndex = 0;
+    this.fetchApplications();
+  }
+  // onFilterChange(filterType: string, value: any) {
+  //   this.selectedFilters[filterType] = value;
+  //   this.pageIndex = 0;
+  //   this.fetchApplications();
+  //   this.onSearch();
+  // }
+  onFilterChange(filterType: string, value: any): void {
+    this.selectedFilters[filterType] = value;
+    this.pageConfig.curPage = 1;
+    this.fetchApplications();
+  }
+  
+  onSearch() {
+    throw new Error('Method not implemented.');
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.fetchApplications();
+  }
+  clearFilter(event: Event, filterType: 'rank'): void {
+    event.stopPropagation();
+    this.selectedFilters[filterType] = null;
+    this.pageIndex = 0;
+    this.fetchApplications();
+  }
+
+  clearFilters() {
     this.selectedFilters = {
       all: null,
       job_id: null,
       status: null,
-      rank: null
-    }
-
-    this.pageIndex = 0
+      rank: null,
+    };
+    this.pageIndex = 0;
     if (this.paginator) {
-      this.paginator.firstPage()
+      this.paginator.firstPage();
     }
-    this.fetchApplications()
+    this.fetchApplications();
   }
-  viewApplicantDetails (application_id: any): void {
+  
+  viewApplicantDetails(application_id: any): void {
     // debugger
-    this.router.navigate(['/applicant-details', application_id])
+    this.router.navigate(['/applicant-details', application_id]);
   }
 
-  deleteApplicant (application_id: any): void {
+  deleteApplicant(application_id: any): void {
     // debugger
     Swal.fire({
       title: 'Are you sure?',
@@ -265,34 +295,34 @@ export class ApplicationsComponent {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel'
-    }).then(result => {
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.loader.show()
+        this.loader.show();
         const payload = {
-          id: application_id
-        }
+          id: application_id,
+        };
 
         this.adminService.deleteApplicant(payload).subscribe({
           next: (response: any) => {
             if (response.statusCode === 200) {
-              this.toaster.success(response.message)
-              this.fetchApplications()
+              this.toaster.success(response.message);
+              this.fetchApplications();
             } else {
-              this.toaster.warning(response.message)
+              this.toaster.warning(response.message);
             }
-            this.loader.hide()
+            this.loader.hide();
           },
           error: (err: any) => {
-            this.loader.hide()
+            this.loader.hide();
             this.toaster.error(
               err?.error?.message ||
                 'An error occurred while deleting the applicant.'
-            )
-          }
-        })
+            );
+          },
+        });
       }
-    })
+    });
   }
 
   //   fetchApplications() {
