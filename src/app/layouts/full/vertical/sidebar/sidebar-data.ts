@@ -107,15 +107,14 @@ export const navItems: NavItem[] = [
   //   route: 'starter/edit-profile',
 
   // },
-  {
-    displayName: 'User',
-    iconName: 'user',
-    // route: '/userlist',
-    route: 'authentication/Development-page',
-    visibleForRoles: ['admin']
-    // chip: true,
-    // chipClass: 'b-1 border-secondary text-secondary',
-  }
+  // {
+  //   displayName: 'User',
+  //   iconName: 'user',
+  //   route: '/userlist',
+  //   visibleForRoles: ['admin']
+  //   // chip: true,
+  //   // chipClass: 'b-1 border-secondary text-secondary',
+  // }
 
 
 ];
