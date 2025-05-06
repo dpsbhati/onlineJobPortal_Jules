@@ -90,7 +90,7 @@ export class ApplicationsComponent {
   };
   total: number = 0;
   data: any;
-  viewapplicationlist:any;
+  viewapplicationlist: any;
   sortBy: string = 'created_on'
   direction: string = 'desc'
   @ViewChild(MatPaginator) paginator!: MatPaginator
@@ -109,11 +109,11 @@ export class ApplicationsComponent {
     private helper: HelperService
   ) { }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     // this.applicantId = this.route.snapshot.paramMap.get('id')
     // this.dataSource.paginator = this.paginator
     // this.dataSource.sort = this.sort
-    // // this.fetchJobPosts()
+    this.fetchJobPosts()
     // this.fetchApplications()
     // this.route.paramMap.subscribe(params => {
     //   const jobId = params.get('id');
@@ -158,21 +158,19 @@ export class ApplicationsComponent {
   }
   fetchJobPosts() {
     // debugger
-    const payload = {
-      curPage: 1,
-      perPage: 10,
-    };
+    // const payload = {
+    //   curPage: 1,
+    //   perPage: 10,
+    // };
 
     this.adminService
-      .applicationPagination(payload)
+      .getJobPostings()
       .subscribe((response: any) => {
         if (response.statusCode === 200) {
-          this.jobPosts = response.data
-            .map((application: any) => ({
-              id: application.job?.id,
-              title: application.job?.title,
-            }))
-            .filter((job: any) => job?.title);
+          this.jobPosts = response.data;
+        }
+        else {
+          this.jobPosts = [];
         }
       });
   }
