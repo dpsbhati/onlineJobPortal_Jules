@@ -189,22 +189,26 @@ export class ApplicationService {
     }
   }
 
-  async paginateApplicationsByJobId(req: any, pagination: IPagination, job_id: string) {
+  async paginateApplicationsByJobId(
+    req: any,
+    pagination: IPagination,
+    job_id: string,
+  ) {
     try {
       const { curPage = 1, perPage = 10, whereClause } = pagination;
-  
+
       let lwhereClause = 'app.is_deleted = :is_deleted AND job.id = :job_id';
-      const parameters: Record<string, any> = { 
+      const parameters: Record<string, any> = {
         is_deleted: false,
-        job_id: job_id // Filter by the provided job_id
+        job_id: job_id, // Filter by the provided job_id
       };
-  
+
       // const isApplicant = req.user?.role === 'applicant';
       // if (isApplicant) {
       //   lwhereClause += ` AND app.user_id = :userId`;
       //   parameters.userId = req.user.id;
       // }
-  
+
       const fieldsToSearch = [
         'status',
         'description',
@@ -216,7 +220,7 @@ export class ApplicationService {
         'user.email',
         'userProfile.first_name',
       ];
-  
+
       // Dynamically adding search filters
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
@@ -226,7 +230,7 @@ export class ApplicationService {
             parameters[`${field}_search`] = `%${fieldValue}%`;
           }
         });
-  
+
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
           const searches = fieldsToSearch
@@ -236,9 +240,9 @@ export class ApplicationService {
           parameters.all_search = `%${allValues}%`;
         }
       }
-  
+
       const skip = (curPage - 1) * perPage;
-  
+
       // Fetch the applications for the current page based on job_id
       const applications = await this.applicationRepository
         .createQueryBuilder('app')
@@ -251,21 +255,23 @@ export class ApplicationService {
         .orderBy('app.applied_at', 'DESC')
         .addOrderBy('app.created_at', 'DESC')
         .getMany();
-  
+
       // If no applications are found
       if (!applications.length) {
         return WriteResponse(404, [], `No records found.`);
       }
-  
+
       // Return only the count of applications in the response
-      return WriteResponse(200, { applications,count: applications.length }, "Applications found successfully.");
+      return WriteResponse(
+        200,
+        { applications, count: applications.length },
+        'Applications found successfully.',
+      );
     } catch (error) {
       console.error('Application Pagination Error --> ', error);
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
-  
-  
 
   async update(
     id: string,
@@ -316,10 +322,12 @@ export class ApplicationService {
         );
       }
 
-      Object.assign(application, updateApplicationDto);
+      // Object.assign(application, updateApplicationDto);
+
+      updateApplicationDto.id = id;
 
       const updatedApplication =
-        await this.applicationRepository.save(application);
+        await this.applicationRepository.save(updateApplicationDto);
       console.log(
         'Updating application with updatedApplication:',
         updatedApplication,
@@ -327,19 +335,22 @@ export class ApplicationService {
 
       // Send notification (you can pass relevant information like job title, user details, status)
       const notificationData = {
-        application_id: updatedApplication.data.id, // Accessing the application ID from the 'data' field
-        jobTitle: updatedApplication.data.job.title, // Accessing the job title correctly from 'job'
-        userName: updatedApplication.data.user.email, // Accessing the user's email correctly
-        status:
-          ApplicationStatus[
-            updatedApplication.data.status as keyof typeof ApplicationStatus
-          ], // Mapping status to enum
-        to: updatedApplication.data.user.email, // Email of the user to send the notification to
+        application_id: updatedApplication.id, // Accessing the application ID from the 'data' field
+        jobTitle: application.data.job.title, // Accessing the job title correctly from 'job'
+        // userName: updatedApplication.user.email, // Accessing the user's email correctly
+        // status:
+        //   ApplicationStatus[
+        //     updatedApplication.status as keyof typeof ApplicationStatus
+        //   ], // Mapping status to enum
+        status: updatedApplication.status as ApplicationStatus,
+        to: application.data.user.email, // Email of the user to send the notification to
         subject: 'Application Status Update', // Notification subject
-        content: `Your application for the job ${updatedApplication.data.job.title} has been ${updatedApplication.data.status}.`, // Notification content
+        content: `Your application for the job ${application.data.job.title} has been ${updatedApplication.status}.`, // Notification content
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
+
+      console.log('savedNotification======>>>>>', savedNotification);
 
       return WriteResponse(
         200,
@@ -347,7 +358,7 @@ export class ApplicationService {
         'Application updated successfully.',
       );
     } catch (error) {
-      console.error('Error updating application:', error.message);
+      console.error('Error updating application:', error);
       return WriteResponse(
         500,
         {},
@@ -394,17 +405,17 @@ export class ApplicationService {
         'userProfile.first_name',
       ];
       const email = pagination.whereClause.find(
-        (p: any) => p.key === "email" && p.value,
-    );
-    if (email) {
+        (p: any) => p.key === 'email' && p.value,
+      );
+      if (email) {
         lwhereClause += ` AND user.email LIKE '%${email.value}%'`;
-    }
+      }
       const first_name = pagination.whereClause.find(
-        (p: any) => p.key === "first_name" && p.value,
-    );
-    if (first_name) {
+        (p: any) => p.key === 'first_name' && p.value,
+      );
+      if (first_name) {
         lwhereClause += ` AND userProfile.first_name LIKE '%${first_name.value}%'`;
-    }
+      }
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
           const fieldValue = whereClause.find((p) => p.key === field)?.value;
