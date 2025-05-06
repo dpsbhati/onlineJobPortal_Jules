@@ -77,11 +77,19 @@ export class ApplicationsComponent {
     all: null,
     jobPostId: null,
     status: null,
-    rank: null,
-    job_id: null
-  }
+    rank: null
+  };
+  pageConfig: any = {
+    curPage: 1,
+    perPage: 10,
+    sortBy: 'created_on',
+    direction: 'desc',
+    whereClause: [],
+    job_id: '' // <-- Add job_id here
+  };
   total: number = 0
-  data: any
+  data: any;
+  viewapplicationlist:any;
   sortBy: string = 'created_on'
   direction: string = 'desc'
   @ViewChild(MatPaginator) paginator!: MatPaginator
@@ -106,17 +114,25 @@ export class ApplicationsComponent {
     this.dataSource.sort = this.sort
     // this.fetchJobPosts()
     this.fetchApplications()
+    this.route.paramMap.subscribe(params => {
+      const jobId = params.get('id');
+      // console.log('mus',jobId);
+      if (jobId) {
+        this.pageConfig.job_id = jobId;
+        this.onjobviewapplicationPagination(); // Load data once jobId is available
+      }
+    });
   }
   openHeaderDialog() {
     const dialogRef = this.dialog.open(FileuploadComponent)
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
+      // console.log('Dialog result: result')
     })
   }
   deleteDialog() {
     const dialogRef = this.dialog.open(DeleteComponent)
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Dialog result: result')
+      // console.log('Dialog result: result')
     })
   }
   fetchJobPosts() {
@@ -378,4 +394,28 @@ export class ApplicationsComponent {
   //         }
   //       });
   //   }
+
+  onjobviewapplicationPagination(): void {
+    this.loader.show();
+    this.adminService.jobviewapplicationPagination(this.pageConfig).subscribe({
+      next: (res: any) => {
+        if (res.statusCode === 200) {
+          this.viewapplicationlist = res.data;
+          this.total = res.count || 0;
+        } else {
+          this.viewapplicationlist = [];
+          this.total = 0;
+          this.toaster.warning(res.message);
+        }
+        this.loader.hide();
+      },
+      error: (err: any) => {
+        // console.error('API Error:', err);
+        this.viewapplicationlist = [];
+        this.total = 0;
+        this.toaster.error(err?.error?.message || 'Something went wrong');
+        this.loader.hide();
+      },
+    });
+  }
 }

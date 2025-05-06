@@ -6,17 +6,24 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { GenericService } from '../generic.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AdminService {
   private readonly BASE_URL = 'https://onlinejobportal.microlent.com/api/';
-  constructor(private genericService: GenericService, private http: HttpClient) { }
+  constructor(
+    private genericService: GenericService,
+    private http: HttpClient
+  ) {}
 
   createOrUpdateJobPosting(payload: any): Observable<any> {
     return this.genericService.Post(`job-posting/create-update`, payload);
   }
 
-  uploadFile(payload: { folderName: string; file: File; userId: string }): Observable<any> {
+  uploadFile(payload: {
+    folderName: string;
+    file: File;
+    userId: string;
+  }): Observable<any> {
     const formData = new FormData();
     formData.append('folderName', payload.folderName);
     formData.append('file', payload.file);
@@ -29,9 +36,15 @@ export class AdminService {
     return this.genericService.Get(`job-posting`);
   }
 
+  getallranks(): Observable<any> {
+    return this.genericService.Get(`/ranks/getAll`);
+  }
+
   getJobById(jobId: string): Observable<any> {
     const key = 'id';
-    return this.genericService.Get<any>(`job-posting/find-one?key=id&value=${jobId}`);
+    return this.genericService.Get<any>(
+      `job-posting/find-one?key=id&value=${jobId}`
+    );
   }
 
   deleteJob(id: string): Observable<any> {
@@ -41,6 +54,9 @@ export class AdminService {
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
+  jobviewapplicationPagination(data: any): Observable<any> {
+    return this.genericService.Post<any>(`applications/getApplicationsByJobId`, data);
+  }
   applicationPagination(payload: any): Observable<any> {
     return this.genericService.Post<any>(`applications/pagination`, payload);
   }
@@ -48,7 +64,6 @@ export class AdminService {
   deleteApplicant(payload: { id: string }): Observable<any> {
     return this.http.post(`${this.BASE_URL}applications/delete`, payload);
   }
-
 
   applyJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/apply`, payload);
@@ -61,7 +76,7 @@ export class AdminService {
   }
 
   allApplicantDetails(applicantId: string): Observable<any> {
-    return this.genericService.Get(`applications/${applicantId}`);
+    return this.genericService.Get(`applications/getOne/${applicantId}`);
   }
   userDetails(applicantId: string): Observable<any> {
     return this.genericService.Get(`user/get-by-id/${applicantId}`);
@@ -69,7 +84,6 @@ export class AdminService {
 
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post(`applications/update/${id}`, payload);
-    
   }
   // updateApplicationStatus(id: string, payload: any): Observable<any> {
   //   return this.genericService.Post('applications/update', { id, ...payload });

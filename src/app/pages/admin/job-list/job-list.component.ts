@@ -18,7 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
-import { DeleteComponent } from '../delete/delete.component'
+import { DeleteComponent } from '../delete/delete.component';
 @Component({
   selector: 'app-job-list',
   standalone: true,
@@ -124,9 +124,7 @@ export class JobListComponent implements OnInit {
     job_type: '',
     employer: '',
     rank: '',
-jobpost_status
-: '',
-
+    jobpost_status: '',
   };
 
   total: number = 0;
@@ -142,33 +140,33 @@ jobpost_status
     private authService: AuthService,
     private loader: LoaderService,
     private toastr: ToastrService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.userRole = this.authService.getUserRole();
     this.displayedColumns = this.isAdmin()
       ? [
-        'position',
-        'title',
-        'job_type',
-        'employer',
-        'salary',
-        'date_published',
-        'deadline',
-        'status',
-        'number_of_applicant',
-        'actions',
-      ]
+          'position',
+          'title',
+          'job_type',
+          'employer',
+          'salary',
+          'date_published',
+          'deadline',
+          'status',
+          'number_of_applicant',
+          'actions',
+        ]
       : [
-        'position',
-        'title',
-        'job_type',
-        'employer',
-        'salary',
-        'date_published',
-        'number_of_applicant',
-        'deadline',
-        'actions',
-      ];
+          'position',
+          'title',
+          'job_type',
+          'employer',
+          'salary',
+          'date_published',
+          'number_of_applicant',
+          'deadline',
+          'actions',
+        ];
   }
 
   isAdmin(): boolean {
@@ -178,6 +176,7 @@ jobpost_status
   ngOnInit(): void {
     this.isLoading = true;
     this.allJobList();
+    this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
 
@@ -235,6 +234,9 @@ jobpost_status
   viewJobPostDetails(jobId: string): void {
     this.router.navigate(['/job-post-details', jobId]);
   }
+  viewapplicationDetails(jobId: string): void {
+    this.router.navigate(['/applications', jobId]);
+  }
 
   viewAppliedApplication(jobId: any): void {
     this.router.navigate(['/applications', jobId]);
@@ -245,9 +247,9 @@ jobpost_status
   }
 
   deleteJob(jobId: string) {
-    const dialogRef = this.dialog.open(DeleteComponent)
-    dialogRef.afterClosed().subscribe(result => {
-      if(result){
+    const dialogRef = this.dialog.open(DeleteComponent);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
         this.loader.show();
         this.adminService.deleteJob(jobId).subscribe({
           next: (response: any) => {
@@ -256,7 +258,10 @@ jobpost_status
             // Refresh job data after deletion
             this.onPagination();
             // If the current page becomes empty after deletion, navigate to the previous page
-            if (this.jobPostingList.length === 1 && this.pageConfig.curPage > 1) {
+            if (
+              this.jobPostingList.length === 1 &&
+              this.pageConfig.curPage > 1
+            ) {
               this.pageConfig.curPage -= 1;
               this.onPagination();
             }
@@ -277,6 +282,14 @@ jobpost_status
   formatSalary(value: number): string {
     return '$' + value.toLocaleString('en-IN');
   }
+  allrankslist() {
+    this.adminService.getallranks().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        const allRanks = response.data.map((rank: any) => rank.rank_name);
+        this.uniqueRanks = [...new Set(allRanks)] as string[];
+      }
+    });
+  }
 
   allJobList() {
     this.adminService.getJobPostings().subscribe((response: any) => {
@@ -286,18 +299,22 @@ jobpost_status
           rank: job.rank,
         }));
         // Extract unique ranks
-        this.uniqueRanks = [
-          ...new Set(this.jobList.map((job) => job.rank)),
-        ].filter((rank) => rank);
+        // this.uniqueRanks = [
+        //   ...new Set(this.jobList.map((job) => job.rank)),
+        // ].filter((rank) => rank);
       }
     });
   }
 
-  clearFilter(event: Event, filterType: 'job_type' | 'rank' | 'jobpost_status'): void {
+  clearFilter(
+    event: Event,
+    filterType: 'job_type' | 'rank' | 'jobpost_status'
+  ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
     this.onSearch();
   }
+
   clearSearch(): void {
     this.filters = {
       all: '',
@@ -306,8 +323,7 @@ jobpost_status
       employer: '',
       rank: '',
 
-jobpost_status
-: '',
+      jobpost_status: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
     this.pageConfig.whereClause = [];
