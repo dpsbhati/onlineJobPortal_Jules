@@ -70,7 +70,12 @@ export class ApplicantComponent implements OnInit {
   jobs: any[] = []; // To store job data
   userRole: string = '';
   filters = {
-    job_type: ''
+    job_type: '',
+    // date: null
+    dateRange: {
+      start: null,
+      end: null
+    }
   };
   errorMessage: string = '';
   searchQuery: string = '';
@@ -136,6 +141,7 @@ export class ApplicantComponent implements OnInit {
     // this.fetchJobs();
     this.onPagination();
     // this.initializeDeadlinePicker();
+    this.onDateRangeChange()
   }
   onSearch(): void {
     if (this.searchQuery.trim()) {
@@ -172,6 +178,12 @@ export class ApplicantComponent implements OnInit {
 
   clearFilters(): void {
     this.filters.job_type = ''; // Clear the dropdown
+    // this.filters.date = null;
+    this.filters.dateRange = {                 // ✅ Clear date range
+      start: null,
+      end: null
+    };
+    this.searchQuery = '';
     this.pageConfig.curPage = 1;
     this.pageConfig.whereClause = []; // Clear filter conditions
     this.onPagination(); // Refresh data
@@ -374,4 +386,68 @@ export class ApplicantComponent implements OnInit {
     // Navigate to the job applications view with initial filters
     this.router.navigate(['/job-applicants-list', jobId]);
   }
+
+
+  formatDateToLocalISO(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+
+  // onDateRangeChange(): void {
+  //   const { start, end } = this.filters.dateRange;
+  //   const whereClause = [];
+
+  //   if (this.filters.job_type) {
+  //     whereClause.push({ key: 'job_type', operator: '=', value: this.filters.job_type });
+  //   }
+
+  //   if (start && end) {
+  //     const startDate = this.formatDateToLocalISO(start);
+  //     const endDate = this.formatDateToLocalISO(end);
+
+  //     whereClause.push({
+  //       key: 'date_published',
+  //       operator: 'between',
+  //       value: [startDate, endDate]
+  //     });
+  //   }
+
+  //   this.pageConfig.curPage = 1;
+  //   this.pageConfig.whereClause = whereClause;
+  //   this.onPagination();
+  // }
+  onDateRangeChange(): void {
+    const { start, end } = this.filters.dateRange;
+    const whereClause: any[] = [];
+
+    if (this.filters.job_type) {
+      whereClause.push({ key: 'job_type', operator: '=', value: this.filters.job_type });
+    }
+
+    if (start) {
+      const startDate = this.formatDateToLocalISO(start);
+      whereClause.push({
+        key: 'startDate',
+        operator: '=',
+        value: startDate
+      });
+    }
+
+    if (end) {
+      const endDate = this.formatDateToLocalISO(end);
+      whereClause.push({
+        key: 'endDate',
+        operator: '=',
+        value: endDate
+      });
+    }
+
+    this.pageConfig.curPage = 1;
+    this.pageConfig.whereClause = whereClause;
+    this.onPagination();
+  }
+
+
 }
