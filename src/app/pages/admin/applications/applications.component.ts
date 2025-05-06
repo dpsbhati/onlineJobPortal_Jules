@@ -90,14 +90,14 @@ export class ApplicationsComponent {
   };
   total: number = 0;
   data: any;
-  viewapplicationlist: any;
-  sortBy: string = 'created_on';
-  direction: string = 'desc';
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  isLoading: boolean = false;
-  applicantId: string | null = null;
-  application_id: string | null = null;
+  viewapplicationlist:any;
+  sortBy: string = 'created_on'
+  direction: string = 'desc'
+  @ViewChild(MatPaginator) paginator!: MatPaginator
+  @ViewChild(MatSort) sort!: MatSort
+  isLoading: boolean = false
+  applicantId: string | null = null
+  application_id: string | null = null
   constructor(
     private dialog: MatDialog,
     private adminService: AdminService,
@@ -107,7 +107,7 @@ export class ApplicationsComponent {
     private loader: LoaderService,
     private toaster: ToastrService,
     private helper: HelperService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.applicantId = this.route.snapshot.paramMap.get('id');
@@ -118,6 +118,7 @@ export class ApplicationsComponent {
     this.fetchApplications();
     this.route.paramMap.subscribe((params) => {
       const jobId = params.get('id');
+      // console.log('mus',jobId);
       console.log('mus', jobId);
       if (jobId) {
         this.pageConfig.job_id = jobId;
@@ -132,11 +133,12 @@ export class ApplicationsComponent {
     });
   }
   deleteDialog() {
-    const dialogRef = this.dialog.open(DeleteComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('Dialog result: result');
-    });
+    const dialogRef = this.dialog.open(DeleteComponent)
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log('Dialog result: result')
+    })
   }
+  fetchJobPosts() {
   fetchJobPosts() {
     // debugger
     const payload = {
@@ -160,8 +162,11 @@ export class ApplicationsComponent {
 
   fetchApplications() {
     // debugger
-    this.loader.show();
-    const whereClause = this.helper.getAllFilters(this.selectedFilters);
+    this.loader.show()
+    if (this.applicantId) {
+      this.selectedFilters.job_id = this.applicantId;
+    }
+    const whereClause = this.helper.getAllFilters(this.selectedFilters)
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
@@ -215,8 +220,8 @@ export class ApplicationsComponent {
   }
 
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value
+    this.dataSource.filter = filterValue.trim().toLowerCase()
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
@@ -235,8 +240,8 @@ export class ApplicationsComponent {
   }
 
   filterByJobPost() {
-    this.pageIndex = 0;
-    this.fetchApplications();
+    this.pageIndex = 0
+    this.fetchApplications()
   }
   // onFilterChange(filterType: string, value: any) {
   //   this.selectedFilters[filterType] = value;
@@ -286,6 +291,7 @@ export class ApplicationsComponent {
   }
 
   deleteApplicant(application_id: any): void {
+  deleteApplicant(application_id: any): void {
     // debugger
     Swal.fire({
       title: 'Are you sure?',
@@ -317,10 +323,10 @@ export class ApplicationsComponent {
             this.loader.hide();
             this.toaster.error(
               err?.error?.message ||
-                'An error occurred while deleting the applicant.'
-            );
-          },
-        });
+              'An error occurred while deleting the applicant.'
+            )
+          }
+        })
       }
     });
   }
@@ -437,7 +443,7 @@ export class ApplicationsComponent {
         this.loader.hide();
       },
       error: (err: any) => {
-        console.error('API Error:', err);
+        // console.error('API Error:', err);
         this.viewapplicationlist = [];
         this.total = 0;
         this.toaster.error(err?.error?.message || 'Something went wrong');
