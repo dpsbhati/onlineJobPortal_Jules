@@ -122,11 +122,21 @@ export class ExpiredJobPostingComponent implements OnInit {
     });
   }
   onPagination(): void {
-    // this.isLoading = true;
     this.loader.show();
-    this.pageConfig.whereClause = this.helperService.getAllFilters(
-      this.filters
-    );
+
+    // 1. Get dynamic filters from form
+    const dynamicFilters = this.helperService.getAllFilters(this.filters);
+
+    // 2. Add static filter for expired jobs
+    const expiredFilter = {
+      key: 'job_opening',
+      value: 'close',
+      operator: '=',
+    };
+
+    // 3. Combine filters
+    this.pageConfig.whereClause = [...dynamicFilters, expiredFilter];
+
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
@@ -151,6 +161,7 @@ export class ExpiredJobPostingComponent implements OnInit {
       },
     });
   }
+
   ngOnInit(): void {
     this.isLoading = true;
     this.allJobList();
@@ -226,9 +237,9 @@ export class ExpiredJobPostingComponent implements OnInit {
           rank: job.rank,
         }));
         // Extract unique ranks
-      //   this.uniqueRanks = [
-      //     ...new Set(this.jobList.map((job) => job.rank)),
-      //   ].filter((rank) => rank);
+        //   this.uniqueRanks = [
+        //     ...new Set(this.jobList.map((job) => job.rank)),
+        //   ].filter((rank) => rank);
       }
     });
   }
