@@ -77,7 +77,8 @@ export class ApplicationsComponent {
     all: null,
     jobPostId: null,
     status: null,
-    rank: null
+    rank: null,
+    job_id: null
   }
   total: number = 0
   data: any
@@ -88,7 +89,7 @@ export class ApplicationsComponent {
   isLoading: boolean = false
   applicantId: string | null = null
   application_id: string | null = null
-  constructor (
+  constructor(
     private dialog: MatDialog,
     private adminService: AdminService,
     private notify: NotifyService,
@@ -97,28 +98,28 @@ export class ApplicationsComponent {
     private loader: LoaderService,
     private toaster: ToastrService,
     private helper: HelperService
-  ) {}
+  ) { }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     this.applicantId = this.route.snapshot.paramMap.get('id')
     this.dataSource.paginator = this.paginator
     this.dataSource.sort = this.sort
     // this.fetchJobPosts()
     this.fetchApplications()
   }
-  openHeaderDialog () {
+  openHeaderDialog() {
     const dialogRef = this.dialog.open(FileuploadComponent)
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result: result')
     })
   }
-  deleteDialog () {
+  deleteDialog() {
     const dialogRef = this.dialog.open(DeleteComponent)
     dialogRef.afterClosed().subscribe(result => {
       console.log('Dialog result: result')
     })
   }
-  fetchJobPosts () {
+  fetchJobPosts() {
     // debugger
     const payload = {
       curPage: 1,
@@ -139,9 +140,12 @@ export class ApplicationsComponent {
       })
   }
 
-  fetchApplications () {
+  fetchApplications() {
     // debugger
     this.loader.show()
+    if (this.applicantId) {
+      this.selectedFilters.job_id = this.applicantId;
+    }
     const whereClause = this.helper.getAllFilters(this.selectedFilters)
     const payload = {
       curPage: this.pageIndex + 1,
@@ -195,7 +199,7 @@ export class ApplicationsComponent {
     )
   }
 
-  applyFilter (event: Event) {
+  applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
     this.dataSource.filter = filterValue.trim().toLowerCase()
 
@@ -204,22 +208,22 @@ export class ApplicationsComponent {
     }
   }
 
-  filterByJobPost () {
+  filterByJobPost() {
     this.pageIndex = 0
     this.fetchApplications()
   }
-  onFilterChange (filterType: string, value: any) {
+  onFilterChange(filterType: string, value: any) {
     this.selectedFilters[filterType] = value
     this.pageIndex = 0
     this.fetchApplications()
   }
-  onPageChange (event: any) {
+  onPageChange(event: any) {
     this.pageIndex = event.pageIndex
     this.pageSize = event.pageSize
     this.fetchApplications()
   }
 
-  clearFilters () {
+  clearFilters() {
     this.selectedFilters = {
       all: null,
       job_id: null,
@@ -233,12 +237,12 @@ export class ApplicationsComponent {
     }
     this.fetchApplications()
   }
-  viewApplicantDetails (application_id: any): void {
+  viewApplicantDetails(application_id: any): void {
     // debugger
     this.router.navigate(['/applicant-details', application_id])
   }
 
-  deleteApplicant (application_id: any): void {
+  deleteApplicant(application_id: any): void {
     // debugger
     Swal.fire({
       title: 'Are you sure?',
@@ -270,7 +274,7 @@ export class ApplicationsComponent {
             this.loader.hide()
             this.toaster.error(
               err?.error?.message ||
-                'An error occurred while deleting the applicant.'
+              'An error occurred while deleting the applicant.'
             )
           }
         })

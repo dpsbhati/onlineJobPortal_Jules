@@ -158,10 +158,10 @@
                 <mat-icon>visibility</mat-icon>
                 <span>View Details</span>
               </button>
-              <a mat-menu-item href="/applications">
+              <button mat-menu-item (click)="viewAppliedApplication(element.id)">
                 <mat-icon>visibility</mat-icon>
                 <span>View Application</span>
-              </a>
+              </button>
               <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
                 <mat-icon>edit</mat-icon>
                 Edit
