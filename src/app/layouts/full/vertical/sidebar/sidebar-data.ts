@@ -73,12 +73,12 @@ export const navItems: NavItem[] = [
         visibleForRoles: ['admin']
       },
 
-      {
-        displayName: 'Categories',
-        iconName: 'point',
-        route: '/menu-2',
-        visibleForRoles: ['admin']
-      },
+      // {
+      //   displayName: 'Categories',
+      //   iconName: 'point',
+      //   route: '/menu-2',
+      //   visibleForRoles: ['admin']
+      // },
       {
         displayName: 'Expired Job Postings',
         iconName: 'point',
@@ -95,7 +95,8 @@ export const navItems: NavItem[] = [
     displayName: 'Notifications',
     iconName: 'notification',
 
-    route: '/notifications',
+    // route: '/notifications',
+    route: 'authentication/Development-page',
     visibleForRoles: ['admin', 'applicant']
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
@@ -109,7 +110,8 @@ export const navItems: NavItem[] = [
   {
     displayName: 'User',
     iconName: 'user',
-    route: '/userlist',
+    // route: '/userlist',
+    route: 'authentication/Development-page',
     visibleForRoles: ['admin']
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
