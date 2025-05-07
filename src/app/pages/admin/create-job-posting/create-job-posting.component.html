@@ -265,7 +265,7 @@
 
           <!-- Image Preview -->
           <div class="img-preview m-t-6" *ngIf="imagePreview">
-            <img [src]="imagePreview" alt="Preview" style="width: 300px; height: 200px; object-fit: cover;" />
+            <img [src]="imagePreview" alt="Preview" style="width: 300px; height: 200px; object-fit: contain;" />
           </div>
 
           <span class="file-name" *ngIf="jobForm.get('featured_image')?.value">
