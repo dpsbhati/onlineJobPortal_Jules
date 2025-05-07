@@ -116,7 +116,7 @@ export class AllApplicantsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.onPagination();
+    // this.onPagination();
     this.onDateRangeChange();
   }
 
