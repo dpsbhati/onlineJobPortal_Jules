@@ -293,16 +293,22 @@
   <!-- --------------------------------------------------------------- -->
   <!-- profile Dropdown -->
   <!-- --------------------------------------------------------------- -->
-  <button mat-icon-button extended [matMenuTriggerFor]="profilemenu" aria-label="Notifications"
+  <!-- <button mat-icon-button extended [matMenuTriggerFor]="profilemenu" aria-label="Notifications"
     class="position-relative align-items-center justify-content-center profile-btn-dd d-none d-lg-flex">
     <img src="/assets/images/profile/user.webp"
       class="rounded-circle icon-30 object-cover profile-dd d-flex align-items-center justify-content-center m-l-2 m-t-2"
       width="30" height="30" />
-  </button>
+  </button> -->
+  <div  style="cursor: pointer;"  extended [matMenuTriggerFor]="profilemenu" aria-label="Notifications"
+  class="position-relative align-items-center justify-content-center profile-btn-dd d-none d-lg-flex ">
+  <span class="d-flex align-items-center justify-content-center profile-dd m-l-2 m-t-2">
+    <span style="font-size: 12px;" class="profile-greeting text-white">{{ 'Hi, ' + userName }}</span>
+  </span>
+</div>
   <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow dd-notifications">
     <div class="p-x-16 p-y-20 b-b-1">
       <div class="d-flex align-items-center">
-        <img src="/assets/images/profile/user.webp" class="rounded-circle" width="50" height="50" />
+        <!-- <img src="/assets/images/profile/user.webp" class="rounded-circle" width="50" height="50" /> -->
         <div class="m-l-16">
           <h6 class="f-s-14 f-w-600 m-0 d-flex align-items-center">
             {{ userName }}

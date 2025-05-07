@@ -326,7 +326,7 @@ export class EditProfileComponent implements OnInit {
         this.loader.hide();
         if (response.statusCode === 200) {
           this.notify.showSuccess(response.message);
-          this.router.navigate(['/starter']);
+          this.router.navigate(['/dashboard']);
         } else {
           this.notify.showError(response.message || 'Failed to update profile');
           this.scrollToTop();
@@ -397,7 +397,7 @@ export class EditProfileComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.loader.hide();  
+        this.loader.hide();
         console.error('Error fetching user profile data:', error);
         this.notify.showError(error.error?.message || 'An error occurred while fetching user profile data');
       }
