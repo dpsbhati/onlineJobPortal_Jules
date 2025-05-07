@@ -12,10 +12,10 @@
       <div class="p-32 d-flex align-items-start align-items-lg-center justify-content-center h-100">
         <div class="row justify-content-center w-100">
           <div class="col-lg-9 max-width-form">
-            <div class="or-border m-t-30">Register a New User</div>
+            <div class="or-border m-t-30" style="font-size: 14px;">Register a New User</div>
 
             <form class="m-t-30" [formGroup]="registrationForm">
-              <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" />
                 <mat-error *ngIf="registrationForm.get('firstName')?.hasError('required')">
@@ -32,7 +32,7 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" />
                 <mat-error *ngIf="registrationForm.get('lastName')?.hasError('required')">
@@ -49,7 +49,7 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Email</mat-label>
                 <input matInput type="email" formControlName="email" />
                 <mat-error *ngIf="registrationForm.get('email')?.hasError('required')">
@@ -60,7 +60,7 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="w-100" color="primary">
+              <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Password</mat-label>
                 <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" />
                 <button

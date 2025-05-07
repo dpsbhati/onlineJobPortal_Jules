@@ -58,7 +58,7 @@
               </div>
             </div> -->
 
-            <div class="or-border m-t-30">sign in with</div>
+            <div class="or-border m-t-30" style="font-size: 14px;">sign in with</div>
 
             <form class="m-t-30" [formGroup]="form" (ngSubmit)="submit()">
               <mat-label class="f-s-14 f-w-600 m-b-12 d-block">Email</mat-label>
@@ -118,7 +118,7 @@
                 [disabled]="!form.valid || isLoading"
               >
                 <div class="d-flex align-items-center justify-content-center">
-                  <mat-spinner *ngIf="isLoading" [diameter]="20" class="m-r-8"></mat-spinner>
+                  <!-- <mat-spinner *ngIf="isLoading" [diameter]="20" class="m-r-8"></mat-spinner> -->
                   <span>Sign In</span>
                 </div>
               </button>
