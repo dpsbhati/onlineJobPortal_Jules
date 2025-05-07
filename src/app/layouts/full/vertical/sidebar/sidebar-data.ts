@@ -80,7 +80,7 @@ export const navItems: NavItem[] = [
       //   visibleForRoles: ['admin']
       // },
       {
-        displayName: 'Expired Job Postings',
+        displayName: 'All Expired Job',
         iconName: 'point',
         route: 'expired-job-posting',
         visibleForRoles: ['admin']
