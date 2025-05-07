@@ -1,0 +1,56 @@
+
+.custom-time-field {
+  font-family: 'Poppins', sans-serif;
+  margin-top: 16px;
+}
+
+.time-input-wrapper {
+  position: relative;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #ebf1f6;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  margin: 0;
+}
+
+.styled-time-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  background: transparent;
+}
+
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 4px;
+  color: #44474e;
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 0.2s ease-out;
+}
+
+.styled-time-input:focus + .floating-label,
+.styled-time-input:valid + .floating-label {
+  top: 0px;
+  font-size: 12px;
+  color: #44474e;
+}
+
+.time-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+
