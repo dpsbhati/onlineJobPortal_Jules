@@ -3,8 +3,8 @@
     <mat-card-title class="d-flex align-items-center gap-6">
       <button mat-icon-button color="primary" (click)="navigate()">
         <mat-icon>arrow_back</mat-icon>
-      </button> {{ isEditMode ? 'Edit Job Posting' :
-      'Add New Job Posting' }}
+      </button> {{ isEditMode ? 'Edit Job Post' :
+      'Add New Job Post' }}
 
     </mat-card-title>
   </mat-card-header>
@@ -394,7 +394,7 @@
 
       <div class="d-flex justify-content-end col-12 m-b-16">
         <button mat-flat-button color="primary" [disabled]="!jobForm.valid" (click)="onSubmit()">
-          {{ isEditMode ? 'Update' : 'Create' }} Job Posting
+          {{ isEditMode ? 'Update' : 'Create' }} Job Post
         </button>
       </div>
       <!-- <div class="form-actions col-12">

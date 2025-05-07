@@ -200,7 +200,7 @@ export class JobListComponent implements OnInit {
           this.jobPostingList = [];
           this.total = 0;
           this.loader.hide();
-          this.toastr.warning(res.message);
+          // this.toastr.warning(res.message);
         }
         this.isLoading = false;
       },

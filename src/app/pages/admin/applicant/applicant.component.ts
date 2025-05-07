@@ -262,7 +262,6 @@ export class ApplicantComponent implements OnInit {
           this.loader.hide()
           this.jobPostingList = res.data;
           this.total = res.count;
-          console.log('this', this.jobPostingList);
         }
         else {
           this.loader.hide()

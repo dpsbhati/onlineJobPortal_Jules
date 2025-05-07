@@ -178,19 +178,19 @@ export class ApplicationsComponent {
 
   fetchApplications() {
     this.loader.show();
-  
+
     if (this.applicantId) {
       this.selectedFilters.job_id = this.applicantId;
     }
-  
+
     // Step 1: Get filters from helper
     let whereClause = this.helper.getAllFilters(this.selectedFilters);
-  
+
     // ✅ Step 2: Replace "rank" filter with "all" (like) filter
     if (this.selectedFilters.rank) {
       // Remove original rank filter if it exists
       whereClause = whereClause.filter(clause => clause.key !== 'rank');
-  
+
       // Push custom 'all' filter for rank
       whereClause.push({
         key: 'all',
@@ -198,7 +198,7 @@ export class ApplicationsComponent {
         operator: 'like',
       });
     }
-  
+
     const payload = {
       curPage: this.pageIndex + 1,
       perPage: this.pageSize,
@@ -206,7 +206,7 @@ export class ApplicationsComponent {
       direction: this.direction,
       whereClause,
     };
-  
+
     this.adminService.applicationPagination(payload).subscribe(
       (response: any) => {
         this.loader.hide();
@@ -237,7 +237,7 @@ export class ApplicationsComponent {
             })
           );
         } else {
-          this.toaster.warning(response.message);
+          // this.toaster.warning(response.message);
           this.dataSource.data = [];
           this.totalApplications = 0;
         }
@@ -250,7 +250,7 @@ export class ApplicationsComponent {
       }
     );
   }
-  
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value
@@ -500,7 +500,7 @@ export class ApplicationsComponent {
             })
           );
         } else {
-          this.toaster.warning(res.message || 'No applications found');
+          // this.toaster.warning(res.message || 'No applications found');
           this.dataSource.data = [];
           this.totalApplications = 0;
         }
