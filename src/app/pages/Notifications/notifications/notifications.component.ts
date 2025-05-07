@@ -42,6 +42,8 @@ interface notificationsList {
 })
 export class NotificationsComponent implements OnInit {
   displayedColumns: string[] = []
+  notificationlist:any;
+  total: number = 0;
   // displayedColumns: string[] = ['#', 'name', 'email', 'mobile'];
   pageConfig: any = {
     curPage: 1,
@@ -84,6 +86,7 @@ export class NotificationsComponent implements OnInit {
 
   ngOnInit () {
     this.dataSource.paginator = this.paginator
+    this.onPagination();
   }
 
   applyFilter (filterValue: string) {
@@ -99,42 +102,41 @@ export class NotificationsComponent implements OnInit {
     // Dialog open logic yahan add kar sakte ho
   }
 
-  // onPagination(): void {
-  //   // this.isLoading = true;
-  //   this.loader.show();
-  //   this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
-  //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
-  //     next: (res: any) => {
-  //       // console.log('API Response:', res);
-  //       if (res.statusCode === 200) {
-  //         this.jobPostingList = res.data;
-  //         this.total = res.count || 0;
-  //         this.loader.hide();
-  //         console.log('Loaded jobs:', this.jobPostingList);
-  //       } else {
-  //         this.jobPostingList = [];
-  //         this.total = 0;
-  //         this.loader.hide();
-  //         this.toastr.warning(res.message);
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     error: (err: any) => {
-  //       console.error('API Error:', err);
-  //       this.isLoading = false;
-  //       this.loader.hide();
-  //       this.toastr.error(err?.error?.message);
-  //       this.jobPostingList = [];
-  //       this.total = 0;
-  //     }
-  //   });
-  // }
-
-  // onPageChange(event: any): void {
-  //   this.pageConfig.curPage = event.pageIndex + 1;
-  //   this.pageConfig.perPage = event.pageSize;
-  //   this.onPagination();
-  // }
+  onPagination(): void {
+    // this.isLoading = true;
+    this.loader.show();
+    // this.pageConfig.whereClause = this.helperService.getAllFilters(
+    //   this.filters
+    // );
+    this.adminService.notificationPagination(this.pageConfig).subscribe({
+      next: (res: any) => {
+        if (res.statusCode === 200) {
+          this.notificationlist = res.data;
+          this.total = res.count || 0;
+          this.loader.hide();
+        } else {
+          this.notificationlist = [];
+          this.total = 0;
+          this.loader.hide();
+          // this.toastr.warning(res.message);
+        }
+        // this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('API Error:', err);
+        // this.isLoading = false;
+        this.loader.hide();
+        this.toastr.error(err?.error?.message);
+        this.notificationlist = [];
+        this.total = 0;
+      },
+    });
+  }
+  onPageChange(event: any): void {
+    this.pageConfig.curPage = event.pageIndex + 1;
+    this.pageConfig.perPage = event.pageSize;
+    this.onPagination();
+  }
 
   notifications: notificationsList[] = [
     {
@@ -173,4 +175,7 @@ export class NotificationsComponent implements OnInit {
       subtitle: 'Just a reminder that you have event'
     }
   ]
+  trackByNotification(index: number, item: any): string {
+    return item.id; // Assuming 'id' is unique for each notification
+  }
 }
