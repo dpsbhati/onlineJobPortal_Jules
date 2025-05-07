@@ -140,4 +140,7 @@ export class SideForgotPasswordComponent implements OnInit {
   navigateToLogin(): void {
     this._router.navigate(['/authentication/login']);
   }
+  navigate () {
+    this._router.navigate(['/authentication/login'])
+  }
 }

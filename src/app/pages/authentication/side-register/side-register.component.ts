@@ -124,7 +124,7 @@ export class AppSideRegisterComponent {
         console.log(res);
         if (res.statusCode == 200 || res.statusCode == 201) {
           this.loader.hide();
-          this.router.navigate(['auth/login']);
+          this.router.navigate(['/authentication/login']);
           this.toastr.success(res.message + ' Please check your email to verify your account.');
           this.loading = false;
         }
