@@ -25,7 +25,6 @@ import { SidebarService } from 'src/app/core/services/sidebar.service'
 
 interface notifications {
   id: number
-  icon: string
   color: string
   title: string
   time: string
@@ -198,7 +197,6 @@ export class HeaderComponent {
   notifications: notifications[] = [
     {
       id: 1,
-      icon: 'briefcase',
       color: 'primary',
       time: '9:00 AM',
       title: 'Job Created',
@@ -206,7 +204,6 @@ export class HeaderComponent {
     },
     {
       id: 2,
-      icon: 'user-check',
       color: 'success',
       time: '8:45 AM',
       title: 'Application Received',
@@ -214,7 +211,6 @@ export class HeaderComponent {
     },
     {
       id: 4,
-      icon: 'edit',
       color: 'warning',
       time: '8:00 AM',
       title: 'Job Updated',

@@ -101,8 +101,8 @@ export const navItems: NavItem[] = [
     displayName: 'Notifications',
     iconName: 'notification',
 
-    // route: '/notifications',
-    route: 'authentication/Development-page',
+    route: '/notifications',
+    // route: 'authentication/Development-page',
     visibleForRoles: ['admin', 'applicant']
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
