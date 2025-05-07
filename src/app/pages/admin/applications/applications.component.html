@@ -45,8 +45,8 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Status</mat-label>
               <mat-select [(value)]="selectedFilters.status" (selectionChange)="onFilterChange('status', $event.value)">
-                <mat-option value="Hired">Approved</mat-option>
-                <mat-option value="Pending">In Review</mat-option>
+                <mat-option value="Shortlisted">Shortlisted</mat-option>
+                <mat-option value="Pending">Pending</mat-option>
                 <mat-option value="Rejected">Rejected</mat-option>
               </mat-select>
             </mat-form-field>
