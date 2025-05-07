@@ -20,6 +20,7 @@ import { ApplyJobComponent } from './admin/apply-job/apply-job.component';
 import { AppliedApplicationsComponent } from './admin/applied-applications/applied-applications.component';
 import { AppliedStatusComponent } from './admin/applied-status/applied-status.component';
 import { ExpiredJobPostingComponent } from './admin/expired-job-posting/expired-job-posting.component';
+import { AllApplicantsComponent } from '../all-applicants/all-applicants.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -92,6 +93,18 @@ export const PagesRoutes: Routes = [
           title: 'Expired Job Posting',
           urls: [
             { title: 'Job List' },
+            // { title: 'Applications List' },
+          ],
+        },
+      },
+      {
+        path: 'all-applicants',
+        component: AllApplicantsComponent,
+        canActivate: [roleGuard(['admin'])],
+        data: {
+          title: 'All Applicants',
+          urls: [
+            { title: 'Applicants List' },
             // { title: 'Applications List' },
           ],
         },
