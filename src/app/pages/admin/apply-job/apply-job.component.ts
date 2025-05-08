@@ -262,7 +262,9 @@ export class ApplyJobComponent {
   fileInput.value = '';
 }
 
-deleteFile(controlName: string, index?: number): void {
+deleteFile(controlName: string, event: MouseEvent, index?: number): void {
+  event.stopPropagation();
+  console.log('Delete file triggered:', controlName, index);
   if (controlName === 'cv_path') {
     this.uploadedFileName = null;
     this.fileUploaded = null;
