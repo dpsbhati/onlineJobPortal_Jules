@@ -173,12 +173,12 @@ export class UserService {
       where: { email, is_deleted: false },
     });
     if (!User) {
-      return WriteResponse(403, {}, 'Invalid Credentials.');
+      return WriteResponse(401, {}, 'Invalid Credentials.');
     }
     const passwordValid = await bcrypt.compare(password, User.password);
     if (!passwordValid) {
       console.log(`Invalid password for user: ${email}`);
-      return WriteResponse(403, {}, 'Invalid password.');
+      return WriteResponse(401, {}, 'Invalid password.');
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
@@ -190,7 +190,7 @@ export class UserService {
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
-      return WriteResponse(403, {}, 'User email is not verified.');
+      return WriteResponse(401, {}, 'User email is not verified.');
     }
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
