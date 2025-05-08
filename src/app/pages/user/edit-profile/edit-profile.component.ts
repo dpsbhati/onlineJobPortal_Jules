@@ -62,7 +62,7 @@ export class EditProfileComponent implements OnInit {
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
-     private loader : LoaderService,
+    private loader: LoaderService,
     private toaster: ToastrService,
 
   ) {
@@ -313,6 +313,10 @@ export class EditProfileComponent implements OnInit {
     this.loader.show();
 
     const formValues = this.userProfileForm.value;
+    // Format the Date of Birth (dob) if it's set
+    if (formValues.dob) {
+      formValues.dob = this.formatDate(formValues.dob);
+    }
     const formattedSkills = formValues.key_skills.map((skill: string) => `/${skill}`);
 
     const payload = {
@@ -341,6 +345,20 @@ export class EditProfileComponent implements OnInit {
       }
     });
   }
+
+  // Helper function to format the Date of Birth to YYYY-MM-DD format
+  formatDate(date: Date): string {
+    // Set the time to midnight to avoid timezone issues
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);  // Set the time to midnight
+
+    const year = localDate.getFullYear();
+    const month = ('0' + (localDate.getMonth() + 1)).slice(-2); // Add leading zero if month < 10
+    const day = ('0' + localDate.getDate()).slice(-2); // Add leading zero if day < 10
+
+    return `${year}-${month}-${day}`; // Returns in 'YYYY-MM-DD' format
+  }
+
 
   loadUserData(userId: string): void {
     this.loader.show();
@@ -400,15 +418,15 @@ export class EditProfileComponent implements OnInit {
       error: (error: any) => {
         this.loader.hide();
         console.error('Error fetching user profile data:', error);
-         this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
+        this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
       }
     });
   }
 
-  addSkill(): void {
+  addSkill(event:Event): void {
     const skill = this.newSkill.trim();
     if (!skill) {
-     this.toaster.warning('Skill cannot be empty.');
+      this.toaster.warning('Skill cannot be empty.');
       return;
     }
     if (skill.length < 2) {
@@ -416,7 +434,7 @@ export class EditProfileComponent implements OnInit {
       return;
     }
     if (skill.length > 50) {
-       this.toaster.warning('Skill cannot exceed 50 characters.');
+      this.toaster.warning('Skill cannot exceed 50 characters.');
       return;
     }
     if (skill && !this.skillsArray.includes(skill)) {
@@ -466,5 +484,5 @@ export class EditProfileComponent implements OnInit {
       event.preventDefault();  // Prevent typing any character other than allowed
     }
   }
- 
+
 }
