@@ -139,7 +139,7 @@ export class ApplicantComponent implements OnInit {
 
   ngOnInit(): void {
     // this.fetchJobs();
-    this.onPagination();
+    // this.onPagination();
     // this.initializeDeadlinePicker();
     this.onDateRangeChange()
   }
@@ -254,8 +254,16 @@ export class ApplicantComponent implements OnInit {
 
   onPagination(): void {
     this.loader.show();
-    // this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
+    // const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
+    const aplicantFilter = {
+      key: 'job_opening',
+      value: 'open',
+      operator: '=',
+    };
+
+     // 3. Combine filters
+     this.pageConfig.whereClause = [ aplicantFilter];
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
