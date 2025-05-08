@@ -157,7 +157,7 @@
           <div class="d-flex align-items-center justify-content-between gap-6 " *ngIf="applicantDetails.cv_path">
             <div class="">
               <h4 class="m-b-0">CV/Resume</h4>
-              <h5 class="m-b-0 m-t-0">CV_Deepika_Joshi.pdf
+              <h5 class="m-b-0 m-t-0">{{ extractFileName(applicantDetails.cv_path) }}
               </h5>
             </div>
 
