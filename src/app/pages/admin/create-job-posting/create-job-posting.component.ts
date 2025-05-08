@@ -157,6 +157,7 @@ export class CreateJobPostingComponent {
         ]),
         social_media_type: new FormControl([], Validators.required),
         posted_at: new FormControl('', Validators.required),
+        posted_date:new FormControl('',Validators.required),
         jobpost_status: new FormControl('draft'),
         job_type_post: new FormControl('', Validators.required)
         // work_type: new FormControl(''),
