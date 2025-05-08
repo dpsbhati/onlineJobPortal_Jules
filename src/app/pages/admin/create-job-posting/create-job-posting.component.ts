@@ -157,7 +157,7 @@ export class CreateJobPostingComponent {
         ]),
         social_media_type: new FormControl([], Validators.required),
         posted_at: new FormControl('', Validators.required),
-        posted_date:new FormControl('',Validators.required),
+        posted_date: new FormControl('', Validators.required),
         jobpost_status: new FormControl('draft'),
         job_type_post: new FormControl('', Validators.required)
         // work_type: new FormControl(''),
@@ -419,6 +419,13 @@ export class CreateJobPostingComponent {
           'yyyy-MM-dd',
           'en-US'
         )
+
+        const formattedpostedAtDate = formatDate(
+          data.posted_date,
+          'yyyy-MM-dd',
+          'en-US'
+        )
+
         const socialMediaTypes = data.social_media_type
           ? JSON.parse(data.social_media_type)
           : []
@@ -468,6 +475,7 @@ export class CreateJobPostingComponent {
           address: data.address || '',
           social_media_type: socialMediaTypes,
           posted_at: data.posted_at,
+          posted_date: data.posted_date,
           jobpost_status: data.jobpost_status || 'draft',
           job_type_post: data.job_type_post
           // work_type: data.work_type || '',
@@ -657,7 +665,7 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-
+      formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
       }
