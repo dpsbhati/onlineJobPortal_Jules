@@ -48,6 +48,8 @@
                 <mat-option value="Shortlisted">Shortlisted</mat-option>
                 <mat-option value="Pending">Pending</mat-option>
                 <mat-option value="Rejected">Rejected</mat-option>
+                <mat-option value="Hired">Hired</mat-option>
+
               </mat-select>
             </mat-form-field>
           </div>
@@ -150,7 +152,7 @@
         'bg-light-error  text-error ': element.status.toLowerCase() === 'rejected',
         'bg-light-success  text-success': element.status.toLowerCase() === 'shortlisted'
       }">
-              {{ element.status||'-' }} 
+              {{ element.status||'-' }}
             </span>
           </td>
         </ng-container>
