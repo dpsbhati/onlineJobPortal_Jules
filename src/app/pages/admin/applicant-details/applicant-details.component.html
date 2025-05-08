@@ -1,20 +1,18 @@
-<div class="container" *ngIf="applicantDetails">
+<div *ngIf="applicantDetails">
 
-  <div class="header d-flex align-items-center">
-    <button (click)="goBack()" class="back-button">
+  <div class="header d-flex align-items-center gap-6 m-b-16">
+    <button mat-icon-button color="primary" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="m-l-12">Application Details</h2>
+    <h2>Application Details</h2>
   </div>
   <mat-card class="cardWithShadow">
-    <mat-card-header>
-      <mat-card-title class="d-flex align-items-center gap-6">
+    <mat-card-content>
+      <mat-card-title class="m-b-16">
         Application Status
       </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="status-controls">
-        <div class="current-status">
+      <div class="d-flex align-items-center justify-content-between gap-6">
+        <div class="d-flex align-items-center justify-content-between gap-6">
           <label>Current Status:</label>
           <span class="status-badge" [ngClass]="applicantDetails.status?.toLowerCase()">
             {{applicantDetails.status}}
@@ -34,17 +32,13 @@
       </div>
     </mat-card-content>
   </mat-card>
-
   <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-8">
       <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
+        <mat-card-content>
+          <mat-card-title class="m-b-16">
             Personal Information
           </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Name:</label></div>
             <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.first_name}}
@@ -69,16 +63,11 @@
 
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col-lg-6">
       <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
+        <mat-card-content>
+          <mat-card-title class="m-b-16">
             Professional Details
           </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Current Company:</label></div>
             <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company}}</strong></div>
@@ -103,15 +92,13 @@
 
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col-lg-6" *ngIf="applicantDetails.additional_info || applicantDetails.description">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
+
+
+      <mat-card class="cardWithShadow" *ngIf="applicantDetails.additional_info || applicantDetails.description">
+        <mat-card-content>
+          <mat-card-title class="m-b-16">
             Additional Information
           </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
           <div class="row m-b-16" *ngIf="applicantDetails.description">
             <div class="col-lg-4"> <label>Description</label></div>
             <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company}}</strong></div>
@@ -122,84 +109,70 @@
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col-lg-6" *ngIf="certifications.length > 0">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
-            Courses & Certifications
-          </mat-card-title>
-        </mat-card-header>
-
+      <mat-card class="cardWithShadow" *ngIf="applicantDetails.additional_info || applicantDetails.description">
         <mat-card-content>
-          <div class="certification-item" *ngFor="let cert of certifications">
-            <h4>{{cert.organization_name}}</h4>
-            <div class="cert-details">
-              <p><strong>Description:</strong> {{cert.certification_description}}</p>
-              <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank"
-                class="cert-file-link">
-                <i class="fas fa-file-pdf"></i> View Certificate
-              </a>
-            </div>
+          <mat-card-title class="m-b-16">
+            Additional Information
+          </mat-card-title>
+          <div class="row m-b-16" *ngIf="applicantDetails.description">
+            <div class="col-lg-4"> <label>Description:</label></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.description}}</strong></div>
+          </div>
+          <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
+            <div class="col-lg-4"> <label>Additional Info:</label></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.additional_info}}</strong></div>
           </div>
         </mat-card-content>
       </mat-card>
     </div>
-    <div class="col-lg-6">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
-            Documents
-          </mat-card-title>
-        </mat-card-header>
-
+    <div class="col-lg-4">
+      <mat-card *ngIf="certifications.length > 0">
         <mat-card-content>
-          <div class="document-item" *ngIf="applicantDetails.cv_path">
-            <i class="fas fa-file-pdf"></i>
-            <span>CV/Resume</span>
-            <a [href]="applicantDetails.cv_path" target="_blank" class="btn btn-primary btn-sm">
-              <i class="fas fa-download"></i> Download CV
+          <mat-card-title class="m-b-16">
+            Courses & Certifications
+          </mat-card-title>
+          <div class="certification-item " *ngFor="let cert of certifications">
+            <h4 class="m-b-0">{{cert.organization_name}}</h4>
+            <p class=""><strong>Description:</strong> {{cert.certification_description}}</p>
+            <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank" mat-button>
+              View Certificate
             </a>
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col-lg-6" *ngIf="applicantDetails.additional_info || applicantDetails.description">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
-            Additional Information
-          </mat-card-title>
-        </mat-card-header>
 
+
+      <mat-card>
         <mat-card-content>
-          <div class="row m-b-16" *ngIf="applicantDetails.description">
-            <div class="col-lg-12"> <label>Description:</label></div>
-            <div class="col-lg-12"> <strong>{{applicantDetails.description}}</strong></div>
-          </div>
-          <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
-            <div class="col-lg-12"> <label>Additional Info:</label></div>
-            <div class="col-lg-12"> <strong>{{applicantDetails.additional_info}}</strong></div>
+          <mat-card-title class="m-b-16">
+            Documents
+          </mat-card-title>
+          <div class="d-flex align-items-center justify-content-between gap-6 " *ngIf="applicantDetails.cv_path">
+            <div class="">
+              <h4 class="m-b-0">CV/Resume</h4>
+              <h5 class="m-b-0 m-t-0">CV_Deepika_Joshi.pdf
+              </h5>
+            </div>
+
+            <a mat-flat-button [href]="applicantDetails.cv_path" target="_blank">
+              Download CV
+            </a>
           </div>
         </mat-card-content>
       </mat-card>
-    </div>
-    <div class="col-lg-6">
-      <mat-card class="cardWithShadow">
-        <mat-card-header>
-          <mat-card-title class="d-flex align-items-center gap-6">
+
+
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title class="m-b-16">
             Admin Comment
           </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="comments-section">
-            <textarea [(ngModel)]="adminComments" class="comments-input" placeholder="Add your comments here..."
-              rows="3"></textarea>
-            <button mat-flat-button (click)="updateStatus()" color="primary">
-             Save
-            </button>
-          </div>
+          <mat-form-field appearance="outline" class="w-100">
+            <textarea [(ngModel)]="adminComments" rows="5" matInput placeholder="Add your comments here..."></textarea>
+          </mat-form-field>
+          <button mat-flat-button class="w-100" (click)="updateStatus()" color="primary">
+            Save
+          </button>
         </mat-card-content>
       </mat-card>
     </div>

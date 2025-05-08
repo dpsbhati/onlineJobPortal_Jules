@@ -1,30 +1,30 @@
 <div class="email-activation-container mat-elevation-z8">
     <h2>Email Activation</h2>
-  
+
     <!-- Error Message -->
-    <mat-card *ngIf="errorMessage" class="mat-card-error">
+    <mat-card *ngIf="errorMessage" class="mat-card-error m-t-24">
       <mat-card-content>
         <mat-icon color="warn">error_outline</mat-icon>
         <p>Email verification failed. Please try again.</p>
       </mat-card-content>
     </mat-card>
-  
+
     <!-- Resend Section -->
-    <mat-card *ngIf="errorMessage" class="mat-card-resend">
+    <mat-card *ngIf="errorMessage" class="mat-card-resend m-t-24">
       <mat-card-content>
         <p>Would you like us to send a new verification link?</p>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email Address</mat-label>
-          <input 
-            matInput 
-            [(ngModel)]="email" 
+          <input
+            matInput
+            [(ngModel)]="email"
             placeholder="Enter your email address"
             [disabled]="loading" />
           <mat-error *ngIf="!email">Email is required.</mat-error>
         </mat-form-field>
         <div class="button-container">
-          <button 
-            mat-flat-button 
+          <button
+            mat-flat-button
             color="primary"
             (click)="resendVerificationEmail()"
             [disabled]="loading || !email"
@@ -34,15 +34,15 @@
         </div>
       </mat-card-content>
     </mat-card>
-  
+
     <!-- Success Message -->
-    <mat-card *ngIf="successMessage" class="mat-card-success">
+    <mat-card *ngIf="successMessage" class="mat-card-success m-t-24">
       <mat-card-content>
         <mat-icon color="primary">check_circle</mat-icon>
         <p>{{ successMessage }}</p>
       </mat-card-content>
     </mat-card>
-  
+
     <!-- Loading State -->
     <div *ngIf="!successMessage && !errorMessage" class="loading">
       <mat-progress-spinner
@@ -53,4 +53,3 @@
       <p>Processing your email activation...</p>
     </div>
   </div>
-  

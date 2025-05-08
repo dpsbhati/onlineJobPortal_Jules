@@ -77,7 +77,7 @@ export class JobPostDetailComponent {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
-          if (this.jobDetails.skills_required) {
+          if (response.data.skills_required) {
             this.formattedSkills = this.formatSkills(
               this.jobDetails.skills_required
             );

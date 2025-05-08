@@ -48,6 +48,8 @@
                 <mat-option value="Shortlisted">Shortlisted</mat-option>
                 <mat-option value="Pending">Pending</mat-option>
                 <mat-option value="Rejected">Rejected</mat-option>
+                <mat-option value="Hired">Hired</mat-option>
+
               </mat-select>
             </mat-form-field>
           </div>
@@ -147,8 +149,8 @@
             <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
         'bg-light-secondary text-secondary': element.status.toLowerCase() === 'hired',
         'bg-light-warning text-warning': element.status.toLowerCase() === 'pending',
-        'bg-light-danger text-danger': element.status.toLowerCase() === 'rejected',
-        'bg-purple text-white': element.status.toLowerCase() === 'Shortlisted'
+        'bg-light-error  text-error ': element.status.toLowerCase() === 'rejected',
+        'bg-light-success  text-success': element.status.toLowerCase() === 'shortlisted'
       }">
               {{ element.status||'-' }}
             </span>
