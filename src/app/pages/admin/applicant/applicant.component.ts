@@ -254,7 +254,7 @@ export class ApplicantComponent implements OnInit {
 
   onPagination(): void {
     this.loader.show();
-    // const dynamicFilters = this.helperService.getAllFilters(this.filters);
+    const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
     const aplicantFilter = {
       key: 'job_opening',
@@ -263,7 +263,7 @@ export class ApplicantComponent implements OnInit {
     };
 
      // 3. Combine filters
-     this.pageConfig.whereClause = [ aplicantFilter];
+     this.pageConfig.whereClause = [ ...dynamicFilters,aplicantFilter];
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
