@@ -275,6 +275,12 @@ export class CreateJobPostingDto {
   posted_at?: String;
 
   @ApiProperty({
+    description: 'The date when the job is scheduled to be posted.',
+    example: '2025-01-15',
+  })
+  posted_date: Date;
+
+  @ApiProperty({
     description: 'The social media platforms where the job will be posted.',
     example: ['facebook', 'linkedin'],
     isArray: true,

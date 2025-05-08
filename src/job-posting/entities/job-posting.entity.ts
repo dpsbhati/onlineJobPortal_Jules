@@ -115,6 +115,14 @@ export class JobPosting {
 
   @Column()
   posted_at: String;
+  // For full datetime (date + time)
+// @Column({ type: 'timestamp', nullable: true })
+// posted_at: Date;
+
+// For date only (without time)
+@Column({ type: 'date', nullable: true })
+posted_date: Date;
+
 
   @Column({
     type:'enum',

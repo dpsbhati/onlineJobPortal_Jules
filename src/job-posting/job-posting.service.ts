@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
+import { Equal, LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -60,17 +60,35 @@ export class JobPostingService {
   //   }
   // }
 
-  @Cron(CronExpression.EVERY_MINUTE) // Runs every minute
+  @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   async autoPostJobs() {
     try {
       const now = new Date();
+       // Get "today" as per local time (e.g., IST)
+   // Create IST midnight today
+// const now = new Date();
+const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
+const istNow = new Date(now.getTime() + IST_OFFSET);
+
+// Get YYYY-MM-DD from IST
+const istYear = istNow.getUTCFullYear();
+const istMonth = istNow.getUTCMonth();
+const istDate = istNow.getUTCDate();
+
+// Create a new UTC date from IST's Y/M/D at midnight
+const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
+
+      console.log('todayIST----->>', todayIST," Now----->>", now);
+      
       const jobsToPost = await this.jobPostingRepository.find({
         where: {
           jobpost_status: 'draft',
           is_deleted: false,
+          posted_date: Equal(todayIST), // Match only today's date
           posted_at: LessThanOrEqual(now),
         },
       });
+console.log('jobsToPost----->>', jobsToPost);
 
       if (jobsToPost.length > 0) {
         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
@@ -207,13 +225,14 @@ export class JobPostingService {
   }
 
   async paginateJobPostings(req, pagination: IPagination) {
+    try{
     let { curPage, perPage, direction, whereClause, sortBy } = pagination;
     let skip = (curPage - 1) * perPage;
-
+  
     // Set default sorting if not provided
-    sortBy = 'created_at';
+    sortBy = sortBy || 'created_at'; // Default sorting by created_at
     direction = direction || 'DESC'; // Default to DESC
-
+  
     let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
     const fieldsToSearch = [
       'job_type',
@@ -227,6 +246,8 @@ export class JobPostingService {
       'rank',
       'required_experience',
       'salary',
+      'start_salary',
+      'end_salary',
       'address',
       'work_type',
       'application_instruction',
@@ -235,7 +256,7 @@ export class JobPostingService {
       'jobpost_status',
       'job_opening',
     ];
-
+  
     // Apply dynamic filters for each field in fieldsToSearch
     fieldsToSearch.forEach((field) => {
       const fieldValues = whereClause
@@ -248,17 +269,13 @@ export class JobPostingService {
         lwhereClause += ` AND (${conditions})`;
       }
     });
-
+  
     // Handle start and end date range filtering dynamically
-    const startDateObj = whereClause.find(
-      (p: any) => p.key === 'startDate' && p.value,
-    );
-    const endDateObj = whereClause.find(
-      (p: any) => p.key === 'endDate' && p.value,
-    );
+    const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
+    const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
     const startDate = startDateObj?.value;
     const endDate = endDateObj?.value;
-
+  
     if (startDate && endDate) {
       lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
     } else if (startDate) {
@@ -266,16 +283,47 @@ export class JobPostingService {
     } else if (endDate) {
       lwhereClause += ` AND DATE(f.date_published) <= '${endDate}'`;
     }
-
-    // Handle dynamic search across all fields
+  
+    // Handle dynamic salary filtering based on salary range (start_salary, end_salary)
+    const startSalaryObj = whereClause.find((p: any) => p.key === 'start_salary' && p.value);
+    const endSalaryObj = whereClause.find((p: any) => p.key === 'end_salary' && p.value);
+    const startSalary = startSalaryObj?.value;
+    const endSalary = endSalaryObj?.value;
+  
+    if (startSalary && endSalary) {
+      lwhereClause += ` AND f.salary BETWEEN ${startSalary} AND ${endSalary}`;
+    } else if (startSalary) {
+      lwhereClause += ` AND f.salary >= ${startSalary}`;
+    } else if (endSalary) {
+      lwhereClause += ` AND f.salary <= ${endSalary}`;
+    }
+  
+    // Handle dynamic search across all fields, including salary
     const allValue = whereClause.find((p) => p.key === 'all')?.value;
+    console.log('allValue: ', allValue);
+  
     if (allValue) {
       const conditions = fieldsToSearch
-        .map((field) => `f.${field} LIKE '%${allValue}%'`)
+        .map((field) => {
+          console.log("Checking field: ", field);
+  
+          // Special handling for numeric fields (salary, start_salary, end_salary)
+          if (field === 'salary' || field === 'start_salary' || field === 'end_salary') {
+            // Check if allValue is numeric
+            if (!isNaN(Number(allValue))) {
+              return `f.${field} = ${allValue}`; // Exact match for numbers
+            } else {
+              return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
+            }
+          } else {
+            // Default for string fields
+            return `f.${field} LIKE '%${allValue}%'`;
+          }
+        })
         .join(' OR ');
       lwhereClause += ` AND (${conditions})`;
     }
-
+  
     const queryBuilder = await this.jobPostingRepository
       .createQueryBuilder('f')
       .leftJoin(
@@ -288,20 +336,14 @@ export class JobPostingService {
         'app_counts',
         'app_counts.job_id = f.id',
       )
-      .addSelect(
-        'COALESCE(app_counts.application_number, 0)',
-        'application_number',
-      ) // select applicant count
+      .addSelect('COALESCE(app_counts.application_number, 0)', 'application_number')
       .where(lwhereClause)
       .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
       .skip(skip)
       .take(perPage);
-
-    const [entities, raw] = await Promise.all([
-      queryBuilder.getMany(), // actual job posting records (entity)
-      queryBuilder.getRawMany(), // raw rows with applicant_number
-    ]);
-
+  
+    const [entities, raw] = await Promise.all([queryBuilder.getMany(), queryBuilder.getRawMany()]);
+  
     // Map applicant_number back into the entity list
     const finalData = entities.map((job, index) => {
       const rawItem = raw.find((r) => r.f_id === job.id);
@@ -310,16 +352,21 @@ export class JobPostingService {
         application_number: parseInt(rawItem?.application_number || '0'),
       };
     });
-
+  
     // Count query separately
     const totalCount = await this.jobPostingRepository
       .createQueryBuilder('f')
       .where(lwhereClause)
       .getCount();
-
+  
     // Return paginated data
     return paginateResponse(finalData, totalCount);
+  }catch (error) {
+    console.error('Error fetching job postings:', error);
+    return WriteResponse(500, {}, 'something went wrong');
   }
+  }
+  
 
   async findAll() {
     try {
