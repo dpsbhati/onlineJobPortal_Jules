@@ -18,6 +18,7 @@ import { ToastrService } from 'ngx-toastr'
 import { UserRole } from 'src/app/core/enums/roles.enum'
 import { TablerIconsModule } from 'angular-tabler-icons'
 import { FormsModule } from '@angular/forms'
+import { MaterialModule } from 'src/app/material.module'
 interface notificationsList {
   id: number
   color: string
@@ -36,7 +37,19 @@ interface notificationsList {
     MatIconModule,
     MatButtonModule,
     MatTableModule,
-    MatPaginatorModule,TablerIconsModule,FormsModule
+    MatInputModule,
+    MatPaginatorModule,TablerIconsModule,FormsModule,
+
+    MaterialModule,
+    TablerIconsModule,
+    FormsModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+
+
+
+
   ],
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss']
