@@ -82,7 +82,7 @@ export class ApplicantComponent implements OnInit {
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
-    sortBy: "created_on",
+    sortBy: "created_at",
     direction: "desc",
     whereClause: [],
   }
