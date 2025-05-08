@@ -168,3 +168,6 @@ flex-wrap: wrap;
 }
 
 
+.custom-btn .mat-mdc-fab-base .mdc-button__label, .mat-mdc-fab-base .mat-icon{
+  height: 17px;
+}

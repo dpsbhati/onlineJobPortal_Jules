@@ -63,19 +63,21 @@
             </div>
             <div class="m-b-16" *ngIf="uploadedFileName">
               <h5>Upload CV:</h5>
-              {{ uploadedFileName }}
-              <!-- <button
-              
-                type="button"
-                class="delete-button"
-              >
-                X
-              </button> -->
-
-              <button (click)="deleteFile('cv_path', $event)" mat-mini-fab class="bg-error text-white custom-btn">
-                <i-tabler name="x" class="close-icon" style="width: 14px;"></i-tabler> <!-- Close icon -->
-              </button>
-              
+              <div class="d-flex align-items-center gap-6">
+                {{ uploadedFileName }}
+                <button
+                  (click)="deleteFile('cv_path', $event)"
+                  mat-mini-fab
+                  class="bg-error text-white custom-btn"
+                >
+                  <i-tabler
+                    name="x"
+                    class="close-icon"
+                    style="width: 14px; height: 14px"
+                  ></i-tabler>
+                  <!-- Close icon -->
+                </button>
+              </div>
             </div>
 
             <!-- <label class="m-b-8">CV Upload</label> -->
@@ -93,14 +95,23 @@
               <h5>Selected Files:</h5>
               <ul>
                 <li *ngFor="let file of certificationFiles; let i = index">
-                  {{ file.name }}
-                  <button
-                    (click)="deleteFile('courses_and_certification', $event, i)"
-                    type="button"
-                    class="delete-button"
-                  >
-                    X
-                  </button>
+                  <div class="d-flex gap-6 m-b-6">
+                    {{ file.name }}
+                    <button
+                      (click)="
+                        deleteFile('courses_and_certification', $event, i)
+                      "
+                      mat-mini-fab
+                      class="bg-error text-white custom-btn"
+                    >
+                      <i-tabler
+                        name="x"
+                        class="close-icon"
+                        style="width: 14px; height: 14px"
+                      ></i-tabler>
+                      <!-- Close icon -->
+                    </button>
+                  </div>
                 </li>
               </ul>
             </div>
