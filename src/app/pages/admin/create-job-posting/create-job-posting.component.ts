@@ -26,6 +26,7 @@ import countries from '../../../core/helpers/country.json'
 import { MatCardModule } from '@angular/material/card'
 import { TablerIconsModule } from 'angular-tabler-icons'
 import { LoaderService } from 'src/app/core/services/loader.service'
+import { ToastrService } from 'ngx-toastr'
 
 @Component({
   selector: 'app-create-job-posting',
@@ -42,7 +43,7 @@ import { LoaderService } from 'src/app/core/services/loader.service'
     MatIconModule,
     MatChipsModule,
     MatCardModule,
-    FormsModule,TablerIconsModule
+    FormsModule, TablerIconsModule
   ],
   templateUrl: './create-job-posting.component.html',
   styleUrls: ['./create-job-posting.component.scss']
@@ -68,13 +69,14 @@ export class CreateJobPostingComponent {
   ]
   imagePreview: string | ArrayBuffer | null = null
   uniqueRanks: string[]
-  constructor (
+  constructor(
     private fb: FormBuilder,
     private adminService: AdminService,
     private route: ActivatedRoute,
     private router: Router,
     private imageCompressionService: ImageCompressionService,
-     private loader: LoaderService,
+    private loader: LoaderService,
+    private toaster: ToastrService
   ) // private notify :NotifyService,
 
   {
@@ -164,7 +166,7 @@ export class CreateJobPostingComponent {
     )
   }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     this.allrankslist();
     const jobId = this.route.snapshot.paramMap.get('id') as string
     if (jobId) {
@@ -202,7 +204,7 @@ export class CreateJobPostingComponent {
       ])
     //  this.listenToJobPostingStatus();
   }
-  addSkill (): void {
+  addSkill(): void {
     const skill = this.newSkill.trim()
     if (!skill) {
       // this.notify.showWarning('Skill cannot be empty.');
@@ -223,12 +225,12 @@ export class CreateJobPostingComponent {
     }
   }
 
-  removeSkill (index: number): void {
+  removeSkill(index: number): void {
     this.skillsArray.splice(index, 1)
     this.updateSkillsInForm()
   }
 
-  updateSkillsInForm (): void {
+  updateSkillsInForm(): void {
     this.jobForm.get('skills_required')?.setValue(this.skillsArray)
     this.jobForm.get('skills_required')?.markAsTouched()
   }
@@ -245,7 +247,7 @@ export class CreateJobPostingComponent {
   //     postedAtControl?.updateValueAndValidity();
   //   });
   // }
-  validateMinimumTime (): ValidatorFn {
+  validateMinimumTime(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
         return null
@@ -258,7 +260,7 @@ export class CreateJobPostingComponent {
       return selectedDate < oneHourFromNow ? { minimumTime: true } : null
     }
   }
-  skillsValidator (minLength: number, maxLength: number): ValidatorFn {
+  skillsValidator(minLength: number, maxLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const skills = control.value
 
@@ -288,7 +290,7 @@ export class CreateJobPostingComponent {
       return null
     }
   }
-  SkillArrayValidator (min: number, max: number) {
+  SkillArrayValidator(min: number, max: number) {
     return (control: AbstractControl): ValidationErrors | null => {
       const skills = control.value
       if (!Array.isArray(skills)) {
@@ -303,7 +305,7 @@ export class CreateJobPostingComponent {
       return null
     }
   }
-  minLengthWithoutSpaces (minLength: number): ValidatorFn {
+  minLengthWithoutSpaces(minLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
         return null
@@ -322,7 +324,7 @@ export class CreateJobPostingComponent {
       return null
     }
   }
-  postedAtValidator (): ValidatorFn {
+  postedAtValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const selectedDate = new Date(control.value)
       const now = new Date()
@@ -334,7 +336,7 @@ export class CreateJobPostingComponent {
     }
   }
 
-  formatSalary (controlName: string): void {
+  formatSalary(controlName: string): void {
     const control = this.jobForm.get(controlName)
     if (control) {
       let value = control.value
@@ -348,7 +350,7 @@ export class CreateJobPostingComponent {
     }
   }
 
-  sanitizeFormValues (): void {
+  sanitizeFormValues(): void {
     Object.keys(this.jobForm.controls).forEach(key => {
       const control = this.jobForm.get(key)
       if (control && typeof control.value === 'string') {
@@ -356,7 +358,7 @@ export class CreateJobPostingComponent {
       }
     })
   }
-  deadlineValidator (date_published: Date): ValidatorFn {
+  deadlineValidator(date_published: Date): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const selectedDeadline = new Date(control.value)
       const today = new Date()
@@ -367,7 +369,7 @@ export class CreateJobPostingComponent {
       return null
     }
   }
-  salaryComparisonValidator (control: AbstractControl): ValidationErrors | null {
+  salaryComparisonValidator(control: AbstractControl): ValidationErrors | null {
     const startSalaryControl = control.get('start_salary')
     const endSalaryControl = control.get('end_salary')
 
@@ -397,7 +399,7 @@ export class CreateJobPostingComponent {
     return null
   }
 
-  getJobPosting (jobId: string): void {
+  getJobPosting(jobId: string): void {
     this.loader.show();
     this.adminService.getJobById(jobId).subscribe((response: any) => {
       if (response.statusCode === 200 && response.data) {
@@ -472,18 +474,28 @@ export class CreateJobPostingComponent {
         })
         if (data.featured_image) {
           this.imagePreview = data.featured_image;
-        }else {
+        } else {
           this.loader.hide();
-      }
+        }
         // console.error('Failed to retrieve job posting data', response.message)
       }
     })
   }
 
-  onFileSelected (event: Event, controlName: string): void {
+  onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0]
 
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        // Show warning or error if it's not an image file
+        // this.notify.showWarning("Please select an image file.");
+        this.toaster.warning('Please select an image file.');
+
+        // Optionally, clear the selected file
+        (event.target as HTMLInputElement).value = ''; // Reset input file
+        return;
+      }
+
       // Create preview
       const reader = new FileReader()
       reader.onload = () => {
@@ -534,7 +546,7 @@ export class CreateJobPostingComponent {
     }
   }
 
-  clearImage () {
+  clearImage() {
     this.jobForm.patchValue({
       featured_image: null
     })
@@ -640,7 +652,7 @@ export class CreateJobPostingComponent {
   //     // this.notify.showWarning("Failed to update the form")
   //   }
   // }
-  onSubmit (): void {
+  onSubmit(): void {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
@@ -689,19 +701,19 @@ export class CreateJobPostingComponent {
       }
     });
   }
-  
-  navigate () {
+
+  navigate() {
     this.router.navigate(['/job-list'])
   }
 
-  getFileName (path: string | null): string {
+  getFileName(path: string | null): string {
     if (!path) return ''
     // Extract filename from path
     const parts = path.split(/[\/\\]/)
     return parts[parts.length - 1]
   }
 
-  onDateTimeChange (event: any): void {
+  onDateTimeChange(event: any): void {
     const selectedDate = event.value
     if (selectedDate) {
       this.jobForm.patchValue({

@@ -41,9 +41,10 @@ export class ApplyJobComponent {
       user_id: new FormControl(this.user),
       work_experiences: new FormControl('', [
         Validators.required,
-        Validators.minLength(5),
-        Validators.maxLength(200),
-        this.minLengthWithContent(5),
+        // Validators.pattern('^[0-9]+$'), 
+        Validators.minLength(1),
+        Validators.maxLength(2),
+        this.minLengthWithContent(1),
       ]),
       additional_info: new FormControl('', [
         Validators.required,
@@ -78,15 +79,21 @@ export class ApplyJobComponent {
     });
 
   }
-
   minLengthWithContent(minLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value || control.value.trim().length < minLength) {
+      // Ensure the control value is not empty, has only numbers, and is at least the specified length
+      const value = control.value ? control.value.trim() : '';
+  
+      // Check if the value is numeric
+      const isNumeric = /^[0-9]+$/.test(value);
+  
+      if (!value || value.length < minLength || !isNumeric) {
         return { minLengthWithContent: true };
       }
       return null;
     };
   }
+  
 
   goBack() {
     this.router.navigate(['/applicant'])

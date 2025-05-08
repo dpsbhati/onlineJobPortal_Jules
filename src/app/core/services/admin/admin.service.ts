@@ -37,7 +37,7 @@ export class AdminService {
   }
 
   getallranks(): Observable<any> {
-    return this.genericService.Get(`/ranks/getAll`);
+    return this.genericService.Get(`ranks/getAll`);
   }
 
   getJobById(jobId: string): Observable<any> {
