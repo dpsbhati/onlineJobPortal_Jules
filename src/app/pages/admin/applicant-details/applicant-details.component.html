@@ -15,7 +15,7 @@
         <div class="d-flex align-items-center justify-content-between gap-6">
           <label>Current Status:</label>
           <span class="status-badge" [ngClass]="applicantDetails.status?.toLowerCase()">
-            {{applicantDetails.status}}
+            {{applicantDetails.status||'-'}}
           </span>
         </div>
         <div class="status-change">
@@ -24,7 +24,7 @@
             <mat-select [(ngModel)]="selectedStatus">
               <mat-option value="">Select Status</mat-option>
               <mat-option *ngFor="let status of statusOptions" [value]="status">
-                {{ status }}
+                {{ status ||'-' }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -41,24 +41,24 @@
           </mat-card-title>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Name:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.first_name}}
-                {{applicantDetails.user.userProfile?.last_name}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.first_name ||'-'}}
+                {{applicantDetails.user.userProfile?.last_name ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Email:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.email}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.email ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Gender:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.gender}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.gender ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Date of Birth:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.dob | date}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.dob | date }}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Mobile:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.mobile}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.mobile ||'-'}}</strong></div>
           </div>
 
         </mat-card-content>
@@ -70,23 +70,27 @@
           </mat-card-title>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Current Company:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Work Experience:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.work_experiences}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.work_experiences ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Expected Salary:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.work_experiences}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.expected_salary ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Key Skills:</label></div>
-            <div class="col-lg-8"> <span class="skill-tag" *ngFor="let skill of keySkills">{{skill}}</span></div>
+            <div class="col-lg-8"><button mat-stroked-button color="primary" class="m-l-4"  *ngFor="let skill of keySkills">
+              {{ skill }}
+            </button>
+
+             </div>
           </div>
           <div class="row m-b-16">
             <div class="col-lg-4"> <label>Mobile:</label></div>
-            <div class="col-lg-8"><strong>--</strong>
+            <div class="col-lg-8"><strong>{{applicantDetails.user.userProfile?.mobile||'-' }}</strong>
                 </div>
           </div>
 
@@ -101,11 +105,11 @@
           </mat-card-title>
           <div class="row m-b-16" *ngIf="applicantDetails.description">
             <div class="col-lg-4"> <label>Description</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.user.userProfile?.current_company ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
             <div class="col-lg-4"> <label>Additional Info:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.additional_info}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.additional_info ||'-'}}</strong></div>
           </div>
         </mat-card-content>
       </mat-card>
@@ -116,11 +120,11 @@
           </mat-card-title>
           <div class="row m-b-16" *ngIf="applicantDetails.description">
             <div class="col-lg-4"> <label>Description:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.description}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.description ||'-'}}</strong></div>
           </div>
           <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
             <div class="col-lg-4"> <label>Additional Info:</label></div>
-            <div class="col-lg-8"> <strong>{{applicantDetails.additional_info}}</strong></div>
+            <div class="col-lg-8"> <strong>{{applicantDetails.additional_info ||'-'}}</strong></div>
           </div>
         </mat-card-content>
       </mat-card>
@@ -133,7 +137,10 @@
           </mat-card-title>
           <div class="certification-item " *ngFor="let cert of certifications">
             <h4 class="m-b-0">{{cert.organization_name}}</h4>
-            <p class=""><strong>Description:</strong> {{cert.certification_description}}</p>
+            <p *ngIf="cert.certification_description || cert.certification_description === null">
+              <strong>Description:</strong>
+              {{ cert.certification_description || 'Not Available' }}
+            </p>
             <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank" mat-button>
               View Certificate
             </a>
