@@ -4,6 +4,16 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
 import { MailService } from './mail.service';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+let templateDirectory;
+if (process.env.NODE_ENV === 'production') {
+  templateDirectory = join(__dirname, '..', '..', 'api', 'templates');
+}
+if (process.env.NODE_ENV === 'development') {
+  templateDirectory = join(__dirname, '..', '..', 'templates');
+}
 
 @Module({
   imports: [
@@ -20,8 +30,7 @@ import { MailService } from './mail.service';
         from: '"No Reply" <noreply@example.com>',
       },
       template: {
-        // dir: join(__dirname, '..', '..', 'api', 'templates'), // Path to templates folder
-        dir: join(__dirname, '..', '..', 'templates'), // Path to templates folder
+        dir: templateDirectory,
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,

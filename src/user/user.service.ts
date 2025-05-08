@@ -136,12 +136,12 @@ export class UserService {
         // Only send email if creating a new user
         const verificationToken = this.generateVerificationToken(savedUser.id);
         const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
-
+        const templateName = 'verify';
         await this.mailerService.sendEmail(
           savedUser.email,
           'Verify Your Email Address',
           { name: userDto.firstName, verificationUrl } as Record<string, any>,
-          'verify', // Assuming this is the template name
+          templateName, // Assuming this is the template name
         );
       }
 
@@ -154,7 +154,7 @@ export class UserService {
         },
         user
           ? 'User updated successfully.'
-          : 'User created successfully. Please verify your email.',
+          : 'User created successfully. Please verify your email to complete registration.',
       );
     } catch (error) {
       return WriteResponse(
@@ -173,12 +173,12 @@ export class UserService {
       where: { email, is_deleted: false },
     });
     if (!User) {
-      return WriteResponse(403, {}, 'Invalid Credentials.');
+      return WriteResponse(401, {}, 'Invalid Credentials.');
     }
     const passwordValid = await bcrypt.compare(password, User.password);
     if (!passwordValid) {
       console.log(`Invalid password for user: ${email}`);
-      return WriteResponse(403, {}, 'Invalid password.');
+      return WriteResponse(401, {}, 'Invalid password.');
     }
     const payload = { id: User.id };
     const token = await this.jwtService.signAsync(payload);
@@ -190,7 +190,7 @@ export class UserService {
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
-      return WriteResponse(403, {}, 'User email is not verified.');
+      return WriteResponse(401, {}, 'User email is not verified.');
     }
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
@@ -316,6 +316,7 @@ export class UserService {
       }
 
       const verificationToken = this.generateVerificationToken(user.id);
+
       const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${verificationToken}`;
 
       // const message = `
@@ -329,7 +330,7 @@ export class UserService {
 
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
-        'Welcome to Our Platform',
+        'Reset Password',
         { name: user.email, resetLink: resetLink } as Record<string, any>,
         'forgetpassword',
       );
@@ -374,6 +375,10 @@ export class UserService {
         message: 'Password reset successfully.',
       });
     } catch (error) {
+      console.log(error);
+      if (error.name == 'TokenExpiredError') {
+        return WriteResponse(410, false, 'The Link has been expired.');
+      }
       return WriteResponse(
         500,
         false,
@@ -404,6 +409,9 @@ export class UserService {
 
       return WriteResponse(200, {}, 'Email verified successfully.');
     } catch (error) {
+      if (error.name == 'TokenExpiredError') {
+        return WriteResponse(410, false, 'The Link has been expired.');
+      }
       return WriteResponse(
         500,
         {},
