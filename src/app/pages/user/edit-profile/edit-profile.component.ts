@@ -124,7 +124,7 @@ export class EditProfileComponent implements OnInit {
       ] : null),
       current_company: new FormControl('', this.isApplicant() ? [
         Validators.required,
-        // Validators.pattern('^[a-zA-Z0-9 ]+$'),
+        Validators.pattern('^[a-zA-Z0-9 ]+$'),
          Validators.maxLength(100)
       ] : null),
       expected_salary: new FormControl('', this.isApplicant() ? [
@@ -145,7 +145,7 @@ export class EditProfileComponent implements OnInit {
       }
     });
 
-    this.addTrimValidators();
+    // this.addTrimValidators();
   }
 
   skillsValidator(minLength: number, maxLength: number): ValidatorFn {
@@ -461,17 +461,15 @@ export class EditProfileComponent implements OnInit {
   }
   onInputChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    let value = inputElement.value;
 
-    // Regular expression to match only letters and spaces
-    const regex = /^[a-zA-Z\s]*$/;
+    // Allow only letters (a-zA-Z), numbers (0-9), and spaces
+    const filteredValue = inputElement.value.replace(/[^a-zA-Z0-9 ]/g, '');
 
-    // If the value contains any invalid characters, we remove them
-    if (!regex.test(value)) {
-      value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
-      inputElement.value = value; // Set the modified value back to the input
-    }
+    // Automatically update the form control value to the filtered value
+    this.userProfileForm.get('current_company')?.setValue(filteredValue);
   }
+
+
 
 
 

@@ -140,7 +140,7 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Current Company</mat-label>
-            <input matInput formControlName="current_company" placeholder="Enter current company">
+            <input matInput formControlName="current_company" placeholder="Enter current company" >
             <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['required']">
               Current company is required
             </mat-error>
