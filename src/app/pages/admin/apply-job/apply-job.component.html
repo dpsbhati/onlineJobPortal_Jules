@@ -18,6 +18,8 @@
                 placeholder="Enter Experience"
                 formControlName="work_experiences"
               />
+              <mat-error *ngIf="userDetailsForm.get('work_experiences')?.hasError('required')">Experience is required.</mat-error>
+              <mat-error *ngIf="userDetailsForm.get('work_experiences')?.hasError('maxlength')">Please enter valid experience.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-100 m-b-10">
@@ -27,6 +29,8 @@
                 placeholder="Enter Comments"
                 formControlName="comments"
               />
+              <mat-error *ngIf="userDetailsForm.get('comments')?.hasError('required')">Comment is required.</mat-error>
+              <mat-error *ngIf="userDetailsForm.get('comments')?.hasError('maxlength')">Comment cannot exceed 500 characters.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-100 m-b-10">
@@ -36,6 +40,8 @@
                 placeholder="Enter Description"
                 formControlName="description"
               />
+              <mat-error *ngIf="userDetailsForm.get('description')?.hasError('required')">Description is required.</mat-error>
+              <mat-error *ngIf="userDetailsForm.get('description')?.hasError('maxlength')">Description cannot exceed 500 characters.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-100 m-b-10">
@@ -45,6 +51,8 @@
                 placeholder="Additional Information"
                 formControlName="additional_info"
               />
+              <mat-error *ngIf="userDetailsForm.get('additional_info')?.hasError('required')">Additional Information is required.</mat-error>
+              <mat-error *ngIf="userDetailsForm.get('additional_info')?.hasError('maxlength')">Additional Information cannot exceed 500 characters.</mat-error>
             </mat-form-field>
 
             <!-- <label class="m-b-8">CV Upload</label> -->
@@ -65,7 +73,7 @@
               <h5>Upload CV:</h5>
               {{ uploadedFileName }}
               <!-- <button
-              
+
                 type="button"
                 class="delete-button"
               >
@@ -75,7 +83,7 @@
               <button (click)="deleteFile('cv_path', $event)" mat-mini-fab class="bg-error text-white custom-btn">
                 <i-tabler name="x" class="close-icon" style="width: 14px;"></i-tabler> <!-- Close icon -->
               </button>
-              
+
             </div>
 
             <!-- <label class="m-b-8">CV Upload</label> -->

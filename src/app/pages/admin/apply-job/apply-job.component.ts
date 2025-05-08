@@ -41,28 +41,28 @@ export class ApplyJobComponent {
       user_id: new FormControl(this.user),
       work_experiences: new FormControl('', [
         Validators.required,
-        // Validators.pattern('^[0-9]+$'), 
+        // Validators.pattern('^[0-9]+$'),
         Validators.minLength(1),
         Validators.maxLength(2),
-        this.minLengthWithContent(1),
+        // this.minLengthWithContent(1),
       ]),
       additional_info: new FormControl('', [
         Validators.required,
-        Validators.minLength(5),
+        // Validators.minLength(5),
         Validators.maxLength(500),
-        this.minLengthWithContent(5),
+        // this.minLengthWithContent(5),
       ]),
       description: new FormControl('', [
         Validators.required,
-        Validators.minLength(15),
+        // Validators.minLength(15),
         Validators.maxLength(1000),
-        this.minLengthWithContent(5),
+        // this.minLengthWithContent(5),
       ]),
       comments: new FormControl('', [
         Validators.required,
-        Validators.minLength(10),
+        // Validators.minLength(10),
         Validators.maxLength(500),
-        this.minLengthWithContent(5),
+        // this.minLengthWithContent(5),
       ]),
       cv_path: new FormControl('', Validators.required),
       courses_and_certification: new FormControl([], Validators.required),
@@ -83,17 +83,17 @@ export class ApplyJobComponent {
     return (control: AbstractControl): ValidationErrors | null => {
       // Ensure the control value is not empty, has only numbers, and is at least the specified length
       const value = control.value ? control.value.trim() : '';
-  
+
       // Check if the value is numeric
       const isNumeric = /^[0-9]+$/.test(value);
-  
+
       if (!value || value.length < minLength || !isNumeric) {
         return { minLengthWithContent: true };
       }
       return null;
     };
   }
-  
+
 
   goBack() {
     this.router.navigate(['/applicant'])
