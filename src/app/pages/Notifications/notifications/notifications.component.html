@@ -5,9 +5,18 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Search</mat-label>
 
-                    <input matInput   placeholder="Search..." />
+                    <input
+                    matInput
+                    placeholder="Search..."
+                    [(ngModel)]="searchText"
+                    (keyup.enter)="onSearch()"
+                    (input)="onSearch()"
+                  />
                     <mat-icon matSuffix>search</mat-icon>
                   </mat-form-field>
+            </div>
+            <div class="col-xl-1 col-lg-1 col-md-12">
+              <h4 class="mb-20"> Filters </h4>
             </div>
         </div>
     </mat-card-content>
