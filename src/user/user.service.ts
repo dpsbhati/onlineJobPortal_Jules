@@ -316,6 +316,7 @@ export class UserService {
       }
 
       const verificationToken = this.generateVerificationToken(user.id);
+
       const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${verificationToken}`;
 
       // const message = `
@@ -329,7 +330,7 @@ export class UserService {
 
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
-        'Welcome to Our Platform',
+        'Reset Password',
         { name: user.email, resetLink: resetLink } as Record<string, any>,
         'forgetpassword',
       );
@@ -374,6 +375,10 @@ export class UserService {
         message: 'Password reset successfully.',
       });
     } catch (error) {
+      console.log(error);
+      if (error.name == 'TokenExpiredError') {
+        return WriteResponse(410, false, 'The Link has been expired.');
+      }
       return WriteResponse(
         500,
         false,
@@ -404,6 +409,9 @@ export class UserService {
 
       return WriteResponse(200, {}, 'Email verified successfully.');
     } catch (error) {
+      if (error.name == 'TokenExpiredError') {
+        return WriteResponse(410, false, 'The Link has been expired.');
+      }
       return WriteResponse(
         500,
         {},
