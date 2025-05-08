@@ -83,7 +83,7 @@ export class ApplicationsComponent {
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
-    sortBy: 'created_on',
+    sortBy: 'created_at',
     direction: 'desc',
     whereClause: [],
     job_id: '', // <-- Add job_id here
@@ -91,7 +91,7 @@ export class ApplicationsComponent {
   total: number = 0;
   data: any;
   viewapplicationlist: any;
-  sortBy: string = 'created_on'
+  sortBy: string = 'created_at'
   direction: string = 'desc'
   @ViewChild(MatPaginator) paginator!: MatPaginator
   @ViewChild(MatSort) sort!: MatSort

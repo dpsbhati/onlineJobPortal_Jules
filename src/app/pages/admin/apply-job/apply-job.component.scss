@@ -37,9 +37,11 @@
   height: 24px; /* Make the button smaller */
   padding: 0;   /* Remove padding to keep it small */
   font-size: 18px;  /* Adjust the font size for the icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Adjust the icon size */
-.close-icon {
-  font-size: 14px; /* Reduce the size of the close icon */
-}
+
+
