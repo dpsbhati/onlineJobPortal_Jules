@@ -54,6 +54,9 @@ export class AdminService {
   jobPostingPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`job-posting/pagination`, data);
   }
+  notificationPagination(data: any): Observable<any> {
+    return this.genericService.Post<any>(`notifications/pagination`, data);
+  }
   jobviewapplicationPagination(data: any): Observable<any> {
     return this.genericService.Post<any>(`applications/getApplicationsByJobId`, data);
   }

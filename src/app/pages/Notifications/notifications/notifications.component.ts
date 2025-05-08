@@ -17,6 +17,8 @@ import { LoaderService } from 'src/app/core/services/loader.service'
 import { ToastrService } from 'ngx-toastr'
 import { UserRole } from 'src/app/core/enums/roles.enum'
 import { TablerIconsModule } from 'angular-tabler-icons'
+import { FormsModule } from '@angular/forms'
+import { MaterialModule } from 'src/app/material.module'
 interface notificationsList {
   id: number
   color: string
@@ -35,13 +37,28 @@ interface notificationsList {
     MatIconModule,
     MatButtonModule,
     MatTableModule,
-    MatPaginatorModule,TablerIconsModule
+    MatInputModule,
+    MatPaginatorModule,TablerIconsModule,FormsModule,
+
+    MaterialModule,
+    TablerIconsModule,
+    FormsModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+
+
+
+
   ],
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss']
 })
 export class NotificationsComponent implements OnInit {
   displayedColumns: string[] = []
+  notificationlist:any;
+  total: number = 0;
+  searchText: string = '';
   // displayedColumns: string[] = ['#', 'name', 'email', 'mobile'];
   pageConfig: any = {
     curPage: 1,
@@ -50,20 +67,7 @@ export class NotificationsComponent implements OnInit {
     direction: 'desc',
     whereClause: []
   }
-  dataSource = new MatTableDataSource<any>([
-    {
-      id: 1,
-      Name: 'Amit Sharma',
-      Email: 'amit.sharma@example.com',
-      Mobile: '9876543210'
-    },
-    {
-      id: 2,
-      Name: 'Neha Verma',
-      Email: 'neha.verma@example.com',
-      Mobile: '9123456780'
-    }
-  ])
+
   userRole: string
   constructor (
     private adminService: AdminService,
@@ -83,12 +87,13 @@ export class NotificationsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator
 
   ngOnInit () {
-    this.dataSource.paginator = this.paginator
+    // this.dataSource.paginator = this.paginator
+    this.onPagination();
   }
 
-  applyFilter (filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase()
-  }
+  // applyFilter (filterValue: string) {
+  //   this.dataSource.filter = filterValue.trim().toLowerCase()
+  // }
 
   isAdmin (): boolean {
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase()
@@ -99,78 +104,62 @@ export class NotificationsComponent implements OnInit {
     // Dialog open logic yahan add kar sakte ho
   }
 
-  // onPagination(): void {
-  //   // this.isLoading = true;
-  //   this.loader.show();
-  //   this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
-  //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
-  //     next: (res: any) => {
-  //       // console.log('API Response:', res);
-  //       if (res.statusCode === 200) {
-  //         this.jobPostingList = res.data;
-  //         this.total = res.count || 0;
-  //         this.loader.hide();
-  //         console.log('Loaded jobs:', this.jobPostingList);
-  //       } else {
-  //         this.jobPostingList = [];
-  //         this.total = 0;
-  //         this.loader.hide();
-  //         this.toastr.warning(res.message);
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     error: (err: any) => {
-  //       console.error('API Error:', err);
-  //       this.isLoading = false;
-  //       this.loader.hide();
-  //       this.toastr.error(err?.error?.message);
-  //       this.jobPostingList = [];
-  //       this.total = 0;
-  //     }
-  //   });
-  // }
+  onPagination(): void {
+    // this.isLoading = true;
+    this.loader.show();
+    // this.pageConfig.whereClause = this.helperService.getAllFilters(
+    //   this.filters
+    // );
+    this.adminService.notificationPagination(this.pageConfig).subscribe({
+      next: (res: any) => {
+        if (res.statusCode === 200) {
+          this.notificationlist = res.data;
+          this.total = res.count || 0;
+          this.loader.hide();
+        } else {
+          this.notificationlist = [];
+          this.total = 0;
+          this.loader.hide();
+          // this.toastr.warning(res.message);
+        }
+        // this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('API Error:', err);
+        // this.isLoading = false;
+        this.loader.hide();
+        this.toastr.error(err?.error?.message);
+        this.notificationlist = [];
+        this.total = 0;
+      },
+    });
+  }
+  onPageChange(event: any): void {
+    this.pageConfig.curPage = event.pageIndex + 1;
+    this.pageConfig.perPage = event.pageSize;
+    this.onPagination();
+  }
 
-  // onPageChange(event: any): void {
-  //   this.pageConfig.curPage = event.pageIndex + 1;
-  //   this.pageConfig.perPage = event.pageSize;
-  //   this.onPagination();
-  // }
+  trackByNotification(index: number, item: any): string {
+    return item.id; // Assuming 'id' is unique for each notification
+  }
+  onSearch(): void {
+    const trimmedText = this.searchText.trim();
+    this.pageConfig.curPage = 1;
 
-  notifications: notificationsList[] = [
-    {
-      id: 1,
-      color: 'primary',
-      time: '9:00 AM',
-      title: 'Job Created',
-      subtitle: 'New job posting for “Chief Engineer” created.'
-    },
-    {
-      id: 2,
-      color: 'success',
-      time: '8:45 AM',
-      title: 'Application Received',
-      subtitle: 'You have received 3 new applications.'
-    },
-    {
-      id: 4,
-      color: 'warning',
-      time: '8:00 AM',
-      title: 'Job Updated',
-      subtitle: '“First Officer” job post details modified.'
-    },
-    {
-      id: 4,
-      color: 'success',
-      time: '7:30 AM',
-      title: 'Launch Templates',
-      subtitle: 'Just see the my new admin!'
-    },
-    {
-      id: 5,
-      color: 'error',
-      time: '7:03 AM',
-      title: 'Event tomorrow',
-      subtitle: 'Just a reminder that you have event'
+    if (trimmedText) {
+      this.pageConfig.whereClause = [
+        {
+          key: 'all',
+          value: trimmedText,
+          operator: '='
+        }
+      ];
+    } else {
+      this.pageConfig.whereClause = []; // 🔄 Clear filters if empty
     }
-  ]
+
+    this.onPagination();
+  }
+
 }
