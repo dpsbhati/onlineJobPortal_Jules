@@ -423,7 +423,7 @@ export class EditProfileComponent implements OnInit {
     });
   }
 
-  addSkill(event:Event): void {
+  addSkill(): void {
     const skill = this.newSkill.trim();
     if (!skill) {
     //  this.toaster.warning('Skill cannot be empty.');

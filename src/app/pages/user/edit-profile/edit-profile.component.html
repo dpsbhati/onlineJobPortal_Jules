@@ -102,8 +102,8 @@
             <mat-form-field appearance="outline" class="w-100 mb-2">
               <mat-label>Add Skill</mat-label>
               <input matInput [(ngModel)]="newSkill" [ngModelOptions]="{standalone: true}"
-                placeholder="Enter a skill and press Enter" (keyup.enter)="addSkill($event)">
-              <button mat-icon-button matSuffix color="primary" (click)="addSkill($event)" [disabled]="!newSkill.trim()">
+                placeholder="Enter a skill and press Enter" (keyup.enter)="addSkill()">
+              <button mat-icon-button matSuffix color="primary" (click)="addSkill()" [disabled]="!newSkill.trim()">
                 <mat-icon>add</mat-icon>
               </button>
             </mat-form-field>
