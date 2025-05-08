@@ -8,11 +8,13 @@ import { NotifyService } from '../../../core/services/notify.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { MaterialModule } from 'src/app/material.module';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { MatTableModule } from '@angular/material/table';
+import { TablerIconsModule } from 'angular-tabler-icons';
 @Component({
   selector: 'app-applicant-details',
   imports: [ CommonModule,
     FormsModule,
-    RouterModule,
+    RouterModule,MatTableModule ,TablerIconsModule,
   MaterialModule,ToastrModule],
   templateUrl: './applicant-details.component.html',
   styleUrl: './applicant-details.component.scss'
