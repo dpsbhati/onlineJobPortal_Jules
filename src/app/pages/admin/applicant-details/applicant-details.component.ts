@@ -165,6 +165,10 @@ export class ApplicantDetailsComponent {
         }
       });
   }
+  extractFileName(cvPath: string): string {
+    const urlSegments = cvPath.split("\\"); // Split by the backslash
+    return urlSegments[urlSegments.length - 1]; // Get the last segment (filename)
+  }
 
   goBack(): void {
     // Get jobId from localStorage for back navigation

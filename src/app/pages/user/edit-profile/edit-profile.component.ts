@@ -461,16 +461,18 @@ export class EditProfileComponent implements OnInit {
   }
   onInputChange(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
+    let value = inputElement.value;
 
     // Regular expression to match only letters and spaces
     const regex = /^[a-zA-Z\s]*$/;
 
+    // If the value contains any invalid characters, we remove them
     if (!regex.test(value)) {
-      // Remove any invalid characters (anything other than letters and spaces)
-      inputElement.value = value.replace(/[^a-zA-Z\s]/g, '');
+      value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
+      inputElement.value = value; // Set the modified value back to the input
     }
   }
+
 
 
 
