@@ -27,7 +27,7 @@ export class EmailActivationComponent {
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
     private router: Router,
-  
+
     private _snackBar: MatSnackBar,
     private notify: NotifyService,
     private toastr : ToastrService,
@@ -51,28 +51,28 @@ export class EmailActivationComponent {
   }
 
   verifyEmail(token: string): void {
- 
+
     this.loading = true;
-    
+
     this.authService.verifyEmail({ token }).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
-          this.successMessage = 'Email verified successfully!';
-          this.toastr.success(this.successMessage);
+          this.successMessage = response.message;
+          this.toastr.success(response.message);
           setTimeout(() => {
             this.router.navigate(['authentication/login']);
           }, 2000);
         } else {
-          this.errorMessage = 'Email verification failed. Please try again.';
-          this.toastr.warning(this.errorMessage);
+          this.errorMessage = response.message;
+          this.toastr.warning(response.message);
         }
-       
+
         this.loading = false;
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Email verification failed. Please try again.';
         this.toastr.error(this.errorMessage ?? 'Email verification failed.');
-       
+
         this.loading = false;
       }
     });
@@ -94,12 +94,12 @@ export class EmailActivationComponent {
         } else {
           this.toastr.warning(response.message || 'Failed to resend verification email');
         }
-   
+
         this.loading = false;
       },
       error: (error:any) => {
         this.toastr.error =(error.error?.message || 'Failed to resend verification email');
-       
+
         this.loading = false;
       }
     });

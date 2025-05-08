@@ -1,16 +1,16 @@
 <div class="email-activation-container mat-elevation-z8">
-    <h2>Email Activation</h2>
+    <!-- <h2>Email Activation</h2> -->
 
     <!-- Error Message -->
     <mat-card *ngIf="errorMessage" class="mat-card-error m-t-24">
       <mat-card-content>
         <mat-icon color="warn">error_outline</mat-icon>
-        <p>Email verification failed. Please try again.</p>
+        <p>{{errorMessage}}</p>
       </mat-card-content>
     </mat-card>
 
     <!-- Resend Section -->
-    <mat-card *ngIf="errorMessage" class="mat-card-resend m-t-24">
+    <!-- <mat-card *ngIf="errorMessage" class="mat-card-resend m-t-24">
       <mat-card-content>
         <p>Would you like us to send a new verification link?</p>
         <mat-form-field appearance="outline" class="full-width">
@@ -33,7 +33,7 @@
           </button>
         </div>
       </mat-card-content>
-    </mat-card>
+    </mat-card> -->
 
     <!-- Success Message -->
     <mat-card *ngIf="successMessage" class="mat-card-success m-t-24">

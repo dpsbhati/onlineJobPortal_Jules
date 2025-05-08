@@ -124,8 +124,8 @@ export class EditProfileComponent implements OnInit {
       ] : null),
       current_company: new FormControl('', this.isApplicant() ? [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9 ]+$'),
-        Validators.maxLength(100)
+        // Validators.pattern('^[a-zA-Z0-9 ]+$'),
+         Validators.maxLength(100)
       ] : null),
       expected_salary: new FormControl('', this.isApplicant() ? [
         Validators.required,
@@ -426,15 +426,15 @@ export class EditProfileComponent implements OnInit {
   addSkill(event:Event): void {
     const skill = this.newSkill.trim();
     if (!skill) {
-      this.toaster.warning('Skill cannot be empty.');
+    //  this.toaster.warning('Skill cannot be empty.');
       return;
     }
     if (skill.length < 2) {
-      this.toaster.warning('Skill must be at least 2 characters long.');
+      // this.toaster.warning('Skill must be at least 2 characters long.');
       return;
     }
     if (skill.length > 50) {
-      this.toaster.warning('Skill cannot exceed 50 characters.');
+      //  this.toaster.warning('Skill cannot exceed 50 characters.');
       return;
     }
     if (skill && !this.skillsArray.includes(skill)) {
@@ -477,11 +477,17 @@ export class EditProfileComponent implements OnInit {
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  onKeyPress(event: KeyboardEvent): void {
-    const allowedKeys = ['Backspace', 'Tab', 'Enter', 'Space']; // Add allowed keys here
+  onInputChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let value = inputElement.value;
 
-    if (!allowedKeys.includes(event.key) && !/^[a-zA-Z0-9 ]+$/.test(event.key)) {
-      event.preventDefault();  // Prevent typing any character other than allowed
+    // Regular expression to match only letters and spaces
+    const regex = /^[a-zA-Z\s]*$/;
+
+    // If the value contains any invalid characters, we remove them
+    if (!regex.test(value)) {
+      value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
+      inputElement.value = value; // Set the modified value back to the input
     }
   }
 
