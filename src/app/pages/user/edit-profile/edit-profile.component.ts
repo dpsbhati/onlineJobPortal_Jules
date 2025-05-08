@@ -18,6 +18,7 @@ import { NotifyService } from '../../../core/services/notify.service';
 
 import { UserRole } from '../../../core/enums/roles.enum';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-profile',
@@ -62,7 +63,7 @@ export class EditProfileComponent implements OnInit {
     private imageCompressionService: ImageCompressionService,
     private router: Router,
      private loader : LoaderService,
-    private notify: NotifyService,
+    private toaster: ToastrService,
 
   ) {
     this.userRole = localStorage.getItem('role') || '';
@@ -123,7 +124,7 @@ export class EditProfileComponent implements OnInit {
       ] : null),
       current_company: new FormControl('', this.isApplicant() ? [
         Validators.required,
-        Validators.pattern('^[a-zA-Z ]*$'),
+        Validators.pattern('^[a-zA-Z0-9 ]+$'),
         Validators.maxLength(100)
       ] : null),
       expected_salary: new FormControl('', this.isApplicant() ? [
@@ -210,13 +211,13 @@ export class EditProfileComponent implements OnInit {
       const errors = control.errors;
       if (errors) {
         if (errors['required']) {
-          this.notify.showWarning(`${this.formatFieldName(fieldName)} is required`);
+          this.toaster.warning(`${this.formatFieldName(fieldName)} is required`);
           this.scrollToTop();
         } else if (fieldName === 'current_company' && errors['pattern']) {
-          this.notify.showWarning('Current Company must contain only alphabets');
+          this.toaster.warning('Current Company must contain only alphabets');
           this.scrollToTop();
         } else if (fieldName === 'expected_salary' && errors['maxDigits']) {
-          this.notify.showWarning('Expected Salary should not exceed 7 digits');
+          this.toaster.warning('Expected Salary should not exceed 7 digits');
           this.scrollToTop();
         }
       }
@@ -325,17 +326,17 @@ export class EditProfileComponent implements OnInit {
       next: (response: any) => {
         this.loader.hide();
         if (response.statusCode === 200) {
-          this.notify.showSuccess(response.message);
+          this.toaster.success(response.message);
           this.router.navigate(['/dashboard']);
         } else {
-          this.notify.showError(response.message || 'Failed to update profile');
+          this.toaster.error(response.message || 'Failed to update profile');
           this.scrollToTop();
         }
       },
       error: (error) => {
         this.loader.hide();
         console.error('Error updating profile:', error);
-        this.notify.showError(error.error?.message || 'An error occurred while updating the profile');
+        this.toaster.error(error.error?.message || 'An error occurred while updating the profile');
         this.scrollToTop();
       }
     });
@@ -393,13 +394,13 @@ export class EditProfileComponent implements OnInit {
             });
           }
         } else {
-          this.notify.showError(response.message || 'Failed to retrieve user profile data');
+          this.toaster.error(response.message || 'Failed to retrieve user profile data');
         }
       },
       error: (error: any) => {
         this.loader.hide();
         console.error('Error fetching user profile data:', error);
-        this.notify.showError(error.error?.message || 'An error occurred while fetching user profile data');
+         this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
       }
     });
   }
@@ -407,15 +408,15 @@ export class EditProfileComponent implements OnInit {
   addSkill(): void {
     const skill = this.newSkill.trim();
     if (!skill) {
-      this.notify.showWarning('Skill cannot be empty.');
+     this.toaster.warning('Skill cannot be empty.');
       return;
     }
     if (skill.length < 2) {
-      this.notify.showWarning('Skill must be at least 2 characters long.');
+      this.toaster.warning('Skill must be at least 2 characters long.');
       return;
     }
     if (skill.length > 50) {
-      this.notify.showWarning('Skill cannot exceed 50 characters.');
+       this.toaster.warning('Skill cannot exceed 50 characters.');
       return;
     }
     if (skill && !this.skillsArray.includes(skill)) {
@@ -458,4 +459,12 @@ export class EditProfileComponent implements OnInit {
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+  onKeyPress(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Tab', 'Enter', 'Space']; // Add allowed keys here
+
+    if (!allowedKeys.includes(event.key) && !/^[a-zA-Z0-9 ]+$/.test(event.key)) {
+      event.preventDefault();  // Prevent typing any character other than allowed
+    }
+  }
+ 
 }
