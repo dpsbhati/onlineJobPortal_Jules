@@ -136,12 +136,12 @@ export class UserService {
         // Only send email if creating a new user
         const verificationToken = this.generateVerificationToken(savedUser.id);
         const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
-
+        const templateName = 'verify';
         await this.mailerService.sendEmail(
           savedUser.email,
           'Verify Your Email Address',
           { name: userDto.firstName, verificationUrl } as Record<string, any>,
-          'verify', // Assuming this is the template name
+          templateName, // Assuming this is the template name
         );
       }
 
@@ -154,7 +154,7 @@ export class UserService {
         },
         user
           ? 'User updated successfully.'
-          : 'User created successfully. Please verify your email.',
+          : 'User created successfully. Please verify your email to complete registration.',
       );
     } catch (error) {
       return WriteResponse(
