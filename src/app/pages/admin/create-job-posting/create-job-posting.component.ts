@@ -119,9 +119,9 @@ export class CreateJobPostingComponent {
         ]),
         assignment_duration: new FormControl('', [
           Validators.required,
-          Validators.min(2),
-          this.minLengthWithoutSpaces(2),
-          Validators.maxLength(50)
+          // Validators.min(2),
+          // this.minLengthWithoutSpaces(2),
+          // Validators.maxLength(50)
         ]),
         employer: new FormControl('', [
           Validators.required,
@@ -184,16 +184,7 @@ export class CreateJobPostingComponent {
     }
     this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
       const postedAtControl = this.jobForm.get('posted_at')
-      if (value === 'Schedulelater') {
-        postedAtControl?.setValidators([
-          Validators.required,
-          this.validateMinimumTime()
-        ])
-      } else {
-        postedAtControl?.clearValidators()
-        postedAtControl?.setValue('')
-      }
-      postedAtControl?.updateValueAndValidity()
+      this.onJobTypePostChange(value);
     })
     const today = new Date().toISOString().split('T')[0]
     this.jobForm.get('date_published')?.setValue(today)
@@ -225,6 +216,41 @@ export class CreateJobPostingComponent {
       this.updateSkillsInForm()
     }
   }
+
+   // Method to handle dynamic changes to validation based on job type
+   onJobTypePostChange(value: string): void {
+    const postedAtControl = this.jobForm.get('posted_at');
+    const postedDateControl = this.jobForm.get('posted_date');
+    const currentDate = new Date();
+  
+    const formattedTime = currentDate.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }); // Format: HH:mm (e.g., 17:10)
+  
+    const formattedDate = currentDate.toLocaleDateString('en-GB'); // Format: dd/MM/yyyy (e.g., 09/05/2025)
+  
+    if (value === 'Schedulelater') {
+      // Make posted_at and posted_date required if 'Schedulelater' is selected
+      postedAtControl?.setValidators([Validators.required]);
+      postedDateControl?.setValidators([Validators.required]);
+    } else {
+      // Set current time and date when 'Postnow' is selected
+      postedAtControl?.setValue(formattedTime);
+      postedDateControl?.setValue(formattedDate);
+  
+      // Clear validators if 'Postnow' is selected
+      postedAtControl?.clearValidators();
+      postedDateControl?.clearValidators();
+    }
+  
+    // Update the form controls to apply the validation changes
+    postedAtControl?.updateValueAndValidity();
+    postedDateControl?.updateValueAndValidity();
+  }
+  
+  
 
   removeSkill(index: number): void {
     this.skillsArray.splice(index, 1)
@@ -665,7 +691,7 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-      formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
+      // formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
       }
@@ -702,6 +728,7 @@ export class CreateJobPostingComponent {
       console.warn("Form is invalid", this.jobForm.errors);
     }
   }
+
   allrankslist() {
     this.adminService.getallranks().subscribe((res: any) => {
       if (res.statusCode === 200) {
@@ -729,5 +756,10 @@ export class CreateJobPostingComponent {
         posted_at: selectedDate
       })
     }
+  }
+
+  removeImage(): void {
+    this.imagePreview = ''; // Clear the image preview
+    this.jobForm.get('featured_image')?.setValue(null); // Reset the form control value
   }
 }

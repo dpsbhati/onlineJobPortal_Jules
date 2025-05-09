@@ -248,13 +248,13 @@ export const PagesRoutes: Routes = [
         path: 'change-password',
         component: ChangePasswordComponent,
         canActivate: [AuthGuard],
-        data: {
-          title: 'change-password',
-          // urls: [
-          //   { title: 'Applications List', url: '/applications' },
-          //   // { title: 'Applications List' },
-          // ],
-        },
+        // data: {
+        //   title: 'User-list',
+        //   urls: [
+        //     { title: 'Applications List', url: '/applications' },
+        //     { title: 'Applications List' },
+        //   ],
+        // },
       },
     ],
   },
