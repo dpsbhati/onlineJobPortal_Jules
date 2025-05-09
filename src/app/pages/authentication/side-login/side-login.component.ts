@@ -17,6 +17,7 @@ interface RememberMeData {
   email: string;
   password: string;
   timestamp: number;
+  remember: boolean;
 }
 
 @Component({
@@ -78,7 +79,7 @@ export class AppSideLoginComponent implements OnInit {
     private _router: Router,
     private _authService: AuthService,
     private _snackBar: MatSnackBar,
-    private toastr : ToastrService
+    private toastr: ToastrService
   ) {
     this.initializeForm();
   }
@@ -136,7 +137,8 @@ export class AppSideLoginComponent implements OnInit {
       const rememberMeData: RememberMeData = {
         email: this.form.get('email')?.value,
         password: this.form.get('password')?.value,
-        timestamp: new Date().getTime()
+        timestamp: new Date().getTime(),
+        remember:this.form.get('rememberDevice')?.value
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
@@ -207,7 +209,7 @@ export class AppSideLoginComponent implements OnInit {
     } catch (error: any) {
       console.error('Login error:', error);
       if (error.error && error.error.message) {
-        this.toastr.error(error.error.message, );
+        this.toastr.error(error.error.message,);
       } else {
         this.toastr.warning('Unable to connect to the server. Please try again later.',);
       }
