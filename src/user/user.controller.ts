@@ -3,35 +3,27 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   HttpCode,
   HttpStatus,
-  Query,
   UseGuards,
   BadRequestException,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
+  ChangePasswordDto,
   CreateUserDto,
   LoginDTO,
   ResendEmailDto,
   ResetPasswordDto,
 } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { forgetPasswordDto } from './dto/create-user.dto';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { WriteResponse } from 'src/shared/response';
 import { JwtService } from '@nestjs/jwt';
 import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('User')
 @Controller('user')
@@ -48,6 +40,8 @@ export class UserController {
     return this.userService.createUpdate(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('get-all')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Get all users' })
@@ -55,6 +49,8 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('email')
   @ApiOperation({ summary: 'Find a user by email' })
   @ApiBody({
@@ -79,12 +75,16 @@ export class UserController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('get-by-id/:id')
   @ApiOperation({ summary: 'Find a user by ID' })
   async findOneById(@Param('id') id: string) {
     return this.userService.findOne('id', id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('delete-by-id/:id')
   @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Delete a user by ID' })
@@ -92,6 +92,8 @@ export class UserController {
     return this.userService.delete(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('pagination')
   @ApiBody({
     schema: {
@@ -162,8 +164,6 @@ export class UserController {
     return this.userService.forgetPassword(forgetPasswordDto);
   }
 
-  
-  
   @Post('verify-email')
   @ApiBody({
     description: 'Payload for verifying email using a token',
@@ -183,7 +183,6 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Resend verification email' })
-  
   @Post('resend-email')
   async resendEmail(@Body() body: ResendEmailDto) {
     const { email } = body;
@@ -193,5 +192,12 @@ export class UserController {
     }
 
     return await this.userService.resendEmailByEmail(email);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('change-password')
+  changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req) {
+    return this.userService.changePassword(changePasswordDto, req);
   }
 }

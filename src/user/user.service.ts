@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { IPagination } from 'src/shared/paginationEum';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { forgetPasswordDto } from 'src/user/dto/create-user.dto';
+import { ChangePasswordDto, forgetPasswordDto } from 'src/user/dto/create-user.dto';
 import { MailService } from 'src/utils/mail.service';
 import { Not, Repository } from 'typeorm';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
@@ -190,7 +190,10 @@ export class UserService {
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
-      return WriteResponse(401, {}, 'User email is not verified.');
+      const res=await this.resendEmailByEmail(email);
+      if(res.statusCode==200){
+        return WriteResponse(401, {}, 'Your email address is not verified. A new verification email has been sent to you. Please verify your email to continue.');
+      }
     }
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
@@ -442,19 +445,38 @@ export class UserService {
       // Resend the email
       await this.mailerService.sendEmail(
         user.email,
-        'Resend Email Verification',
-        { name: verificationUrl } as Record<string, any>,
+        'Verify Your Email Address',
+        { name: user.userProfile.first_name,verificationUrl } as Record<string, any>,
         'verify',
       );
 
       return WriteResponse(200, {}, 'Verification email resent successfully.');
     } catch (error) {
-      console.error('Error resending email:', error.message);
+      console.error('Error resending email:', error);
       return WriteResponse(
         500,
         {},
         'An unexpected error occurred while resending the email.',
       );
+    }
+  }
+
+  async changePassword(changePasswordDto:ChangePasswordDto,req){
+    try {
+      const user=await this.userRepository.findOne({where:{email:changePasswordDto.email,is_deleted:false}});
+      if(!user){
+        return WriteResponse(404,false,"User not found.");
+      }
+      const passwordValid = await bcrypt.compare(changePasswordDto.oldPassword, user.password);
+      if (!passwordValid) {
+        return WriteResponse(401, false, 'Invalid current password.');
+      }
+      const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+      await this.userRepository.update(user.id,{password:hashedPassword});
+      return WriteResponse(200,true,"Password changed successfully.");
+    } catch (error) {
+      console.log(error);
+      return WriteResponse(500,false,"Something went wrong.");
     }
   }
 
