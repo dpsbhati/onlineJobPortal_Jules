@@ -190,7 +190,10 @@ export class UserService {
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
-      return WriteResponse(401, {}, 'User email is not verified.');
+      const res=await this.resendEmailByEmail(email);
+      if(res.statusCode==200){
+        return WriteResponse(401, {}, 'Your email address is not verified. A new verification email has been sent to you. Please verify your email to continue.');
+      }
     }
     delete User.password;
     return WriteResponse(200, { User, token }, 'Login successful.'); // Include token in data
@@ -442,14 +445,14 @@ export class UserService {
       // Resend the email
       await this.mailerService.sendEmail(
         user.email,
-        'Resend Email Verification',
-        { name: verificationUrl } as Record<string, any>,
+        'Verify Your Email Address',
+        { name: user.userProfile.first_name,verificationUrl } as Record<string, any>,
         'verify',
       );
 
       return WriteResponse(200, {}, 'Verification email resent successfully.');
     } catch (error) {
-      console.error('Error resending email:', error.message);
+      console.error('Error resending email:', error);
       return WriteResponse(
         500,
         {},
