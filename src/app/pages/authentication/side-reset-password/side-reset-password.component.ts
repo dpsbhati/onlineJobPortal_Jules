@@ -93,13 +93,25 @@ export class SideResetPasswordComponent implements OnInit {
       ]],
       confirmPassword: ['', Validators.required]
     }, {
-      validator: this.passwordMatchValidator
+      // validators: this.passwordMatchValidator
     });
   }
 
-  passwordMatchValidator(g: FormGroup) {
-    return g.get('password')?.value === g.get('confirmPassword')?.value
-      ? null : { 'mismatch': true };
+  passwordMatchValidator() {
+    const password = this.form.get('password')?.value;
+    const confirmPassword = this.form.get('confirmPassword')?.value;
+    // Manually trigger mismatch error if passwords don't match
+    if (password !== confirmPassword) {
+      this.form.get('confirmPassword')?.setErrors({ mismatch: true });
+    } else {
+      // Remove the mismatch error when passwords match
+      this.form.get('confirmPassword')?.setErrors(null);
+    }
+  }
+
+  // Called on input change to trigger validation
+  onInputChange() {
+    this.passwordMatchValidator();
   }
 
   get f() {
@@ -114,7 +126,7 @@ export class SideResetPasswordComponent implements OnInit {
       return 'Password must be at least 8 characters';
     }
     if (this.f['password'].hasError('pattern')) {
-      return 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character';
+      return 'Password must be in valid format';
     }
     return '';
   }
