@@ -83,22 +83,20 @@ export class AppliedStatusComponent {
 
   loadJobDetails(id: string): void {
     this.loader.show();
-    this.adminService.getJobById(id).subscribe({
+    this.adminService.allApplicantDetails(id).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
           this.user = this.jobDetails.user;
-          console.log(this.user, 'user--------------------------1');
-
           this.userProfile = this.jobDetails.user?.userProfile;
-          console.log(this.userProfile, 'userProfile1------------------------------------2');
 
-          if (this.jobDetails.skills_required) {
-            this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
+          if (this.jobDetails?.job?.skills_required) {
+            this.formattedSkills = JSON.parse(this.jobDetails?.job?.skills_required);
+            console.log(this.formattedSkills)
           }
-          if (this.jobDetails.social_media_type) {
+          if (this.jobDetails?.job?.social_media_type) {
             this.formattedSocialMedia = JSON.parse(
-              this.jobDetails.social_media_type
+              this.jobDetails?.job?.social_media_type
             );
           }
           this.loader.hide();
@@ -110,7 +108,6 @@ export class AppliedStatusComponent {
       error: (error) => {
         this.loader.hide();
         this.notifyService.showError(error?.error?.message);
-        console.error('Error:', error);
       },
     });
   }

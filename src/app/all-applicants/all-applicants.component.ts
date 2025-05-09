@@ -104,7 +104,6 @@ export class AllApplicantsComponent implements OnInit {
     private authService: AuthService
   ) {
     this.userRole = this.authService.getUserRole();
-    console.log('Current user role:', this.userRole); // Debug log
   }
 
   isAdmin(): boolean {

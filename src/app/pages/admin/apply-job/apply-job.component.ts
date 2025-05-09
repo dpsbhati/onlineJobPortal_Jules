@@ -199,7 +199,7 @@ export class ApplyJobComponent {
                 certification_file: response.data.path,
               });
               this.loader.hide();
-               this.toastr.success(response.message);
+              //  this.toastr.success(response.message);
 
             } else {
               this.loader.hide();
@@ -241,7 +241,7 @@ export class ApplyJobComponent {
     this.adminService.uploadFile({ folderName, file, userId }).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
-          this.toastr.success(response.message);
+          // this.toastr.success(response.message);
           this.userDetailsForm.patchValue({
             [controlName]: response.data.path
           });
@@ -264,14 +264,13 @@ export class ApplyJobComponent {
 
 deleteFile(controlName: string, event: MouseEvent, index?: number): void {
   event.stopPropagation();
-  console.log('Delete file triggered:', controlName, index);
   if (controlName === 'cv_path') {
     this.uploadedFileName = null;
     this.fileUploaded = null;
     this.userDetailsForm.patchValue({
       [controlName]: null,
     });
-    this.toastr.success('CV removed successfully.');
+    // this.toastr.success('CV removed successfully.');
 }   else if (controlName === 'courses_and_certification' && index !== undefined) {
     this.certificationFiles.splice(index, 1);
     this.userDetailsForm.patchValue({
@@ -284,7 +283,7 @@ deleteFile(controlName: string, event: MouseEvent, index?: number): void {
     //   [controlName]: updatedCertifications,
     // });
 
-    this.toastr.success('Certification removed successfully.');
+    // this.toastr.success('Certification removed successfully.');
 
 }
 }
