@@ -321,6 +321,13 @@
       <a class="p-8 text-decoration-none d-block text-hover-primary" href="edit-profile">
         Profile
       </a>
+      <a class="p-8 text-decoration-none d-block text-hover-primary" href="change-password">
+        <div class="d-flex align-items-center">
+          <h5 class="f-s-14 f-w-500 m-0 textprimary hover-text">
+            Change Password
+          </h5>
+        </div>
+      </a>
       @for(profile of profiledd; track profile.title) {
       <a class="p-8 text-decoration-none d-block text-hover-primary" href="javascript:void(0)" (click)="signOut()">
         <div class="d-flex align-items-center">

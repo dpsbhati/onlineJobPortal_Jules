@@ -259,7 +259,7 @@ export class ApplicantComponent implements OnInit {
     const aplicantFilter = {
       key: 'job_opening',
       operator: '=',
-      value: 'open',
+      value: 'Active',
     };
 
     // Start with the applicant filter
@@ -301,7 +301,7 @@ export class ApplicantComponent implements OnInit {
       });
     }
     this.pageConfig.whereClause = whereClause;
- 
+
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {

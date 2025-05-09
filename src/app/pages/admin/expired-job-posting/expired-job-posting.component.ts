@@ -130,7 +130,7 @@ export class ExpiredJobPostingComponent implements OnInit {
     // 2. Add static filter for expired jobs
     const expiredFilter = {
       key: 'job_opening',
-      value: 'close',
+      value: 'Close',
       operator: '=',
     };
 
