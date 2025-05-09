@@ -17,6 +17,8 @@ import { ImageCompressionService } from 'src/app/core/services/image/image-compr
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { UserRole } from '../../../core/enums/roles.enum';
+import { NotifyService } from 'src/app/core/services/notify.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-change-password',
@@ -45,6 +47,7 @@ export class ChangePasswordComponent {
   passwordVisible = false;
   passwordVisible1=false;
   passwordVisible2=false;
+  errorMessage: string | null = null;
 
    constructor(
       private userService: UserService,
@@ -54,6 +57,10 @@ export class ChangePasswordComponent {
       private router: Router,
       private loader: LoaderService,
       private toaster: ToastrService,
+       private authService: AuthService,
+
+          private notify: NotifyService,
+
 
     ) {
       this.userRole = localStorage.getItem('role') || '';
@@ -81,36 +88,31 @@ export class ChangePasswordComponent {
 
     initializeForm(): void {
       this.userProfileForm = new FormGroup({
-        Email: new FormControl('', [
+        email: new FormControl('', [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9 ]+$'),
+          Validators.email,
         ]),
-        CurrentPassword: new FormControl('', [
+        oldPassword: new FormControl('', [
           Validators.required,
-          Validators.minLength(8),
+          // Validators.minLength(8),
           Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
         ]),
-        NewPassword: new FormControl('', [
+        newPassword: new FormControl('', [
           Validators.required,
-          Validators.minLength(8),
+          // Validators.minLength(8),
           Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
         ]),
-        ConfirmPassword: new FormControl('', [
+        confirmPassword: new FormControl('', [
           Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+          Validators.minLength(8)
         ])
       });
 
       // Apply the custom password match validator after form initialization
-      this.userProfileForm.setValidators(this.passwordMatchValidator);
+      // this.userProfileForm.setValidators(this.passwordMatchValidator);
     }
 
-    // Password match validator function
-    passwordMatchValidator(g: FormGroup) {
-      return g.get('NewPassword')?.value === g.get('ConfirmPassword')?.value
-        ? null : { 'mismatch': true };
-    }
+
     togglePasswordVisibility() {
       this.passwordVisible = !this.passwordVisible;
 
@@ -124,6 +126,56 @@ export class ChangePasswordComponent {
     // Access form controls
     get f() {
       return this.userProfileForm.controls;
+    }
+
+    onSubmit(): void {
+      this.loader.show();
+      // if (this.userProfileForm.invalid) {
+      //   this.loader.hide();
+      //   return;
+      // }
+      // this.trimFormValues();
+
+      this.errorMessage = null;
+
+      this.authService.changepassword(this.userProfileForm.value).subscribe({
+        next: (res: any) => {
+          console.log(res);
+          if (res.statusCode == 200 || res.statusCode == 201) {
+            this.loader.hide();
+            this.router.navigate(['/authentication/login']);
+            this.toaster.success(res.message);
+          }
+          else {
+            this.errorMessage = res.message;
+            console.log(res.message,'test')
+            this.toaster.warning(res.message)
+            this.loader.hide();
+          }
+        },
+        error: (error: any) => {
+          this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
+          // this.notify.showError(this.errorMessage);
+          this.loader.hide();
+        }
+      });
+    }
+
+    passwordMatchValidator() {
+      const password = this.userProfileForm.get('newPassword')?.value;
+      const confirmPassword = this.userProfileForm.get('confirmPassword')?.value;
+      // Manually trigger mismatch error if passwords don't match
+      if (password !== confirmPassword) {
+        this.userProfileForm.get('confirmPassword')?.setErrors({ mismatch: true });
+      } else {
+        // Remove the mismatch error when passwords match
+        this.userProfileForm.get('confirmPassword')?.setErrors(null);
+      }
+    }
+
+    // Called on input change to trigger validation
+    onInputChange() {
+      this.passwordMatchValidator();
     }
 
 

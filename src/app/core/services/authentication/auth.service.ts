@@ -147,9 +147,13 @@ export class AuthService {
       })
     );
   }
+  changepassword(payload: { token: string }): Observable<any> {
+    return this.genericService.Post('user/change-password', payload)
+  }
+
 
   resendVerificationEmail(email: string): Observable<any> {
-    return this.genericService.Post('user/resend-email', { 
+    return this.genericService.Post('user/resend-email', {
       email: email,
     }).pipe(
       catchError((error) => {
