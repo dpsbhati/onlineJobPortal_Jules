@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
-import { JobPosting } from './entities/job-posting.entity';
+import {
+  JobOpeningStatus,
+  JobPosting,
+  JobPostStatus,
+} from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
@@ -64,37 +68,52 @@ export class JobPostingService {
   async autoPostJobs() {
     try {
       const now = new Date();
-       // Get "today" as per local time (e.g., IST)
-   // Create IST midnight today
-// const now = new Date();
-const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
-const istNow = new Date(now.getTime() + IST_OFFSET);
+      // Get "today" as per local time (e.g., IST)
+      // Create IST midnight today
+      // const now = new Date();
+      const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
+      console.log('IST_OFFSET----->>', IST_OFFSET);
 
-// Get YYYY-MM-DD from IST
-const istYear = istNow.getUTCFullYear();
-const istMonth = istNow.getUTCMonth();
-const istDate = istNow.getUTCDate();
+      const istNow = new Date(now.getTime() - IST_OFFSET);
+      const oneHourMs = 60 * 60 * 1000;
+      const currentTime = new Date(istNow.getTime() - oneHourMs);
 
-// Create a new UTC date from IST's Y/M/D at midnight
-const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
+      // Get YYYY-MM-DD from IST
+      const istYear = istNow.getUTCFullYear();
+      const istMonth = istNow.getUTCMonth();
+      const istDate = istNow.getUTCDate();
 
-      console.log('todayIST----->>', todayIST," Now----->>", now);
-      
+      // Create a new UTC date from IST's Y/M/D at midnight
+      const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
+      // Format to YYYY-MM-DD string
+const istDateString = `${istYear}-${(istMonth + 1).toString().padStart(2, '0')}-${istDate
+  .toString()
+  .padStart(2, '0')}`;
+
+console.log('istDateString ---->>', istDateString);
+
+      console.log(
+        'todayIST----->>',
+        todayIST,
+        ' currentTime----->>',
+        currentTime,
+      );
+
       const jobsToPost = await this.jobPostingRepository.find({
         where: {
-          jobpost_status: 'draft',
+          jobpost_status: JobPostStatus.DRAFT,
           is_deleted: false,
-          posted_date: Equal(todayIST), // Match only today's date
-          posted_at: LessThanOrEqual(now),
+          posted_date: istDateString, // Match only today's date
+          posted_at: LessThanOrEqual(currentTime),
         },
       });
-console.log('jobsToPost----->>', jobsToPost);
+      console.log('jobsToPost----->>', jobsToPost);
 
       if (jobsToPost.length > 0) {
         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
 
         for (const job of jobsToPost) {
-          job.jobpost_status = 'posted';
+          job.jobpost_status = JobPostStatus.POSTED;
           job.updated_at = new Date();
           await this.jobPostingRepository.save(job);
         }
@@ -117,7 +136,7 @@ console.log('jobsToPost----->>', jobsToPost);
       const jobsToOpen = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
-          job_opening: 'hold',
+          job_opening: JobOpeningStatus.HOLD,
           date_published: LessThanOrEqual(currentDateTime),
         },
       });
@@ -127,7 +146,7 @@ console.log('jobsToPost----->>', jobsToPost);
           `Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`,
         );
         for (const job of jobsToOpen) {
-          job.job_opening = 'open';
+          job.job_opening = JobOpeningStatus.OPEN;
           await this.jobPostingRepository.save(job);
           console.log(`Job with ID ${job.id} marked as "open".`);
         }
@@ -136,7 +155,7 @@ console.log('jobsToPost----->>', jobsToPost);
       const jobsToClose = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
-          job_opening: 'open',
+          job_opening: JobOpeningStatus.OPEN,
           deadline: LessThanOrEqual(currentDateTime),
         },
       });
@@ -145,7 +164,7 @@ console.log('jobsToPost----->>', jobsToPost);
         console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
 
         for (const job of jobsToClose) {
-          job.job_opening = 'close';
+          job.job_opening = JobOpeningStatus.CLOSE;
           await this.jobPostingRepository.save(job);
           console.log(`Job with ID ${job.id} marked as "close".`);
         }
@@ -168,7 +187,9 @@ console.log('jobsToPost----->>', jobsToPost);
         : null;
 
       // Preserve existing job_opening status if the job is being updated
-      let job_opening = jobPosting ? jobPosting.job_opening : 'hold';
+      let job_opening = jobPosting
+        ? jobPosting.job_opening
+        : JobOpeningStatus.HOLD;
 
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
@@ -176,9 +197,9 @@ console.log('jobsToPost----->>', jobsToPost);
         const deadline = new Date(jobDto.deadline);
 
         if (now >= datePublished && now <= deadline) {
-          job_opening = 'open';
+          job_opening = JobOpeningStatus.OPEN;
         } else if (now > deadline) {
-          job_opening = 'close';
+          job_opening = JobOpeningStatus.CLOSE;
         }
       }
 
@@ -225,148 +246,165 @@ console.log('jobsToPost----->>', jobsToPost);
   }
 
   async paginateJobPostings(req, pagination: IPagination) {
-    try{
-    let { curPage, perPage, direction, whereClause, sortBy } = pagination;
-    let skip = (curPage - 1) * perPage;
-  
-    // Set default sorting if not provided
-    sortBy = sortBy || 'created_at'; // Default sorting by created_at
-    direction = direction || 'DESC'; // Default to DESC
-  
-    let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
-    const fieldsToSearch = [
-      'job_type',
-      'qualifications',
-      'skills_required',
-      'title',
-      'short_description',
-      'full_description',
-      'assignment_duration',
-      'employer',
-      'rank',
-      'required_experience',
-      'salary',
-      'start_salary',
-      'end_salary',
-      'address',
-      'work_type',
-      'application_instruction',
-      'employee_experience',
-      'job_type_post',
-      'jobpost_status',
-      'job_opening',
-    ];
-  
-    // Apply dynamic filters for each field in fieldsToSearch
-    fieldsToSearch.forEach((field) => {
-      const fieldValues = whereClause
-        .filter((p) => p.key === field)
-        .map((p) => p.value);
-      if (fieldValues.length > 0) {
-        const conditions = fieldValues
-          .map((value) => `f.${field} LIKE '%${value}%'`)
+    try {
+      let { curPage, perPage, direction, whereClause, sortBy } = pagination;
+      let skip = (curPage - 1) * perPage;
+
+      // Set default sorting if not provided
+      sortBy = sortBy || 'created_at'; // Default sorting by created_at
+      direction = direction || 'DESC'; // Default to DESC
+
+      let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
+      const fieldsToSearch = [
+        'job_type',
+        'qualifications',
+        'skills_required',
+        'title',
+        'short_description',
+        'full_description',
+        'assignment_duration',
+        'employer',
+        'rank',
+        'required_experience',
+        'salary',
+        'start_salary',
+        'end_salary',
+        'address',
+        'work_type',
+        'application_instruction',
+        'employee_experience',
+        'job_type_post',
+        'jobpost_status',
+        'job_opening',
+      ];
+
+      // Apply dynamic filters for each field in fieldsToSearch
+      fieldsToSearch.forEach((field) => {
+        const fieldValues = whereClause
+          .filter((p) => p.key === field)
+          .map((p) => p.value);
+        if (fieldValues.length > 0) {
+          const conditions = fieldValues
+            .map((value) => `f.${field} LIKE '%${value}%'`)
+            .join(' OR ');
+          lwhereClause += ` AND (${conditions})`;
+        }
+      });
+
+      // Handle start and end date range filtering dynamically
+      const startDateObj = whereClause.find(
+        (p: any) => p.key === 'startDate' && p.value,
+      );
+      const endDateObj = whereClause.find(
+        (p: any) => p.key === 'endDate' && p.value,
+      );
+      const startDate = startDateObj?.value;
+      const endDate = endDateObj?.value;
+
+      if (startDate && endDate) {
+        lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
+      } else if (startDate) {
+        lwhereClause += ` AND DATE(f.date_published) >= '${startDate}'`;
+      } else if (endDate) {
+        lwhereClause += ` AND DATE(f.date_published) <= '${endDate}'`;
+      }
+
+      // Handle dynamic salary filtering based on salary range (start_salary, end_salary)
+      const startSalaryObj = whereClause.find(
+        (p: any) => p.key === 'start_salary' && p.value,
+      );
+      const endSalaryObj = whereClause.find(
+        (p: any) => p.key === 'end_salary' && p.value,
+      );
+      const startSalary = startSalaryObj?.value;
+      const endSalary = endSalaryObj?.value;
+
+      if (startSalary && endSalary) {
+        lwhereClause += ` AND f.salary BETWEEN ${startSalary} AND ${endSalary}`;
+      } else if (startSalary) {
+        lwhereClause += ` AND f.salary >= ${startSalary}`;
+      } else if (endSalary) {
+        lwhereClause += ` AND f.salary <= ${endSalary}`;
+      }
+
+      // Handle dynamic search across all fields, including salary
+      const allValue = whereClause.find((p) => p.key === 'all')?.value;
+      console.log('allValue: ', allValue);
+
+      if (allValue) {
+        const conditions = fieldsToSearch
+          .map((field) => {
+            console.log('Checking field: ', field);
+
+            // Special handling for numeric fields (salary, start_salary, end_salary)
+            if (
+              field === 'salary' ||
+              field === 'start_salary' ||
+              field === 'end_salary'
+            ) {
+              // Check if allValue is numeric
+              if (!isNaN(Number(allValue))) {
+                return `f.${field} = ${allValue}`; // Exact match for numbers
+              } else {
+                return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
+              }
+            } else {
+              // Default for string fields
+              return `f.${field} LIKE '%${allValue}%'`;
+            }
+          })
           .join(' OR ');
         lwhereClause += ` AND (${conditions})`;
       }
-    });
-  
-    // Handle start and end date range filtering dynamically
-    const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
-    const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
-    const startDate = startDateObj?.value;
-    const endDate = endDateObj?.value;
-  
-    if (startDate && endDate) {
-      lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
-    } else if (startDate) {
-      lwhereClause += ` AND DATE(f.date_published) >= '${startDate}'`;
-    } else if (endDate) {
-      lwhereClause += ` AND DATE(f.date_published) <= '${endDate}'`;
+
+      const queryBuilder = await this.jobPostingRepository
+        .createQueryBuilder('f')
+        .leftJoin(
+          (qb) =>
+            qb
+              .select('a.job_id', 'job_id')
+              .addSelect('COUNT(a.id)', 'application_number')
+              .from('applications', 'a')
+              .groupBy('a.job_id'),
+          'app_counts',
+          'app_counts.job_id = f.id',
+        )
+        .addSelect(
+          'COALESCE(app_counts.application_number, 0)',
+          'application_number',
+        )
+        .where(lwhereClause)
+        .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
+        .skip(skip)
+        .take(perPage);
+
+      const [entities, raw] = await Promise.all([
+        queryBuilder.getMany(),
+        queryBuilder.getRawMany(),
+      ]);
+
+      // Map applicant_number back into the entity list
+      const finalData = entities.map((job, index) => {
+        const rawItem = raw.find((r) => r.f_id === job.id);
+        return {
+          ...job,
+          application_number: parseInt(rawItem?.application_number || '0'),
+        };
+      });
+
+      // Count query separately
+      const totalCount = await this.jobPostingRepository
+        .createQueryBuilder('f')
+        .where(lwhereClause)
+        .getCount();
+
+      // Return paginated data
+      return paginateResponse(finalData, totalCount);
+    } catch (error) {
+      console.error('Error fetching job postings:', error);
+      return WriteResponse(500, {}, 'something went wrong');
     }
-  
-    // Handle dynamic salary filtering based on salary range (start_salary, end_salary)
-    const startSalaryObj = whereClause.find((p: any) => p.key === 'start_salary' && p.value);
-    const endSalaryObj = whereClause.find((p: any) => p.key === 'end_salary' && p.value);
-    const startSalary = startSalaryObj?.value;
-    const endSalary = endSalaryObj?.value;
-  
-    if (startSalary && endSalary) {
-      lwhereClause += ` AND f.salary BETWEEN ${startSalary} AND ${endSalary}`;
-    } else if (startSalary) {
-      lwhereClause += ` AND f.salary >= ${startSalary}`;
-    } else if (endSalary) {
-      lwhereClause += ` AND f.salary <= ${endSalary}`;
-    }
-  
-    // Handle dynamic search across all fields, including salary
-    const allValue = whereClause.find((p) => p.key === 'all')?.value;
-    console.log('allValue: ', allValue);
-  
-    if (allValue) {
-      const conditions = fieldsToSearch
-        .map((field) => {
-          console.log("Checking field: ", field);
-  
-          // Special handling for numeric fields (salary, start_salary, end_salary)
-          if (field === 'salary' || field === 'start_salary' || field === 'end_salary') {
-            // Check if allValue is numeric
-            if (!isNaN(Number(allValue))) {
-              return `f.${field} = ${allValue}`; // Exact match for numbers
-            } else {
-              return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
-            }
-          } else {
-            // Default for string fields
-            return `f.${field} LIKE '%${allValue}%'`;
-          }
-        })
-        .join(' OR ');
-      lwhereClause += ` AND (${conditions})`;
-    }
-  
-    const queryBuilder = await this.jobPostingRepository
-      .createQueryBuilder('f')
-      .leftJoin(
-        (qb) =>
-          qb
-            .select('a.job_id', 'job_id')
-            .addSelect('COUNT(a.id)', 'application_number')
-            .from('applications', 'a')
-            .groupBy('a.job_id'),
-        'app_counts',
-        'app_counts.job_id = f.id',
-      )
-      .addSelect('COALESCE(app_counts.application_number, 0)', 'application_number')
-      .where(lwhereClause)
-      .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(perPage);
-  
-    const [entities, raw] = await Promise.all([queryBuilder.getMany(), queryBuilder.getRawMany()]);
-  
-    // Map applicant_number back into the entity list
-    const finalData = entities.map((job, index) => {
-      const rawItem = raw.find((r) => r.f_id === job.id);
-      return {
-        ...job,
-        application_number: parseInt(rawItem?.application_number || '0'),
-      };
-    });
-  
-    // Count query separately
-    const totalCount = await this.jobPostingRepository
-      .createQueryBuilder('f')
-      .where(lwhereClause)
-      .getCount();
-  
-    // Return paginated data
-    return paginateResponse(finalData, totalCount);
-  }catch (error) {
-    console.error('Error fetching job postings:', error);
-    return WriteResponse(500, {}, 'something went wrong');
   }
-  }
-  
 
   async findAll() {
     try {
@@ -464,7 +502,11 @@ console.log('jobsToPost----->>', jobsToPost);
   async postScheduledJob(jobId: string, userId: string) {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
-        where: { id: jobId, is_deleted: false, jobpost_status: 'draft' },
+        where: {
+          id: jobId,
+          is_deleted: false,
+          jobpost_status: JobPostStatus.DRAFT,
+        },
       });
 
       if (!jobPosting) {
@@ -475,7 +517,7 @@ console.log('jobsToPost----->>', jobsToPost);
         );
       }
 
-      jobPosting.jobpost_status = 'posted';
+      jobPosting.jobpost_status = JobPostStatus.POSTED;
       jobPosting.updated_by = userId;
 
       const updatedJobPosting =

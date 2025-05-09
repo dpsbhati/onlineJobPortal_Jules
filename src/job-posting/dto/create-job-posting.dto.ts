@@ -18,6 +18,7 @@ import {
   IsIn,
   IsArray,
 } from 'class-validator';
+import { JobPostStatus, JobTypePost } from '../entities/job-posting.entity';
 
 @ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
 @Injectable()
@@ -71,16 +72,15 @@ export class CreateJobPostingDto {
   job_type: string;
 
   @ApiProperty({
-    description: 'job_type_post',
-    example: 'postnow',
-    enum: ['postnow','schedulelater'],
+    description: 'Job type post method',
+    example: JobTypePost.POST_NOW,
+    enum: JobTypePost,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(['postnow','schedulelater'], {
-    message: 'job_type_post must be one of postnow or schedulelater.',
+  @IsEnum(JobTypePost, {
+    message: `job_type_post must be one of: ${Object.values(JobTypePost).join(', ')}`,
   })
-  job_type_post?: string;
+  job_type_post?: JobTypePost;
 
   @ApiProperty({
     description: 'The featured image URL',
@@ -255,15 +255,20 @@ export class CreateJobPostingDto {
   })
   required_experience: string;
 
-  @ApiProperty({
-    description: 'The status of the job posting (draft or posted)',
-    example: 'draft',
-  })
+  // @ApiProperty({
+  //   description: 'The status of the job posting (draft or posted)',
+  //   example: 'draft',
+  // })
+  // @IsOptional()
+  // @IsEnum(['draft', 'posted'], {
+  //   message: 'jobpost_status must be either draft or posted.',
+  // })
+  // jobpost_status?: string;
+
+  @ApiProperty({ default: JobPostStatus.DRAFT, description: 'Job post status', enum: JobPostStatus })
   @IsOptional()
-  @IsEnum(['draft', 'posted'], {
-    message: 'jobpost_status must be either draft or posted.',
-  })
-  jobpost_status?: string;
+  @IsEnum(JobPostStatus)
+  jobpost_status?: JobPostStatus;
 
   @ApiProperty({
     description: 'The date and time when the job is scheduled to be posted.',
@@ -272,13 +277,13 @@ export class CreateJobPostingDto {
   @IsOptional()
   // @IsDate({ message: 'posted_at must be a valid ISO date.' })
   // @Type(() => Date)
-  posted_at?: String;
+  posted_at?: string;
 
   @ApiProperty({
     description: 'The date when the job is scheduled to be posted.',
     example: '2025-01-15',
   })
-  posted_date: Date;
+  posted_date: string;
 
   @ApiProperty({
     description: 'The social media platforms where the job will be posted.',
