@@ -331,7 +331,7 @@ export class UserService {
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Reset Password',
-        { name: user.email, resetLink: resetLink } as Record<string, any>,
+        { name: user.userProfile.first_name, resetLink: resetLink } as Record<string, any>,
         'forgetpassword',
       );
       await this.userRepository.save(user);
