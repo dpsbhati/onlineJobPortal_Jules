@@ -267,7 +267,7 @@ export class CreateJobPostingDto {
 
   @ApiProperty({
     description: 'The date and time when the job is scheduled to be posted.',
-    example: '2025-01-15T10:30:00.000Z',
+    example: '10:30',
   })
   @IsOptional()
   // @IsDate({ message: 'posted_at must be a valid ISO date.' })
