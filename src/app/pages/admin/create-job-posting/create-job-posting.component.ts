@@ -158,7 +158,7 @@ export class CreateJobPostingComponent {
         social_media_type: new FormControl([], Validators.required),
         posted_at: new FormControl('', Validators.required),
         posted_date: new FormControl('', Validators.required),
-        jobpost_status: new FormControl('draft'),
+        jobpost_status: new FormControl('Draft'),
         job_type_post: new FormControl('', Validators.required)
         // work_type: new FormControl(''),
         // file_path: new FormControl(null),
@@ -184,7 +184,7 @@ export class CreateJobPostingComponent {
     }
     this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
       const postedAtControl = this.jobForm.get('posted_at')
-      if (value === 'schedulelater') {
+      if (value === 'Schedulelater') {
         postedAtControl?.setValidators([
           Validators.required,
           this.validateMinimumTime()
@@ -239,7 +239,7 @@ export class CreateJobPostingComponent {
   // listenToJobPostingStatus(): void {
   //   this.jobForm.get('job_type_post')?.valueChanges.subscribe((value) => {
   //     const postedAtControl = this.jobForm.get('posted_at');
-  //     if (value === 'schedulelater') {
+  //     if (value === 'Schedulelater') {
   //       postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
   //     } else {
   //       postedAtControl?.clearValidators();
@@ -476,7 +476,7 @@ export class CreateJobPostingComponent {
           social_media_type: socialMediaTypes,
           posted_at: data.posted_at,
           posted_date: data.posted_date,
-          jobpost_status: data.jobpost_status || 'draft',
+          jobpost_status: data.jobpost_status || 'Draft',
           job_type_post: data.job_type_post
           // work_type: data.work_type || '',
           // file_path: data.file || null,

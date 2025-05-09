@@ -201,8 +201,8 @@
           <mat-label>Type of post</mat-label>
           <mat-select id="job_type_post" formControlName="job_type_post" [disabled]="isEditMode">
             <mat-option value="" disabled>Select a post</mat-option>
-            <mat-option value="postnow">Post now</mat-option>
-            <mat-option value="schedulelater">Schedule later</mat-option>
+            <mat-option value="Postnow">Post now</mat-option>
+            <mat-option value="Schedulelater">Schedule later</mat-option>
           </mat-select>
           <mat-error *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched">
             Type of post is required.
@@ -226,7 +226,7 @@
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
         <!-- Post At -->
 
-        <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'schedulelater'">
+        <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
           <!-- <label for="posted_at">Post At<span class="text-danger">*</span></label>
           <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
           <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
