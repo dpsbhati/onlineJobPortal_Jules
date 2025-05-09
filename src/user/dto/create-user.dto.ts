@@ -158,3 +158,45 @@ export class ResendEmailDto {
   @IsString({ message: 'Email must be a valid string.' })
   email: string;
 }
+
+export class ChangePasswordDto {
+  @ApiProperty({
+    example: 'john.doe@example.com',
+    description: 'The email address of the user.',
+  })
+  @IsEmail({}, { message: 'email must be a valid email address.' })
+  @IsNotEmpty({ message: 'email is required.' })
+  @Transform(({ value }) => value?.trim())
+  email: string;
+
+  @ApiProperty({
+    example: 'securePassword123!',
+    description:
+      'The password of the user (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
+  })
+  @IsString({ message: 'password must be a valid string.' })
+  @IsNotEmpty({ message: 'password is required.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
+    message:
+      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+  })
+  @Transform(({ value }) => value?.trim())
+  oldPassword: string;
+
+  @ApiProperty({
+    example: 'securePassword123!',
+    description:
+      'The password of the user (minimum length of 6 characters, no spaces, must be alphanumeric and can include special characters).',
+  })
+  @IsString({ message: 'password must be a valid string.' })
+  @IsNotEmpty({ message: 'password is required.' })
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
+    message:
+      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+  })
+  @Transform(({ value }) => value?.trim())
+  newPassword: string;
+  
+}

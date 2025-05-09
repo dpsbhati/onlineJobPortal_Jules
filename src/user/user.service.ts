@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { IPagination } from 'src/shared/paginationEum';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { forgetPasswordDto } from 'src/user/dto/create-user.dto';
+import { ChangePasswordDto, forgetPasswordDto } from 'src/user/dto/create-user.dto';
 import { MailService } from 'src/utils/mail.service';
 import { Not, Repository } from 'typeorm';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
@@ -458,6 +458,25 @@ export class UserService {
         {},
         'An unexpected error occurred while resending the email.',
       );
+    }
+  }
+
+  async changePassword(changePasswordDto:ChangePasswordDto,req){
+    try {
+      const user=await this.userRepository.findOne({where:{email:changePasswordDto.email,is_deleted:false}});
+      if(!user){
+        return WriteResponse(404,false,"User not found.");
+      }
+      const passwordValid = await bcrypt.compare(changePasswordDto.oldPassword, user.password);
+      if (!passwordValid) {
+        return WriteResponse(401, false, 'Invalid current password.');
+      }
+      const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
+      await this.userRepository.update(user.id,{password:hashedPassword});
+      return WriteResponse(200,true,"Password changed successfully.");
+    } catch (error) {
+      console.log(error);
+      return WriteResponse(500,false,"Something went wrong.");
     }
   }
 
