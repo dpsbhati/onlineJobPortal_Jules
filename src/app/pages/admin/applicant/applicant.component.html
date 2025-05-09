@@ -22,7 +22,7 @@
                 <mat-select [(ngModel)]="filters.job_type" (selectionChange)="onJobTypeChange($event.value)">
                   <mat-option value="full-time">Full-Time</mat-option>
                   <mat-option value="part-time">Part-Time</mat-option>
-                  <mat-option value="flexible">Flexible</mat-option>
+                  <mat-option value="flexible">Contract</mat-option>
                 </mat-select>
 
               </mat-form-field>
@@ -31,16 +31,27 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Date Range</mat-label>
                 <mat-date-range-input [rangePicker]="picker">
-                  <input matStartDate [(ngModel)]="filters.dateRange.start" name="startDate" placeholder="From date" (ngModelChange)="onDateRangeChange()" />
-                  <input matEndDate [(ngModel)]="filters.dateRange.end" name="endDate" placeholder="To date" (ngModelChange)="onDateRangeChange()" />
+                  <input
+                    matStartDate
+                    [(ngModel)]="filters.dateRange.start"
+                    name="startDate"
+                    placeholder="From date"
+                    (ngModelChange)="onDateRangeChange()"
+                  />
+                  <input
+                    matEndDate
+                    [(ngModel)]="filters.dateRange.end"
+                    name="endDate"
+                    placeholder="To date"
+                    (ngModelChange)="onDateRangeChange()"
+                  />
                 </mat-date-range-input>
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
                 <mat-date-range-picker #picker></mat-date-range-picker>
               </mat-form-field>
-
-
-
-
             </div>
 
             <div class="col-xl-1 col-lg-2 col-md-3">

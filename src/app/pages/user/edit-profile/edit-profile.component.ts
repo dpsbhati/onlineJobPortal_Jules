@@ -62,7 +62,7 @@ export class EditProfileComponent implements OnInit {
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
-     private loader : LoaderService,
+    private loader: LoaderService,
     private toaster: ToastrService,
 
   ) {
@@ -124,7 +124,7 @@ export class EditProfileComponent implements OnInit {
       ] : null),
       current_company: new FormControl('', this.isApplicant() ? [
         Validators.required,
-        // Validators.pattern('^[a-zA-Z0-9 ]+$'),
+        Validators.pattern('^[a-zA-Z0-9 ]+$'),
          Validators.maxLength(100)
       ] : null),
       expected_salary: new FormControl('', this.isApplicant() ? [
@@ -145,7 +145,7 @@ export class EditProfileComponent implements OnInit {
       }
     });
 
-    this.addTrimValidators();
+    // this.addTrimValidators();
   }
 
   skillsValidator(minLength: number, maxLength: number): ValidatorFn {
@@ -313,6 +313,10 @@ export class EditProfileComponent implements OnInit {
     this.loader.show();
 
     const formValues = this.userProfileForm.value;
+    // Format the Date of Birth (dob) if it's set
+    if (formValues.dob) {
+      formValues.dob = this.formatDate(formValues.dob);
+    }
     const formattedSkills = formValues.key_skills.map((skill: string) => `/${skill}`);
 
     const payload = {
@@ -341,6 +345,20 @@ export class EditProfileComponent implements OnInit {
       }
     });
   }
+
+  // Helper function to format the Date of Birth to YYYY-MM-DD format
+  formatDate(date: Date): string {
+    // Set the time to midnight to avoid timezone issues
+    const localDate = new Date(date);
+    localDate.setHours(0, 0, 0, 0);  // Set the time to midnight
+
+    const year = localDate.getFullYear();
+    const month = ('0' + (localDate.getMonth() + 1)).slice(-2); // Add leading zero if month < 10
+    const day = ('0' + localDate.getDate()).slice(-2); // Add leading zero if day < 10
+
+    return `${year}-${month}-${day}`; // Returns in 'YYYY-MM-DD' format
+  }
+
 
   loadUserData(userId: string): void {
     this.loader.show();
@@ -400,7 +418,7 @@ export class EditProfileComponent implements OnInit {
       error: (error: any) => {
         this.loader.hide();
         console.error('Error fetching user profile data:', error);
-         this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
+        this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
       }
     });
   }
@@ -459,21 +477,17 @@ export class EditProfileComponent implements OnInit {
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  onInputChange(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    let value = inputElement.value;
+  // onInputChange(event: Event): void {
+  //   const inputElement = event.target as HTMLInputElement;
 
-    // Regular expression to match only letters and spaces
-    const regex = /^[a-zA-Z\s]*$/;
+  //   // Regular expression to match only letters and spaces
+  //   const regex = /^[a-zA-Z\s]*$/;
 
-    // If the value contains any invalid characters, we remove them
-    if (!regex.test(value)) {
-      value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
-      inputElement.value = value; // Set the modified value back to the input
-    }
-  }
-
-
-
+  //   // If the value contains any invalid characters, we remove them
+  //   if (!regex.test(value)) {
+  //     value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
+  //     inputElement.value = value; // Set the modified value back to the input
+  //   }
+  // }
 
 }

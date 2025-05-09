@@ -43,15 +43,15 @@ import { MatSliderModule } from '@angular/material/slider';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatTableModule,    MatPaginatorModule,MatMenuModule,MatSelectModule,FormsModule,MatFormFieldModule, MatInputModule, MatDatepickerModule,MatNativeDateModule,MatSliderModule
+    MatTableModule, MatPaginatorModule, MatMenuModule, MatSelectModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatSliderModule
 
-    ,MatMenuModule,MatSelectModule,FormsModule
+    , MatMenuModule, MatSelectModule, FormsModule
   ],
   templateUrl: './applicant.component.html',
   styleUrl: './applicant.component.scss'
 })
 export class ApplicantComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'employer', 'jobType', 'publishedDate', 'deadline', 'startSalary','endSalary', 'jobPost','city', 'action'];
+  displayedColumns: string[] = ['name', 'employer', 'jobType', 'publishedDate', 'deadline', 'startSalary', 'endSalary', 'jobPost', 'city', 'action'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -74,8 +74,8 @@ export class ApplicantComponent implements OnInit {
     // date: null
     dateRange: {
       start: null,
-      end: null
-    }
+      end: null,
+    },
   };
   errorMessage: string = '';
   searchQuery: string = '';
@@ -254,16 +254,54 @@ export class ApplicantComponent implements OnInit {
 
   onPagination(): void {
     this.loader.show();
-    // const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
+    // Create the base applicant filter
     const aplicantFilter = {
       key: 'job_opening',
-      value: 'open',
       operator: '=',
+      value: 'open',
     };
 
-     // 3. Combine filters
-     this.pageConfig.whereClause = [ aplicantFilter];
+    // Start with the applicant filter
+    let whereClause = [aplicantFilter];
+
+    // Add job type filter if present
+    if (this.filters.job_type) {
+      whereClause.push({
+        key: 'job_type',
+        operator: '=',
+        value: this.filters.job_type
+      });
+    }
+
+    // Add date range filter if present
+    const { start, end } = this.filters.dateRange;
+    if (start) {
+      whereClause.push({
+        key: 'startDate',
+        operator: '=',
+        value: this.formatDateToLocalISO(start)
+      });
+    }
+
+    if (end) {
+      whereClause.push({
+        key: 'endDate',
+        operator: '=',
+        value: this.formatDateToLocalISO(end)
+      });
+    }
+
+    // Add search query filter if present
+    if (this.searchQuery.trim()) {
+      whereClause.push({
+        key: 'all',
+        operator: '=',
+        value: this.searchQuery.trim().toLowerCase()
+      });
+    }
+    this.pageConfig.whereClause = whereClause;
+ 
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200) {
@@ -385,8 +423,8 @@ export class ApplicantComponent implements OnInit {
   //   }
   // }
 
-  viewJob(id:any) {
-    this.router.navigate(['/view-job',id]);
+  viewJob(id: any) {
+    this.router.navigate(['/view-job', id]);
   }
 
   viewJobApplications(jobId: string) {
@@ -394,16 +432,24 @@ export class ApplicantComponent implements OnInit {
     this.router.navigate(['/job-applicants-list', jobId]);
   }
 
-  applyNow(jobId: string){
+  applyNow(jobId: string) {
     this.router.navigate(['/Apply-Job', jobId]);
   }
 
+
   formatDateToLocalISO(date: Date): string {
-    const year = date.getFullYear();
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const day = ('0' + date.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
+    const localDate = new Date(date);
+
+    // Set the time to midnight to avoid timezone issues
+    localDate.setHours(0, 0, 0, 0);
+
+    const year = localDate.getFullYear();
+    const month = ('0' + (localDate.getMonth() + 1)).slice(-2); // Ensure 2-digit month
+    const day = ('0' + localDate.getDate()).slice(-2); // Ensure 2-digit day
+
+    return `${year}-${month}-${day}`; // Return formatted date in 'YYYY-MM-DD' format
   }
+
 
   // onDateRangeChange(): void {
   //   const { start, end } = this.filters.dateRange;
@@ -436,28 +482,31 @@ export class ApplicantComponent implements OnInit {
       whereClause.push({ key: 'job_type', operator: '=', value: this.filters.job_type });
     }
 
+    // Only add start date if it's provided and formatted correctly
     if (start) {
       const startDate = this.formatDateToLocalISO(start);
       whereClause.push({
-        key: 'startDate',
-        operator: '=',
+        key: 'startDate', // Change the key to match your backend filter for start date
+        operator: '=',   // Use '>=', assuming you want jobs from this date onwards
         value: startDate
       });
     }
 
+    // Only add end date if it's provided and formatted correctly
     if (end) {
       const endDate = this.formatDateToLocalISO(end);
       whereClause.push({
-        key: 'endDate',
-        operator: '=',
+        key: 'endDate', // Change the key to match your backend filter for end date
+        operator: '=',  // Use '<=' to filter jobs that are due on or before this date
         value: endDate
       });
     }
 
     this.pageConfig.curPage = 1;
-    this.pageConfig.whereClause = whereClause;
-    this.onPagination();
+    this.pageConfig.whereClause = whereClause; // Ensure the whereClause is updated
+    this.onPagination(); // Trigger pagination with updated filters
   }
+
 
 
 }
