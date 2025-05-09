@@ -49,11 +49,11 @@
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Status</mat-label>
               <mat-select [(ngModel)]="filters.
-              jobpost_status
+              job_opening
               " (selectionChange)="onSearch()">
-                <mat-option value="Posted">Posted</mat-option>
-                <mat-option value="Closed">Closed</mat-option>
-                <mat-option value="Draft">Draft</mat-option>
+                <mat-option value="Hold">Hold</mat-option>
+                <mat-option value="Active">Active</mat-option>
+                <mat-option value="Close">Close</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

@@ -124,7 +124,7 @@ export class JobListComponent implements OnInit {
     job_type: '',
     employer: '',
     rank: '',
-    jobpost_status: '',
+    job_opening: '',
   };
 
   total: number = 0;
@@ -308,7 +308,7 @@ export class JobListComponent implements OnInit {
 
   clearFilter(
     event: Event,
-    filterType: 'job_type' | 'rank' | 'jobpost_status'
+    filterType: 'job_type' | 'rank' | 'job_opening'
   ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
@@ -323,7 +323,7 @@ export class JobListComponent implements OnInit {
       employer: '',
       rank: '',
 
-      jobpost_status: '',
+      job_opening: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
     this.pageConfig.whereClause = [];
