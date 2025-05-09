@@ -21,6 +21,7 @@ import { AppliedApplicationsComponent } from './admin/applied-applications/appli
 import { AppliedStatusComponent } from './admin/applied-status/applied-status.component';
 import { ExpiredJobPostingComponent } from './admin/expired-job-posting/expired-job-posting.component';
 import { AllApplicantsComponent } from '../all-applicants/all-applicants.component';
+import { ChangePasswordComponent } from './authentication/change-password/change-password.component';
 export const PagesRoutes: Routes = [
   {
     path: '',
@@ -237,6 +238,18 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard],
         data: {
           title: 'User-list',
+          // urls: [
+          //   { title: 'Applications List', url: '/applications' },
+          //   // { title: 'Applications List' },
+          // ],
+        },
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
+        canActivate: [AuthGuard],
+        data: {
+          title: 'change-password',
           // urls: [
           //   { title: 'Applications List', url: '/applications' },
           //   // { title: 'Applications List' },
