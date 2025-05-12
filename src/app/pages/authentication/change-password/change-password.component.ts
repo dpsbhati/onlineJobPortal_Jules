@@ -88,10 +88,10 @@ export class ChangePasswordComponent {
 
     initializeForm(): void {
       this.userProfileForm = new FormGroup({
-        email: new FormControl('', [
-          Validators.required,
-          Validators.email,
-        ]),
+        // email: new FormControl('', [
+        //   Validators.required,
+        //   Validators.email,
+        // ]),
         oldPassword: new FormControl('', [
           Validators.required,
           // Validators.minLength(8),
@@ -128,38 +128,80 @@ export class ChangePasswordComponent {
       return this.userProfileForm.controls;
     }
 
+    // onSubmit(): void {
+    //   this.loader.show();
+    //   // if (this.userProfileForm.invalid) {
+    //   //   this.loader.hide();
+    //   //   return;
+    //   // }
+    //   // this.trimFormValues();
+
+    //   this.errorMessage = null;
+
+    //   this.authService.changepassword(this.userProfileForm.value).subscribe({
+    //     next: (res: any) => {
+    //       console.log(res);
+    //       if (res.statusCode == 200 || res.statusCode == 201) {
+    //         this.loader.hide();
+    //         this.router.navigate(['/authentication/login']);
+    //         this.toaster.success(res.message);
+    //       }
+    //       else {
+    //         this.errorMessage = res.message;
+    //         console.log(res.message,'test')
+    //         this.toaster.warning(res.message)
+    //         this.loader.hide();
+    //       }
+    //     },
+    //     error: (error: any) => {
+    //       this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
+    //       // this.notify.showError(this.errorMessage);
+    //       this.loader.hide();
+    //     }
+    //   });
+    // }
     onSubmit(): void {
-      this.loader.show();
-      // if (this.userProfileForm.invalid) {
-      //   this.loader.hide();
-      //   return;
-      // }
-      // this.trimFormValues();
+  this.loader.show();
+  this.errorMessage = null;
 
-      this.errorMessage = null;
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const email = user?.email || '';
 
-      this.authService.changepassword(this.userProfileForm.value).subscribe({
-        next: (res: any) => {
-          console.log(res);
-          if (res.statusCode == 200 || res.statusCode == 201) {
-            this.loader.hide();
-            this.router.navigate(['/authentication/login']);
-            this.toaster.success(res.message);
-          }
-          else {
-            this.errorMessage = res.message;
-            console.log(res.message,'test')
-            this.toaster.warning(res.message)
-            this.loader.hide();
-          }
-        },
-        error: (error: any) => {
-          this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
-          // this.notify.showError(this.errorMessage);
-          this.loader.hide();
-        }
-      });
+  if (!email) {
+    this.toaster.error('User email not found. Please login again.');
+    this.loader.hide();
+    return;
+  }
+
+  const formValue = this.userProfileForm.value;
+
+  const payload = {
+    email: email,
+    oldPassword: formValue.oldPassword,
+    newPassword: formValue.newPassword,
+    confirmPassword: formValue.confirmPassword
+  };
+
+  this.authService.changepassword(payload).subscribe({
+    next: (res: any) => {
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        this.loader.hide();
+        this.router.navigate(['/authentication/login']);
+        this.toaster.success(res.message);
+      } else {
+        this.errorMessage = res.message;
+        this.toaster.warning(res.message);
+        this.loader.hide();
+      }
+    },
+    error: (error: any) => {
+      this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
+      this.loader.hide();
     }
+  });
+}
+
 
     passwordMatchValidator() {
       const password = this.userProfileForm.get('newPassword')?.value;

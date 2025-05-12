@@ -132,9 +132,16 @@
 
           <th mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let element">
-            <span
+            <!-- <span
               class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted bg-light-secondary text-secondary">
               {{element.job_opening | titlecase}}
+            </span> -->
+            <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
+        'bg-light-secondary text-secondary': element.job_opening == 'Active',
+        'bg-light-warning text-warning': element.job_opening == 'Hold',
+        'bg-light-error  text-error ': element.job_opening == 'Close',
+      }">
+              {{ element.job_opening||'-' }}
             </span>
           </td>
         </ng-container>
