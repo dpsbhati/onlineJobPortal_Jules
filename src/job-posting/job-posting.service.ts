@@ -5,6 +5,7 @@ import {
   JobOpeningStatus,
   JobPosting,
   JobPostStatus,
+  JobTypePost,
 } from './entities/job-posting.entity';
 import { CreateJobPostingDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
@@ -65,65 +66,137 @@ export class JobPostingService {
   // }
 
   @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
-  async autoPostJobs() {
-    try {
-      const now = new Date();
-      // Get "today" as per local time (e.g., IST)
-      // Create IST midnight today
-      // const now = new Date();
-      const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
-      console.log('IST_OFFSET----->>', IST_OFFSET);
+  //   async autoPostJobs() {
+  //     try {
+  //       const now = new Date();
+  //       // Get "today" as per local time (e.g., IST)
+  //       // Create IST midnight today
+  //       // const now = new Date();
+  //       const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
+  //       console.log('IST_OFFSET----->>', IST_OFFSET);
 
-      const istNow = new Date(now.getTime() - IST_OFFSET);
-      const oneHourMs = 60 * 60 * 1000;
-      const currentTime = new Date(istNow.getTime() - oneHourMs);
+  //       const istNow = new Date(now.getTime() - IST_OFFSET);
+  //       const oneHourMs = 60 * 60 * 1000;
+  //       const currentTime = new Date(istNow.getTime() - oneHourMs);
+  //       // const current24=currentTime.toLocaleDateString('en-US', { hour12: false })
+  //       // console.log('current24----->>', current24);
+  //       // const currentTime = new Date(istNow.getTime() - oneHourMs);
 
-      // Get YYYY-MM-DD from IST
-      const istYear = istNow.getUTCFullYear();
-      const istMonth = istNow.getUTCMonth();
-      const istDate = istNow.getUTCDate();
+  // // Extract time (HH:mm:ss) from currentTime
+  // const hours = currentTime.getUTCHours().toString().padStart(2, '0');   // 24-hour format (00-23)
+  // const minutes = currentTime.getUTCMinutes().toString().padStart(2, '0'); // (00-59)
+  // // const seconds = currentTime.getUTCSeconds().toString().padStart(2, '0'); // (00-59)
 
-      // Create a new UTC date from IST's Y/M/D at midnight
-      const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
-      // Format to YYYY-MM-DD string
-const istDateString = `${istYear}-${(istMonth + 1).toString().padStart(2, '0')}-${istDate
-  .toString()
-  .padStart(2, '0')}`;
+  // const timeOnly = `${hours}:${minutes}`;
 
-console.log('istDateString ---->>', istDateString);
+  // console.log('Extracted time:', timeOnly); // Example: "07:10:30"
 
-      console.log(
-        'todayIST----->>',
-        todayIST,
-        ' currentTime----->>',
-        currentTime,
-      );
+  // const current24Hours=now.getHours()
+  // const current24Minutes=now.getMinutes()
 
-      const jobsToPost = await this.jobPostingRepository.find({
-        where: {
-          jobpost_status: JobPostStatus.DRAFT,
-          is_deleted: false,
-          posted_date: istDateString, // Match only today's date
-          posted_at: LessThanOrEqual(currentTime),
-        },
-      });
-      console.log('jobsToPost----->>', jobsToPost);
+  // const totalTime=`${current24Hours}:${current24Minutes}`
 
-      if (jobsToPost.length > 0) {
-        this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
+  // console.log('current24----->>',totalTime);
 
-        for (const job of jobsToPost) {
-          job.jobpost_status = JobPostStatus.POSTED;
-          job.updated_at = new Date();
-          await this.jobPostingRepository.save(job);
-        }
+  //       // Get YYYY-MM-DD from IST
+  //       const istYear = istNow.getUTCFullYear();
+  //       const istMonth = istNow.getUTCMonth();
+  //       const istDate = istNow.getUTCDate();
 
-        this.logger.log(`Posted ${jobsToPost.length} jobs.`);
+  //       // Create a new UTC date from IST's Y/M/D at midnight
+  //       const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
+  //       // Format to YYYY-MM-DD string
+  // const istDateString = `${istYear}-${(istMonth + 1).toString().padStart(2, '0')}-${istDate
+  //   .toString()
+  //   .padStart(2, '0')}`;
+
+  // console.log('istDateString ---->>', istDateString);
+
+  //       console.log(
+  //         'todayIST----->>',
+  //         todayIST,
+  //         ' currentTime----->>',
+  //         currentTime,
+  //       );
+
+  //       const jobsToPost = await this.jobPostingRepository.find({
+  //         where: {
+  //           jobpost_status: JobPostStatus.DRAFT,
+  //           is_deleted: false,
+  //           posted_date: istDateString, // Match only today's date
+  //           posted_at: LessThanOrEqual(totalTime),
+  //         },
+  //       });
+  //       console.log('jobsToPost----->>', jobsToPost);
+
+  //       if (jobsToPost.length > 0) {
+  //         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
+
+  //         for (const job of jobsToPost) {
+  //           job.jobpost_status = JobPostStatus.POSTED;
+  //           job.updated_at = new Date();
+  //           await this.jobPostingRepository.save(job);
+  //         }
+
+  //         this.logger.log(`Posted ${jobsToPost.length} jobs.`);
+  //       }
+  //     } catch (error) {
+  //       this.logger.error('Error in autoPostJobs scheduler', error);
+  //     }
+  //   }
+ async autoPostJobs() {
+  try {
+    const now = new Date();
+
+    // Get hours and minutes
+    let current24Hours = now.getHours();
+    let current24Minutes = now.getMinutes();
+
+    // Ensure two-digit format for hours and minutes
+    const formattedHours = current24Hours.toString().padStart(2, '0');
+    const formattedMinutes = current24Minutes.toString().padStart(2, '0');
+
+    // Concatenate hours and minutes in 24-hour format
+    const totalTime = `${formattedHours}:${formattedMinutes}`;
+
+    console.log('current24----->>', totalTime);  // Example output: "09:05"
+
+    // Get the date in YYYY-MM-DD format
+    const date = now.getDate();
+    const month = now.getMonth() + 1;  // Months are zero-indexed in JavaScript, so add 1
+    const year = now.getFullYear();
+
+    const todayDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+
+    console.log('todayDate----->>', todayDate);  // Example output: "2025-05-09"
+
+    const jobsToPost = await this.jobPostingRepository.find({
+      where: {
+        jobpost_status: JobPostStatus.DRAFT,
+        is_deleted: false,
+        posted_date: todayDate, // Match only today's date
+        posted_at: LessThanOrEqual(totalTime),
+      },
+    });
+
+    console.log('jobsToPost----->>', jobsToPost);
+
+    if (jobsToPost.length > 0) {
+      this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
+
+      for (const job of jobsToPost) {
+        job.jobpost_status = JobPostStatus.POSTED;
+        job.updated_at = new Date();
+        await this.jobPostingRepository.save(job);
       }
-    } catch (error) {
-      this.logger.error('Error in autoPostJobs scheduler', error);
+
+      this.logger.log(`Posted ${jobsToPost.length} jobs.`);
     }
+  } catch (error) {
+    this.logger.error('Error in autoPostJobs scheduler', error);
   }
+}
+
 
   @Cron('*/1 * * * *') // Runs every minute
   async closeExpiredJobs() {
@@ -159,6 +232,8 @@ console.log('istDateString ---->>', istDateString);
           deadline: LessThanOrEqual(currentDateTime),
         },
       });
+      console.log('jobsToClose----->>', jobsToClose);
+      
 
       if (jobsToClose.length > 0) {
         console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
@@ -179,6 +254,11 @@ console.log('istDateString ---->>', istDateString);
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
+      if(jobDto.job_type_post = JobTypePost.POST_NOW){
+jobDto.jobpost_status = JobPostStatus.POSTED
+      }
+      console.log("jobDto.jobpost_status----------------------------------->>",jobDto.jobpost_status);
+      
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
