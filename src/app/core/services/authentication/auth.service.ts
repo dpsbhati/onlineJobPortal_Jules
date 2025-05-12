@@ -147,9 +147,17 @@ export class AuthService {
       })
     );
   }
-  changepassword(payload: { token: string }): Observable<any> {
-    return this.genericService.Post('user/change-password', payload)
-  }
+  // changepassword(payload: { token: string }): Observable<any> {
+  //   return this.genericService.Post('user/change-password', payload)
+  // }
+  changepassword(payload: {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Observable<any> {
+  return this.genericService.Post('user/change-password', payload);
+}
 
 
   resendVerificationEmail(email: string): Observable<any> {
