@@ -175,7 +175,7 @@ export class SideResetPasswordComponent implements OnInit {
 
     if (this.form.invalid) {
       if (this.form.errors?.['mismatch']) {
-        this._notifyService.showError('Passwords do not match');
+        this._notifyService.showError('New password and confirm password do not match');
       }
       return;
     }

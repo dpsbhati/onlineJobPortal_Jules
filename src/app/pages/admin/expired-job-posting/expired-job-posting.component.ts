@@ -147,12 +147,11 @@ export class ExpiredJobPostingComponent implements OnInit {
           this.jobPostingList = [];
           this.total = 0;
           this.loader.hide();
-          this.toastr.warning(res.message);
+          // this.toastr.warning(res.message);
         }
         this.isLoading = false;
       },
       error: (err: any) => {
-        console.error('API Error:', err);
         this.isLoading = false;
         this.loader.hide();
         this.toastr.error(err?.error?.message);
