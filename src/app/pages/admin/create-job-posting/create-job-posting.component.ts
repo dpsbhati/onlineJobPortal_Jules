@@ -250,7 +250,47 @@ export class CreateJobPostingComponent {
     postedDateControl?.updateValueAndValidity();
   }
   
-  
+   onSubmit(): void {
+    if (this.jobForm.valid) {
+      this.sanitizeFormValues();
+      const formValues = this.jobForm.value;
+      formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
+      if (formValues.start_salary) {
+        formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
+      }
+      if (formValues.end_salary) {
+        formValues.end_salary = parseInt(formValues.end_salary.replace(/,/g, ''), 10);
+      }
+      if (!formValues.id) {
+        delete formValues.id;
+      }
+
+      formValues.skills_required = JSON.stringify(formValues.skills_required);
+      this.loader.show();
+
+      this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+        next: (response: any) => {
+          this.loader.hide();
+          if (response.statusCode === 200) {
+            this.router.navigate(['/job-list']);
+          } else {
+            console.error(response.message);
+          }
+        },
+        error: (error: any) => {
+          this.loader.hide();
+          console.error(error.error?.message);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+    } else {
+      // Mark all fields as touched to show validation errors
+      this.jobForm.markAllAsTouched();
+      this.loader.hide();
+      console.warn("Form is invalid", this.jobForm.errors);
+    }
+  }
 
   removeSkill(index: number): void {
     this.skillsArray.splice(index, 1)
@@ -501,7 +541,7 @@ export class CreateJobPostingComponent {
           address: data.address || '',
           social_media_type: socialMediaTypes,
           posted_at: data.posted_at,
-          posted_date: data.posted_date,
+          posted_date: formattedpostedAtDate,
           jobpost_status: data.jobpost_status || 'Draft',
           job_type_post: data.job_type_post
           // work_type: data.work_type || '',
@@ -687,47 +727,7 @@ export class CreateJobPostingComponent {
   //     // this.notify.showWarning("Failed to update the form")
   //   }
   // }
-  onSubmit(): void {
-    if (this.jobForm.valid) {
-      this.sanitizeFormValues();
-      const formValues = this.jobForm.value;
-      // formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
-      if (formValues.start_salary) {
-        formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
-      }
-      if (formValues.end_salary) {
-        formValues.end_salary = parseInt(formValues.end_salary.replace(/,/g, ''), 10);
-      }
-      if (!formValues.id) {
-        delete formValues.id;
-      }
-
-      formValues.skills_required = JSON.stringify(formValues.skills_required);
-      this.loader.show();
-
-      this.adminService.createOrUpdateJobPosting(formValues).subscribe({
-        next: (response: any) => {
-          this.loader.hide();
-          if (response.statusCode === 200) {
-            this.router.navigate(['/job-list']);
-          } else {
-            console.error(response.message);
-          }
-        },
-        error: (error: any) => {
-          this.loader.hide();
-          console.error(error.error?.message);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      });
-
-    } else {
-      // Mark all fields as touched to show validation errors
-      this.jobForm.markAllAsTouched();
-      this.loader.hide();
-      console.warn("Form is invalid", this.jobForm.errors);
-    }
-  }
+ 
 
   allrankslist() {
     this.adminService.getallranks().subscribe((res: any) => {
