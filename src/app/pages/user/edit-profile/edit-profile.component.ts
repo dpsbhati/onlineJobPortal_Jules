@@ -139,7 +139,9 @@ export class EditProfileComponent implements OnInit {
     Object.keys(this.userProfileForm.controls).forEach(key => {
       const control = this.userProfileForm.get(key);
       if (control) {
+        console.log(key,"Control");
         control.valueChanges.subscribe(() => {
+          console.log("touched",control.touched, key)
           if (control.touched) {
             this.showValidationMessage(key);
           }
@@ -147,6 +149,7 @@ export class EditProfileComponent implements OnInit {
       }
     });
 
+    console.log(this.userProfileForm);
     // this.addTrimValidators();
   }
 
@@ -213,6 +216,7 @@ export class EditProfileComponent implements OnInit {
     const control = this.userProfileForm.get(fieldName);
     if (control?.invalid && control.touched) {
       const errors = control.errors;
+      console.log(errors,"ERRORS");
       if (errors) {
         if (errors['required']) {
           this.toaster.warning(`${this.formatFieldName(fieldName)} is required`);
@@ -381,15 +385,24 @@ export class EditProfileComponent implements OnInit {
     return `${year}-${month}-${day}`; // Returns in 'YYYY-MM-DD' format
   }
 
-    restrictToNumbers(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.charCode);
-    const regex = /[^0-9]/g; // Match any non-numeric character
+   restrictToNumbers(event: KeyboardEvent): void {
+  const inputChar = String.fromCharCode(event.charCode);
+  const inputElement = event.target as HTMLInputElement;
+  const currentValue = inputElement.value;
 
-    // Prevent the input if it's not a valid number
-    if (regex.test(inputChar)) {
-      event.preventDefault();
-    }
+  const digitsOnly = currentValue.replace(/\D/g, ''); // Remove non-digit characters
+
+  // Prevent the input if it's not a number
+  if (/[^0-9]/g.test(inputChar)) {
+    event.preventDefault();
   }
+
+  // Prevent entering more than 8 digits
+  if (digitsOnly.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
+    event.preventDefault(); // Prevent further input if length exceeds 8 digits
+  }
+}
+
 
 
   loadUserData(userId: string): void {

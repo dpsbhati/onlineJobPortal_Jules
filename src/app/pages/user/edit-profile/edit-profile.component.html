@@ -3,7 +3,8 @@
     <mat-card-title class="d-flex align-items-center gap-6">
       <button mat-icon-button color="primary" (click)="goBack()">
         <mat-icon>arrow_back</mat-icon>
-      </button> {{ isAdmin() ? 'Edit Admin Profile' : 'Edit User Profile' }}
+      </button>
+      {{ isAdmin() ? "Edit Admin Profile" : "Edit User Profile" }}
     </mat-card-title>
   </mat-card-header>
 
@@ -13,17 +14,25 @@
     </div>
 
     <form [formGroup]="userProfileForm" class="profile-form">
-
       <div class="row">
         <!-- First Name -->
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="first_name" placeholder="Enter first name" (keypress)="restrictNumeric($event)">
-            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="first_name"
+              placeholder="Enter first name"
+              (keypress)="restrictNumeric($event)"
+            />
+            <mat-error
+              *ngIf="userProfileForm.get('first_name')?.errors?.['required']"
+            >
               First name is required
             </mat-error>
-            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']">
+            <mat-error
+              *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']"
+            >
               First name can only contain letters and spaces
             </mat-error>
           </mat-form-field>
@@ -33,11 +42,20 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="last_name" placeholder="Enter last name" (keypress)="restrictNumeric($event)">
-            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="last_name"
+              placeholder="Enter last name"
+              (keypress)="restrictNumeric($event)"
+            />
+            <mat-error
+              *ngIf="userProfileForm.get('last_name')?.errors?.['required']"
+            >
               Last name is required
             </mat-error>
-            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']">
+            <mat-error
+              *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']"
+            >
               Last name can only contain letters, and spaces
             </mat-error>
           </mat-form-field>
@@ -47,7 +65,7 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Email</mat-label>
-            <input matInput [value]="userEmail" disabled>
+            <input matInput [value]="userEmail" disabled />
           </mat-form-field>
         </div>
 
@@ -55,13 +73,18 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Date of Birth</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="dob">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <input matInput [matDatepicker]="picker" formControlName="dob" />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['required']">
               Date of birth is required
             </mat-error>
-           <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['invalidDOB']">
+            <mat-error
+              *ngIf="userProfileForm.get('dob')?.errors?.['invalidDOB']"
+            >
               Invalid Date of Birth format. Please enter in YYYY-MM-DD.
             </mat-error>
           </mat-form-field>
@@ -77,7 +100,9 @@
               <mat-option value="FEMALE">Female</mat-option>
               <mat-option value="OTHERS">Other</mat-option>
             </mat-select>
-            <mat-error *ngIf="userProfileForm.get('gender')?.errors?.['required']">
+            <mat-error
+              *ngIf="userProfileForm.get('gender')?.errors?.['required']"
+            >
               Gender is required
             </mat-error>
           </mat-form-field>
@@ -87,13 +112,21 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile" type="number" placeholder="Enter mobile number"
-              (input)="onMobileInput()">
-            <mat-error *ngIf="userProfileForm.get('mobile')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="mobile"
+              type="number"
+              placeholder="Enter mobile number"
+              (input)="onMobileInput()"
+            />
+            <mat-error
+              *ngIf="userProfileForm.get('mobile')?.errors?.['required']"
+            >
               Mobile number is required
             </mat-error>
             <mat-error
-              *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']">
+              *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']"
+            >
               Please enter a valid 10-digit mobile number
             </mat-error>
           </mat-form-field>
@@ -104,22 +137,38 @@
           <div class="skills-section">
             <mat-form-field appearance="outline" class="w-100 mb-2">
               <mat-label>Add Skill</mat-label>
-              <input matInput [(ngModel)]="newSkill" [ngModelOptions]="{standalone: true}"
-                placeholder="Enter a skill and press Enter" (keyup.enter)="addSkill()">
-              <button mat-icon-button matSuffix color="primary" (click)="addSkill()" [disabled]="!newSkill.trim()">
+              <input
+                matInput
+                [(ngModel)]="newSkill"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Enter a skill and press Enter"
+                (keyup.enter)="addSkill()"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                color="primary"
+                (click)="addSkill()"
+                [disabled]="!newSkill.trim()"
+              >
                 <mat-icon>add</mat-icon>
               </button>
             </mat-form-field>
 
             <mat-chip-listbox>
-              <mat-chip *ngFor="let skill of skillsArray; let i = index" (removed)="removeSkill(i)" [removable]="true">
-                {{skill}}
+              <mat-chip
+                *ngFor="let skill of skillsArray; let i = index"
+                (removed)="removeSkill(i)"
+                [removable]="true"
+              >
+                {{ skill }}
                 <mat-icon matChipRemove>cancel</mat-icon>
               </mat-chip>
             </mat-chip-listbox>
 
             <mat-error
-              *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.errors?.['required']">
+              *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.errors?.['required']"
+            >
               At least one skill is required
             </mat-error>
           </div>
@@ -129,12 +178,21 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Work Experience</mat-label>
-            <input matInput formControlName="work_experiences" placeholder="Enter work experience">
-            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="work_experiences"
+              placeholder="Enter work experience"
+            />
+            <mat-error
+              *ngIf="userProfileForm.get('work_experiences')?.errors?.['required']"
+            >
               Work experience is required
             </mat-error>
-            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']">
-              Please enter valid work experience (1 or 2 digits followed by optional text)
+            <mat-error
+              *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']"
+            >
+              Please enter valid work experience (1 or 2 digits followed by
+              optional text)
             </mat-error>
           </mat-form-field>
         </div>
@@ -143,11 +201,19 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Current Company</mat-label>
-            <input matInput formControlName="current_company" placeholder="Enter current company" >
-            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="current_company"
+              placeholder="Enter current company"
+            />
+            <mat-error
+              *ngIf="userProfileForm.get('current_company')?.errors?.['required']"
+            >
               Current company is required
             </mat-error>
-            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']">
+            <mat-error
+              *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']"
+            >
               Company name must contain only letters and spaces
             </mat-error>
           </mat-form-field>
@@ -157,23 +223,37 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Expected Salary</mat-label>
-            <input matInput formControlName="expected_salary" placeholder="Enter expected salary"
-              (input)="formatSalary('expected_salary')"   (keypress)="restrictToNumbers($event)">
-            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']">
+            <input
+              matInput
+              formControlName="expected_salary"
+              placeholder="Enter expected salary"
+              (input)="formatSalary('expected_salary')"
+              (keypress)="restrictToNumbers($event)"
+            />
+            {{userProfileForm.get('expected_salary')}}
+            <mat-error
+              *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']"
+            >
               Expected salary is required
             </mat-error>
-            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['maxDigits']">
+            <mat-error
+              *ngIf="userProfileForm.get('expected_salary')?.errors?.['maxDigits']"
+            >
               Salary should not exceed 8 digits
             </mat-error>
           </mat-form-field>
         </div>
       </div>
 
-
       <!-- Submit Button -->
       <div class="d-flex justify-content-end mt-4">
-        <button mat-flat-button color="primary" [disabled]="isUpdateButtonDisabled" (click)="onSubmit()">
-          {{ isEditMode ? 'Update' : 'Create' }}
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="isUpdateButtonDisabled"
+          (click)="onSubmit()"
+        >
+          {{ isEditMode ? "Update" : "Create" }}
         </button>
       </div>
     </form>
