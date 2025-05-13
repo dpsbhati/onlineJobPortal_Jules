@@ -256,7 +256,7 @@
               <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }} <!-- Dynamic deadline -->
             </div>
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} years <!-- Dynamic experience -->
+              <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} <!-- Dynamic experience -->
             </div>
             <div class="col-lg-12 m-b-16">
               <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_date ? (jobDetails?.posted_date | date:'mediumDate') : '-' }}</span> <!-- Dynamic posted date -->
