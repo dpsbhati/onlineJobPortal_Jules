@@ -144,64 +144,63 @@ export class JobPostingService {
   //       this.logger.error('Error in autoPostJobs scheduler', error);
   //     }
   //   }
- async autoPostJobs() {
-  try {
-    const now = new Date();
+  async autoPostJobs() {
+    try {
+      const now = new Date();
 
-    // Get hours and minutes
-    let current24Hours = now.getHours();
-    let current24Minutes = now.getMinutes();
+      // Get hours and minutes
+      let current24Hours = now.getHours();
+      let current24Minutes = now.getMinutes();
 
-    // Ensure two-digit format for hours and minutes
-    const formattedHours = current24Hours.toString().padStart(2, '0');
-    const formattedMinutes = current24Minutes.toString().padStart(2, '0');
+      // Ensure two-digit format for hours and minutes
+      const formattedHours = current24Hours.toString().padStart(2, '0');
+      const formattedMinutes = current24Minutes.toString().padStart(2, '0');
 
-    // Concatenate hours and minutes in 24-hour format
-    const totalTime = `${formattedHours}:${formattedMinutes}`;
+      // Concatenate hours and minutes in 24-hour format
+      const totalTime = `${formattedHours}:${formattedMinutes}`;
 
-    console.log('current24----->>', totalTime);  // Example output: "09:05"
+      // console.log('current24----->>', totalTime);  // Example output: "09:05"
 
-    // Get the date in YYYY-MM-DD format
-    const date = now.getDate();
-    const month = now.getMonth() + 1;  // Months are zero-indexed in JavaScript, so add 1
-    const year = now.getFullYear();
+      // Get the date in YYYY-MM-DD format
+      const date = now.getDate();
+      const month = now.getMonth() + 1; // Months are zero-indexed in JavaScript, so add 1
+      const year = now.getFullYear();
 
-    const todayDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+      const todayDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
 
-    console.log('todayDate----->>', todayDate);  // Example output: "2025-05-09"
+      // console.log('todayDate----->>', todayDate);  // Example output: "2025-05-09"
 
-    const jobsToPost = await this.jobPostingRepository.find({
-      where: {
-        jobpost_status: JobPostStatus.DRAFT,
-        is_deleted: false,
-        posted_date: todayDate, // Match only today's date
-        posted_at: LessThanOrEqual(totalTime),
-      },
-    });
+      const jobsToPost = await this.jobPostingRepository.find({
+        where: {
+          jobpost_status: JobPostStatus.DRAFT,
+          is_deleted: false,
+          posted_date: todayDate, // Match only today's date
+          posted_at: LessThanOrEqual(totalTime),
+        },
+      });
 
-    console.log('jobsToPost----->>', jobsToPost);
+      // console.log('jobsToPost----->>', jobsToPost);
 
-    if (jobsToPost.length > 0) {
-      this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
+      if (jobsToPost.length > 0) {
+        this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
 
-      for (const job of jobsToPost) {
-        job.jobpost_status = JobPostStatus.POSTED;
-        job.updated_at = new Date();
-        await this.jobPostingRepository.save(job);
+        for (const job of jobsToPost) {
+          job.jobpost_status = JobPostStatus.POSTED;
+          job.updated_at = new Date();
+          await this.jobPostingRepository.save(job);
+        }
+
+        this.logger.log(`Posted ${jobsToPost.length} jobs.`);
       }
-
-      this.logger.log(`Posted ${jobsToPost.length} jobs.`);
+    } catch (error) {
+      this.logger.error('Error in autoPostJobs scheduler', error);
     }
-  } catch (error) {
-    this.logger.error('Error in autoPostJobs scheduler', error);
   }
-}
-
 
   @Cron('*/1 * * * *') // Runs every minute
   async closeExpiredJobs() {
     try {
-      console.log('Running job scheduler to close expired jobs...');
+      // console.log('Running job scheduler to close expired jobs...');
 
       const currentDateTime = new Date();
 
@@ -215,13 +214,13 @@ export class JobPostingService {
       });
 
       if (jobsToOpen.length > 0) {
-        console.log(
-          `Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`,
-        );
+        // console.log(
+        //   `Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`,
+        // );
         for (const job of jobsToOpen) {
           job.job_opening = JobOpeningStatus.OPEN;
           await this.jobPostingRepository.save(job);
-          console.log(`Job with ID ${job.id} marked as "open".`);
+          // console.log(`Job with ID ${job.id} marked as "open".`);
         }
       }
 
@@ -232,16 +231,15 @@ export class JobPostingService {
           deadline: LessThanOrEqual(currentDateTime),
         },
       });
-      console.log('jobsToClose----->>', jobsToClose);
-      
+      // console.log('jobsToClose----->>', jobsToClose);
 
       if (jobsToClose.length > 0) {
-        console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
+        // console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
 
         for (const job of jobsToClose) {
           job.job_opening = JobOpeningStatus.CLOSE;
           await this.jobPostingRepository.save(job);
-          console.log(`Job with ID ${job.id} marked as "close".`);
+          // console.log(`Job with ID ${job.id} marked as "close".`);
         }
       }
     } catch (error) {
@@ -254,11 +252,23 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      if(jobDto.job_type_post = JobTypePost.POST_NOW){
-jobDto.jobpost_status = JobPostStatus.POSTED
+      console.log(
+        'jobDto.job_type_post----------------------------------->>',
+        jobDto.job_type_post,
+      );
+
+      if (jobDto.job_type_post === JobTypePost.POST_NOW) {
+        jobDto.jobpost_status = JobPostStatus.POSTED;
+        console.log(
+          'jobDto.jobpost_status----------------------------------->>',
+          jobDto.jobpost_status,
+        );
       }
-      console.log("jobDto.jobpost_status----------------------------------->>",jobDto.jobpost_status);
-      
+      console.log(
+        'jobDto.jobpost_status----------------------------------->>',
+        jobDto.jobpost_status,
+      );
+
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
@@ -337,22 +347,14 @@ jobDto.jobpost_status = JobPostStatus.POSTED
       let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
       const fieldsToSearch = [
         'job_type',
-        'qualifications',
-        'skills_required',
+
         'title',
-        'short_description',
-        'full_description',
-        'assignment_duration',
+
         'employer',
-        'rank',
-        'required_experience',
+
         'salary',
         'start_salary',
         'end_salary',
-        'address',
-        'work_type',
-        'application_instruction',
-        'employee_experience',
         'job_type_post',
         'jobpost_status',
         'job_opening',
@@ -411,26 +413,45 @@ jobDto.jobpost_status = JobPostStatus.POSTED
       const allValue = whereClause.find((p) => p.key === 'all')?.value;
       console.log('allValue: ', allValue);
 
+      // if (allValue) {
+      //   const conditions = fieldsToSearch
+      //     .map((field) => {
+      //       console.log('Checking field: ', field);
+
+      //       // Special handling for numeric fields (salary, start_salary, end_salary)
+      //       if (
+      //         field === 'salary' ||
+      //         field === 'start_salary' ||
+      //         field === 'end_salary'
+      //       ) {
+      //         // Check if allValue is numeric
+      //         if (!isNaN(Number(allValue))) {
+      //           return `f.${field} = ${allValue}`; // Exact match for numbers
+      //         } else {
+      //           return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
+      //         }
+      //       } else {
+      //         // Default for string fields
+      //         return `f.${field} LIKE '%${allValue}%'`;
+      //       }
+      //     })
+      //     .join(' OR ');
+      //   lwhereClause += ` AND (${conditions})`;
+      // }
+
       if (allValue) {
         const conditions = fieldsToSearch
           .map((field) => {
-            console.log('Checking field: ', field);
-
-            // Special handling for numeric fields (salary, start_salary, end_salary)
+            const matchPattern = `${allValue}%`; // start-to-end match
+            const matchPatterns = `%${allValue}%`; // start-to-end match
             if (
               field === 'salary' ||
               field === 'start_salary' ||
               field === 'end_salary'
             ) {
-              // Check if allValue is numeric
-              if (!isNaN(Number(allValue))) {
-                return `f.${field} = ${allValue}`; // Exact match for numbers
-              } else {
-                return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
-              }
+              return `CAST(f.${field} AS CHAR) LIKE '${matchPattern}'`;
             } else {
-              // Default for string fields
-              return `f.${field} LIKE '%${allValue}%'`;
+              return `f.${field} LIKE '${matchPatterns}'`;
             }
           })
           .join(' OR ');
