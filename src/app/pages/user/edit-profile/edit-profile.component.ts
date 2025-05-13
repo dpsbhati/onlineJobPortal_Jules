@@ -105,7 +105,7 @@ export class EditProfileComponent implements OnInit {
           Validators.pattern('^[a-zA-Z ]*$'),
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl('', this.isApplicant() ? [Validators.required] : null),
+      dob: new FormControl('', [Validators.required, this.dobValidator]),
       gender: new FormControl('', this.isApplicant() ? [Validators.required] : null),
       mobile: new FormControl('', this.isApplicant() ? [
         Validators.required,
@@ -130,6 +130,7 @@ export class EditProfileComponent implements OnInit {
       ] : null),
       expected_salary: new FormControl('', this.isApplicant() ? [
         Validators.required,
+         Validators.pattern('^[0-9]*$'),
         Validators.min(1),
         this.expectedSalaryValidator()
       ] : null),
@@ -206,7 +207,7 @@ export class EditProfileComponent implements OnInit {
     }
   }
 
-  
+
 
   showValidationMessage(fieldName: string) {
     const control = this.userProfileForm.get(fieldName);
@@ -216,16 +217,34 @@ export class EditProfileComponent implements OnInit {
         if (errors['required']) {
           this.toaster.warning(`${this.formatFieldName(fieldName)} is required`);
           this.scrollToTop();
-        } else if (fieldName === 'current_company' && errors['pattern']) {
+        }else if (errors['invalidDOB']) { // Check for invalid DOB error
+        this.toaster.warning('Invalid Date of Birth format. Please enter in YYYY-MM-DD.');
+        this.scrollToTop();
+      }
+        else if (fieldName === 'current_company' && errors['pattern']) {
           this.toaster.warning('Current Company must contain only alphabets');
           this.scrollToTop();
-        } else if (fieldName === 'expected_salary' && errors['maxDigits']) {
-          this.toaster.warning('Expected Salary should not exceed 7 digits');
-          this.scrollToTop();
+        } else if (errors['maxDigits']) {
+          this.toaster.warning('Salary should not exceed 8 digits');
+        } else if (errors['pattern']) {
+          this.toaster.warning('Please enter a valid numeric salary value');
         }
       }
     }
   }
+   dobValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+  if (!value) {
+    return null; // No value means we don't show any error yet (waiting for the user to type something)
+  }
+
+  // Check if the date is in the correct format (YYYY-MM-DD)
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regex.test(value)) {
+    return { invalidDOB: 'Invalid Date of Birth format. Please enter in YYYY-MM-DD.' };
+  }
+  return null; // Return null when the date format is valid
+}
 
   private formatFieldName(fieldName: string): string {
     return fieldName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -362,6 +381,16 @@ export class EditProfileComponent implements OnInit {
     return `${year}-${month}-${day}`; // Returns in 'YYYY-MM-DD' format
   }
 
+    restrictToNumbers(event: KeyboardEvent): void {
+    const inputChar = String.fromCharCode(event.charCode);
+    const regex = /[^0-9]/g; // Match any non-numeric character
+
+    // Prevent the input if it's not a valid number
+    if (regex.test(inputChar)) {
+      event.preventDefault();
+    }
+  }
+
 
   loadUserData(userId: string): void {
     this.loader.show();
@@ -457,15 +486,26 @@ export class EditProfileComponent implements OnInit {
     this.userProfileForm.get('key_skills')?.markAsTouched();
   }
 
-  expectedSalaryValidator(): ValidatorFn {
+  // expectedSalaryValidator(): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const value = control.value;
+  //     if (!value) return null;
+  //     const numStr = value.toString().replace(/,/g, '');
+  //     if (numStr.length > 7) {
+  //       return { maxDigits: true };
+  //     }
+  //     return null;
+  //   };
+  // }
+   expectedSalaryValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-      if (!value) return null;
-      const numStr = value.toString().replace(/,/g, '');
-      if (numStr.length > 7) {
-        return { maxDigits: true };
+      if (!value) return null;  // Allow empty value as valid
+      const numStr = value.toString().replace(/,/g, '');  // Remove commas before checking length
+      if (numStr.length > 8) {
+        return { maxDigits: 'Salary should not exceed 8 digits' };  // Validation error for too many digits
       }
-      return null;
+      return null;  // No error if the length is valid
     };
   }
 
