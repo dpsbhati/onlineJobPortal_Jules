@@ -70,6 +70,21 @@ export class ApplicationController {
    return this.applicationService.paginateApplicationsByJobId(req, pagination, job_id);
  }
 
+@Post('jobs-with-applications')
+@ApiBody({
+  schema: {
+    type: 'object',
+    properties: IPaginationSwagger,
+  },
+})
+async paginateJobsWithApplications(
+  @Request() req: any,
+  @Body() pagination: IPagination,
+) {
+  return this.applicationService.paginateJobsWithApplications(req, pagination);
+}
+
+
 
 
   @Post('update/:id') 
