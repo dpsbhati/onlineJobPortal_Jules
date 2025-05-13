@@ -230,7 +230,6 @@
               (input)="formatSalary('expected_salary')"
               (keypress)="restrictToNumbers($event)"
             />
-            {{userProfileForm.get('expected_salary')}}
             <mat-error
               *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']"
             >
