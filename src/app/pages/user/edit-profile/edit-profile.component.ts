@@ -97,11 +97,12 @@ export class EditProfileComponent implements OnInit {
     this.userProfileForm = new FormGroup({
       first_name: new FormControl('', [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9 ]+$'),
+        Validators.pattern('^[a-zA-Z ]*$'),
       ]),
       last_name: new FormControl('', [
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9 ]+$')
+        // Validators.pattern('^[a-zA-Z0-9 ]+$')
+          Validators.pattern('^[a-zA-Z ]*$'),
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
       dob: new FormControl('', this.isApplicant() ? [Validators.required] : null),
@@ -204,6 +205,8 @@ export class EditProfileComponent implements OnInit {
       }
     }
   }
+
+  
 
   showValidationMessage(fieldName: string) {
     const control = this.userProfileForm.get(fieldName);
@@ -489,5 +492,14 @@ export class EditProfileComponent implements OnInit {
   //     inputElement.value = value; // Set the modified value back to the input
   //   }
   // }
+
+  restrictNumeric(event: KeyboardEvent): void {
+  const regex = /^[a-zA-Z\s]*$/;  // Regex for allowing only alphabets and spaces
+  const inputChar = String.fromCharCode(event.charCode);
+  if (!regex.test(inputChar)) {
+    event.preventDefault();  // Prevent the input if it doesn't match the regex
+  }
+}
+
 
 }

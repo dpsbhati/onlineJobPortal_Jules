@@ -19,12 +19,12 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>First Name</mat-label>
-            <input matInput formControlName="first_name" placeholder="Enter first name">
+            <input matInput formControlName="first_name" placeholder="Enter first name" (keypress)="restrictNumeric($event)">
             <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['required']">
               First name is required
             </mat-error>
             <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']">
-              First name can only contain letters, numbers, and spaces
+              First name can only contain letters and spaces
             </mat-error>
           </mat-form-field>
         </div>
@@ -33,12 +33,12 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Last Name</mat-label>
-            <input matInput formControlName="last_name" placeholder="Enter last name">
+            <input matInput formControlName="last_name" placeholder="Enter last name" (keypress)="restrictNumeric($event)">
             <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['required']">
               Last name is required
             </mat-error>
             <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']">
-              Last name can only contain letters, numbers, and spaces
+              Last name can only contain letters, and spaces
             </mat-error>
           </mat-form-field>
         </div>
