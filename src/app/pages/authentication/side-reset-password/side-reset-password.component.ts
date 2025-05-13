@@ -126,7 +126,7 @@ export class SideResetPasswordComponent implements OnInit {
       return 'Password must be at least 8 characters';
     }
     if (this.f['password'].hasError('pattern')) {
-      return 'Password must be in valid format';
+      return 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character';
     }
     return '';
   }
