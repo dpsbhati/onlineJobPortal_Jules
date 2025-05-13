@@ -7,10 +7,11 @@ import { CoursesAndCertificationService } from 'src/courses_and_certification/co
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([applications,CoursesAndCertification,Notification]), // Add your entity here
+    TypeOrmModule.forFeature([applications,CoursesAndCertification,Notification,JobPosting]), // Add your entity here
   ],
   providers: [ApplicationService,CoursesAndCertificationService,NotificationsService],
   controllers: [ApplicationController],

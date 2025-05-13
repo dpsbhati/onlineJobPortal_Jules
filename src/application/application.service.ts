@@ -11,6 +11,8 @@ import { applications } from './entities/application.entity';
 import * as nodemailer from 'nodemailer';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ApplicationStatus } from './enums/applications.-status';
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
+import { count } from 'console';
 
 @Injectable()
 export class ApplicationService {
@@ -20,6 +22,8 @@ export class ApplicationService {
     @InjectRepository(CoursesAndCertification)
     private coursesRepository: Repository<CoursesAndCertification>,
     private readonly notificationsService: NotificationsService,
+       @InjectRepository(JobPosting)
+        private jobPostingRepository: Repository<JobPosting>,
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
@@ -272,6 +276,119 @@ export class ApplicationService {
       return WriteResponse(500, {}, `Something went wrong.`);
     }
   }
+
+async paginateJobsWithApplications(req: any, pagination: IPagination) {
+  try {
+    const {
+      curPage = 1,
+      perPage = 10,
+      direction = 'DESC',
+      sortBy = 'created_at',
+      whereClause = [],
+    } = pagination;
+
+    const skip = (curPage - 1) * perPage;
+    const params: Record<string, any> = {};
+
+    const searchableFields = [
+      'title',
+      'job_type',
+      'skills_required',
+      'short_description',
+      'full_description',
+      'assignment_duration',
+      'employer',
+      'required_experience',
+      'salary',
+      'address',
+      'work_type',
+    ];
+
+    let lwhereClause = 'job.is_deleted = false';
+
+    for (const clause of whereClause) {
+      const { key, value, operator = 'LIKE' } = clause;
+      if (value && key !== 'all') {
+        const paramKey = `filter_${key}`;
+        if (operator.toUpperCase() === 'LIKE') {
+          lwhereClause += ` AND job.${key} LIKE :${paramKey}`;
+          params[paramKey] = `%${value}%`;
+        } else {
+          lwhereClause += ` AND job.${key} ${operator} :${paramKey}`;
+          params[paramKey] = value;
+        }
+      }
+    }
+
+    const allValue = whereClause.find((p) => p.key === 'all')?.value;
+    if (allValue) {
+      const searchConditions = searchableFields
+        .map((field, i) => {
+          const paramKey = `all_search_${i}`;
+          params[paramKey] = `%${allValue}%`;
+          return `job.${field} LIKE :${paramKey}`;
+        })
+        .join(' OR ');
+      lwhereClause += ` AND (${searchConditions})`;
+    }
+
+    // Get total count for pagination
+    const totalCount = await this.jobPostingRepository
+      .createQueryBuilder('job')
+      .leftJoin('job.applications', 'app', 'app.is_deleted = false')
+      .where('app.id IS NOT NULL')
+      .andWhere(lwhereClause, params)
+      .getCount();
+
+    // Main data with application count
+    const jobs = await this.jobPostingRepository
+      .createQueryBuilder('job')
+      .leftJoinAndSelect('job.applications', 'app', 'app.is_deleted = false')
+      .leftJoinAndSelect('app.user', 'user')
+      .leftJoinAndSelect('user.userProfile', 'userProfile')
+      .leftJoin(
+        (qb) =>
+          qb
+            .select('a.job_id', 'job_id')
+            .addSelect('COUNT(a.id)', 'application_count')
+            .from('applications', 'a')
+            .where('a.is_deleted = false')
+            .groupBy('a.job_id'),
+        'app_count',
+        'app_count.job_id = job.id',
+      )
+      .addSelect('COALESCE(app_count.application_count, 0)', 'application_count')
+      .where('app.id IS NOT NULL')
+      .andWhere(lwhereClause, params)
+      .orderBy(`job.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
+      .skip(skip)
+      .take(perPage)
+      .getRawAndEntities();
+
+    // Merge raw application_count back into each job
+    const result = jobs.entities.map((job, index) => {
+      const raw = jobs.raw[index];
+      return {
+        ...job,
+        application_count: parseInt(raw.application_count || '0'),
+      };
+    });
+
+    return WriteResponse(
+      200,
+      { jobs: result, count: totalCount },
+      'Jobs with applications found successfully.',
+    );
+  } catch (error) {
+    console.error('Pagination error in jobs with applications -->', error);
+    return WriteResponse(500, {}, 'Something went wrong.');
+  }
+}
+
+
+
+
+
 
   async update(
     id: string,
