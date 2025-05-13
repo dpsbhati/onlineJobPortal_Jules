@@ -217,20 +217,20 @@ export class CreateJobPostingComponent {
     }
   }
 
-   // Method to handle dynamic changes to validation based on job type
-   onJobTypePostChange(value: string): void {
+  // Method to handle dynamic changes to validation based on job type
+  onJobTypePostChange(value: string): void {
     const postedAtControl = this.jobForm.get('posted_at');
     const postedDateControl = this.jobForm.get('posted_date');
     const currentDate = new Date();
-  
+
     const formattedTime = currentDate.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
     }); // Format: HH:mm (e.g., 17:10)
-  
-    const formattedDate = currentDate.toLocaleDateString('en-GB'); // Format: dd/MM/yyyy (e.g., 09/05/2025)
-  
+
+    const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US') // Format: dd/MM/yyyy (e.g., 09/05/2025)
+
     if (value === 'Schedulelater') {
       // Make posted_at and posted_date required if 'Schedulelater' is selected
       postedAtControl?.setValidators([Validators.required]);
@@ -239,27 +239,27 @@ export class CreateJobPostingComponent {
       // Set current time and date when 'Postnow' is selected
       postedAtControl?.setValue(formattedTime);
       postedDateControl?.setValue(formattedDate);
-  
+
       // Clear validators if 'Postnow' is selected
       postedAtControl?.clearValidators();
       postedDateControl?.clearValidators();
     }
-  
+
     // Update the form controls to apply the validation changes
     postedAtControl?.updateValueAndValidity();
     postedDateControl?.updateValueAndValidity();
   }
-  
-   onSubmit(): void {
+
+  onSubmit(): void {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-      formValues.posted_date = formatDate(formValues.posted_date,'yyyy-MM-dd','en-US')
+      formValues.posted_date = formatDate(formValues?.posted_date, 'yyyy-MM-dd', 'en-US')
       if (formValues.start_salary) {
-        formValues.start_salary = parseInt(formValues.start_salary.replace(/,/g, ''), 10);
+        formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
       }
       if (formValues.end_salary) {
-        formValues.end_salary = parseInt(formValues.end_salary.replace(/,/g, ''), 10);
+        formValues.end_salary = parseInt(formValues?.end_salary.replace(/,/g, ''), 10);
       }
       if (!formValues.id) {
         delete formValues.id;
@@ -727,7 +727,7 @@ export class CreateJobPostingComponent {
   //     // this.notify.showWarning("Failed to update the form")
   //   }
   // }
- 
+
 
   allrankslist() {
     this.adminService.getallranks().subscribe((res: any) => {
