@@ -44,6 +44,12 @@ export class Users {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column()
+  isPasswordReset: boolean;
+
+  @Column()
+  resetToken: string;
+
   @Column({
     type: 'enum',
     enum: ['admin', 'applicant', 'employer'],

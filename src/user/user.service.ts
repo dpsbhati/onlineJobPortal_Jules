@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { IPagination } from 'src/shared/paginationEum';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import { ChangePasswordDto, forgetPasswordDto } from 'src/user/dto/create-user.dto';
+import {
+  ChangePasswordDto,
+  forgetPasswordDto,
+} from 'src/user/dto/create-user.dto';
 import { MailService } from 'src/utils/mail.service';
 import { Not, Repository } from 'typeorm';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
@@ -190,9 +193,13 @@ export class UserService {
     // Check if email is verified
     if (!User.isEmailVerified) {
       console.log(`User email is not verified for email: ${email}`);
-      const res=await this.resendEmailByEmail(email);
-      if(res.statusCode==200){
-        return WriteResponse(401, {}, 'Your email address is not verified. A new verification email has been sent to you. Please verify your email to continue.');
+      const res = await this.resendEmailByEmail(email);
+      if (res.statusCode == 200) {
+        return WriteResponse(
+          401,
+          {},
+          'Your email address is not verified. A new verification email has been sent to you. Please verify your email to continue.',
+        );
       }
     }
     delete User.password;
@@ -334,9 +341,15 @@ export class UserService {
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Reset Password',
-        { name: user.userProfile.first_name, resetLink: resetLink } as Record<string, any>,
+        { name: user.userProfile.first_name, resetLink: resetLink } as Record<
+          string,
+          any
+        >,
         'forgetpassword',
       );
+      user.isPasswordReset = false;
+      user.resetToken = verificationToken;
+
       await this.userRepository.save(user);
       return WriteResponse(
         200,
@@ -355,6 +368,7 @@ export class UserService {
   async resetPassword(newPassword: string, token: string) {
     try {
       const decoded = this.jwtService.verify(token);
+
       const userId = decoded.id;
 
       const user = await this.userRepository.findOne({
@@ -369,9 +383,27 @@ export class UserService {
         );
       }
 
+      if (user.isPasswordReset&&user.resetToken===null) {
+        return WriteResponse(
+          400,
+          false,
+          'The password has already been reset using this link',
+        );
+      }
+
+      if (user.resetToken!==token) {
+        return WriteResponse(
+          400,
+          false,
+          'The password has already been reset using this link',
+        );
+      }
+
       // Update the user's password using update instead of save
       await this.userRepository.update(userId, {
         password: await bcrypt.hash(newPassword, 10),
+        isPasswordReset: true,
+        resetToken: null
       });
 
       return WriteResponse(200, {
@@ -446,7 +478,10 @@ export class UserService {
       await this.mailerService.sendEmail(
         user.email,
         'Verify Your Email Address',
-        { name: user.userProfile.first_name,verificationUrl } as Record<string, any>,
+        { name: user.userProfile.first_name, verificationUrl } as Record<
+          string,
+          any
+        >,
         'verify',
       );
 
@@ -461,22 +496,30 @@ export class UserService {
     }
   }
 
-  async changePassword(changePasswordDto:ChangePasswordDto,req){
+  async changePassword(changePasswordDto: ChangePasswordDto, req) {
     try {
-      const user=await this.userRepository.findOne({where:{email:changePasswordDto.email,is_deleted:false}});
-      if(!user){
-        return WriteResponse(404,false,"User not found.");
+      const user = await this.userRepository.findOne({
+        where: { email: changePasswordDto.email, is_deleted: false },
+      });
+      if (!user) {
+        return WriteResponse(404, false, 'User not found.');
       }
-      const passwordValid = await bcrypt.compare(changePasswordDto.oldPassword, user.password);
+      const passwordValid = await bcrypt.compare(
+        changePasswordDto.oldPassword,
+        user.password,
+      );
       if (!passwordValid) {
         return WriteResponse(401, false, 'Invalid current password.');
       }
-      const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
-      await this.userRepository.update(user.id,{password:hashedPassword});
-      return WriteResponse(200,true,"Password changed successfully.");
+      const hashedPassword = await bcrypt.hash(
+        changePasswordDto.newPassword,
+        10,
+      );
+      await this.userRepository.update(user.id, { password: hashedPassword });
+      return WriteResponse(200, true, 'Password changed successfully.');
     } catch (error) {
       console.log(error);
-      return WriteResponse(500,false,"Something went wrong.");
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 
