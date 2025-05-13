@@ -398,10 +398,45 @@ export class EditProfileComponent implements OnInit {
   }
 
   // Prevent entering more than 8 digits
-  if (digitsOnly.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
-    event.preventDefault(); // Prevent further input if length exceeds 8 digits
+  // if (digitsOnly.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
+  //   event.preventDefault(); // Prevent further input if length exceeds 8 digits
+  // }
+
+  // Check if the input length exceeds 8 digits
+  const expectedSalaryControl = this.userProfileForm.get('expected_salary');
+  
+  if (digitsOnly.length > 8) {
+    // Set error if more than 8 digits are entered
+    expectedSalaryControl?.setErrors({ maxDigits: true });
+    event.preventDefault(); // Prevent further input
+  } else {
+    // Clear maxDigits error if the input length is within limit
+    expectedSalaryControl?.setErrors(null);
   }
 }
+
+onBlur(event: FocusEvent): void {
+  const inputElement = event.target as HTMLInputElement;
+  const value = inputElement.value;
+
+  // Ensure that the value doesn't exceed 8 digits on blur
+  const digitsOnly = value.replace(/\D/g, '');  // Remove non-digit characters
+
+  const expectedSalaryControl = this.userProfileForm.get('expected_salary');
+
+  if (!value) {
+    // If the input is empty, set the "required" error
+    expectedSalaryControl?.setErrors({ required: true });
+  } else if (digitsOnly.length > 8) {
+    // If the input exceeds 8 digits, set the "maxDigits" error
+    expectedSalaryControl?.setErrors({ maxDigits: true });
+  } else {
+    // Clear errors if the input is valid
+    expectedSalaryControl?.setErrors(null);
+  }
+}
+
+
 
 
 
@@ -447,7 +482,7 @@ export class EditProfileComponent implements OnInit {
           this.userProfileForm.markAsPristine();
 
           if (this.isApplicant()) {
-            const applicantControls = ['dob', 'gender', 'mobile', 'key_skills', 'work_experiences'];
+            const applicantControls = ['dob', 'gender', 'mobile', 'key_skills', 'work_experiences', 'expected_salary'];
             applicantControls.forEach(controlName => {
               const control = this.userProfileForm.get(controlName);
               if (control) {

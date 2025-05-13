@@ -229,6 +229,7 @@
               placeholder="Enter expected salary"
               (input)="formatSalary('expected_salary')"
               (keypress)="restrictToNumbers($event)"
+              (blur)="onBlur($event)"
             />
             <mat-error
               *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']"
