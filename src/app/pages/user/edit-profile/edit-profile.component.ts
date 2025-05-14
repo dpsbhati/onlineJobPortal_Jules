@@ -404,7 +404,7 @@ export class EditProfileComponent implements OnInit {
 
   // Check if the input length exceeds 8 digits
   const expectedSalaryControl = this.userProfileForm.get('expected_salary');
-  
+
   if (digitsOnly.length > 8) {
     // Set error if more than 8 digits are entered
     expectedSalaryControl?.setErrors({ maxDigits: true });
@@ -533,6 +533,17 @@ onBlur(event: FocusEvent): void {
     this.userProfileForm.get('key_skills')?.setValue(this.skillsArray);
     this.userProfileForm.get('key_skills')?.markAsTouched();
   }
+
+  onSkillEnter(event: any): void {
+  event.preventDefault(); // prevent form submit or validation triggering
+  this.addSkill();
+}
+
+preventFormSubmit(event: any): void {
+  event.preventDefault();  // Prevent form-wide submit behavior
+  event.stopPropagation(); // Stop the event from bubbling up
+}
+
 
   // expectedSalaryValidator(): ValidatorFn {
   //   return (control: AbstractControl): ValidationErrors | null => {

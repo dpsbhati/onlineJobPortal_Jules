@@ -818,4 +818,8 @@ export class CreateJobPostingComponent {
   const fileInput: HTMLInputElement = document.querySelector('input[type="file"]')!;
   fileInput.value = ''; // Reset the file input value
 }
+preventFormSubmit(event: any): void {
+  event.preventDefault();  // Prevent form-wide submit behavior
+  event.stopPropagation(); // Stop the event from bubbling up
+}
 }

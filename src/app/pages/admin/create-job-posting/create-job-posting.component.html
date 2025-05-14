@@ -259,9 +259,9 @@
         <div class="skills-section m-0">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Add Skills</mat-label>
-            <input matInput id="skills_input" type="text" [(ngModel)]="newSkill" (keyup.enter)="addSkill()"
+            <input matInput id="skills_input" type="text" [(ngModel)]="newSkill" (keyup.enter)="addSkill()"  (keydown.enter)="preventFormSubmit($event)"
               [ngModelOptions]="{standalone: true}" placeholder="Enter a skill and press Enter">
-            <button mat-icon-button matSuffix (click)="addSkill()" [disabled]="!newSkill.trim()">
+            <button mat-icon-button matSuffix  type="button" (click)="addSkill()" [disabled]="!newSkill.trim()" (keydown.enter)="preventFormSubmit($event)">
               <mat-icon>add</mat-icon>
             </button>
           </mat-form-field>

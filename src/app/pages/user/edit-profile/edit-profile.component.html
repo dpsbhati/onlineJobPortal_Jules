@@ -73,7 +73,13 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Date of Birth</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="dob" [disabled]="true" readonly/>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="dob"
+              [disabled]="true"
+              readonly
+            />
             <mat-datepicker-toggle
               matSuffix
               [for]="picker"
@@ -115,7 +121,7 @@
             <input
               matInput
               formControlName="mobile"
-                 type="text"
+              type="text"
               placeholder="Enter mobile number"
               (input)="onMobileInput()"
             />
@@ -142,12 +148,16 @@
                 [(ngModel)]="newSkill"
                 [ngModelOptions]="{ standalone: true }"
                 placeholder="Enter a skill and press Enter"
+                (keydown.enter)="preventFormSubmit($event)"
                 (keyup.enter)="addSkill()"
               />
+
               <button
                 mat-icon-button
                 matSuffix
                 color="primary"
+                type="button"
+                (keydown.enter)="preventFormSubmit($event)"
                 (click)="addSkill()"
                 [disabled]="!newSkill.trim()"
               >
