@@ -149,6 +149,7 @@
                 [ngModelOptions]="{ standalone: true }"
                 placeholder="Enter a skill and press Enter"
                 (keydown.enter)="preventFormSubmit($event)"
+                (focus)="onInputFocus()"
                 (keyup.enter)="addSkill()"
               />
 
