@@ -22,6 +22,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service'
 import { Router } from '@angular/router'
 import { AppNavItemComponent } from '../sidebar/nav-item/nav-item.component'
 import { SidebarService } from 'src/app/core/services/sidebar.service'
+import { UserService } from 'src/app/core/services/user/user.service'
 
 interface notifications {
   id: number
@@ -92,6 +93,7 @@ export class HeaderComponent {
 
   showFiller = false
 
+
   public selectedLanguage: any = {
     language: 'English',
     code: 'en',
@@ -136,7 +138,8 @@ export class HeaderComponent {
     private translate: TranslateService,
     private authService: AuthService,
     private _router: Router,
-    private sidebarService: SidebarService
+    private sidebarService: SidebarService,
+     private userService: UserService,
   ) {
     translate.setDefaultLang('en')
     this.loadUserName()
@@ -155,8 +158,41 @@ export class HeaderComponent {
         console.error('Error parsing user from localStorage:', e);
       }
     }
+     this.loadUserData();
 
   }
+  loadUserData(): void {
+    const userString = localStorage.getItem('user');
+
+    if (userString) {
+      try {
+        const parsedUser = JSON.parse(userString);
+        const userId = parsedUser?.id; // Assuming `id` is available in the user object
+        if (userId) {
+          this.userService.getUserById(userId).subscribe({
+            next: (response: any) => {
+              if (response.statusCode === 200 && response.data) {
+                const data = response.data;
+                const firstName = data.first_name || 'User';
+                const lastName = data.last_name || '';
+                this.userName = `${firstName} ${lastName}`.trim();
+                this.userEmail = data.user?.email || ''; 
+              } else {
+                console.error('Error fetching user profile data:', response.message);
+              }
+            },
+            error: (error: any) => {
+              console.error('Error fetching user profile data:', error);
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Error parsing user from localStorage:', e);
+      }
+    }
+  }
+
+
 
   toggleCollapse () {
     this.isCollapsed = !this.isCollapsed
