@@ -347,8 +347,11 @@ export class JobPostingService {
       let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
       const fieldsToSearch = [
         'job_type',
-
+        'rank',
+        'skills_required',
         'title',
+        'short_description',
+        'full_description',
 
         'employer',
 
