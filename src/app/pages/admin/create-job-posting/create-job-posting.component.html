@@ -223,10 +223,10 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
+      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
         <!-- Post At -->
 
-        <div class="form-group" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
+        <div class="form-group" >
           <!-- <label for="posted_at">Post At<span class="text-danger">*</span></label>
           <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
           <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
@@ -318,7 +318,6 @@
         </div>
 
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"></div>
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
         <!-- Short Description -->
         <mat-form-field appearance="outline" class="w-100">
