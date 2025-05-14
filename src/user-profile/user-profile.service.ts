@@ -86,6 +86,7 @@ export class UserProfileService {
     try {
       const profile = await this.userProfileRepository.findOne({
         where: { user_id: userId, is_deleted: false },
+        relations: ['user'],
       });
 
       if (!profile) {
@@ -95,6 +96,11 @@ export class UserProfileService {
           `User Profile for the provided user ID not found.`,
         );
       }
+      if (profile.user?.userProfile) {
+  delete profile.user.userProfile;
+  delete profile.user.password;
+}
+
       return WriteResponse(
         200,
         profile,
