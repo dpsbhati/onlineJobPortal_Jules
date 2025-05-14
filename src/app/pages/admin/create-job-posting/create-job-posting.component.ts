@@ -557,69 +557,123 @@ export class CreateJobPostingComponent {
     })
   }
 
+  // onFileSelected(event: Event, controlName: string): void {
+  //   const file = (event.target as HTMLInputElement).files?.[0]
+
+  //  if (file) {
+  //   if (!file.type.startsWith('image/')) {
+  //     this.toaster.warning('Please select an image file.');
+  //     // Optionally, clear the selected file
+  //     (event.target as HTMLInputElement).value = ''; // Reset input file
+  //     return;
+  //   }
+  //     // Create preview
+  //     const reader = new FileReader()
+  //     reader.onload = () => {
+  //       this.imagePreview = reader.result
+  //     }
+  //     reader.readAsDataURL(file)
+
+  //     // Your existing compression and upload logic
+  //     if (this.allowedImageFormats.includes(file.type)) {
+  //       this.imageCompressionService
+  //         .compressImage(file)
+  //         .then((compressedImageUrl: string) => {
+  //           fetch(compressedImageUrl)
+  //             .then(res => res.blob())
+  //             .then(compressedFileBlob => {
+  //               const compressedFile = new File(
+  //                 [compressedFileBlob],
+  //                 file.name,
+  //                 { type: file.type }
+  //               )
+
+  //               // this.jobForm.patchValue({ [controlName]: compressedFile });
+  //               const folderName = 'job-postings'
+  //               const user = JSON.parse(localStorage.getItem('user') || '{}')
+  //               const userId = user.id
+  //               this.adminService
+  //                 .uploadFile({ folderName, file: compressedFile, userId })
+  //                 .subscribe(
+  //                   (response: any) => {
+  //                     if (response.statusCode === 200) {
+  //                       // this.notify.showSuccess(response.message);
+  //                       this.jobForm.patchValue({
+  //                         [controlName]: response.data.path
+  //                       })
+  //                     } else {
+  //                       // this.notify.showWarning(response.message);
+  //                     }
+  //                   },
+  //                   (error: any) => {
+  //                     console.error('Error uploading file:', error)
+  //                   }
+  //                 )
+  //             })
+  //         })
+  //     } else {
+  //       // this.notify.showWarning("Invalid image format")
+  //     }
+  //   }
+  // }
   onFileSelected(event: Event, controlName: string): void {
-    const file = (event.target as HTMLInputElement).files?.[0]
+  const file = (event.target as HTMLInputElement).files?.[0];
 
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        // Show warning or error if it's not an image file
-        // this.notify.showWarning("Please select an image file.");
-        this.toaster.warning('Please select an image file.');
+  if (file) {
+    if (!file.type.startsWith('image/')) {
+      this.toaster.warning('Please select an image file.');
+      // Optionally, clear the selected file
+      (event.target as HTMLInputElement).value = ''; // Reset input file
+      return;
+    }
 
-        // Optionally, clear the selected file
-        (event.target as HTMLInputElement).value = ''; // Reset input file
-        return;
-      }
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result; // Set the preview for the selected image
+    };
+    reader.readAsDataURL(file);
 
-      // Create preview
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.imagePreview = reader.result
-      }
-      reader.readAsDataURL(file)
+    // Your existing compression and upload logic
+    if (this.allowedImageFormats.includes(file.type)) {
+      this.imageCompressionService
+        .compressImage(file)
+        .then((compressedImageUrl: string) => {
+          fetch(compressedImageUrl)
+            .then(res => res.blob())
+            .then(compressedFileBlob => {
+              const compressedFile = new File(
+                [compressedFileBlob],
+                file.name,
+                { type: file.type }
+              );
 
-      // Your existing compression and upload logic
-      if (this.allowedImageFormats.includes(file.type)) {
-        this.imageCompressionService
-          .compressImage(file)
-          .then((compressedImageUrl: string) => {
-            fetch(compressedImageUrl)
-              .then(res => res.blob())
-              .then(compressedFileBlob => {
-                const compressedFile = new File(
-                  [compressedFileBlob],
-                  file.name,
-                  { type: file.type }
-                )
-
-                // this.jobForm.patchValue({ [controlName]: compressedFile });
-                const folderName = 'job-postings'
-                const user = JSON.parse(localStorage.getItem('user') || '{}')
-                const userId = user.id
-                this.adminService
-                  .uploadFile({ folderName, file: compressedFile, userId })
-                  .subscribe(
-                    (response: any) => {
-                      if (response.statusCode === 200) {
-                        // this.notify.showSuccess(response.message);
-                        this.jobForm.patchValue({
-                          [controlName]: response.data.path
-                        })
-                      } else {
-                        // this.notify.showWarning(response.message);
-                      }
-                    },
-                    (error: any) => {
-                      console.error('Error uploading file:', error)
+              // Upload image
+              const folderName = 'job-postings';
+              const user = JSON.parse(localStorage.getItem('user') || '{}');
+              const userId = user.id;
+              this.adminService
+                .uploadFile({ folderName, file: compressedFile, userId })
+                .subscribe(
+                  (response: any) => {
+                    if (response.statusCode === 200) {
+                      this.jobForm.patchValue({
+                        [controlName]: response.data.path
+                      });
+                    } else {
+                      console.error(response.message);
                     }
-                  )
-              })
-          })
-      } else {
-        // this.notify.showWarning("Invalid image format")
-      }
+                  },
+                  (error: any) => {
+                    console.error('Error uploading file:', error);
+                  }
+                );
+            });
+        });
     }
   }
+}
+
 
   clearImage() {
     this.jobForm.patchValue({
@@ -758,8 +812,10 @@ export class CreateJobPostingComponent {
     }
   }
 
-  removeImage(): void {
-    this.imagePreview = ''; // Clear the image preview
-    this.jobForm.get('featured_image')?.setValue(null); // Reset the form control value
-  }
+ removeImage(): void {
+  this.imagePreview = ''; // Clear the image preview
+  this.jobForm.get('featured_image')?.setValue(null); // Reset the form control value
+  const fileInput: HTMLInputElement = document.querySelector('input[type="file"]')!;
+  fileInput.value = ''; // Reset the file input value
+}
 }
