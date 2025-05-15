@@ -36,7 +36,7 @@
         <!-- (click)="sidenav.toggle()" -->
         <mat-icon>menu</mat-icon>
       </button>
-      <button mat-icon-button><mat-icon>person</mat-icon></button>
+      <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
       <button mat-icon-button><mat-icon>search</mat-icon></button>
     </div>
   </div>
@@ -84,7 +84,7 @@
 
             <div class="filter">
               <span class="material-icons material-icons-custom">location_on</span>
-              
+
               <mat-form-field appearance="outline">
                 <mat-label>Location</mat-label>
                 <mat-select [(ngModel)]="selectedRank">

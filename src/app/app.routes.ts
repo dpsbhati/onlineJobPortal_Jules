@@ -3,10 +3,11 @@ import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { EmailActivationComponent } from './pages/authentication/email-activation/email-activation.component';
+import { HomeComponent } from './pages/home/home.component';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/dashboard',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
@@ -36,11 +37,10 @@ export const routes: Routes = [
 
     ],
   },
-
-  // {
-  //   path: '**',
-  //   redirectTo: 'authentication/error',
-  // },
+ {
+        path: 'home',
+        component: HomeComponent,
+      },
   {
     path: '**',
     redirectTo: 'authentication/Development-page',

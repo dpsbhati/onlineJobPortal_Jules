@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-home',
@@ -34,4 +35,14 @@ export class HomeComponent {
   selectedEmployer = ''
   selectedLocation = ''
   keyword = ''
+   constructor(private router: Router,
+
+
+
+    ){}
+
+
+  goToLogin() {
+  this.router.navigate(['/authentication/login']);
+}
 }

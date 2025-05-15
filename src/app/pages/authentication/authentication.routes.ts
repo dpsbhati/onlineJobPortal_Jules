@@ -58,17 +58,14 @@ export const AuthenticationRoutes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'login',
+        redirectTo: 'home',
         pathMatch: 'full'
       },
       {
         path: 'email-activation',
         component: EmailActivationComponent
       },
-      {
-        path: 'home',
-        component: HomeComponent,
-      }
+
     ]
   }
 ]
