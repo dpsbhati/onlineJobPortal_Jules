@@ -261,7 +261,7 @@
     margin-top: 18px;
 
     .job-tag {
-      background-color: #D8E1E9;
+      background-color: #d8e1e9;
       color: #000;
       font-size: 12px;
       padding: 2px 10px;
@@ -271,7 +271,7 @@
 
   .job-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
 
     .job-icons {
@@ -285,9 +285,6 @@
         margin-right: 4px;
       }
     }
-
-  
-    
   }
 }
 
@@ -359,11 +356,17 @@
 
 .material-icons-custom {
   color: #a0abb8;
+  width: 18px;
+  height: 18px;
 }
 
 mat-label {
-  color: #91b5cd;
+  color: #a0abb8;
 }
 .mat-drawer-transition .mat-drawer-content {
   background-color: #eef5f9;
+}
+
+.bg-primary {
+  background-color: #0b7ea5 !important;
 }

@@ -37,7 +37,8 @@
         <mat-icon>menu</mat-icon>
       </button>
       <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
-      <button mat-icon-button><mat-icon>search</mat-icon></button>
+      <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
+          class="material-icons-custom" /></button>
     </div>
   </div>
 </mat-toolbar>
@@ -59,7 +60,7 @@
         <div class="col-12">
           <div class="search-bar">
             <div class="filter">
-              <span class="material-icons material-icons-custom">layers</span>
+              <img src="./assets/images/Icons/Ranks.svg" alt="Logo" class="material-icons-custom" />
               <mat-form-field appearance="outline">
                 <mat-label>Rank</mat-label>
                 <mat-select [(ngModel)]="selectedRank">
@@ -71,7 +72,7 @@
             <div class="divider"></div>
 
             <div class="filter">
-              <span class="material-icons material-icons-custom">work_outline</span>
+              <img src="./assets/images/Icons/Employer.svg" alt="Logo" class="material-icons-custom" />
               <mat-form-field class="border-0" appearance="outline">
                 <mat-label>Employers</mat-label>
                 <mat-select [(ngModel)]="selectedRank">
@@ -83,7 +84,7 @@
             <div class="divider"></div>
 
             <div class="filter">
-              <span class="material-icons material-icons-custom">location_on</span>
+              <img src="./assets/images/Icons/Location.svg" alt="Logo" class="material-icons-custom" />
 
               <mat-form-field appearance="outline">
                 <mat-label>Location</mat-label>
@@ -97,10 +98,13 @@
 
             <div class="input-keyword">
               <span class="material-icons material-icons-custom">apps</span>
-              <input type="text" placeholder="Your keyword..." />
+              <mat-form-field appearance="outline">
+                <mat-label>Your keyword...</mat-label>
+                <input matInput placeholder="Your keyword..." />
+              </mat-form-field>
             </div>
 
-            <button mat-flat-button color="primary">
+            <button mat-flat-button color="primary" class="bg-primary">
               Search
             </button>
           </div>
@@ -114,7 +118,9 @@
         <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
-              <img src="https://img.freepik.com/premium-photo/aerial-view-large-general-cargo-ship-tanker-bulk-carrie_213438-7581.jpg?w=360" alt="Job Image" />
+              <img
+                src="https://img.freepik.com/premium-photo/aerial-view-large-general-cargo-ship-tanker-bulk-carrie_213438-7581.jpg?w=360"
+                alt="Job Image" />
               <div class="job-date">23 Dec 2024</div>
             </div>
 
@@ -133,12 +139,12 @@
               </div>
 
               <div class="job-footer">
-                <div class="job-icons">
+                <!-- <div class="job-icons">
                   <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
                   <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-                </div>
+                </div> -->
 
-                <button mat-flat-button color="primary">
+                <button mat-flat-button color="primary" class="bg-primary">
                   Read more
                 </button>
               </div>
@@ -148,7 +154,8 @@
         <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
-              <img src="https://www.shutterstock.com/image-photo/aerial-view-bulk-carrier-evening-260nw-2285879109.jpg" alt="Job Image" />
+              <img src="https://www.shutterstock.com/image-photo/aerial-view-bulk-carrier-evening-260nw-2285879109.jpg"
+                alt="Job Image" />
               <div class="job-date">23 Dec 2024</div>
             </div>
 
@@ -167,12 +174,12 @@
               </div>
 
               <div class="job-footer">
-                <div class="job-icons">
+                <!-- <div class="job-icons">
                   <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
                   <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-                </div>
+                </div> -->
 
-                <button mat-flat-button color="primary">
+                <button mat-flat-button color="primary" class="bg-primary">
                   Read more
                 </button>
               </div>
@@ -182,7 +189,9 @@
         <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
-              <img src="https://img.freepik.com/fotos-premium/contenedor-buques-carga-carga-transporte-maritimo-negocios-mundiales-logistica-nautica-importacion-exportacion_35024-2664.jpg" alt="Job Image" />
+              <img
+                src="https://img.freepik.com/fotos-premium/contenedor-buques-carga-carga-transporte-maritimo-negocios-mundiales-logistica-nautica-importacion-exportacion_35024-2664.jpg"
+                alt="Job Image" />
               <div class="job-date">23 Dec 2024</div>
             </div>
 
@@ -201,12 +210,12 @@
               </div>
 
               <div class="job-footer">
-                <div class="job-icons">
+                <!-- <div class="job-icons">
                   <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
                   <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-                </div>
+                </div> -->
 
-                <button mat-flat-button color="primary">
+                <button mat-flat-button color="primary" class="bg-primary">
                   Read more
                 </button>
               </div>
