@@ -490,6 +490,12 @@ export class JobPostingService {
       // Map applicant_number back into the entity list
       const finalData = entities.map((job, index) => {
         const rawItem = raw.find((r) => r.f_id === job.id);
+        job.skills_required=JSON.parse(job.skills_required)
+        if(typeof job.social_media_type === 'string'){
+        job.social_media_type = JSON.parse(
+          job.social_media_type,
+        );
+      }
         return {
           ...job,
           application_number: parseInt(rawItem?.application_number || '0'),
@@ -548,6 +554,16 @@ export class JobPostingService {
         return WriteResponse(404, {}, `Job posting not found.`);
       }
 
+      jobPosting.skills_required = JSON.parse(
+        jobPosting.skills_required,
+      );
+      
+      if(typeof jobPosting.social_media_type === 'string'){
+        jobPosting.social_media_type = JSON.parse(
+          jobPosting.social_media_type,
+        );
+      }
+      
       const response = {
         ...jobPosting,
         job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
