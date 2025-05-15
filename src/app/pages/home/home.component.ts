@@ -143,4 +143,10 @@ goToJobDetail(jobId: string) {
   this.router.navigate(['/view-job', jobId]);
 }
 
+  onPageChange(event: any): void {
+    this.pageConfig.curPage = event.pageIndex + 1;
+    this.pageConfig.perPage = event.pageSize;
+    this.onPagination();
+  }
+
 }

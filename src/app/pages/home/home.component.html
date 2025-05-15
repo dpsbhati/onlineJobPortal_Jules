@@ -225,6 +225,10 @@
       </div>
 
     </div>
+     <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
+      aria-label="Select page">
+    </mat-paginator>
 
   </mat-sidenav-content>
 </mat-sidenav-container>
