@@ -77,11 +77,19 @@ export class JobPostDetailComponent {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
-          if (response.data.skills_required) {
-            this.formattedSkills = this.formatSkills(
-              this.jobDetails.skills_required
-            );
+          this.loader.hide();
+          if (Array.isArray(this.jobDetails.skills_required)) {
+          this.formattedSkills = this.jobDetails.skills_required;
+        } else if (typeof this.jobDetails.skills_required === 'string') {
+          // If for some reason it's a string, parse it safely
+          try {
+            this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
+          } catch {
+            this.formattedSkills = [];
           }
+        } else {
+          this.formattedSkills = [];
+        }
           this.loader.hide();
         } else {
           this.loader.hide();
