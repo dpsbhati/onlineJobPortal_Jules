@@ -73,12 +73,23 @@ export class ViewJobComponent {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
-          if (this.jobDetails?.skills_required) {
-            this.formattedSkills = JSON.parse(this.jobDetails?.skills_required);
+          this.loader.hide();
+           if (Array.isArray(this.jobDetails.skills_required)) {
+          this.formattedSkills = this.jobDetails.skills_required;
+        } else if (typeof this.jobDetails.skills_required === 'string') {
+          // If for some reason it's a string, parse it safely
+          try {
+            this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
+          } catch {
+            this.formattedSkills = [];
           }
-          if (this.jobDetails.social_media_type) {
-            this.formattedSocialMedia = JSON.parse(this.jobDetails.social_media_type);
-          }
+        } else {
+          this.formattedSkills = [];
+        }
+
+          // if (this.jobDetails.social_media_type) {
+          //   this.formattedSocialMedia = JSON.parse(this.jobDetails.social_media_type);
+          // }
           this.loader.hide();
         } else {
           this.loader.hide();
