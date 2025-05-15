@@ -7,13 +7,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IPaginationSwagger } from 'src/shared/paginationEum';
 
 @Controller('ranks')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+
 export class RanksController {
   manualsService: any;
   constructor(private readonly ranksService: RanksService) {}
 
   @Post('create-or-update')
+  @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
   @ApiBody({type:[CreateRankDto]})
   create(@Body() createRankDto: CreateRankDto[]) {
     return this.ranksService.create(createRankDto);
@@ -30,6 +31,8 @@ export class RanksController {
   }
 
   @Post('delete/:id')
+  @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
   remove(@Param('id') id: string) {
     return this.ranksService.remove(id);
   }
