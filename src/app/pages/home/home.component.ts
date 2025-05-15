@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common'
+import { CommonModule, NgIf } from '@angular/common'
 import { Component } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
@@ -12,6 +12,13 @@ import { Router } from '@angular/router'
 import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { NotifyService } from 'src/app/core/services/notify.service'
+import { MatSortModule } from '@angular/material/sort'
+import { TablerIconsModule } from 'angular-tabler-icons'
+import { MaterialModule } from 'src/app/material.module'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { ToastrModule } from 'ngx-toastr'
+import countries from '../../core/helpers/country.json'
 
 @Component({
   selector: 'app-home',
@@ -24,13 +31,27 @@ import { NotifyService } from 'src/app/core/services/notify.service'
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatButtonModule,MatSidenavModule
+    MatButtonModule,MatSidenavModule,
+     CommonModule,
+        MaterialModule,
+        TablerIconsModule,
+        FormsModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+
+
+        ToastrModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   uniqueRanks: string[] = [];
+
+   countryList = countries
    isLoading: boolean = false;
     total: number = 0;
    jobPostingList:any;
@@ -99,7 +120,40 @@ export class HomeComponent {
       }
     })
   }
+  onSearch(): void {
+  // Reset page to 1 on new search
+  this.pageConfig.curPage = 1;
+
+  // Update whereClause with keyword filter
+  if (this.keyword && this.keyword.trim() !== '') {
+    this.pageConfig.whereClause = [
+      { key: 'all', operator: '=', value: this.keyword.trim() }
+    ];
+  } else {
+    // Clear filter if keyword empty
+    this.pageConfig.whereClause = [];
+  }
+
+  // Call pagination API with updated filter
+  this.onPagination();
+}
+onKeywordChange(value: string): void {
+  if (!value || value.trim() === '') {
+    this.pageConfig.curPage = 1;
+    this.pageConfig.whereClause = [];
+    this.onPagination();
+  }
+}
+
+
+
+
+
   goToLogin() {
   this.router.navigate(['/authentication/login']);
 }
+goToJobDetail(jobId: string) {
+  this.router.navigate(['/view-job', jobId]);
+}
+
 }

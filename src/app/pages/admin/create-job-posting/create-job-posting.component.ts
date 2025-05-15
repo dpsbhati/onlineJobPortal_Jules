@@ -492,26 +492,33 @@ export class CreateJobPostingComponent {
           'en-US'
         )
 
-        const socialMediaTypes = data.social_media_type
-          ? JSON.parse(data.social_media_type)
-          : []
-        //  const formattedPostedAt = data.posted_at
-        //  ? new Date(data.posted_at).toISOString().slice(0, 16)
-        //  : '';
-        //  const formattedPostedAt = data.posted_at
-        //  ? new Date(data.posted_at).toLocaleString('en-GB', {
-        //      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        //      year: 'numeric',
-        //      month: '2-digit',
-        //      day: '2-digit',
-        //      hour: '2-digit',
-        //      minute: '2-digit',
-        //    }).replace(',', '') // Optional: Remove comma for formatting
-        //  : '';
-        const skills = data.skills_required
-          ? JSON.parse(data.skills_required)
-          : []
-        this.skillsArray = Array.isArray(skills) ? skills : []
+        let socialMediaTypes: string[] = [];
+      if (data.social_media_type) {
+        if (typeof data.social_media_type === 'string') {
+          try {
+            socialMediaTypes = JSON.parse(data.social_media_type);
+          } catch (e) {
+            console.error('Failed to parse social_media_type:', e);
+            socialMediaTypes = [];
+          }
+        } else if (Array.isArray(data.social_media_type)) {
+          socialMediaTypes = data.social_media_type;
+        }
+      }
+       let skillsArray: string[] = [];
+      if (data.skills_required) {
+        if (typeof data.skills_required === 'string') {
+          try {
+            skillsArray = JSON.parse(data.skills_required);
+          } catch (e) {
+            console.error('Failed to parse skills_required:', e);
+            skillsArray = [];
+          }
+        } else if (Array.isArray(data.skills_required)) {
+          skillsArray = data.skills_required;
+        }
+      }
+      this.skillsArray = skillsArray;
 
         const formattedStartSalary = data.start_salary
           ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))

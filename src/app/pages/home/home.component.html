@@ -64,7 +64,7 @@
               <mat-form-field appearance="outline">
                 <mat-label>Rank</mat-label>
                 <mat-select [(ngModel)]="selectedRank">
-                  <mat-option>Captain</mat-option>
+                  <mat-option *ngFor="let rank of uniqueRanks" [value]="rank"> {{ rank }}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
@@ -88,8 +88,8 @@
 
               <mat-form-field appearance="outline">
                 <mat-label>Location</mat-label>
-                <mat-select [(ngModel)]="selectedRank">
-                  <mat-option>Captain</mat-option>
+                <mat-select id="country_code">
+                  <mat-option  *ngFor="let country of countryList" [value]="country.code">{{ country.name }} ({{ country.code }})</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
@@ -100,11 +100,11 @@
               <span class="material-icons material-icons-custom">apps</span>
               <mat-form-field appearance="outline">
                 <mat-label>Your keyword...</mat-label>
-                <input matInput placeholder="Your keyword..." />
+                <input matInput placeholder="Your keyword..." [(ngModel)]="keyword" (ngModelChange)="onKeywordChange($event)"/>
               </mat-form-field>
             </div>
 
-            <button mat-flat-button color="primary" class="bg-primary">
+            <button mat-flat-button color="primary" class="bg-primary" (click)="onSearch()">
               Search
             </button>
           </div>
@@ -115,27 +115,25 @@
     </div>
     <div class="container m-t-48">
       <div class="row">
-        <div class="col-lg-4 col-sm-6 m-b-20">
+        <div *ngFor="let job of jobPostingList" class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
               <img
-                src="https://img.freepik.com/premium-photo/aerial-view-large-general-cargo-ship-tanker-bulk-carrie_213438-7581.jpg?w=360"
+               [src]="job.featured_image || 'https://via.placeholder.com/360x180?text=No+Image'"
                 alt="Job Image" />
-              <div class="job-date">23 Dec 2024</div>
+              <div class="job-date">{{ job.date_published | date:'dd MMM yyyy' }}</div>
             </div>
 
             <div class="job-content">
-              <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
+              <h3 class="job-title">{{ job.title }}</h3>
               <p class="job-description">
-                Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
-                Sail
-                the world and gain unparalleled...
+                {{ job.full_description }}
               </p>
 
-              <div class="job-tags">
-                <span class="job-tag">At Sea</span>
-                <span class="job-tag">Contractual</span>
-                <span class="job-tag">Worldwide</span>
+              <div class="job-tags" *ngIf="job.skills_required?.length > 0">
+                <span class="job-tag" *ngFor="let skill of job.skills_required">{{ skill }}</span>
+                <!-- <span class="job-tag">Contractual</span>
+                <span class="job-tag">Worldwide</span> -->
               </div>
 
               <div class="job-footer">
@@ -144,14 +142,14 @@
                   <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
                 </div> -->
 
-                <button mat-flat-button color="primary" class="bg-primary">
+                <button mat-flat-button color="primary" class="bg-primary" (click)="goToJobDetail(job.id)">
                   Read more
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-4 col-sm-6 m-b-20">
+        <!-- <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
               <img src="https://www.shutterstock.com/image-photo/aerial-view-bulk-carrier-evening-260nw-2285879109.jpg"
@@ -174,10 +172,6 @@
               </div>
 
               <div class="job-footer">
-                <!-- <div class="job-icons">
-                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
-                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-                </div> -->
 
                 <button mat-flat-button color="primary" class="bg-primary">
                   Read more
@@ -185,8 +179,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 m-b-20">
+        </div> -->
+        <!-- <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
               <img
@@ -210,10 +204,7 @@
               </div>
 
               <div class="job-footer">
-                <!-- <div class="job-icons">
-                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
-                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-                </div> -->
+
 
                 <button mat-flat-button color="primary" class="bg-primary">
                   Read more
@@ -221,7 +212,12 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
+         <!-- <div class="job-icons">
+                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
+                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+                </div> -->
+
 
       </div>
 
