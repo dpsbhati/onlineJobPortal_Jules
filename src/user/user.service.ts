@@ -439,6 +439,10 @@ export class UserService {
       if (!user) {
         return WriteResponse(404, {}, 'User not found.');
       }
+
+      if(user.isEmailVerified) {
+        return WriteResponse(200, {}, 'Your email is already verified.');
+      }
       // Update the user's email verification status
       await this.userRepository.update(userId, { isEmailVerified: true });
 
