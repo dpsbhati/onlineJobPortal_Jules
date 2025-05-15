@@ -127,3 +127,18 @@ body {
 .mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch{
   border-left: 0 !important;
 }
+
+.mat-drawer-container {
+  height: 100% !important;
+}
+.search-bar .mat-mdc-form-field-subscript-wrapper,
+.search-bar .mat-mdc-form-field-bottom-align::before {
+  display: none;
+}
+
+
+.search-bar .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece,
+.search-bar .mdc-text-field--outlined .mdc-notched-outline .mdc-notched-outline__leading,
+.search-bar .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border: none;
+}
