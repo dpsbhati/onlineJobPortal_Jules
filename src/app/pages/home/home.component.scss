@@ -379,6 +379,7 @@ mat-label {
   margin-top: 20px;
 }
 .job-description {
+  min-height: 45px;
   display: -webkit-box !important;
   -webkit-line-clamp: 2; /* Limit to 2 lines */
   -webkit-box-orient: vertical;
