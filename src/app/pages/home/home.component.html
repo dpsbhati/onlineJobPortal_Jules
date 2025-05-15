@@ -63,7 +63,7 @@
               <img src="./assets/images/Icons/Ranks.svg" alt="Logo" class="material-icons-custom" />
               <mat-form-field appearance="outline">
                 <mat-label>Rank</mat-label>
-                <mat-select [(ngModel)]="selectedRank">
+                <mat-select [(ngModel)]="selectedRank"  (selectionChange)="onRankChange($event.value)">
                   <mat-option *ngFor="let rank of uniqueRanks" [value]="rank"> {{ rank }}</mat-option>
                 </mat-select>
               </mat-form-field>
@@ -88,7 +88,7 @@
 
               <mat-form-field appearance="outline">
                 <mat-label>Location</mat-label>
-                <mat-select id="country_code">
+                <mat-select [(ngModel)]="selectedLocation" (selectionChange)="onLocationChange($event)">
                   <mat-option  *ngFor="let country of countryList" [value]="country.code">{{ country.name }} ({{ country.code }})</mat-option>
                 </mat-select>
               </mat-form-field>
@@ -119,7 +119,7 @@
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
               <img
-               [src]="job.featured_image || 'https://via.placeholder.com/360x180?text=No+Image'"
+               [src]="job.featured_image || './assets/images/noimage.jpg'"
                 alt="Job Image" />
               <div class="job-date">{{ job.date_published | date:'dd MMM yyyy' }}</div>
             </div>
@@ -130,10 +130,8 @@
                 {{ job.full_description }}
               </p>
 
-              <div class="job-tags" *ngIf="job.skills_required?.length > 0">
+              <div class="job-tags job-description" *ngIf="job.skills_required?.length > 0">
                 <span class="job-tag" *ngFor="let skill of job.skills_required">{{ skill }}</span>
-                <!-- <span class="job-tag">Contractual</span>
-                <span class="job-tag">Worldwide</span> -->
               </div>
 
               <div class="job-footer">

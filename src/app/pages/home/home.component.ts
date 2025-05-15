@@ -19,6 +19,7 @@ import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { ToastrModule } from 'ngx-toastr'
 import countries from '../../core/helpers/country.json'
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
   selector: 'app-home',
@@ -94,6 +95,46 @@ export class HomeComponent {
       }
     });
   }
+  onRankChange(rankValue: string): void {
+  this.pageConfig.curPage = 1;  // reset page on filter change
+
+  // Remove existing rank filters from whereClause (if any)
+  this.pageConfig.whereClause = this.pageConfig.whereClause.filter(
+    (filter: any) => filter.key !== 'rank'
+  );
+
+  if (rankValue && rankValue.trim() !== '') {
+    // Add new rank filter
+    this.pageConfig.whereClause.push({
+      key: 'rank',
+      operator: '=',
+      value: rankValue.trim(),
+    });
+  }
+
+  this.onPagination();
+}
+onLocationChange(event: MatSelectChange): void {
+  const locationCode = event.value; // yeh selected value hai
+  this.pageConfig.curPage = 1;
+
+  // Remove any previous location filters
+  this.pageConfig.whereClause = this.pageConfig.whereClause.filter(
+    (filter: any) => filter.key !== 'location'
+  );
+
+  if (locationCode && typeof locationCode === 'string' && locationCode.trim() !== '') {
+    this.pageConfig.whereClause.push({
+      key: 'location',
+      operator: '=',
+      value: locationCode.trim(),
+    });
+  }
+
+  this.onPagination();
+}
+
+
    onPagination(): void {
     this.loader.show();
 

@@ -206,6 +206,7 @@
 
 .job-card {
   width: 100%;
+  height: 100%;
   // max-width: 360px;
   border-radius: 8px;
   overflow: hidden;
@@ -259,6 +260,7 @@
     flex-wrap: wrap;
     margin-bottom: 18px;
     margin-top: 18px;
+    margin-right: 5px;
 
     .job-tag {
       background-color: #d8e1e9;
@@ -266,6 +268,7 @@
       font-size: 12px;
       padding: 2px 10px;
       border-radius: 9999px;
+      margin-right: 5px;
     }
   }
 
@@ -375,3 +378,16 @@ mat-label {
   color: #666;
   margin-top: 20px;
 }
+.job-description {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Optional: to ensure the box doesn't expand beyond the content */
+  white-space: normal;
+}
+
+
+
+
