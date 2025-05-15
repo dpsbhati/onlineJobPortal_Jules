@@ -1,4 +1,3 @@
-
 .custom-time-field {
   font-family: 'Poppins', sans-serif;
   margin-top: 16px;
@@ -53,4 +52,12 @@
   pointer-events: none;
 }
 
+.img-close {
+  position: relative;
+}
 
+.remove-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
