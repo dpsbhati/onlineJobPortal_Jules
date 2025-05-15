@@ -1,4 +1,4 @@
-  <!-- <mat-toolbar class="topbar gap-8">
+<!-- <mat-toolbar class="topbar gap-8">
     <div class="branding d-none d-lg-flex align-items-center justify-content-left">
       <a class="d-flex align-items-center">
         <span class="branding-text f-w-100">
@@ -11,209 +11,212 @@
 
   </mat-toolbar> -->
 
-  <mat-toolbar color="white" class="nav-toolbar">
-    <div class="container header" fxLayout="row" fxLayoutAlign="space-between center">
+<mat-toolbar color="white" class="nav-toolbar">
+  <div class="container header" fxLayout="row" fxLayoutAlign="space-between center">
 
-      <!-- Left: Logo + Hamburger (only on small screens) -->
-      <div fxLayout="row" fxLayoutAlign="start center">
-        <img src="./assets/images/logos/Navilands logo - Dark.svg" alt="Logo" class="logo" />
-        <button mat-icon-button class="mobile-menu" >
-          <!-- (click)="sidenav.toggle()" -->
-          <mat-icon>menu</mat-icon>
-        </button>
-      </div>
-
-      <!-- Center: Navigation Links (hidden on small screens) -->
-      <div fxLayout="row" fxLayoutAlign="center center" class="nav-links desktop-only">
-        <a mat-button>About us</a>
-        <a mat-button>Ship Management</a>
-        <a mat-button>Crew Management</a>
-        <a mat-button>Job Opportunities</a>
-        <a mat-button>Contact</a>
-        
-      </div>
-
-      <!-- Right: Icons -->
-      <div fxLayout="row" fxLayoutAlign="end center" class="icon-buttons">
-        <button mat-icon-button><mat-icon>person</mat-icon></button>
-        <button mat-icon-button><mat-icon>search</mat-icon></button>
-      </div>
-    </div>
-  </mat-toolbar>
-
-  <!-- Mobile/Tablet Sidenav Menu -->
-  <!-- <mat-sidenav-container class="mobile-sidenav-container">
-    <mat-sidenav #sidenav mode="over" class="mobile-sidenav">
-      <a mat-button (click)="sidenav.close()">About us</a>
-      <a mat-button (click)="sidenav.close()">Ship Management</a>
-      <a mat-button (click)="sidenav.close()">Crew Management</a>
-      <a mat-button (click)="sidenav.close()">Job Opportunities</a>
-      <a mat-button (click)="sidenav.close()">Contact</a>
-    </mat-sidenav>
-
-    <mat-sidenav-content>
-    </mat-sidenav-content>
-  </mat-sidenav-container> -->
-
-  <div class="container m-t-48">
-    <div class="row">
-      <div class="col-12">
-        <div class="search-bar">
-          <div class="filter">
-            <span class="material-icons">layers</span>
-            <mat-form-field appearance="outline">
-              <mat-label>Rank</mat-label>
-              <mat-select [(ngModel)]="selectedRank">
-                <mat-option>Captain</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="filter">
-            <span class="material-icons">work_outline</span>
-            <mat-form-field class="border-0" appearance="outline">
-              <mat-label>Employers</mat-label>
-              <mat-select [(ngModel)]="selectedRank">
-                <mat-option>Captain</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="filter">
-            <span class="material-icons">location_on</span>
-            <mat-form-field appearance="outline">
-              <mat-label>Location</mat-label>
-              <mat-select [(ngModel)]="selectedRank">
-                <mat-option>Captain</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="input-keyword">
-            <span class="material-icons">apps</span>
-            <input type="text" placeholder="Your keyword..." />
-          </div>
-
-          <button mat-flat-button color="primary">
-            Search
-          </button>
-        </div>
-      </div>
+    <!-- Left: Logo + Hamburger (only on small screens) -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <img src="./assets/images/logos/Navilands logo - Dark.svg" alt="Logo" class="logo" />
 
     </div>
 
+    <!-- Center: Navigation Links (hidden on small screens) -->
+    <div fxLayout="row" fxLayoutAlign="center center" class="nav-links desktop-only">
+      <a mat-button>About us</a>
+      <a mat-button>Ship Management</a>
+      <a mat-button>Crew Management</a>
+      <a mat-button>Job Opportunities</a>
+      <a mat-button>Contact</a>
+
+    </div>
+
+    <!-- Right: Icons -->
+    <div fxLayout="row" fxLayoutAlign="end center" class="icon-buttons">
+      <button mat-icon-button class="mobile-menu" (click)="sidenav.toggle()">
+        <!-- (click)="sidenav.toggle()" -->
+        <mat-icon>menu</mat-icon>
+      </button>
+      <button mat-icon-button><mat-icon>person</mat-icon></button>
+      <button mat-icon-button><mat-icon>search</mat-icon></button>
+    </div>
   </div>
-  <div class="container m-t-48">
-    <div class="row">
-      <div class="col-lg-4 col-sm-6 m-b-20">
-        <div class="job-card mat-elevation-z2">
-          <div class="job-image-wrapper">
-            <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
-            <div class="job-date">23 Dec 2024</div>
-          </div>
+</mat-toolbar>
 
-          <div class="job-content">
-            <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
-            <p class="job-description">
-              Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
-              Sail
-              the world and gain unparalleled...
-            </p>
+<!-- Mobile/Tablet Sidenav Menu -->
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="over" class="mobile-sidenav">
+    <a mat-button (click)="sidenav.close()">About us</a>
+    <a mat-button (click)="sidenav.close()">Ship Management</a>
+    <a mat-button (click)="sidenav.close()">Crew Management</a>
+    <a mat-button (click)="sidenav.close()">Job Opportunities</a>
+    <a mat-button (click)="sidenav.close()">Contact</a>
+  </mat-sidenav>
 
-            <div class="job-tags">
-              <span class="job-tag">At Sea</span>
-              <span class="job-tag">Contractual</span>
-              <span class="job-tag">Worldwide</span>
+  <mat-sidenav-content>
+
+    <div class="container m-t-48">
+      <div class="row">
+        <div class="col-12">
+          <div class="search-bar">
+            <div class="filter">
+              <span class="material-icons material-icons-custom">layers</span>
+              <mat-form-field appearance="outline">
+                <mat-label>Rank</mat-label>
+                <mat-select [(ngModel)]="selectedRank">
+                  <mat-option>Captain</mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
 
-            <div class="job-footer">
-              <div class="job-icons">
-                <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
-                <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
-              </div>
+            <div class="divider"></div>
 
-              <button mat-flat-button color="primary">
-                Read more
-              </button>
+            <div class="filter">
+              <span class="material-icons material-icons-custom">work_outline</span>
+              <mat-form-field class="border-0" appearance="outline">
+                <mat-label>Employers</mat-label>
+                <mat-select [(ngModel)]="selectedRank">
+                  <mat-option>Captain</mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
+
+            <div class="divider"></div>
+
+            <div class="filter">
+              <span class="material-icons material-icons-custom">location_on</span>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Location</mat-label>
+                <mat-select [(ngModel)]="selectedRank">
+                  <mat-option>Captain</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="input-keyword">
+              <span class="material-icons material-icons-custom">apps</span>
+              <input type="text" placeholder="Your keyword..." />
+            </div>
+
+            <button mat-flat-button color="primary">
+              Search
+            </button>
           </div>
         </div>
+
       </div>
-      <div class="col-lg-4 col-sm-6 m-b-20">
-        <div class="job-card mat-elevation-z2">
-          <div class="job-image-wrapper">
-            <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
-            <div class="job-date">23 Dec 2024</div>
-          </div>
 
-          <div class="job-content">
-            <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
-            <p class="job-description">
-              Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
-              Sail
-              the world and gain unparalleled...
-            </p>
-
-            <div class="job-tags">
-              <span class="job-tag">At Sea</span>
-              <span class="job-tag">Contractual</span>
-              <span class="job-tag">Worldwide</span>
+    </div>
+    <div class="container m-t-48">
+      <div class="row">
+        <div class="col-lg-4 col-sm-6 m-b-20">
+          <div class="job-card mat-elevation-z2">
+            <div class="job-image-wrapper">
+              <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
+              <div class="job-date">23 Dec 2024</div>
             </div>
 
-            <div class="job-footer">
-              <div class="job-icons">
-                <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
-                <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+            <div class="job-content">
+              <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
+              <p class="job-description">
+                Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
+                Sail
+                the world and gain unparalleled...
+              </p>
+
+              <div class="job-tags">
+                <span class="job-tag">At Sea</span>
+                <span class="job-tag">Contractual</span>
+                <span class="job-tag">Worldwide</span>
               </div>
 
-              <button mat-flat-button color="primary">
-                Read more
-              </button>
+              <div class="job-footer">
+                <div class="job-icons">
+                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
+                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+                </div>
+
+                <button mat-flat-button color="primary">
+                  Read more
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-lg-4 col-sm-6 m-b-20">
-        <div class="job-card mat-elevation-z2">
-          <div class="job-image-wrapper">
-            <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
-            <div class="job-date">23 Dec 2024</div>
-          </div>
-
-          <div class="job-content">
-            <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
-            <p class="job-description">
-              Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
-              Sail
-              the world and gain unparalleled...
-            </p>
-
-            <div class="job-tags">
-              <span class="job-tag">At Sea</span>
-              <span class="job-tag">Contractual</span>
-              <span class="job-tag">Worldwide</span>
+        <div class="col-lg-4 col-sm-6 m-b-20">
+          <div class="job-card mat-elevation-z2">
+            <div class="job-image-wrapper">
+              <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
+              <div class="job-date">23 Dec 2024</div>
             </div>
 
-            <div class="job-footer">
-              <div class="job-icons">
-                <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
-                <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+            <div class="job-content">
+              <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
+              <p class="job-description">
+                Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
+                Sail
+                the world and gain unparalleled...
+              </p>
+
+              <div class="job-tags">
+                <span class="job-tag">At Sea</span>
+                <span class="job-tag">Contractual</span>
+                <span class="job-tag">Worldwide</span>
               </div>
 
-              <button mat-flat-button color="primary">
-                Read more
-              </button>
+              <div class="job-footer">
+                <div class="job-icons">
+                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
+                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+                </div>
+
+                <button mat-flat-button color="primary">
+                  Read more
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        <div class="col-lg-4 col-sm-6 m-b-20">
+          <div class="job-card mat-elevation-z2">
+            <div class="job-image-wrapper">
+              <img src="https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg" alt="Job Image" />
+              <div class="job-date">23 Dec 2024</div>
+            </div>
+
+            <div class="job-content">
+              <h3 class="job-title">3rd Engineer (3/E) | Container</h3>
+              <p class="job-description">
+                Embark on a rewarding adventure as a 3rd Officer onboard our advanced oil and chemical tanker vessels.
+                Sail
+                the world and gain unparalleled...
+              </p>
+
+              <div class="job-tags">
+                <span class="job-tag">At Sea</span>
+                <span class="job-tag">Contractual</span>
+                <span class="job-tag">Worldwide</span>
+              </div>
+
+              <div class="job-footer">
+                <div class="job-icons">
+                  <span class="d-flex"><mat-icon>visibility</mat-icon> 725</span>
+                  <span class="d-flex"><mat-icon>chat_bubble_outline</mat-icon> 12</span>
+                </div>
+
+                <button mat-flat-button color="primary">
+                  Read more
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
 
-  </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

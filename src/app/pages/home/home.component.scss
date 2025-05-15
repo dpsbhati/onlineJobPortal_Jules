@@ -311,7 +311,6 @@
 
   .mobile-menu {
     display: none;
-    margin-right: 12px;
   }
 
   .nav-links a {
@@ -353,10 +352,18 @@
   .mobile-sidenav-container {
     display: block;
   }
+  .divider {
+    display: none;
+  }
+  .nav-toolbar {
+    padding: 0 10px;
+  }
+  .mat-drawer-inner-container {
+    margin-top: 80px;
+  }
 }
 
-.material-icons {
-  color: #c8c8c8;
+.material-icons-custom {
+  color: #aebcd0;
 }
-
 
