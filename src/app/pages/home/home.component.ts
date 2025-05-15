@@ -121,32 +121,19 @@ export class HomeComponent {
     })
   }
   onSearch(): void {
-  // Reset page to 1 on new search
   this.pageConfig.curPage = 1;
+  const trimmedKeyword = this.keyword.trim();
 
-  // Update whereClause with keyword filter
-  if (this.keyword && this.keyword.trim() !== '') {
+  if (trimmedKeyword !== '') {
     this.pageConfig.whereClause = [
-      { key: 'all', operator: '=', value: this.keyword.trim() }
+      { key: 'all', operator: '=', value: trimmedKeyword }
     ];
   } else {
-    // Clear filter if keyword empty
     this.pageConfig.whereClause = [];
   }
 
-  // Call pagination API with updated filter
   this.onPagination();
 }
-onKeywordChange(value: string): void {
-  if (!value || value.trim() === '') {
-    this.pageConfig.curPage = 1;
-    this.pageConfig.whereClause = [];
-    this.onPagination();
-  }
-}
-
-
-
 
 
   goToLogin() {

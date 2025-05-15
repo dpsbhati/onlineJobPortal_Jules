@@ -100,7 +100,7 @@
               <span class="material-icons material-icons-custom">apps</span>
               <mat-form-field appearance="outline">
                 <mat-label>Your keyword...</mat-label>
-                <input matInput placeholder="Your keyword..." [(ngModel)]="keyword" (ngModelChange)="onKeywordChange($event)"/>
+                <input matInput placeholder="Your keyword..." [(ngModel)]="keyword"   (keydown.enter)="onSearch()"    autocomplete="off"/>
               </mat-form-field>
             </div>
 
@@ -149,6 +149,9 @@
             </div>
           </div>
         </div>
+         <div *ngIf="jobPostingList?.length === 0" class="no-records-message col-12 text-center">
+      No record found.
+    </div>
         <!-- <div class="col-lg-4 col-sm-6 m-b-20">
           <div class="job-card mat-elevation-z2">
             <div class="job-image-wrapper">
