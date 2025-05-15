@@ -12,6 +12,7 @@ import {
 import { ApplicantDetailsComponent } from '../admin/applicant-details/applicant-details.component'
 import { DevelopmentPageComponent } from './development-page/development-page.component'
 import { HomeComponent } from '../home/home.component'
+import { JobDetailsComponent } from '../job-details/job-details.component'
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -64,6 +65,10 @@ export const AuthenticationRoutes: Routes = [
       {
         path: 'email-activation',
         component: EmailActivationComponent
+      },
+      {
+        path: 'Job-Details',
+        component: JobDetailsComponent
       },
 
     ]

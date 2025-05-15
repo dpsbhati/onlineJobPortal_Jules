@@ -1,0 +1,131 @@
+<mat-toolbar color="white" class="nav-toolbar">
+  <div class="container header" fxLayout="row" fxLayoutAlign="space-between center">
+
+    <!-- Left: Logo + Hamburger (only on small screens) -->
+    <div fxLayout="row" fxLayoutAlign="start center">
+      <img src="./assets/images/logos/Navilands logo - Dark.svg" alt="Logo" class="logo" />
+
+    </div>
+
+    <!-- Center: Navigation Links (hidden on small screens) -->
+    <div fxLayout="row" fxLayoutAlign="center center" class="nav-links desktop-only">
+      <a mat-button>About us</a>
+      <a mat-button>Ship Management</a>
+      <a mat-button>Crew Management</a>
+      <a mat-button>Job Opportunities</a>
+      <a mat-button>Contact</a>
+
+    </div>
+
+    <!-- Right: Icons -->
+    <div fxLayout="row" fxLayoutAlign="end center" class="icon-buttons">
+      <button mat-icon-button class="mobile-menu" >
+        <!-- (click)="sidenav.toggle()" -->
+        <mat-icon>menu</mat-icon>
+      </button>
+      <button mat-icon-button><mat-icon>person</mat-icon></button>
+      <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
+          class="material-icons-custom" /></button>
+    </div>
+  </div>
+</mat-toolbar>
+
+
+<div class="container  m-t-48">
+    
+<div class="header justify-content-start d-flex align-items-center m-b-10">
+    <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+
+    <h2 class="m-l-12">Job Details</h2>
+  </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <mat-card>
+                <mat-card-content>
+                    <div class="row w-100 justify-content-between align-items-center">
+                        <div class="col-lg-12">
+                            <h2 class="m-b-0">Senior Frontend Developer</h2>
+                            <p class="m-t-6 m-b-0">TechNova Solutions Pvt. Ltd.</p>
+                            <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center">
+                                <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
+                                Bengaluru, India
+                            </p>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card>
+                <mat-card-content>
+                    <div class="row">
+                        <div class="col-lg-12 m-b-10">
+                            <div class="row m-b-20">
+                                <div class="col-lg-3"><strong>Assignment</strong></div>
+                                <div class="col-lg-8">6 Months (Extendable)</div>
+                            </div>
+                            <div class="row m-b-20">
+                                <div class="col-lg-3"><strong>Short Description</strong></div>
+                                <div class="col-lg-8">Join our frontend team to develop UI for our web applications.
+                                </div>
+                            </div>
+                            <div class="row m-b-20">
+                                <div class="col-lg-3"><strong>Full Description</strong></div>
+                                <div class="col-lg-8">
+                                    We are looking for a frontend developer who can create pixel-perfect UIs using
+                                    Angular and modern web technologies. You will be part of a cross-functional team
+                                    responsible for the entire software development life cycle.
+                                </div>
+                            </div>
+                            <div class="row m-b-20">
+                                <div class="col-lg-3"><strong>Required Skills</strong></div>
+                                <div class="col-lg-8">
+                                    <div class="d-flex flex-wrap gap-6">
+                                        <button mat-stroked-button color="primary">Angular</button>
+                                        <button mat-stroked-button color="primary">TypeScript</button>
+                                        <button mat-stroked-button color="primary">HTML/CSS</button>
+                                        <button mat-stroked-button color="primary">RxJS</button>
+                                        <button mat-stroked-button color="primary">REST API</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div class="col-lg-4">
+            <mat-card>
+                <img mat-card-image src="https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg?cs=srgb&dl=pexels-anjana-c-169994-674010.jpg&fm=jpg" alt="Job Image"
+                    height="250" width="390">
+                <mat-card-content>
+                    <div class="row">
+                        <div class="col-lg-12 m-b-16">
+                            <strong class="m-r-6">Employment Type:</strong> Full-Time
+                        </div>
+                        <div class="col-lg-12 m-b-16">
+                            <strong class="m-r-6">Salary Range:</strong> ₹80,000 - ₹120,000
+                        </div>
+                        <div class="col-lg-12 m-b-16">
+                            <strong class="m-r-6">Deadline:</strong> Jul 10, 2025
+                        </div>
+                        <div class="col-lg-12 m-b-16">
+                            <strong class="m-r-6">Experience:</strong> 3+ Years
+                        </div>
+                        <div class="col-lg-12 m-b-16">
+                            <strong class="m-r-6">Posted on:</strong> <span>May 10, 2025</span>
+                        </div>
+                    </div>
+                     <button mat-flat-button class="w-100" color="primary">
+            Apply Now
+          </button>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+</div>
