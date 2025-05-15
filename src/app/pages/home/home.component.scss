@@ -162,6 +162,7 @@
   font-size: 14px;
   color: #4a4a4a;
   cursor: pointer;
+  width: 180px;
 }
 
 .divider {
@@ -206,7 +207,7 @@
 .job-card {
   width: 100%;
   // max-width: 360px;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   background-color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -214,7 +215,7 @@
 
 .job-image-wrapper {
   position: relative;
-  height: 180px;
+  height: 200px;
   overflow: hidden;
 
   img {
@@ -229,9 +230,10 @@
     left: 12px;
     background-color: #fff;
     color: #000;
-    padding: 4px 15px;
-    font-size: 12px;
+    padding: 0px 15px;
+    font-size: 10px;
     border-radius: 100px;
+    font-weight: 600;
   }
 }
 
@@ -242,6 +244,7 @@
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 8px;
+    color: #4a5867;
   }
 
   .job-description {
@@ -254,13 +257,14 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
+    margin-top: 18px;
 
     .job-tag {
-      background-color: #f1f5f9;
-      color: #333;
+      background-color: #D8E1E9;
+      color: #000;
       font-size: 12px;
-      padding: 4px 10px;
+      padding: 2px 10px;
       border-radius: 9999px;
     }
   }
@@ -282,18 +286,8 @@
       }
     }
 
-    .read-more-btn {
-      background-color: #303f9f;
-      color: #fff;
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      text-transform: none;
-
-      &:hover {
-        background-color: #1a237e;
-      }
-    }
+  
+    
   }
 }
 
@@ -364,6 +358,12 @@
 }
 
 .material-icons-custom {
-  color: #aebcd0;
+  color: #a0abb8;
 }
 
+mat-label {
+  color: #91b5cd;
+}
+.mat-drawer-transition .mat-drawer-content {
+  background-color: #eef5f9;
+}
