@@ -1,6 +1,6 @@
 <!-- If the item has a navCap (section header) -->
 <ng-container *ngIf="item.navCap">
-  <div mat-subheader class="nav-caption">
+  <div mat-subheader class="nav-caption" *ngIf="isVisibleForRole(item)">
     <i-tabler name="dots" class="icon-18 caption-icon"></i-tabler>
     <span class="caption-text">{{ item.navCap }}</span>
   </div>

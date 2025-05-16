@@ -197,7 +197,7 @@ goToLogin() {
     if (role === 'admin') {
       this.router.navigate(['/applications']);
     } else if (role === 'applicant') {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/Applied-Applications']);
     } else {
       // Default fallback if role unknown
       this.router.navigate(['/authentication/login']);
