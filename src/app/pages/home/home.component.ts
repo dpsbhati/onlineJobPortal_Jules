@@ -177,9 +177,38 @@ onLocationChange(event: MatSelectChange): void {
 }
 
 
-  goToLogin() {
-  this.router.navigate(['/authentication/login']);
+//   goToLogin() {
+//   this.router.navigate(['/authentication/login']);
+// }
+goToLogin() {
+  const accessToken = localStorage.getItem('accessToken');
+  const userStr = localStorage.getItem('user');
+
+  if (!accessToken || !userStr) {
+    // Not logged in, send to login page
+    this.router.navigate(['/authentication/login']);
+    return;
+  }
+
+  try {
+    const user = JSON.parse(userStr);
+    const role = user.role?.toLowerCase();
+
+    if (role === 'admin') {
+      this.router.navigate(['/applications']);
+    } else if (role === 'applicant') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      // Default fallback if role unknown
+      this.router.navigate(['/authentication/login']);
+    }
+  } catch (error) {
+    // Parsing error or other issue, fallback to login page
+    console.error('Error parsing user from localStorage:', error);
+    this.router.navigate(['/authentication/login']);
+  }
 }
+
 goToJobDetail(jobId: string) {
   this.router.navigate(['/authentication/Job-Details', jobId]);
 }
