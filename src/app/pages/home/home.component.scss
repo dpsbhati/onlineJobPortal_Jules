@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  // box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
 }
 
@@ -86,6 +86,6 @@ mat-label {
   margin-right: 5px;
 }
 .Job-Image {
-  height: 250px;
+  height: 230px;
   object-fit: cover;
 }

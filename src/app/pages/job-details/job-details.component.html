@@ -149,18 +149,39 @@
 
     </div>
 
-    <div *ngIf="showLoginSignupDialog" class="dialog-overlay" role="dialog" aria-modal="true"
-      aria-labelledby="dialogTitle">
-      <div class="dialog-box">
-        <h2 id="dialogTitle">Sign In or Register</h2>
-        <p>To proceed with your job application, please log in to your account or register as a new user.</p>
-        <div class="dialog-actions">
-          <button mat-flat-button (click)="onLogin()" color="primary">Login</button>
-          <button mat-flat-button color="primary" (click)="onSignup()">Signup</button>
-          <!-- <button mat-button (click)="onCancel()">Cancel</button> -->
-        </div>
-      </div>
+<!-- <div
+  *ngIf="showLoginSignupDialog"
+  class="dialog-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="dialogTitle"
+>
+  <div class="dialog-box">
+    <h2 id="dialogTitle">Please Login or Signup</h2>
+    <p>You need to login or sign up to apply for this job.</p>
+    <div class="dialog-actions">
+      <button mat-button (click)="onLogin()">Login</button>
+      <button mat-button color="primary" (click)="onSignup()">Signup</button>
+      <button mat-button (click)="onCancel()">Cancel</button>
     </div>
+  </div>
+</div> -->
+<div *ngIf="showLoginSignupDialog" class="dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" (click)="onCancel()">
+  <div class="dialog-box" (click)="$event.stopPropagation()">
+    <div class="dialog-header d-flex align-items-center justify-content-between">
+      <h2 id="dialogTitle" class="m-0">Please Login or Signup</h2>
+      <button mat-icon-button aria-label="Close dialog" (click)="onCancel()">
+        <i-tabler name="x" class="icon-20"></i-tabler>
+      </button>
+    </div>
+    <p>You need to login or sign up to apply for this job.</p>
+    <div class="dialog-actions">
+      <button mat-button (click)="onLogin()">Login</button>
+      <button mat-button color="primary" (click)="onSignup()">Signup</button>
+      <!-- <button mat-button (click)="onCancel()">Cancel</button> -->
+    </div>
+  </div>
+</div>
 
 
   </mat-sidenav-content>

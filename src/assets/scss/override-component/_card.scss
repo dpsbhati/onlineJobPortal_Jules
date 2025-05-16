@@ -1,6 +1,6 @@
-@use "sass:map";
-@use "@angular/material" as mat;
-@use "../variables" as *;
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use '../variables' as *;
 
 @include mat.card-overrides(
   (
@@ -14,12 +14,17 @@
     subtitle-text-weight: 400,
     elevated-container-shape: var(--mat-sys-corner-small),
     outlined-container-shape: var(--mat-sys-corner-small),
-    elevated-container-elevation: var(--mat-sys-level2),
+    elevated-container-elevation: var(--mat-sys-level2)
   )
 );
 
 // styles
+
 html {
+  .card-home {
+    padding-top: 0px !important;
+    padding-bottom: 15px !important;
+  }
   .mat-mdc-card {
     margin-bottom: $card-spacer;
     .mat-mdc-card-header {
@@ -29,7 +34,7 @@ html {
       padding: 0 $card-spacer $card-spacer;
     }
     > .mat-mdc-card-content {
-      padding: $card-spacer !important;
+      padding: $card-spacer;
     }
 
     .mdc-card__actions {
