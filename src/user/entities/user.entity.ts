@@ -19,6 +19,7 @@ import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 import { applications } from 'src/application/entities/application.entity';
 import { Application } from 'express';
 import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
+import { CareerType } from '../enums/career-type.enum';
 
 @Entity('users')
 export class Users {
@@ -29,10 +30,14 @@ export class Users {
   @Column({ unique: true })
   email: string;
 
+  @Column({
+    type: 'enum',
+    enum: CareerType,
+  })
+  career_type: CareerType;
 
   @Column()
   refreshToken: string;
-
 
   // @Exclude()
   @Column()
@@ -43,6 +48,15 @@ export class Users {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ default: false })
+  isJobAlerts: boolean;
+
+  @Column({ default: false })
+  isNewsLetters: boolean;
+
+  @Column({ default: false })
+  isPrivacyPolicy: boolean;
 
   @Column()
   isPasswordReset: boolean;
@@ -84,15 +98,12 @@ export class Users {
     // return this.resetPasswordToken === token && new Date();
   }
 
- 
-
   @OneToOne(() => UserProfile, (profile) => profile.user, { eager: true })
   userProfile: UserProfile;
-  
+
   @OneToMany(() => applications, (application) => application.user) // Relation with applications
-  applications: applications[]; 
+  applications: applications[];
 
   @OneToMany(() => JobPosting, (jobPosting) => jobPosting.user) // Relation with applications
-  jobPosting: JobPosting[]; 
-  
+  jobPosting: JobPosting[];
 }

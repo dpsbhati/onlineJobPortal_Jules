@@ -15,7 +15,7 @@ import {
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '../enums/user-role.enums'; // Adjust the import path as necessary
-
+import { CareerType } from '../enums/career-type.enum';
 
 @ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
 export class IsNotWhitespace implements ValidatorConstraintInterface {
@@ -28,7 +28,6 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
     return `${args.property} must not be empty or contain only whitespace.`;
   }
 }
-
 
 export class CreateUserDto {
   @IsOptional()
@@ -72,10 +71,13 @@ export class CreateUserDto {
   @IsString({ message: 'password must be a valid string.' })
   @IsNotEmpty({ message: 'password is required.' })
   @MinLength(6, { message: 'Password must be at least 6 characters long.' })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message:
-      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
-  })
+  @Matches(
+    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/,
+    {
+      message:
+        'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    },
+  )
   @Transform(({ value }) => value?.trim())
   password: string;
 
@@ -84,11 +86,32 @@ export class CreateUserDto {
     enum: UserRole,
     description: 'The role of the user.',
   })
-  @IsEnum(UserRole, { message: `role must be one of ${Object.values(UserRole).join(', ')}.` })
+  @IsEnum(UserRole, {
+    message: `role must be one of ${Object.values(UserRole).join(', ')}.`,
+  })
   @IsOptional()
   role: string = UserRole.APPLICANT;
-}
 
+  @ApiProperty({
+    enum: CareerType,
+    example: CareerType.OFFICE,
+    description:
+      'Career type of the user. Must be one of: Office, At sea, Onshore',
+  })
+  @IsEnum(CareerType, {
+    message: `career_type must be one of: ${Object.values(CareerType).join(', ')}`,
+  })
+  career_type: CareerType;
+
+  @ApiProperty({default: false})
+  isJobAlerts: boolean;
+
+  @ApiProperty({default: false})
+  isNewsLetters: boolean;
+
+  @ApiProperty({default: false})
+  isPrivacyPolicy: boolean;
+}
 
 export class forgetPasswordDto {
   @ApiProperty({
@@ -100,7 +123,6 @@ export class forgetPasswordDto {
   @Transform(({ value }) => value?.trim())
   email: string;
 }
-
 
 export class LoginDTO {
   @ApiProperty({
@@ -122,7 +144,6 @@ export class LoginDTO {
   password: string;
 }
 
-
 export class ResetPasswordDto {
   @ApiProperty({
     example: 'valid-reset-token',
@@ -142,10 +163,13 @@ export class ResetPasswordDto {
   @IsString({ message: 'newPassword must be a valid string.' })
   @IsNotEmpty({ message: 'newPassword is required.' })
   @MinLength(6, { message: 'New password must be at least 6 characters long.' })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message:
-      'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
-  })
+  @Matches(
+    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/,
+    {
+      message:
+        'New password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    },
+  )
   @Transform(({ value }) => value?.trim())
   newPassword: string;
 }
@@ -177,10 +201,13 @@ export class ChangePasswordDto {
   @IsString({ message: 'password must be a valid string.' })
   @IsNotEmpty({ message: 'password is required.' })
   @MinLength(6, { message: 'Password must be at least 6 characters long.' })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message:
-      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
-  })
+  @Matches(
+    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/,
+    {
+      message:
+        'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    },
+  )
   @Transform(({ value }) => value?.trim())
   oldPassword: string;
 
@@ -192,11 +219,13 @@ export class ChangePasswordDto {
   @IsString({ message: 'password must be a valid string.' })
   @IsNotEmpty({ message: 'password is required.' })
   @MinLength(6, { message: 'Password must be at least 6 characters long.' })
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/, {
-    message:
-      'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
-  })
+  @Matches(
+    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}\[\]:;"'<>,.?~`-]{6,}$/,
+    {
+      message:
+        'Password must be at least 6 characters long, contain no spaces, and include both letters and numbers. Special characters are allowed but not required.',
+    },
+  )
   @Transform(({ value }) => value?.trim())
   newPassword: string;
-  
 }

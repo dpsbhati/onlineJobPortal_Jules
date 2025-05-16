@@ -78,41 +78,41 @@ export class UserService {
         }
       }
 
-      const TEMP_EMAIL_DOMAINS = [
-        'tempmail.com',
-        '10minutemail.com',
-        'guerrillamail.com',
-        'mailinator.com',
-        'yopmail.com',
-        'burnermail.io',
-        'trashmail.com',
-        'throwawaymail.com',
-        'emailondeck.com',
-        'getnada.com',
-        'maildrop.cc',
-        'anonaddy.com',
-        'dispostable.com',
-        'fakemailgenerator.com',
-        'mohmal.com',
-        'mytemp.email',
-        'tempinbox.com',
-        'inboxkitten.com',
-        'spamgourmet.com',
-        'throwawaymail.com',
-      ]; // Add more as needed
+      // const TEMP_EMAIL_DOMAINS = [
+      //   'tempmail.com',
+      //   '10minutemail.com',
+      //   'guerrillamail.com',
+      //   'mailinator.com',
+      //   'yopmail.com',
+      //   'burnermail.io',
+      //   'trashmail.com',
+      //   'throwawaymail.com',
+      //   'emailondeck.com',
+      //   'getnada.com',
+      //   'maildrop.cc',
+      //   'anonaddy.com',
+      //   'dispostable.com',
+      //   'fakemailgenerator.com',
+      //   'mohmal.com',
+      //   'mytemp.email',
+      //   'tempinbox.com',
+      //   'inboxkitten.com',
+      //   'spamgourmet.com',
+      //   'throwawaymail.com',
+      // ]; // Add more as needed
 
-      function isTemporaryEmail(email: string): boolean {
-        const domain = email.split('@')[1];
-        return TEMP_EMAIL_DOMAINS.includes(domain);
-      }
+      // function isTemporaryEmail(email: string): boolean {
+      //   const domain = email.split('@')[1];
+      //   return TEMP_EMAIL_DOMAINS.includes(domain);
+      // }
 
-      if (!userDto.id && isTemporaryEmail(userDto.email)) {
-        return WriteResponse(
-          400,
-          {},
-          'Temporary email addresses are not allowed.',
-        );
-      }
+      // if (!userDto.id && isTemporaryEmail(userDto.email)) {
+      //   return WriteResponse(
+      //     400,
+      //     {},
+      //     'Temporary email addresses are not allowed.',
+      //   );
+      // }
 
       // Create a new object excluding role only when updating
       const userData = userDto.id
