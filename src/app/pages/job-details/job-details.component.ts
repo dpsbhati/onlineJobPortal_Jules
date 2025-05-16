@@ -40,7 +40,7 @@ export class JobDetailsComponent {
       private notifyService: NotifyService,
       private loader: LoaderService,
       private authService: AuthService
-      
+
     ) {
       this.userRole = this.authService.getUserRole();
     }
@@ -136,7 +136,7 @@ export class JobDetailsComponent {
 
   onSignup() {
     this.showLoginSignupDialog = false;
-    this.router.navigate(['/authentication/signup']);
+    this.router.navigate(['/authentication/register']);
   }
 
   onCancel() {
