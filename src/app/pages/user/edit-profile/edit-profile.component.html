@@ -1,14 +1,7 @@
 <mat-card>
-  <mat-card-header>
-    <mat-card-title class="d-flex align-items-center gap-6">
-      <button mat-icon-button color="primary" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      {{ isAdmin() ? "Edit Admin Profile" : "Edit User Profile" }}
-    </mat-card-title>
-  </mat-card-header>
 
-  <mat-card-content>
+
+  <mat-card-content class="d-none">
     <div *ngIf="apiError" class="alert alert-danger">
       {{ apiError }}
     </div>
@@ -19,20 +12,12 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>First Name</mat-label>
-            <input
-              matInput
-              formControlName="first_name"
-              placeholder="Enter first name"
-              (keypress)="restrictNumeric($event)"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('first_name')?.errors?.['required']"
-            >
+            <input matInput formControlName="first_name" placeholder="Enter first name"
+              (keypress)="restrictNumeric($event)" />
+            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['required']">
               First name is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']"
-            >
+            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']">
               First name can only contain letters and spaces
             </mat-error>
           </mat-form-field>
@@ -42,20 +27,12 @@
         <div class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Last Name</mat-label>
-            <input
-              matInput
-              formControlName="last_name"
-              placeholder="Enter last name"
-              (keypress)="restrictNumeric($event)"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('last_name')?.errors?.['required']"
-            >
+            <input matInput formControlName="last_name" placeholder="Enter last name"
+              (keypress)="restrictNumeric($event)" />
+            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['required']">
               Last name is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']"
-            >
+            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']">
               Last name can only contain letters, and spaces
             </mat-error>
           </mat-form-field>
@@ -73,24 +50,13 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Date of Birth</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              formControlName="dob"
-              [disabled]="true"
-              readonly
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
+            <input matInput [matDatepicker]="picker" formControlName="dob" [disabled]="true" readonly />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['required']">
               Date of birth is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('dob')?.errors?.['invalidDOB']"
-            >
+            <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['invalidDOB']">
               Invalid Date of Birth format. Please enter in YYYY-MM-DD.
             </mat-error>
           </mat-form-field>
@@ -106,9 +72,7 @@
               <mat-option value="FEMALE">Female</mat-option>
               <mat-option value="OTHERS">Other</mat-option>
             </mat-select>
-            <mat-error
-              *ngIf="userProfileForm.get('gender')?.errors?.['required']"
-            >
+            <mat-error *ngIf="userProfileForm.get('gender')?.errors?.['required']">
               Gender is required
             </mat-error>
           </mat-form-field>
@@ -118,21 +82,13 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Mobile</mat-label>
-            <input
-              matInput
-              formControlName="mobile"
-              type="text"
-              placeholder="Enter mobile number"
-              (input)="onMobileInput()"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('mobile')?.errors?.['required']"
-            >
+            <input matInput formControlName="mobile" type="text" placeholder="Enter mobile number"
+              (input)="onMobileInput()" />
+            <mat-error *ngIf="userProfileForm.get('mobile')?.errors?.['required']">
               Mobile number is required
             </mat-error>
             <mat-error
-              *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']"
-            >
+              *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']">
               Please enter a valid 10-digit mobile number
             </mat-error>
           </mat-form-field>
@@ -143,43 +99,25 @@
           <div class="skills-section">
             <mat-form-field appearance="outline" class="w-100 mb-2">
               <mat-label>Add Skill</mat-label>
-              <input
-                matInput
-                [(ngModel)]="newSkill"
-                [ngModelOptions]="{ standalone: true }"
-                placeholder="Enter a skill and press Enter"
-                (keydown.enter)="preventFormSubmit($event)"
-                (focus)="onInputFocus()"
-                (keyup.enter)="addSkill()"
-              />
+              <input matInput [(ngModel)]="newSkill" [ngModelOptions]="{ standalone: true }"
+                placeholder="Enter a skill and press Enter" (keydown.enter)="preventFormSubmit($event)"
+                (focus)="onInputFocus()" (keyup.enter)="addSkill()" />
 
-              <button
-                mat-icon-button
-                matSuffix
-                color="primary"
-                type="button"
-                (keydown.enter)="preventFormSubmit($event)"
-                (click)="addSkill()"
-                [disabled]="!newSkill.trim()"
-              >
+              <button mat-icon-button matSuffix color="primary" type="button"
+                (keydown.enter)="preventFormSubmit($event)" (click)="addSkill()" [disabled]="!newSkill.trim()">
                 <mat-icon>add</mat-icon>
               </button>
             </mat-form-field>
 
             <mat-chip-listbox>
-              <mat-chip
-                *ngFor="let skill of skillsArray; let i = index"
-                (removed)="removeSkill(i)"
-                [removable]="true"
-              >
+              <mat-chip *ngFor="let skill of skillsArray; let i = index" (removed)="removeSkill(i)" [removable]="true">
                 {{ skill }}
                 <mat-icon matChipRemove>cancel</mat-icon>
               </mat-chip>
             </mat-chip-listbox>
 
             <mat-error
-              *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.errors?.['required']"
-            >
+              *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.errors?.['required']">
               At least one skill is required
             </mat-error>
           </div>
@@ -189,19 +127,11 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Work Experience</mat-label>
-            <input
-              matInput
-              formControlName="work_experiences"
-              placeholder="Enter work experience"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('work_experiences')?.errors?.['required']"
-            >
+            <input matInput formControlName="work_experiences" placeholder="Enter work experience" />
+            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['required']">
               Work experience is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']"
-            >
+            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']">
               Please enter valid work experience (1 or 2 digits followed by
               optional text)
             </mat-error>
@@ -212,19 +142,11 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Current Company</mat-label>
-            <input
-              matInput
-              formControlName="current_company"
-              placeholder="Enter current company"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('current_company')?.errors?.['required']"
-            >
+            <input matInput formControlName="current_company" placeholder="Enter current company" />
+            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['required']">
               Current company is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']"
-            >
+            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']">
               Company name must contain only letters and spaces
             </mat-error>
           </mat-form-field>
@@ -234,22 +156,13 @@
         <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Expected Salary</mat-label>
-            <input
-              matInput
-              formControlName="expected_salary"
-              placeholder="Enter expected salary"
-              (input)="formatSalary('expected_salary')"
-              (keypress)="restrictToNumbers($event)"
-              (blur)="onBlur($event)"
-            />
-            <mat-error
-              *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']"
-            >
+            <input matInput formControlName="expected_salary" placeholder="Enter expected salary"
+              (input)="formatSalary('expected_salary')" (keypress)="restrictToNumbers($event)"
+              (blur)="onBlur($event)" />
+            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']">
               Expected salary is required
             </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('expected_salary')?.errors?.['maxDigits']"
-            >
+            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['maxDigits']">
               Salary should not exceed 8 digits
             </mat-error>
           </mat-form-field>
@@ -258,15 +171,584 @@
 
       <!-- Submit Button -->
       <div class="d-flex justify-content-end mt-4">
-        <button
-          mat-flat-button
-          color="primary"
-          [disabled]="isUpdateButtonDisabled"
-          (click)="onSubmit()"
-        >
+        <button mat-flat-button color="primary" [disabled]="isUpdateButtonDisabled" (click)="onSubmit()">
           {{ isEditMode ? "Update" : "Create" }}
         </button>
       </div>
     </form>
+  </mat-card-content>
+</mat-card>
+
+
+
+
+
+<mat-card>
+  <mat-card-header>
+    <mat-card-title class="d-flex align-items-center gap-6">
+      <button mat-icon-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      {{ isAdmin() ? "Edit Profile" : "Edit Profile" }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-stepper orientation="vertical" #stepper>
+      <mat-step [stepControl]="firstFormGroup">
+        <form class="m-t-24" [formGroup]="firstFormGroup">
+          <ng-template matStepLabel>Basic Information</ng-template>
+          <div class="row">
+            <!-- Profile Image -->
+            <div class="col-lg-4">
+              <!-- <mat-label>Select Profile Image</mat-label> -->
+              <!-- <input type="file" class="form-control" /> -->
+              <button mat-stroked-button type="button" class="w-100">
+                <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
+                Profile Image
+              </button>
+            </div>
+
+
+            <!-- First Name -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="first_name" placeholder="Enter first name" />
+              </mat-form-field>
+            </div>
+
+            <!-- Last Name -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Last Name</mat-label>
+                <input matInput />
+              </mat-form-field>
+            </div>
+
+            <!-- Email -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" />
+              </mat-form-field>
+            </div>
+
+            <!-- Dial Code -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Dial Code</mat-label>
+                <mat-select>
+                  <mat-option>45</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Phone Number</mat-label>
+                <input matInput type="tel" />
+              </mat-form-field>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Date of Birth</mat-label>
+                <input matInput [matDatepicker]="dobPicker" />
+                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dobPicker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <!-- Nationalities -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nationalities</mat-label>
+                <mat-select multiple>
+                  <mat-option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality
+                    }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Country of Residence -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Country of Residence</mat-label>
+                <mat-select>
+                  <mat-option *ngFor="let country of countries" [value]="country">{{ country }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Location -->
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Location</mat-label>
+                <input matInput placeholder="Start typing an address..." />
+              </mat-form-field>
+            </div>
+
+            <!-- Additional Contact Info (Repeater UI) -->
+            <div class="col-lg-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Additional Contact Information</h4>
+              <!-- Example Row -->
+              <div class="row align-items-center">
+                <div class="col-lg-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Contact Type</mat-label>
+                    <mat-select>
+                      <mat-option value="Email">Email</mat-option>
+                      <mat-option value="LinkedIn">LinkedIn (Profile Link)</mat-option>
+                      <mat-option value="Messenger">Messenger</mat-option>
+                      <mat-option value="Telephone Number">Telephone Number</mat-option>
+                      <mat-option value="Viber">Viber</mat-option>
+                      <mat-option value="WhatsApp">WhatsApp</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Value</mat-label>
+                    <input matInput placeholder="Enter value here" />
+                  </mat-form-field>
+                </div>
+                <div class="col-lg-2">
+                  <button mat-icon-button color="primary">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="text-right">
+            <button mat-flat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="secondFormGroup">
+        <form class="m-t-24" [formGroup]="secondFormGroup">
+          <ng-template matStepLabel>Career</ng-template>
+          <div class="row">
+
+            <!-- WORK EXPERIENCE -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Work Experience</h4>
+            </div>
+
+            <ng-container *ngFor="let work of workExperiences; let i = index">
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #weFrom{{i}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #weTo{{i}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Title</mat-label>
+                  <input matInput placeholder="Job title" />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Employer</mat-label>
+                  <input matInput placeholder="Company name" />
+                </mat-form-field>
+              </div>
+            </ng-container>
+
+            <!-- HIGHEST EDUCATION LEVEL -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Highest Education Level</h4>
+
+            </div>
+            <div class="col-lg-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Highest Education Level</mat-label>
+                <mat-select>
+                  <mat-option value="High School">High School</mat-option>
+                  <mat-option value="Graduate">Graduate</mat-option>
+                  <mat-option value="Post Graduate/Master">Post Graduate/Master</mat-option>
+                  <mat-option value="PhD">PhD</mat-option>
+                  <mat-option value="Other">Other</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- EDUCATION -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Education</h4>
+            </div>
+
+            <ng-container>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #eduFrom{{j}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #eduTo{{j}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Title</mat-label>
+                  <input matInput placeholder="Degree or Program" />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Institute</mat-label>
+                  <input matInput placeholder="University or College" />
+                </mat-form-field>
+              </div>
+            </ng-container>
+
+            <!-- COURSES -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Courses</h4>
+            </div>
+
+            <ng-container>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #courseFrom{{k}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #courseTo{{k}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Course Title</mat-label>
+                  <input matInput placeholder="Course Name" />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Course Provider</mat-label>
+                  <input matInput placeholder="Provider/Institution" />
+                </mat-form-field>
+              </div>
+            </ng-container>
+
+            <!-- CERTIFICATIONS -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Certifications</h4>
+            </div>
+
+            <ng-container>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #certFrom{{m}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To</mat-label>
+                  <input matInput />
+                  <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                  <mat-datepicker #certTo{{m}}></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Certification Title</mat-label>
+                  <input matInput />
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Certification Issuer</mat-label>
+                  <input matInput />
+                </mat-form-field>
+              </div>
+            </ng-container>
+
+            <!-- CV Upload -->
+            <div class="col-12 mt-4">
+              <h4 class="mat-headline-6 m-t-24 m-b-20">Upload CV (Resume)</h4>
+            </div>
+            <div class="col-lg-6 m-b-10">
+              <!-- <mat-label>Select your CV (PDF Only)</mat-label>
+          <input type="file" class="form-control" accept=".pdf" /> -->
+              <button mat-stroked-button type="button">
+                <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
+                Select your CV (PDF Only)
+              </button>
+            </div>
+
+          </div>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <button mat-flat-button class="bg-error text-white" matStepperPrevious>
+              Back
+            </button>
+            <button mat-flat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="threeFormGroup">
+        <form class="m-t-24" [formGroup]="secondFormGroup">
+          <ng-template matStepLabel>Other Experience & Projects</ng-template>
+          <form>
+
+            <!-- Other Experience Section -->
+            <h4 class="mat-headline-6 m-t-24 m-b-20">Other Experience</h4>
+            <div class="row">
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput [matDatepicker]="otherFromPicker" />
+                  <mat-datepicker-toggle matSuffix [for]="otherFromPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #otherFromPicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4"><mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To (leave blank if current)</mat-label>
+                  <input matInput [matDatepicker]="otherToPicker" />
+                  <mat-datepicker-toggle matSuffix [for]="otherToPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #otherToPicker></mat-datepicker>
+                </mat-form-field></div>
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Description</mat-label>
+                  <textarea matInput rows="3"></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+
+
+
+
+            <hr />
+            <!-- Projects Section -->
+            <h4 class="mat-headline-6 m-t-24 m-b-20">Projects</h4>
+            <div class="row">
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>From</mat-label>
+                  <input matInput [matDatepicker]="projFromPicker" />
+                  <mat-datepicker-toggle matSuffix [for]="projFromPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #projFromPicker></mat-datepicker>
+                </mat-form-field></div>
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>To (leave blank if current)</mat-label>
+                  <input matInput [matDatepicker]="projToPicker" />
+                  <mat-datepicker-toggle matSuffix [for]="projToPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #projToPicker></mat-datepicker>
+                </mat-form-field> </div>
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Project Name</mat-label>
+                  <input matInput />
+                </mat-form-field></div>
+              <div class="col-lg-4"> <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Project Role</mat-label>
+                  <input matInput />
+                </mat-form-field></div>
+            </div>
+
+
+
+
+
+
+
+
+
+          </form>
+
+        </form>
+        <div class="d-flex align-items-center justify-content-between">
+          <button mat-flat-button class="bg-error text-white" matStepperPrevious>
+            Back
+          </button>
+          <button mat-flat-button matStepperNext>Next</button>
+        </div>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel> Additional Information</ng-template>
+        <!-- Language Skills - Spoken -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Language Skills - Spoken</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Language</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let lang of countriesLanguages" [value]="lang">{{ lang }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Proficiency</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let prof of proficiencyOptions" [value]="prof">{{ prof }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Language Skills - Written -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Language Skills - Written</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Language</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let lang of countriesLanguages" [value]="lang">{{ lang }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Proficiency</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let prof of proficiencyOptions" [value]="prof">{{ prof }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Notice Period and Availability -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Notice Period and Availability</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Notice Period (months)</mat-label>
+              <input matInput type="number" min="0" />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Date available to commence work</mat-label>
+              <input matInput [matDatepicker]="availDatePicker" />
+              <mat-datepicker-toggle matSuffix [for]="availDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #availDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Current Salary (Annual) -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Current Salary (Annual)</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Amount</mat-label>
+              <input matInput type="text" />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Currency</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let curr of currencyList" [value]="curr">{{ curr }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Expected Salary (Annual) -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Expected Salary (Annual)</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Amount</mat-label>
+              <input matInput type="text" />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Currency</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let curr of currencyList" [value]="curr">{{ curr }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Preferences -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Preferences</h4>
+        <div class="row">
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Department(s)</mat-label>
+              <mat-select multiple>
+                <mat-option *ngFor="let dept of departmentsList" [value]="dept">{{ dept }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Location(s)</mat-label>
+              <mat-select multiple>
+                <mat-option *ngFor="let loc of countriesLanguages" [value]="loc">{{ loc }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">Additional Information</h4>
+        <div class="row">
+          <div class="col-lg-8">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Any Additional Information</mat-label>
+              <textarea matInput rows="4"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Vacancy Awareness -->
+        <h4 class="mat-headline-6 m-t-24 m-b-20">How did you come to know about this vacancy?</h4>
+        <div class="row">
+          <div class="col-lg-8">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Source</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let source of vacancySources" [value]="source">{{ source }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between m-t-16">
+          <button mat-flat-button class="bg-error text-white" matStepperPrevious>
+            Back
+          </button>
+          <button mat-flat-button (click)="stepper.reset()">Finish</button>
+        </div>
+      </mat-step>
+    </mat-stepper>
   </mat-card-content>
 </mat-card>
