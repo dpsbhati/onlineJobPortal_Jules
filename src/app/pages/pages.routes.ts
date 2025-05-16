@@ -167,8 +167,8 @@ export const PagesRoutes: Routes = [
         component: AppliedApplicationsComponent,
         canActivate: [AuthGuard],
         data: {
-          title: 'Applied Applications',
-          urls: [{ title: 'Applied Applications' }]
+          title: 'Applications',
+          // urls: [{ title: 'Applied Applications' }]
         }
       },
       {
@@ -258,5 +258,5 @@ export const PagesRoutes: Routes = [
       }
     ]
   },
- 
+
 ]
