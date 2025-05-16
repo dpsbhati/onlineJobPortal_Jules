@@ -138,7 +138,7 @@
                             <strong class="m-r-6">Posted on:</strong> <span> {{ jobDetails?.posted_date | date: 'MMM d, y' }}</span>
                         </div>
                     </div>
-                     <button mat-flat-button class="w-100" color="primary" (click)="onApplyNowClick()">
+                     <button   *ngIf="showApplyButton" mat-flat-button class="w-100" color="primary" (click)="onApplyNowClick()">
             Apply Now
           </button>
                 </mat-card-content>

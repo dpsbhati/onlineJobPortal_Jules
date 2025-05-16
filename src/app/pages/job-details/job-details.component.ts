@@ -52,6 +52,7 @@ export class JobDetailsComponent {
       if (this.id) {
         this.loadJobDetails(this.id);
       }
+
     }
 
     // isAdmin(): boolean {
@@ -108,8 +109,36 @@ export class JobDetailsComponent {
         },
       });
     }
-      goToLogin() {
-  this.router.navigate(['/authentication/login']);
+//       goToLogin() {
+//   this.router.navigate(['/authentication/login']);
+// }
+goToLogin() {
+  const accessToken = localStorage.getItem('accessToken');
+  const userStr = localStorage.getItem('user');
+
+  if (!accessToken || !userStr) {
+    // Not logged in, send to login page
+    this.router.navigate(['/authentication/login']);
+    return;
+  }
+
+  try {
+    const user = JSON.parse(userStr);
+    const role = user.role?.toLowerCase();
+
+    if (role === 'admin') {
+      this.router.navigate(['/applications']);
+    } else if (role === 'applicant') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      // Default fallback if role unknown
+      this.router.navigate(['/authentication/login']);
+    }
+  } catch (error) {
+    // Parsing error or other issue, fallback to login page
+    console.error('Error parsing user from localStorage:', error);
+    this.router.navigate(['/authentication/login']);
+  }
 }
 
 
@@ -144,6 +173,26 @@ export class JobDetailsComponent {
   onCancel() {
     this.showLoginSignupDialog = false;
   }
+
+   get isApplicant(): boolean {
+    return this.userRole.toLowerCase() === 'applicant';
+  }
+
+  get isAdmin(): boolean {
+    return this.userRole.toLowerCase() === 'admin';
+  }
+  get showApplyButton(): boolean {
+  // Agar login nahi hai (userRole blank), ya role applicant hai → button dikhao
+  // Agar role admin hai → button mat dikhao
+
+  if (!this.userRole) {
+    return true; // Not logged in, show button
+  }
+
+  const role = this.userRole.toLowerCase();
+  return role === 'applicant';
+}
+
 
 
 }

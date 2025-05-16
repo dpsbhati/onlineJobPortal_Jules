@@ -12,7 +12,7 @@
       <div class="p-32 d-flex align-items-start align-items-lg-center justify-content-center h-100">
         <div class="row justify-content-center w-100">
           <div class="col-lg-9 max-width-form">
-            <div class="or-border m-t-30" style="font-size: 14px;">Register a New User</div>
+            <div class="or-border m-t-20" style="font-size: 14px;">Register a New User</div>
 
             <form class="m-t-30" [formGroup]="registrationForm">
               <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
@@ -63,12 +63,8 @@
               <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Password</mat-label>
                 <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" />
-                <button
-                  mat-icon-button
-                  matSuffix
-                  (click)="togglePasswordVisibility($event)"
-                  [attr.aria-label]="'Show or hide password'"
-                >
+                <button mat-icon-button matSuffix (click)="togglePasswordVisibility($event)"
+                  [attr.aria-label]="'Show or hide password'">
                   <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
                 <mat-error *ngIf="registrationForm.get('password')?.hasError('required')">
@@ -77,27 +73,39 @@
                 <mat-error *ngIf="registrationForm.get('password')?.hasError('minlength')">
                   Password must be at least 6 characters.
                 </mat-error>
-                <small
-          *ngIf="registrationForm.get('password')?.errors?.['pattern']"
-          style="color: red"
-        >
-          Password must contain:
-          <ul>
-            <li>At least 8 characters</li>
-            <li>At least one uppercase letter (A-Z)</li>
-            <li>At least one lowercase letter (a-z)</li>
-            <li>At least one number (0-9)</li>
-            <li>At least one special character </li>
-          </ul>
-        </small>
+                <small *ngIf="registrationForm.get('password')?.errors?.['pattern']" style="color: red">
+                  Password must contain:
+                  <ul>
+                    <li>At least 8 characters</li>
+                    <li>At least one uppercase letter (A-Z)</li>
+                    <li>At least one lowercase letter (a-z)</li>
+                    <li>At least one number (0-9)</li>
+                    <li>At least one special character </li>
+                  </ul>
+                </small>
               </mat-form-field>
-
-              <button
-                mat-flat-button
-                color="primary"
-                class="w-100"
-                [disabled]="registrationForm.invalid"
-                (click)="onSubmit()" >
+              <mat-form-field class="w-100 m-b-20" color="primary" appearance="outline">
+                <mat-label>Career Type</mat-label>
+                <mat-select formControlName="career_type">
+                  <mat-option value="Office">Office</mat-option>
+                  <mat-option value="At sea">At sea</mat-option>
+                  <mat-option value="Onshore">Onshore</mat-option>
+                </mat-select>
+                <mat-error *ngIf="registrationForm.get('career')?.hasError('required')">
+                  Career is required.
+                </mat-error>
+              </mat-form-field>
+              <mat-checkbox color="primary" formControlName="isJobAlerts">I want to receive job alerts.</mat-checkbox>
+              <mat-checkbox color="primary" formControlName="isNewsLetters">I want to receive
+                newsletters.</mat-checkbox>
+              <mat-checkbox color="primary m-b-20" formControlName="isPrivacyPolicy">I accept the terms of Privacy
+                Policy.</mat-checkbox>
+              <mat-error *ngIf="registrationForm.get('isPrivacyPolicy')?.value != true && registrationForm.valid">
+                Please accept terms of Privacy Policy.
+              </mat-error>
+              <button mat-flat-button color="primary" class="w-100"
+                [disabled]="registrationForm.invalid || registrationForm.get('isPrivacyPolicy')?.value != true"
+                (click)="onSubmit()">
                 Register
               </button>
             </form>
