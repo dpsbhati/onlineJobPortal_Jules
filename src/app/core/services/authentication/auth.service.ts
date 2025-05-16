@@ -235,4 +235,7 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user?.role === UserRole.APPLICANT;
   }
+    isLoggedIn(): boolean {
+    return !!localStorage.getItem('accessToken'); // true if token present
+  }
 }

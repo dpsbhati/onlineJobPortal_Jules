@@ -26,6 +26,7 @@ export class JobDetailsComponent {
 
 
   jobDetails: any;
+   showLoginSignupDialog = false;
     loading: boolean = true;
     error: string = '';
     id: any;
@@ -39,6 +40,7 @@ export class JobDetailsComponent {
       private notifyService: NotifyService,
       private loader: LoaderService,
       private authService: AuthService
+      
     ) {
       this.userRole = this.authService.getUserRole();
     }
@@ -116,7 +118,31 @@ export class JobDetailsComponent {
   goBack() {
     this.router.navigate(['/home']);
   }
-  
+
+   onApplyNowClick() {
+    if (this.authService.isLoggedIn()) {
+      // Redirect if logged in
+      this.router.navigate([`/Apply-Job/${this.jobDetails.id}`]);
+    } else {
+      // Show popup inline in this component
+      this.showLoginSignupDialog = true;
+    }
+  }
+
+  onLogin() {
+    this.showLoginSignupDialog = false;
+    this.router.navigate(['/authentication/login']);
+  }
+
+  onSignup() {
+    this.showLoginSignupDialog = false;
+    this.router.navigate(['/authentication/signup']);
+  }
+
+  onCancel() {
+    this.showLoginSignupDialog = false;
+  }
+
 
 }
 
