@@ -176,7 +176,7 @@ export class HeaderComponent {
                 const firstName = data.first_name || 'User';
                 const lastName = data.last_name || '';
                 this.userName = `${firstName} ${lastName}`.trim();
-                this.userEmail = data.user?.email || ''; 
+                this.userEmail = data.user?.email || '';
               } else {
                 console.error('Error fetching user profile data:', response.message);
               }
@@ -317,7 +317,7 @@ export class HeaderComponent {
     localStorage.removeItem('token')
 
     // Navigate to login
-    this._router.navigate(['/authentication/login'])
+    this._router.navigate(['/home'])
   }
 
   apps: apps[] = [

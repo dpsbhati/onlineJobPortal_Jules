@@ -116,6 +116,7 @@ export class JobDetailsComponent {
   goBack() {
     this.router.navigate(['/home']);
   }
+  
 
 }
 
