@@ -19,7 +19,7 @@ const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z
 import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-side-register',
-  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, NgIf,ToastrModule],
+  imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, NgIf, ToastrModule],
   templateUrl: './side-register.component.html',
 })
 export class AppSideRegisterComponent {
@@ -40,13 +40,17 @@ export class AppSideRegisterComponent {
       Validators.pattern('^[a-zA-Z]+$'),
       Validators.maxLength(50),
     ]),
-    email: new FormControl('', [Validators.required, Validators.email,  Validators.pattern(EMAIL_PATTERN)]),
+    email: new FormControl('', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN)]),
     password: new FormControl('', [
       Validators.required,
       Validators.minLength(6),
       Validators.pattern(PASSWORD_PATTERN)
     ]),
     role: new FormControl('applicant', Validators.required), // Default role
+    career_type: new FormControl(null, Validators.required),
+    isJobAlerts: new FormControl(false),
+    isNewsLetters: new FormControl(false),
+    isPrivacyPolicy:new FormControl(false)
   });
 
   constructor(
@@ -55,9 +59,9 @@ export class AppSideRegisterComponent {
     private notify: NotifyService,
 
     private _snackBar: MatSnackBar,
-    private loader : LoaderService,
-    private toastr : ToastrService,
-  ) {}
+    private loader: LoaderService,
+    private toastr: ToastrService,
+  ) { }
 
   togglePasswordVisibility(event: Event): void {
     event.preventDefault();
@@ -121,7 +125,6 @@ export class AppSideRegisterComponent {
 
     this.authService.registerUser(this.registrationForm.value).subscribe({
       next: (res: any) => {
-        console.log(res);
         if (res.statusCode == 200 || res.statusCode == 201) {
           this.loader.hide();
           this.router.navigate(['/authentication/login']);
