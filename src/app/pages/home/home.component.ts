@@ -181,7 +181,7 @@ onLocationChange(event: MatSelectChange): void {
   this.router.navigate(['/authentication/login']);
 }
 goToJobDetail(jobId: string) {
-  this.router.navigate(['/view-job', jobId]);
+  this.router.navigate(['/authentication/Job-Details', jobId]);
 }
 
   onPageChange(event: any): void {

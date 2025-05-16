@@ -70,6 +70,11 @@ export const AuthenticationRoutes: Routes = [
         path: 'Job-Details',
         component: JobDetailsComponent
       },
+      {
+        path: 'Job-Details/:id',
+        component: JobDetailsComponent
+        // canActivate: [AuthGuard]
+      },
 
     ]
   }
