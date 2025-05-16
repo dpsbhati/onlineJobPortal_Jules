@@ -21,6 +21,7 @@ import { MaterialModule } from 'src/app/material.module'
   styleUrl: './apply-job.component.scss'
 })
 export class ApplyJobComponent {
+    showLoginSignupDialog = false;
   certificationFiles: File[] = [];
   uploadedFileName: string | null = null;
   userDetailsForm: FormGroup;
@@ -287,4 +288,7 @@ deleteFile(controlName: string, event: MouseEvent, index?: number): void {
 
 }
 }
+  onCancel() {
+    this.showLoginSignupDialog = false;
+  }
 }

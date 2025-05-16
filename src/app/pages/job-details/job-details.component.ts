@@ -155,8 +155,8 @@ export class JobDetailsComponent {
   onApplyNowClick() {
     if (this.authService.isLoggedIn()) {
       // Redirect if logged in
-      const dialogRef = this.dialog.open(ApplyJobComponent, {
-        disableClose: true // Add this line
+      const dialogRef = this.dialog.open(ApplyJobComponent, { 
+        disableClose: true,
       });
 
       dialogRef.afterClosed().subscribe((result) => {
