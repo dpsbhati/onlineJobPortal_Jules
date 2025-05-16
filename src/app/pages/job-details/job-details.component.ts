@@ -9,16 +9,18 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module'
+import { BrandingComponent } from "../../layouts/full/vertical/sidebar/branding.component";
 
 @Component({
   selector: 'app-job-details',
   imports: [
-    MaterialModule,TablerIconsModule,
-     CommonModule,
-        FormsModule,
-        RouterModule,
-        ToastrModule,
-  ],
+    MaterialModule, TablerIconsModule,
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    ToastrModule,
+    BrandingComponent
+],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })

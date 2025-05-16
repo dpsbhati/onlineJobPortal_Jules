@@ -20,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { ToastrModule } from 'ngx-toastr'
 import countries from '../../core/helpers/country.json'
 import { MatSelectChange } from '@angular/material/select';
+import { BrandingComponent } from "../../layouts/full/vertical/sidebar/branding.component";
 
 @Component({
   selector: 'app-home',
@@ -32,20 +33,19 @@ import { MatSelectChange } from '@angular/material/select';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatButtonModule,MatSidenavModule,
-     CommonModule,
-        MaterialModule,
-        TablerIconsModule,
-        FormsModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatProgressSpinnerModule,
-
-
-        ToastrModule,
-  ],
+    MatButtonModule, MatSidenavModule,
+    CommonModule,
+    MaterialModule,
+    TablerIconsModule,
+    FormsModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    ToastrModule,
+    BrandingComponent
+],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -58,7 +58,7 @@ export class HomeComponent {
    jobPostingList:any;
    pageConfig: any = {
     curPage: 1,
-    perPage: 10,
+    perPage: 9,
     sortBy: "created_at",
     direction: "desc",
     whereClause: [],

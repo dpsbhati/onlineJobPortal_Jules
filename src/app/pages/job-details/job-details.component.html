@@ -1,37 +1,57 @@
-<mat-toolbar color="white" class="nav-toolbar">
-  <div class="container header" fxLayout="row" fxLayoutAlign="space-between center">
 
-    <!-- Left: Logo + Hamburger (only on small screens) -->
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <img src="./assets/images/logos/Navilands logo - Dark.svg" alt="Logo" class="logo" />
+<mat-sidenav-container class="bg-white">
+  <mat-sidenav-content>
+    <!-- ------------------------------------------------------------------
+    Header
+    ------------------------------------------------------------------ -->
+    <mat-toolbar class="topbar topbar-xl">
+      <div class="container full-width p-xs-6">
+        <!-- --------------------------------------------------------------- -->
+        <div class="branding p-x-0">
+          <app-branding></app-branding>
+        </div>
 
-    </div>
+        <!-- --------------------------------------------------------------- -->
 
-    <!-- Center: Navigation Links (hidden on small screens) -->
-    <div fxLayout="row" fxLayoutAlign="center center" class="nav-links desktop-only">
-      <a mat-button>About us</a>
-      <a mat-button>Ship Management</a>
-      <a mat-button>Crew Management</a>
-      <a mat-button>Job Opportunities</a>
-      <a mat-button>Contact</a>
+        <span class="flex-1-auto"></span>
 
-    </div>
+        <div class="d-none d-lg-flex">
+          <!-- --------------------------------------------------------------- -->
+          <!--  Links -->
+          <!-- --------------------------------------------------------------- -->
+          <button mat-button class="m-x-8 f-s-16 text-white">
+            About us
+          </button>
+          <button mat-button class="m-x-8 f-s-16 text-white">
+            Ship Management
+          </button>
+          <button mat-button class="m-x-8 f-s-16 text-white">
+            Crew Management
+          </button>
+          <button mat-button class="m-x-8 f-s-16 text-white">
+            Job Opportunities
+          </button>
+          <button mat-button class="m-x-8 f-s-16 text-white">
+            Contact
+          </button>
+          <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
+          <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
+              class="material-icons-custom" /></button>
 
-    <!-- Right: Icons -->
-    <div fxLayout="row" fxLayoutAlign="end center" class="icon-buttons">
-      <button mat-icon-button class="mobile-menu" >
-        <!-- (click)="sidenav.toggle()" -->
-        <mat-icon>menu</mat-icon>
-      </button>
-      <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
-      <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
-          class="material-icons-custom" /></button>
-    </div>
-  </div>
-</mat-toolbar>
+          <!-- --------------------------------------------------------------- -->
+          <!--  Links -->
+          <!-- --------------------------------------------------------------- -->
 
 
-<div class="container  m-t-48">
+        </div>
+
+        <!-- Mobile Menu -->
+        <button mat-icon-button (click)="filterNavRight.toggle()" class="d-flex d-lg-none">
+          <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
+        </button>
+      </div>
+    </mat-toolbar>
+  <div class="container  m-t-48">
 
 <div class="header justify-content-start d-flex align-items-center m-b-10">
     <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
@@ -145,3 +165,18 @@
     </div>
   </div>
 </div>
+
+
+  </mat-sidenav-content>
+
+  <!-- ------------------------------------------------------------------
+    Mobile Sidebar
+    ------------------------------------------------------------------ -->
+  <mat-sidenav #filterNavRight mode="over" position="end" class="filter-sidebar">
+    <a mat-button>About us</a>
+    <a mat-button>Ship Management</a>
+    <a mat-button>Crew Management</a>
+    <a mat-button>Job Opportunities</a>
+    <a mat-button>Contact</a>
+  </mat-sidenav>
+</mat-sidenav-container>
