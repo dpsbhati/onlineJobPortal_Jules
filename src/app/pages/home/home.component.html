@@ -143,15 +143,15 @@
 
 
         <div *ngFor="let job of jobPostingList" class="col-lg-4 col-sm-6 m-b-20">
-          <mat-card class="cardWithShadow position-relative card-hover cursor-pointer h-100 m-b-0">
+          <mat-card class="cardWithShadow position-relative card-hover cursor-pointer h-100 m-b-0 ">
             <img mat-card-image [src]="job.featured_image || './assets/images/noimage.jpg'" alt="Job Image"
               alt="Photo of a Shiba Inu" class="Job-Image" />
             <div class="card-overlay h-100 d-flex p-16 p-y-0 align-items-end justify-content-end">
               <span class="f-s-12 f-w-600 m-y-16 bg-white rounded-pill p-x-8">{{ job.date_published | date:'dd MMM yyyy'
                 }}</span>
             </div>
-            <mat-card-content>
-              <mat-card-title class="mat-headline-6 m-t-15">{{ job.title }}</mat-card-title>
+            <mat-card-content class="card-home">
+              <mat-card-title class="mat-headline-6 m-t-10">{{ job.title }}</mat-card-title>
               <p class="job-description">
                 {{ job.full_description }}
               </p>
