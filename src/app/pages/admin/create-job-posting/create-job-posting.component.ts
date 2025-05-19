@@ -137,10 +137,7 @@ export class CreateJobPostingComponent {
           Validators.min(3),
           Validators.maxLength(7)
         ]),
-        end_salary: new FormControl('', [
-          Validators.required,
-          Validators.min(3),
-          Validators.maxLength(8)
+        end_salary: new FormControl(null, [
         ]),
         application_instruction: new FormControl('', [
           Validators.required,
@@ -163,7 +160,6 @@ export class CreateJobPostingComponent {
         // work_type: new FormControl(''),
         // file_path: new FormControl(null),
       },
-      { validators: this.salaryComparisonValidator }
     )
   }
 
@@ -258,9 +254,9 @@ export class CreateJobPostingComponent {
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
       }
-      if (formValues.end_salary) {
-        formValues.end_salary = parseInt(formValues?.end_salary.replace(/,/g, ''), 10);
-      }
+      // if (formValues.end_salary) {
+      //   formValues.end_salary = parseInt(formValues?.end_salary.replace(/,/g, ''), 10);
+      // }
       if (!formValues.id) {
         delete formValues.id;
       }
