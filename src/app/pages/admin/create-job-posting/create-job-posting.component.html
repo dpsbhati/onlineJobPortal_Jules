@@ -111,21 +111,51 @@
 
       </div>
 
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Assignment Duration -->
+    
+       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Assignment Duration</mat-label>
-          <input matInput id="assignment_duration" formControlName="assignment_duration" type="text">
-          <mat-error *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched">
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['required']">Assignment duration is
-              required.</span>
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50
-              characters.</span>
-            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces']">
-              Assignment duration must be at least {{
-              jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
-            </span>
+          <mat-label>Type of post</mat-label>
+          <mat-select id="job_type_post" formControlName="job_type_post" [disabled]="isEditMode">
+            <mat-option value="" disabled>Select a post</mat-option>
+            <mat-option value="Postnow">Post now</mat-option>
+            <mat-option value="Schedulelater">Schedule later</mat-option>
+          </mat-select>
+          <mat-error *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched">
+            Type of post is required.
           </mat-error>
         </mat-form-field>
+      </div>
+ <div class="col-xl-4 col-lg-4 col-md-6 m-b-16" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
+        <!-- Post At -->
+
+        <div class="form-group">
+          <!-- <label for="posted_at">Post At<span class="text-danger">*</span></label>
+          <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
+          <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
+            <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
+            <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
+            <small *ngIf="jobForm.get('posted_at')?.errors?.['minimumTime']">Please select a time at least 1 hour from
+              now.</small>
+          </div> -->
+          <div class="d-flex align-items-top gap-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Choose a date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="posted_date" />
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <div class="w-100 ">
+              <div class="time-input-wrapper custom-time-field">
+                <input type="time" formControlName="posted_at" class="styled-time-input" required
+                  style="cursor: pointer;" />
+                <label class="floating-label">Choose a time</label>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
       </div>
       <div class="col-12 m-b-10">
         <div class="p-16 bg-light-primary rounded">
@@ -195,6 +225,23 @@
           </mat-select>
         </mat-form-field>
       </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> <!-- Assignment Duration -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Assignment Duration</mat-label>
+          <input matInput id="assignment_duration" formControlName="assignment_duration" type="text">
+          <mat-error *ngIf="jobForm.get('assignment_duration')?.invalid && jobForm.get('assignment_duration')?.touched">
+            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['required']">Assignment duration is
+              required.</span>
+            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['maxlength']">Duration cannot exceed 50
+              characters.</span>
+            <span *ngIf="jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces']">
+              Assignment duration must be at least {{
+              jobForm.get('assignment_duration')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
         <!-- Address -->
         <mat-form-field appearance="outline" class="w-100">
@@ -213,65 +260,8 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Type of post</mat-label>
-          <mat-select id="job_type_post" formControlName="job_type_post" [disabled]="isEditMode">
-            <mat-option value="" disabled>Select a post</mat-option>
-            <mat-option value="Postnow">Post now</mat-option>
-            <mat-option value="Schedulelater">Schedule later</mat-option>
-          </mat-select>
-          <mat-error *ngIf="jobForm.get('job_type_post')?.invalid && jobForm.get('job_type_post')?.touched">
-            Type of post is required.
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Social Media Type -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Social Media Type</mat-label>
-          <mat-select formControlName="social_media_type" [multiple]="true" [disabled]="isEditMode">
-            <mat-option *ngFor="let option of socialMediaOptions" [value]="option.value">
-              {{option.label}}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched">
-            Social Media Type is required.
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
-        <!-- Post At -->
-
-        <div class="form-group">
-          <!-- <label for="posted_at">Post At<span class="text-danger">*</span></label>
-          <input id="posted_at" formControlName="posted_at" type="datetime-local" class="form-control" />
-          <div *ngIf="jobForm.get('posted_at')?.invalid && jobForm.get('posted_at')?.touched" class="text-danger">
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['required']">Post At is required.</small>
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['pastDateTime']">Post At cannot be in the past.</small>
-            <small *ngIf="jobForm.get('posted_at')?.errors?.['minimumTime']">Please select a time at least 1 hour from
-              now.</small>
-          </div> -->
-          <div class="d-flex align-items-top gap-4">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Choose a date</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="posted_date" />
-              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-
-            <div class="w-100 ">
-              <div class="time-input-wrapper custom-time-field">
-                <input type="time" formControlName="posted_at" class="styled-time-input" required
-                  style="cursor: pointer;" />
-                <label class="floating-label">Choose a time</label>
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-      </div>
+     
+     
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
         <!-- Skills Required -->
         <div class="skills-section m-0">
@@ -396,6 +386,19 @@
           </mat-error>
         </mat-form-field>
       </div>
+       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Social Media Type -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Social Media Type</mat-label>
+          <mat-select formControlName="social_media_type" [multiple]="true" [disabled]="isEditMode">
+            <mat-option *ngFor="let option of socialMediaOptions" [value]="option.value">
+              {{option.label}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="jobForm.get('social_media_type')?.invalid && jobForm.get('social_media_type')?.touched">
+            Social Media Type is required.
+          </mat-error>
+        </mat-form-field>
+      </div>
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Featured Image -->
         <div class="file-input-container">
           <button mat-stroked-button type="button" (click)="fileInput.click()">
@@ -422,6 +425,7 @@
         </div>
       </div>
 
+     
 
       <div class="d-flex justify-content-end col-12 m-b-16">
         <button mat-flat-button color="primary" [disabled]="!jobForm.valid" (click)="onSubmit()">
