@@ -153,6 +153,7 @@ export class JobListComponent implements OnInit {
           'date_published',
           'deadline',
           'status',
+          'statusToggle',
           'number_of_applicant',
           'actions',
         ]
@@ -220,6 +221,19 @@ export class JobListComponent implements OnInit {
     this.pageConfig.perPage = event.pageSize;
     this.onPagination();
   }
+
+  onStatusToggleChange(element: any, checked: boolean) {
+  console.log('Status toggle changed for job id:', element.id, 'New value:', checked);
+
+  // Example: Update element.job_opening based on toggle (customize as needed)
+  element.job_opening = checked ? 'Active' : 'Hold';
+
+  // Call your API or update the backend accordingly here
+  // this.jobService.updateJobStatus(element.id, element.job_opening).subscribe(...);
+
+  // Optionally refresh the table data or show a notification
+}
+
 
   onSearch(): void {
     this.pageConfig.curPage = 1;
