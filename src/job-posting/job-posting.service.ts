@@ -352,7 +352,7 @@ export class JobPostingService {
         'title',
         'short_description',
         'full_description',
-
+'country_code',
         'employer',
 
         'salary',
