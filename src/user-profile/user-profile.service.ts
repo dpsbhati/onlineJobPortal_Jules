@@ -6,12 +6,15 @@ import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
 import * as moment from 'moment';
+import { CareerInfo } from './entities/career-info.entity';
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectRepository(UserProfile)
     private readonly userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(CareerInfo)
+    private readonly careerInfoRepository: Repository<CareerInfo>,
   ) { }
 
   async create(createUserProfileDto: CreateUserProfileDto, user_id:string) {
@@ -34,6 +37,7 @@ export class UserProfileService {
       const newProfile = this.userProfileRepository.create({
         ...createUserProfileDto,
         dob: formattedDob,
+        additional_contact_info: JSON.stringify(createUserProfileDto.additional_contact_info),
         created_by: user_id,
         updated_by: user_id,
       });
@@ -43,6 +47,20 @@ export class UserProfileService {
         { user_id: user_id },
         newProfile 
       );
+
+      if (createUserProfileDto.career_info && Array.isArray(createUserProfileDto.career_info)) {
+        // Map each career_info item to add user_id
+        const careerInfoEntities = createUserProfileDto.career_info.map((item) => {
+          return {
+            ...item,
+            user_id: user_id, // assign user_id here
+          };
+        });
+  
+        // Save all career info objects in careerInfoRepository (bulk save if supported)
+        await this.careerInfoRepository.save(careerInfoEntities);
+      }
+
       return WriteResponse(
         200,
         createUserProfileDto,

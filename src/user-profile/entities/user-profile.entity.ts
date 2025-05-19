@@ -36,9 +36,23 @@ export class UserProfile {
   @Column()
   dob: Date;
 
+  @Column()
+  dial_code: string;
+
+  @Column()
+  nationalities: string;
+
+  @Column()
+  country: string;
+
+  @Column()
+  location: string;
+
+  @Column()
+  additional_contact_info: string;
+
   @Column({ type: 'int' })
   mobile: number;
-
 
   @Column({ type: 'varchar' })
   first_name: string;

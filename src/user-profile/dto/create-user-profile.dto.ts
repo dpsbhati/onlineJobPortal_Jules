@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiBody, ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsEnum,
@@ -19,6 +19,7 @@ import {
 } from 'class-validator';
 import { Gender } from '../entities/user-profile.entity';
 import { Type, Transform } from 'class-transformer';
+import { CareerInfoDto } from './career-info.dto';
 
 /**
  * Custom Validator: Ensures strings are not just whitespace
@@ -35,7 +36,32 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
   }
 }
 
+class AdditionalContactInfo{
+  @ApiProperty()
+  contact_type: string;
+  @ApiProperty()
+  value: string;
+}
+
 export class CreateUserProfileDto {
+  @ApiProperty()
+  dial_code: string;
+
+  @ApiProperty()
+  nationalities: string;
+
+  @ApiProperty()
+  country: string;
+
+  @ApiProperty()
+  location: string;
+
+  @ApiProperty({type:[AdditionalContactInfo]})
+  additional_contact_info: AdditionalContactInfo[];
+
+  @ApiProperty({type:[CareerInfoDto]})
+  career_info: CareerInfoDto[];
+  
   @ApiProperty({ description: 'User role, e.g., admin or applicant' })
   @IsNotEmpty({ message: 'role cannot be empty' })
   @IsEnum(['admin', 'applicant'], {
@@ -116,3 +142,6 @@ export class CreateUserProfileDto {
   @Transform(({ value }) => value?.trim()) // Trim whitespace
   expected_salary?: string;
 }
+
+
+
