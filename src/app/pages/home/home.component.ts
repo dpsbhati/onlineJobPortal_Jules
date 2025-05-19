@@ -81,6 +81,8 @@ export class HomeComponent {
     ){}
 
   ngOnInit(): void {
+      const savedPerPage = localStorage.getItem('jobPagePerPage');
+  this.pageConfig.perPage = savedPerPage ? parseInt(savedPerPage, 10) : 9;
     // this.isLoading = true;
     // this.allJobList();
     this.allrankslist(); // 🔧 Add this line
@@ -213,10 +215,32 @@ goToJobDetail(jobId: string) {
   this.router.navigate(['/authentication/Job-Details', jobId]);
 }
 
+  // onPageChange(event: any): void {
+  //   this.pageConfig.curPage = event.pageIndex + 1;
+  //   this.pageConfig.perPage = event.pageSize;
+  //   this.onPagination();
+  // }
   onPageChange(event: any): void {
-    this.pageConfig.curPage = event.pageIndex + 1;
-    this.pageConfig.perPage = event.pageSize;
-    this.onPagination();
-  }
+  this.pageConfig.curPage = event.pageIndex + 1;
+  this.pageConfig.perPage = event.pageSize;
+
+  // Save perPage to localStorage
+  localStorage.setItem('jobPagePerPage', this.pageConfig.perPage.toString());
+
+  this.onPagination();
+}
+
+  clearFilters(): void {
+  this.selectedRank = '';
+  this.selectedLocation = '';
+  this.keyword = '';
+
+  // Clear all filters from whereClause
+  this.pageConfig.whereClause = [];
+  this.pageConfig.curPage = 1;
+
+  this.onPagination(); // Re-fetch data without filters
+}
+
 
 }
