@@ -348,7 +348,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
-        'skills_required',
+       
         'title',
         'short_description',
         'full_description',
@@ -385,6 +385,21 @@ export class JobPostingService {
       );
       const startDate = startDateObj?.value;
       const endDate = endDateObj?.value;
+      
+const skills_required = whereClause.find(
+  (p: any) => p.key === 'skills_required' && p.value,
+);
+
+if (skills_required && Array.isArray(skills_required.value)) {
+  const skillsConditions = skills_required.value.map(
+    (skill) => `f.skills_required LIKE '%${skill}%'`
+  );
+  if (skillsConditions.length > 0) {
+    lwhereClause += ` AND (${skillsConditions.join(' OR ')})`;
+  }
+}
+
+ 
 
       if (startDate && endDate) {
         lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
@@ -568,7 +583,8 @@ export class JobPostingService {
         ...jobPosting,
         job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
       };
-
+console.log("response------->>>",response);
+delete response.user.password;
       return WriteResponse(
         200,
         response,

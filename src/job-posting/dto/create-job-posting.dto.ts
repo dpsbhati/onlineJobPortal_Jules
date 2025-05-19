@@ -204,6 +204,13 @@ export class CreateJobPostingDto {
   })
   employer: string;
 
+
+  @ApiProperty({
+    description: 'The skills required for the job',
+    example: 'Java, Python, SQL',
+  })
+  skills_required: string;
+
   @ApiProperty({
     description: 'Rank for the job',
     example: 'Managerial',
