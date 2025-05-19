@@ -6,10 +6,10 @@ export class CareerInfoDto {
   user_id?: string;
 
   @ApiProperty()
-  work_experience_from?: number;
+  work_experience_from?: Date;
 
   @ApiProperty()
-  work_experience_to?: number;
+  work_experience_to?: Date;
 
   @ApiProperty()
   work_experience_title?: string;
@@ -21,10 +21,10 @@ export class CareerInfoDto {
   highest_education_level?: string;
 
   @ApiProperty()
-  education_from?: number;
+  education_from?: Date;
 
   @ApiProperty()
-  education_to?: number;
+  education_to?: Date;
 
   @ApiProperty()
   education_title?: string;
@@ -33,10 +33,10 @@ export class CareerInfoDto {
   education_institute?: string;
 
   @ApiProperty()
-  course_from?: number;
+  course_from?: Date;
 
   @ApiProperty()
-  course_to?: number;
+  course_to?: Date;
 
   @ApiProperty()
   course_title?: string;
@@ -45,10 +45,10 @@ export class CareerInfoDto {
   course_provider?: string;
 
   @ApiProperty()
-  certification_from?: number;
+  certification_from?: Date;
 
   @ApiProperty()
-  certification_to?: number;
+  certification_to?: Date;
 
   @ApiProperty()
   certification_title?: string;
