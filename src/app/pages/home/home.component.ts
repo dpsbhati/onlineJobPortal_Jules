@@ -127,7 +127,7 @@ onLocationChange(event: MatSelectChange): void {
 
   if (locationCode && typeof locationCode === 'string' && locationCode.trim() !== '') {
     this.pageConfig.whereClause.push({
-      key: 'location',
+      key: 'country_code',
       operator: '=',
       value: locationCode.trim(),
     });
@@ -163,20 +163,57 @@ onLocationChange(event: MatSelectChange): void {
       }
     })
   }
-  onSearch(): void {
+//   onSearch(): void {
+//   this.pageConfig.curPage = 1;
+//   const trimmedKeyword = this.keyword.trim();
+
+//   if (trimmedKeyword !== '') {
+//     this.pageConfig.whereClause = [
+//       { key: 'all', operator: '=', value: trimmedKeyword }
+//     ];
+//   } else {
+//     this.pageConfig.whereClause = [];
+//   }
+
+//   this.onPagination();
+// }
+onSearch(): void {
   this.pageConfig.curPage = 1;
   const trimmedKeyword = this.keyword.trim();
+  const trimmedRank = this.selectedRank.trim();
+  const trimmedLocation = this.selectedLocation.trim();
 
-  if (trimmedKeyword !== '') {
-    this.pageConfig.whereClause = [
-      { key: 'all', operator: '=', value: trimmedKeyword }
-    ];
-  } else {
-    this.pageConfig.whereClause = [];
+  // Reset the whereClause
+  this.pageConfig.whereClause = [];
+
+  // Add each filter only if it has a value
+  if (trimmedRank) {
+    this.pageConfig.whereClause.push({
+      key: 'rank',
+      operator: '=',
+      value: trimmedRank,
+    });
+  }
+
+  if (trimmedLocation) {
+    this.pageConfig.whereClause.push({
+      key: 'country_code',
+      operator: '=',
+      value: trimmedLocation,
+    });
+  }
+
+  if (trimmedKeyword) {
+    this.pageConfig.whereClause.push({
+      key: 'all',
+      operator: '=',
+      value: trimmedKeyword,
+    });
   }
 
   this.onPagination();
 }
+
 
 
 //   goToLogin() {
