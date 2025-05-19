@@ -81,6 +81,8 @@ export class HomeComponent {
     ){}
 
   ngOnInit(): void {
+      const savedPerPage = localStorage.getItem('jobPagePerPage');
+  this.pageConfig.perPage = savedPerPage ? parseInt(savedPerPage, 10) : 9;
     // this.isLoading = true;
     // this.allJobList();
     this.allrankslist(); // 🔧 Add this line
@@ -125,7 +127,7 @@ onLocationChange(event: MatSelectChange): void {
 
   if (locationCode && typeof locationCode === 'string' && locationCode.trim() !== '') {
     this.pageConfig.whereClause.push({
-      key: 'location',
+      key: 'country_code',
       operator: '=',
       value: locationCode.trim(),
     });
@@ -161,20 +163,57 @@ onLocationChange(event: MatSelectChange): void {
       }
     })
   }
-  onSearch(): void {
+//   onSearch(): void {
+//   this.pageConfig.curPage = 1;
+//   const trimmedKeyword = this.keyword.trim();
+
+//   if (trimmedKeyword !== '') {
+//     this.pageConfig.whereClause = [
+//       { key: 'all', operator: '=', value: trimmedKeyword }
+//     ];
+//   } else {
+//     this.pageConfig.whereClause = [];
+//   }
+
+//   this.onPagination();
+// }
+onSearch(): void {
   this.pageConfig.curPage = 1;
   const trimmedKeyword = this.keyword.trim();
+  const trimmedRank = this.selectedRank.trim();
+  const trimmedLocation = this.selectedLocation.trim();
 
-  if (trimmedKeyword !== '') {
-    this.pageConfig.whereClause = [
-      { key: 'all', operator: '=', value: trimmedKeyword }
-    ];
-  } else {
-    this.pageConfig.whereClause = [];
+  // Reset the whereClause
+  this.pageConfig.whereClause = [];
+
+  // Add each filter only if it has a value
+  if (trimmedRank) {
+    this.pageConfig.whereClause.push({
+      key: 'rank',
+      operator: '=',
+      value: trimmedRank,
+    });
+  }
+
+  if (trimmedLocation) {
+    this.pageConfig.whereClause.push({
+      key: 'country_code',
+      operator: '=',
+      value: trimmedLocation,
+    });
+  }
+
+  if (trimmedKeyword) {
+    this.pageConfig.whereClause.push({
+      key: 'all',
+      operator: '=',
+      value: trimmedKeyword,
+    });
   }
 
   this.onPagination();
 }
+
 
 
 //   goToLogin() {
@@ -213,10 +252,32 @@ goToJobDetail(jobId: string) {
   this.router.navigate(['/authentication/Job-Details', jobId]);
 }
 
+  // onPageChange(event: any): void {
+  //   this.pageConfig.curPage = event.pageIndex + 1;
+  //   this.pageConfig.perPage = event.pageSize;
+  //   this.onPagination();
+  // }
   onPageChange(event: any): void {
-    this.pageConfig.curPage = event.pageIndex + 1;
-    this.pageConfig.perPage = event.pageSize;
-    this.onPagination();
-  }
+  this.pageConfig.curPage = event.pageIndex + 1;
+  this.pageConfig.perPage = event.pageSize;
+
+  // Save perPage to localStorage
+  localStorage.setItem('jobPagePerPage', this.pageConfig.perPage.toString());
+
+  this.onPagination();
+}
+
+  clearFilters(): void {
+  this.selectedRank = '';
+  this.selectedLocation = '';
+  this.keyword = '';
+
+  // Clear all filters from whereClause
+  this.pageConfig.whereClause = [];
+  this.pageConfig.curPage = 1;
+
+  this.onPagination(); // Re-fetch data without filters
+}
+
 
 }

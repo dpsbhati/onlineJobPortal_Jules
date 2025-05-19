@@ -146,6 +146,21 @@
           </td>
         </ng-container>
 
+        <!-- Toggle Column -->
+<ng-container matColumnDef="statusToggle" *ngIf="isAdmin()">
+  <th mat-header-cell *matHeaderCellDef>Toggle</th>
+  <td mat-cell *matCellDef="let element">
+    <mat-slide-toggle
+      [(ngModel)]="element.isActive"
+      (change)="onStatusToggleChange(element, $event.checked)"
+      color="primary"
+      aria-label="Toggle status"
+    >
+    </mat-slide-toggle>
+  </td>
+</ng-container>
+
+
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Action</th>
