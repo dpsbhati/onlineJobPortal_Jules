@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common'
-import { Component } from '@angular/core'
+import { Component, Inject } from '@angular/core'
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TablerIconsModule } from 'angular-tabler-icons'
@@ -7,7 +7,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr'
 import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { MaterialModule } from 'src/app/material.module'
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 @Component({
   selector: 'app-apply-job',
   imports: [TablerIconsModule,
@@ -21,7 +21,7 @@ import { MaterialModule } from 'src/app/material.module'
   styleUrl: './apply-job.component.scss'
 })
 export class ApplyJobComponent {
-    showLoginSignupDialog = false;
+  showLoginSignupDialog = false;
   certificationFiles: File[] = [];
   uploadedFileName: string | null = null;
   userDetailsForm: FormGroup;
@@ -35,8 +35,11 @@ export class ApplyJobComponent {
     private route: ActivatedRoute,
     private loader: LoaderService,
     private toastr: ToastrService,
-    private adminService : AdminService
+    private adminService: AdminService,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ApplyJobComponent>
   ) {
+
     this.userDetailsForm = new FormGroup({
       job_id: new FormControl(this.jobId),
       user_id: new FormControl(this.user),
@@ -73,7 +76,9 @@ export class ApplyJobComponent {
   ngOnInit(): void {
     this.jobId = this.route.snapshot.paramMap.get('id') as string;
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
-
+    if (this.data && this.data.jobId) {
+      this.jobId = this.data.jobId;
+    }
     this.userDetailsForm.patchValue({
       job_id: this.jobId,
       user_id: this.user?.id
@@ -128,10 +133,11 @@ export class ApplyJobComponent {
 
       this.adminService.applyJobs(apiPayload).subscribe({
         next: (response: any) => {
-          this.loader.hide();
           if (response.statusCode === 200) {
+            this.loader.hide();
             this.toastr.success(response.message);
             this.router.navigate(['/applicant']);
+            this.dialogRef.close();
           } else {
             this.toastr.warning(response.message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -211,83 +217,83 @@ export class ApplyJobComponent {
           if (certifications.length > 0) {
             // const existingCertifications = this.userDetailsForm.get(controlName)?.value || [];
             this.userDetailsForm.patchValue({
-              [controlName]: [ ...certifications],
+              [controlName]: [...certifications],
             });
 
           }
         })
-  } else if (controlName === 'cv_path') {
+    } else if (controlName === 'cv_path') {
 
-    const file = files[0];
+      const file = files[0];
 
-    if (!validFormats.includes(file.type)) {
-      this.fileError = 'Invalid file format. Only PDF and DOC files are allowed.';
-      this.uploadedFileName =null;
-      return;
-    }
-
-    if (file.size > maxFileSize) {
-      this.fileError = 'File size should not exceed 5 MB.';
-      return;
-    }
-
-    this.fileError = null;
-    this.fileUploaded = file;
-    this.uploadedFileName=file.name
-
-    // Make API call for CV upload
-    const folderName = 'user-details';
-    const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
-
-    this.adminService.uploadFile({ folderName, file, userId }).subscribe(
-      (response: any) => {
-        if (response.statusCode === 200) {
-          // this.toastr.success(response.message);
-          this.userDetailsForm.patchValue({
-            [controlName]: response.data.path
-          });
-          this.loader.hide();
-        } else {
-          this.toastr.warning(response.message);
-          this.loader.hide();
-        }
-      },
-      error => {
-        this.toastr.error('Error uploading CV file. Please try again.');
-        console.error(error);
+      if (!validFormats.includes(file.type)) {
+        this.fileError = 'Invalid file format. Only PDF and DOC files are allowed.';
+        this.uploadedFileName = null;
+        return;
       }
-    );
+
+      if (file.size > maxFileSize) {
+        this.fileError = 'File size should not exceed 5 MB.';
+        return;
+      }
+
+      this.fileError = null;
+      this.fileUploaded = file;
+      this.uploadedFileName = file.name
+
+      // Make API call for CV upload
+      const folderName = 'user-details';
+      const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
+
+      this.adminService.uploadFile({ folderName, file, userId }).subscribe(
+        (response: any) => {
+          if (response.statusCode === 200) {
+            // this.toastr.success(response.message);
+            this.userDetailsForm.patchValue({
+              [controlName]: response.data.path
+            });
+            this.loader.hide();
+          } else {
+            this.toastr.warning(response.message);
+            this.loader.hide();
+          }
+        },
+        error => {
+          this.toastr.error('Error uploading CV file. Please try again.');
+          console.error(error);
+        }
+      );
+    }
+
+    // Reset file input to allow selecting the same file again
+    fileInput.value = '';
   }
 
-  // Reset file input to allow selecting the same file again
-  fileInput.value = '';
-}
+  deleteFile(controlName: string, event: MouseEvent, index?: number): void {
+    event.stopPropagation();
+    if (controlName === 'cv_path') {
+      this.uploadedFileName = null;
+      this.fileUploaded = null;
+      this.userDetailsForm.patchValue({
+        [controlName]: null,
+      });
+      // this.toastr.success('CV removed successfully.');
+    } else if (controlName === 'courses_and_certification' && index !== undefined) {
+      this.certificationFiles.splice(index, 1);
+      this.userDetailsForm.patchValue({
+        [controlName]: [...this.certificationFiles],
+      });
 
-deleteFile(controlName: string, event: MouseEvent, index?: number): void {
-  event.stopPropagation();
-  if (controlName === 'cv_path') {
-    this.uploadedFileName = null;
-    this.fileUploaded = null;
-    this.userDetailsForm.patchValue({
-      [controlName]: null,
-    });
-    // this.toastr.success('CV removed successfully.');
-}   else if (controlName === 'courses_and_certification' && index !== undefined) {
-    this.certificationFiles.splice(index, 1);
-    this.userDetailsForm.patchValue({
-      [controlName]: [...this.certificationFiles],
-    });
+      // const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
+      // updatedCertifications.splice(index, 1);
+      // this.userDetailsForm.patchValue({
+      //   [controlName]: updatedCertifications,
+      // });
 
-    // const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
-    // updatedCertifications.splice(index, 1);
-    // this.userDetailsForm.patchValue({
-    //   [controlName]: updatedCertifications,
-    // });
+      // this.toastr.success('Certification removed successfully.');
 
-    // this.toastr.success('Certification removed successfully.');
-
-}
-}
+    }
+  }
   onCancel() {
     this.showLoginSignupDialog = false;
   }

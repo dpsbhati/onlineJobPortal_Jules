@@ -155,12 +155,14 @@ export class JobDetailsComponent {
   onApplyNowClick() {
     if (this.authService.isLoggedIn()) {
       // Redirect if logged in
-      const dialogRef = this.dialog.open(ApplyJobComponent, { 
+      const dialogRef = this.dialog.open(ApplyJobComponent, {
         // disableClose: true,
+        data: { jobId: this.id }
       });
 
       dialogRef.afterClosed().subscribe((result) => {
         // console.log(`Dialog result: ${result}`);
+        this.dialog.closeAll();
       });
     } else {
       // Show popup inline in this component
