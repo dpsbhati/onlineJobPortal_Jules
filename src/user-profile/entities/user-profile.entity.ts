@@ -51,6 +51,9 @@ export class UserProfile {
   @Column()
   additional_contact_info: string;
 
+  @Column()
+  profile_image_path: string;
+
   @Column({ type: 'int' })
   mobile: number;
 

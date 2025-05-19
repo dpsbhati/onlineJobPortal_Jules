@@ -37,6 +37,7 @@ export class UserProfileService {
       const newProfile = this.userProfileRepository.create({
         ...createUserProfileDto,
         dob: formattedDob,
+        nationalities: JSON.stringify(createUserProfileDto.nationalities),
         additional_contact_info: JSON.stringify(createUserProfileDto.additional_contact_info),
         created_by: user_id,
         updated_by: user_id,

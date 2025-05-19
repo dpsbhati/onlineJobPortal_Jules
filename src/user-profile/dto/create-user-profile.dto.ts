@@ -48,7 +48,7 @@ export class CreateUserProfileDto {
   dial_code: string;
 
   @ApiProperty()
-  nationalities: string;
+  nationalities: string[];
 
   @ApiProperty()
   country: string;
@@ -58,6 +58,9 @@ export class CreateUserProfileDto {
 
   @ApiProperty({type:[AdditionalContactInfo]})
   additional_contact_info: AdditionalContactInfo[];
+
+  @ApiProperty()
+  profile_image_path: string;
 
   @ApiProperty({type:[CareerInfoDto]})
   career_info: CareerInfoDto[];
