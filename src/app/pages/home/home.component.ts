@@ -235,6 +235,7 @@ onSearch(): void {
       value: trimmedKeyword,
     });
   }
+    this.ensureIsActiveFilter();
 
   this.onPagination();
 }
