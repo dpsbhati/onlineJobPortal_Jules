@@ -281,14 +281,14 @@
               formControlName="additional_info"
               rows="4"
             ></textarea>
-            <mat-error
+            <!-- <mat-error
               *ngIf="
                 userDetailsForm.get('additional_info')?.hasError('required') &&
                 (userDetailsForm.get('additional_info')?.touched || submitted)
               "
             >
               Additional Information is required.
-            </mat-error>
+            </mat-error> -->
             <mat-error
               *ngIf="
                 userDetailsForm.get('additional_info')?.hasError('maxlength') &&
