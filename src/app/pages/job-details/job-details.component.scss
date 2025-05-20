@@ -402,21 +402,53 @@ mat-label {
   z-index: 1000;
 }
 
+// .dialog-box {
+//   background: white;
+//   padding: 24px;
+//   border-radius: 6px;
+//   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+//   max-width: 320px;
+//   width: 100%;
+// }
+
 .dialog-box {
   background: white;
-  padding: 24px;
-  border-radius: 6px;
+  padding: 32px 32px 24px; /* a bit more padding */
+  border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  max-width: 320px;
+  max-width: 480px;    /* increased from 320px */
   width: 100%;
+  min-height: 320px;   /* ensure some minimum height */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.dialog-box p {
+  margin-bottom: 1.25rem;
+}
+
+.additional-info-heading {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .dialog-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  justify-content: space-between; /* spread buttons */
   margin-top: 16px;
+  gap: 16px;
 }
+
+// .dialog-actions {
+//   display: flex;
+//   justify-content: flex-end;
+//   gap: 8px;
+//   margin-top: 16px;
+// }
 
 
 
