@@ -22,110 +22,83 @@ export class ApplicationService {
     @InjectRepository(CoursesAndCertification)
     private coursesRepository: Repository<CoursesAndCertification>,
     private readonly notificationsService: NotificationsService,
-       @InjectRepository(JobPosting)
-        private jobPostingRepository: Repository<JobPosting>,
+    @InjectRepository(JobPosting)
+    private jobPostingRepository: Repository<JobPosting>,
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
-     try {
-    const { job_id, user_id, certification_path } = createApplicationDto;
+    try {
+      const { job_id, user_id } = createApplicationDto;
 
-    // Validate the certification file format
-    if (
-      certification_path &&
-      !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(certification_path)
-    ) {
-      return WriteResponse(
-        400,
-        {},
-        'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
-      );
-    }
+      // Check if the user has already applied for this job
+      const existingApplication = await this.applicationRepository.findOne({
+        where: {
+          job: { id: job_id },
+          user: { id: user_id },
+          is_deleted: false,
+        },
+      });
 
-    // Check if the user has already applied for this job
-    const existingApplication = await this.applicationRepository.findOne({
-      where: {
+      if (existingApplication) {
+        return WriteResponse(409, [], 'You have already applied for this job.');
+      }
+
+      // Create a new application
+      const application = this.applicationRepository.create({
         job: { id: job_id },
         user: { id: user_id },
-        is_deleted: false,
-      },
-    });
-
-    if (existingApplication) {
-      return WriteResponse(409, [], 'You have already applied for this job.');
-    }
-
-    // Create a new application
-    const application = this.applicationRepository.create({
-      job: { id: job_id },
-      user: { id: user_id },
-      status: 'Pending',
-      description: createApplicationDto.description,
-      comments: createApplicationDto.comments,
-      cv_path: createApplicationDto.cv_path,
-      certification_path, // New field
-      additional_info: createApplicationDto.additional_info,
-      work_experiences: createApplicationDto.work_experiences,
-      created_by: user_id,
-      updated_by: user_id,
-    });
-
-    const savedApplication = await this.applicationRepository.save(application);
-    if (createApplicationDto.job_id) {
-      // Delete existing courses and certifications for the job ID
-      await this.coursesRepository.delete({
-        job_id: createApplicationDto.job_id,
+        status: 'Pending',
+        additional_info: createApplicationDto.additional_info,
+        created_by: user_id,
+        updated_by: user_id,
       });
-    }
 
-    if (createApplicationDto.courses_and_certification) {
-      for (const course of createApplicationDto.courses_and_certification) {
-        const courseWithJobId = {
-          ...course,
-          job_id: createApplicationDto.job_id, // Add job ID to each course
-        };
-        // Save the course
-        await this.coursesRepository.save(courseWithJobId);
+      const savedApplication =
+        await this.applicationRepository.save(application);
+      if (createApplicationDto.job_id) {
+        // Delete existing courses and certifications for the job ID
+        await this.coursesRepository.delete({
+          job_id: createApplicationDto.job_id,
+        });
       }
-    }
 
-    // Fetch job and user details for the email
-    const jobDetails = await this.applicationRepository
-      .createQueryBuilder('app')
-      .leftJoinAndSelect('app.job', 'job')
-      .leftJoinAndSelect('app.user', 'user')
-      .where('app.id = :id', { id: savedApplication.id })
-      .getOne();
+      // Fetch job and user details for the email
+      const jobDetails = await this.applicationRepository
+        .createQueryBuilder('app')
+        .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('app.user', 'user')
+        .where('app.id = :id', { id: savedApplication.id })
+        .getOne();
 
-    if (jobDetails) {
-      // Send confirmation email
-      await this.sendConfirmationEmail(jobDetails);
-    }
-    // Send notification (you can pass relevant information like job title, user details, status)
-    const notificationData = {
-      application_id: savedApplication.id,
-      jobTitle: jobDetails.job.title,
-      userName: savedApplication.user.email,
-      status:
-        ApplicationStatus[
-          savedApplication.status as keyof typeof ApplicationStatus
-        ], // Ensure it's an enum value
-      to: jobDetails.user.email,
-      subject: 'New Application',
-      content: `Your application for the job ${jobDetails.job.title} has been ${savedApplication.status}.`,
-    };
-    const savedNotification =
-      await this.notificationsService.create(notificationData);
+      if (jobDetails) {
+        // Send confirmation email
+        await this.sendConfirmationEmail(jobDetails);
+      }
+      // Send notification (you can pass relevant information like job title, user details, status)
+      const notificationData = {
+        application_id: savedApplication.id,
+        jobTitle: jobDetails.job.title,
+        userName: savedApplication.user.email,
+        status:
+          ApplicationStatus[
+            savedApplication.status as keyof typeof ApplicationStatus
+          ], // Ensure it's an enum value
+        to: jobDetails.user.email,
+        subject: 'New Application',
+        content: `Your application for the job ${jobDetails.job.title} has been ${savedApplication.status}.`,
+      };
+      const savedNotification =
+        await this.notificationsService.create(notificationData);
 
-    return WriteResponse(
-      200,
-      savedApplication,
-      'Application submitted successfully.',
-    );
+      return WriteResponse(
+        200,
+        savedApplication,
+        'Application submitted successfully.',
+      );
     } catch (error) {
-    console.error('Error in applyForJob:', error);
-    return WriteResponse(500, {}, 'Something went wrong.');
-  }
+      console.error('Error in applyForJob:', error);
+      return WriteResponse(500, {}, 'Something went wrong.');
+    }
   }
 
   async findAll() {
@@ -171,6 +144,42 @@ export class ApplicationService {
 
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
+      }
+
+      const userProfile = application.user.userProfile;
+
+      // List all fields that need JSON parsing
+      const jsonFields = [
+        'nationalities',
+        'additional_contact_info',
+        'work_experience_info',
+        'education_info',
+        'course_info',
+        'certification_info',
+        'other_experience_info',
+        'project_info',
+        'language_spoken_info',
+        'language_written_info',
+        'notice_period_info',
+        'current_salary_info',
+        'expected_salary_info',
+        'preferences_info',
+        'additional_info',
+        'vacancy_source_info',
+      ];
+
+      // Parse JSON fields safely
+      for (const field of jsonFields) {
+        if (userProfile[field]) {
+          try {
+            userProfile[field] = JSON.parse(userProfile[field]);
+          } catch {
+            // If parsing fails, keep original or set to null/empty array as needed
+            userProfile[field] = null; // or userProfile[field] = userProfile[field];
+          }
+        } else {
+          userProfile[field] = null;
+        }
       }
 
       const response = {
@@ -278,118 +287,116 @@ export class ApplicationService {
     }
   }
 
-async paginateJobsWithApplications(req: any, pagination: IPagination) {
-  try {
-    const {
-      curPage = 1,
-      perPage = 10,
-      direction = 'DESC',
-      sortBy = 'created_at',
-      whereClause = [],
-    } = pagination;
+  async paginateJobsWithApplications(req: any, pagination: IPagination) {
+    try {
+      const {
+        curPage = 1,
+        perPage = 10,
+        direction = 'DESC',
+        sortBy = 'created_at',
+        whereClause = [],
+      } = pagination;
 
-    const skip = (curPage - 1) * perPage;
-    const params: Record<string, any> = {};
+      const skip = (curPage - 1) * perPage;
+      const params: Record<string, any> = {};
 
-    const searchableFields = [
-      'title',
-      'job_type',
-      'skills_required',
-      'short_description',
-      'full_description',
-      'assignment_duration',
-      'employer',
-      'required_experience',
-      'salary',
-      'address',
-      'work_type',
-    ];
+      const searchableFields = [
+        'title',
+        'job_type',
+        'skills_required',
+        'short_description',
+        'full_description',
+        'assignment_duration',
+        'employer',
+        'required_experience',
+        'salary',
+        'address',
+        'work_type',
+      ];
 
-    let lwhereClause = 'job.is_deleted = false';
+      let lwhereClause = 'job.is_deleted = false';
 
-    for (const clause of whereClause) {
-      const { key, value, operator = 'LIKE' } = clause;
-      if (value && key !== 'all') {
-        const paramKey = `filter_${key}`;
-        if (operator.toUpperCase() === 'LIKE') {
-          lwhereClause += ` AND job.${key} LIKE :${paramKey}`;
-          params[paramKey] = `%${value}%`;
-        } else {
-          lwhereClause += ` AND job.${key} ${operator} :${paramKey}`;
-          params[paramKey] = value;
+      for (const clause of whereClause) {
+        const { key, value, operator = 'LIKE' } = clause;
+        if (value && key !== 'all') {
+          const paramKey = `filter_${key}`;
+          if (operator.toUpperCase() === 'LIKE') {
+            lwhereClause += ` AND job.${key} LIKE :${paramKey}`;
+            params[paramKey] = `%${value}%`;
+          } else {
+            lwhereClause += ` AND job.${key} ${operator} :${paramKey}`;
+            params[paramKey] = value;
+          }
         }
       }
+
+      const allValue = whereClause.find((p) => p.key === 'all')?.value;
+      if (allValue) {
+        const searchConditions = searchableFields
+          .map((field, i) => {
+            const paramKey = `all_search_${i}`;
+            params[paramKey] = `%${allValue}%`;
+            return `job.${field} LIKE :${paramKey}`;
+          })
+          .join(' OR ');
+        lwhereClause += ` AND (${searchConditions})`;
+      }
+
+      // Get total count for pagination
+      const totalCount = await this.jobPostingRepository
+        .createQueryBuilder('job')
+        .leftJoin('job.applications', 'app', 'app.is_deleted = false')
+        .where('app.id IS NOT NULL')
+        .andWhere(lwhereClause, params)
+        .getCount();
+
+      // Main data with application count
+      const jobs = await this.jobPostingRepository
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.applications', 'app', 'app.is_deleted = false')
+        .leftJoinAndSelect('app.user', 'user')
+        .leftJoinAndSelect('user.userProfile', 'userProfile')
+        .leftJoin(
+          (qb) =>
+            qb
+              .select('a.job_id', 'job_id')
+              .addSelect('COUNT(a.id)', 'application_count')
+              .from('applications', 'a')
+              .where('a.is_deleted = false')
+              .groupBy('a.job_id'),
+          'app_count',
+          'app_count.job_id = job.id',
+        )
+        .addSelect(
+          'COALESCE(app_count.application_count, 0)',
+          'application_count',
+        )
+        .where('app.id IS NOT NULL')
+        .andWhere(lwhereClause, params)
+        .orderBy(`job.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
+        .skip(skip)
+        .take(perPage)
+        .getRawAndEntities();
+
+      // Merge raw application_count back into each job
+      const result = jobs.entities.map((job, index) => {
+        const raw = jobs.raw[index];
+        return {
+          ...job,
+          application_count: parseInt(raw.application_count || '0'),
+        };
+      });
+
+      return WriteResponse(
+        200,
+        { jobs: result, count: totalCount },
+        'Jobs with applications found successfully.',
+      );
+    } catch (error) {
+      console.error('Pagination error in jobs with applications -->', error);
+      return WriteResponse(500, {}, 'Something went wrong.');
     }
-
-    const allValue = whereClause.find((p) => p.key === 'all')?.value;
-    if (allValue) {
-      const searchConditions = searchableFields
-        .map((field, i) => {
-          const paramKey = `all_search_${i}`;
-          params[paramKey] = `%${allValue}%`;
-          return `job.${field} LIKE :${paramKey}`;
-        })
-        .join(' OR ');
-      lwhereClause += ` AND (${searchConditions})`;
-    }
-
-    // Get total count for pagination
-    const totalCount = await this.jobPostingRepository
-      .createQueryBuilder('job')
-      .leftJoin('job.applications', 'app', 'app.is_deleted = false')
-      .where('app.id IS NOT NULL')
-      .andWhere(lwhereClause, params)
-      .getCount();
-
-    // Main data with application count
-    const jobs = await this.jobPostingRepository
-      .createQueryBuilder('job')
-      .leftJoinAndSelect('job.applications', 'app', 'app.is_deleted = false')
-      .leftJoinAndSelect('app.user', 'user')
-      .leftJoinAndSelect('user.userProfile', 'userProfile')
-      .leftJoin(
-        (qb) =>
-          qb
-            .select('a.job_id', 'job_id')
-            .addSelect('COUNT(a.id)', 'application_count')
-            .from('applications', 'a')
-            .where('a.is_deleted = false')
-            .groupBy('a.job_id'),
-        'app_count',
-        'app_count.job_id = job.id',
-      )
-      .addSelect('COALESCE(app_count.application_count, 0)', 'application_count')
-      .where('app.id IS NOT NULL')
-      .andWhere(lwhereClause, params)
-      .orderBy(`job.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(perPage)
-      .getRawAndEntities();
-
-    // Merge raw application_count back into each job
-    const result = jobs.entities.map((job, index) => {
-      const raw = jobs.raw[index];
-      return {
-        ...job,
-        application_count: parseInt(raw.application_count || '0'),
-      };
-    });
-
-    return WriteResponse(
-      200,
-      { jobs: result, count: totalCount },
-      'Jobs with applications found successfully.',
-    );
-  } catch (error) {
-    console.error('Pagination error in jobs with applications -->', error);
-    return WriteResponse(500, {}, 'Something went wrong.');
   }
-}
-
-
-
-
-
 
   async update(
     id: string,
@@ -499,16 +506,16 @@ async paginateJobsWithApplications(req: any, pagination: IPagination) {
   async paginateApplications(req: any, pagination: IPagination) {
     try {
       const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
-  
+
       let lwhereClause = 'app.is_deleted = :is_deleted';
       const parameters: Record<string, any> = { is_deleted: false };
-  
+
       const isApplicant = req.user?.role === 'applicant';
       if (isApplicant) {
         lwhereClause += ` AND app.user_id = :userId`;
         parameters.userId = req.user.id;
       }
-  
+
       const fieldsToSearch = [
         'status',
         'job_id',
@@ -522,26 +529,30 @@ async paginateJobsWithApplications(req: any, pagination: IPagination) {
         'userProfile.first_name',
         'userProfile.last_name',
       ];
-  
+
       // Specific field filters
-      const email = whereClause.find(p => p.key === 'email' && p.value);
+      const email = whereClause.find((p) => p.key === 'email' && p.value);
       if (email) {
         lwhereClause += ` AND user.email LIKE :email`;
         parameters.email = `%${email.value}%`;
       }
-  
-      const first_name = whereClause.find(p => p.key === 'first_name' && p.value);
+
+      const first_name = whereClause.find(
+        (p) => p.key === 'first_name' && p.value,
+      );
       if (first_name) {
         lwhereClause += ` AND userProfile.first_name LIKE :first_name`;
         parameters.first_name = `%${first_name.value}%`;
       }
-  
-      const last_name = whereClause.find(p => p.key === 'last_name' && p.value);
+
+      const last_name = whereClause.find(
+        (p) => p.key === 'last_name' && p.value,
+      );
       if (last_name) {
         lwhereClause += ` AND userProfile.last_name LIKE :last_name`;
         parameters.last_name = `%${last_name.value}%`;
       }
-  
+
       // Field-wise filters (safe binding)
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
@@ -552,28 +563,27 @@ async paginateJobsWithApplications(req: any, pagination: IPagination) {
             parameters[paramKey] = `%${fieldValue}%`;
           }
         });
-  
+
         // ALL SEARCH - dynamic fields
         const allValues = whereClause.find((p) => p.key === 'all')?.value;
         if (allValues) {
           const allSearchConditions = fieldsToSearch
             .map((field, idx) => `${field} LIKE :all_search_${idx}`)
             .join(' OR ');
-        
+
           // Add full name concatenation match
           lwhereClause += ` AND (CONCAT(userProfile.first_name, ' ', userProfile.last_name) LIKE :full_name_search OR ${allSearchConditions})`;
-        
+
           parameters['full_name_search'] = `%${allValues}%`;
-        
+
           fieldsToSearch.forEach((_, idx) => {
             parameters[`all_search_${idx}`] = `%${allValues}%`;
           });
         }
-        
       }
-  
+
       const skip = (curPage - 1) * perPage;
-  
+
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
@@ -585,18 +595,17 @@ async paginateJobsWithApplications(req: any, pagination: IPagination) {
         .orderBy('app.applied_at', 'DESC')
         .addOrderBy('app.created_at', 'DESC')
         .getManyAndCount();
-  
+
       if (!list.length) {
         return WriteResponse(404, [], 'No records found.');
       }
-  
+
       return paginateResponse(list, totalCount, curPage, perPage);
     } catch (error) {
       console.error('Application Pagination Error --> ', error);
       return WriteResponse(500, {}, 'Something went wrong.');
     }
   }
-  
 
   async pagination(req: any, pagination: IPagination) {
     try {

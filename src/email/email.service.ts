@@ -13,8 +13,8 @@ export class EmailService {
       port: 587,
       secure: false,
       auth: {
-        user: 'sarfaraz.f9460@gmail.com',
-        pass: 'wciirazzhwdhppaw',
+        user: 'hmharshit2002@gmail.com',
+        pass: 'hqur jpll sxru nokz',
       },
     });
   }

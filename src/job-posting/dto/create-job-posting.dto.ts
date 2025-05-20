@@ -158,14 +158,14 @@ export class CreateJobPostingDto {
 
   applicant_number: number;
 
-  @ApiProperty({
-    description: 'The ending salary',
-    example: 100000,
-  })
-  @IsNotEmpty({ message: 'end_salary is required.' })
-  @IsNumber({}, { message: 'end_salary must be a valid number.' })
-  @Min(0, { message: 'Ending salary must be at least 0.' })
-  end_salary: number;
+  // @ApiProperty({
+  //   description: 'The ending salary',
+  //   example: 100000,
+  // })
+  // @IsNotEmpty({ message: 'end_salary is required.' })
+  // @IsNumber({}, { message: 'end_salary must be a valid number.' })
+  // @Min(0, { message: 'Ending salary must be at least 0.' })
+  // end_salary: number;
 
   @ApiProperty({
     description: 'The job location address',
