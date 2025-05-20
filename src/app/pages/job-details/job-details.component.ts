@@ -60,7 +60,7 @@ export class JobDetailsComponent {
       user_id: new FormControl(this.user),
 
       additional_info: new FormControl('', [
-        Validators.required,
+       
         // Validators.minLength(5),
         Validators.maxLength(500),
         // this.minLengthWithContent(5),
