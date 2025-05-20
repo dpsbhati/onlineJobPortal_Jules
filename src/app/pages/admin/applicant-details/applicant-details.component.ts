@@ -20,6 +20,7 @@ import { TablerIconsModule } from 'angular-tabler-icons';
   styleUrl: './applicant-details.component.scss'
 })
 export class ApplicantDetailsComponent {
+   formattedCourseInfo: string = '-';
   jobId: string = '';
   userId: string = '';
   applicantDetails: any = null;
@@ -75,6 +76,26 @@ export class ApplicantDetailsComponent {
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
+           // ====== New: Format course_info here ======
+        const courses = response.data.user?.userProfile?.course_info;
+        if (courses && courses.length > 0) {
+          const validCourses = courses
+            .map((c: any) => {
+              const title = c.course_title || '';
+              if (!title) return null;
+              const from = c.course_from ? `From ${c.course_from}` : '';
+              const to = c.course_to ? `To ${c.course_to}` : '';
+              let dateRange = '';
+              if (from && to) dateRange = ` (${from} - ${to})`;
+              else if (from) dateRange = ` (${from})`;
+              else if (to) dateRange = ` (${to})`;
+              return title + dateRange;
+            })
+            .filter((x: any) => x !== null);
+          this.formattedCourseInfo = validCourses.length > 0 ? validCourses.join('; ') : '-';
+        } else {
+          this.formattedCourseInfo = '-';
+        }
           // this.isLoading = false;
           this.loader.hide();
         } else {

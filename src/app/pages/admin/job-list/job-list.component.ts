@@ -240,7 +240,7 @@ onStatusToggleChange(element: any, checked: boolean) {
 this.toastr.success(res.message);
  
       // Refresh the paginated data to get latest statuses
-      this.onPagination();
+      // this.onPagination();
     },
     error: (err) => {
       // Revert UI changes on failure
