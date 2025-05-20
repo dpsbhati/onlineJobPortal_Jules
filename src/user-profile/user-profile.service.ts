@@ -93,14 +93,20 @@ export class UserProfileService {
   //   }
   // }
 
-  async create(createUserProfileDto: CreateUserProfileDto, user_id: string,req) {
+  async create(
+    createUserProfileDto: CreateUserProfileDto,
+    user_id: string,
+    req,
+  ) {
     try {
       // Validate DOB format
-      if(req.user.role !== 'admin') {
-      if (!moment(createUserProfileDto.dob, moment.ISO_8601, true).isValid()) {
-        return WriteResponse(400, {}, 'Invalid datetime format for dob.');
+      if (req.user.role !== 'admin') {
+        if (
+          !moment(createUserProfileDto.dob, moment.ISO_8601, true).isValid()
+        ) {
+          return WriteResponse(400, {}, 'Invalid datetime format for dob.');
+        }
       }
-    }
 
       const formattedDob = moment(createUserProfileDto.dob).toISOString();
 
@@ -198,7 +204,7 @@ export class UserProfileService {
         delete profile.user.password;
       }
 
-      const userProfile = profile.user.userProfile;
+      const userProfile = profile;
 
       // List all fields that need JSON parsing
       const jsonFields = [
@@ -222,7 +228,7 @@ export class UserProfileService {
 
       // Parse JSON fields safely
       for (const field of jsonFields) {
-        if (userProfile[field]) {
+        if (userProfile[field] && typeof userProfile[field] === 'string') {
           try {
             userProfile[field] = JSON.parse(userProfile[field]);
           } catch {
@@ -240,6 +246,7 @@ export class UserProfileService {
         'User profile retrieved successfully.',
       );
     } catch (error) {
+      console.log(error);
       return WriteResponse(
         500,
         {},
