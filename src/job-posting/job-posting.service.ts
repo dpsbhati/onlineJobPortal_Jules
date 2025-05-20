@@ -344,15 +344,15 @@ export class JobPostingService {
       sortBy = sortBy || 'created_at'; // Default sorting by created_at
       direction = direction || 'DESC'; // Default to DESC
 
-      let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
+      let lwhereClause = `f.is_deleted = false`;
       const fieldsToSearch = [
         'job_type',
         'rank',
-       
+
         'title',
         'short_description',
         'full_description',
-'country_code',
+        'country_code',
         'employer',
 
         'salary',
@@ -385,21 +385,19 @@ export class JobPostingService {
       );
       const startDate = startDateObj?.value;
       const endDate = endDateObj?.value;
-      
-const skills_required = whereClause.find(
-  (p: any) => p.key === 'skills_required' && p.value,
-);
 
-if (skills_required && Array.isArray(skills_required.value)) {
-  const skillsConditions = skills_required.value.map(
-    (skill) => `f.skills_required LIKE '%${skill}%'`
-  );
-  if (skillsConditions.length > 0) {
-    lwhereClause += ` AND (${skillsConditions.join(' OR ')})`;
-  }
-}
+      const skills_required = whereClause.find(
+        (p: any) => p.key === 'skills_required' && p.value,
+      );
 
- 
+      if (skills_required && Array.isArray(skills_required.value)) {
+        const skillsConditions = skills_required.value.map(
+          (skill) => `f.skills_required LIKE '%${skill}%'`,
+        );
+        if (skillsConditions.length > 0) {
+          lwhereClause += ` AND (${skillsConditions.join(' OR ')})`;
+        }
+      }
 
       if (startDate && endDate) {
         lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
@@ -505,12 +503,10 @@ if (skills_required && Array.isArray(skills_required.value)) {
       // Map applicant_number back into the entity list
       const finalData = entities.map((job, index) => {
         const rawItem = raw.find((r) => r.f_id === job.id);
-        job.skills_required=JSON.parse(job.skills_required)
-        if(typeof job.social_media_type === 'string'){
-        job.social_media_type = JSON.parse(
-          job.social_media_type,
-        );
-      }
+        job.skills_required = JSON.parse(job.skills_required);
+        if (typeof job.social_media_type === 'string') {
+          job.social_media_type = JSON.parse(job.social_media_type);
+        }
         return {
           ...job,
           application_number: parseInt(rawItem?.application_number || '0'),
@@ -569,22 +565,18 @@ if (skills_required && Array.isArray(skills_required.value)) {
         return WriteResponse(404, {}, `Job posting not found.`);
       }
 
-      jobPosting.skills_required = JSON.parse(
-        jobPosting.skills_required,
-      );
-      
-      if(typeof jobPosting.social_media_type === 'string'){
-        jobPosting.social_media_type = JSON.parse(
-          jobPosting.social_media_type,
-        );
+      jobPosting.skills_required = JSON.parse(jobPosting.skills_required);
+
+      if (typeof jobPosting.social_media_type === 'string') {
+        jobPosting.social_media_type = JSON.parse(jobPosting.social_media_type);
       }
-      
+
       const response = {
         ...jobPosting,
         job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
       };
-console.log("response------->>>",response);
-delete response.user.password;
+      console.log('response------->>>', response);
+      delete response.user.password;
       return WriteResponse(
         200,
         response,
@@ -608,22 +600,30 @@ delete response.user.password;
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
 
-  async toggleJobStatus(id: string, isActive: boolean) {
+  async toggleJobStatus(query) {
     try {
+      console.log(typeof query.isActive, '1');
+
+      let { id, isActive } = query;
+      isActive = isActive === 'true' ? true : false;
+
+      if (!id) {
+        return WriteResponse(400, false, 'Job posting ID is required.');
+      }
+
       const jobPosting = await this.jobPostingRepository.findOne({
-        where: { id, is_deleted: false },
+        where: { id: id, is_deleted: false },
       });
 
       if (!jobPosting) {
         return WriteResponse(404, {}, `Job posting with ID ${id} not found.`);
       }
 
-      jobPosting.isActive = isActive;
-      await this.jobPostingRepository.save(jobPosting);
+      await this.jobPostingRepository.update(id, { isActive: isActive });
 
       return WriteResponse(
         200,
-        jobPosting,
+        true,
         `Job posting has been ${isActive ? 'activated' : 'deactivated'} successfully.`,
       );
     } catch (error) {
