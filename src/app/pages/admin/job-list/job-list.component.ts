@@ -226,7 +226,7 @@ export class JobListComponent implements OnInit {
   console.log('Status toggle changed for job id:', element.id, 'New value:', checked);
 
   // Example: Update element.job_opening based on toggle (customize as needed)
-  element.job_opening = checked ? 'Active' : 'Hold';
+  element.job_opening = checked ? 'Active' : 'DeActivated';
 
   // Call your API or update the backend accordingly here
   // this.jobService.updateJobStatus(element.id, element.job_opening).subscribe(...);
