@@ -97,22 +97,16 @@ export class JobPostingController {
     return this.jobPostingService.findOne(query.key, query.value);
   }
 
-  @Post(':id/status')
+  @Get('toggle-job-status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Toggle the active/inactive status of a job posting.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'The ID of the job posting to update.',
-    example: 'job-id-123',
-  })
+  
+  @ApiQuery({name:'id',required:true})
+  @ApiQuery({name:'isActive',required:true})
   async toggleJobStatus(
-    @Param('id') id: string,
-    @Body('isActive') isActive: boolean,
+    @Query() query
   ) {
-    return this.jobPostingService.toggleJobStatus(id, isActive);
+    return this.jobPostingService.toggleJobStatus(query);
   }
 
   @Put('publish/:id')
