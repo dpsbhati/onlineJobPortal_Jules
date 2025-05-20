@@ -202,10 +202,18 @@
             <div class="col-lg-4">
               <!-- <mat-label>Select Profile Image</mat-label> -->
               <!-- <input type="file" class="form-control" /> -->
-              <button mat-stroked-button type="button" class="w-100">
+              <button mat-stroked-button type="button" class="w-100" (click)="fileInput.click()">
                 <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
                 Profile Image
               </button>
+              <input #fileInput type="file" style="display: none"
+              (change)="onFileSelected($event, 'profile_image_path')" />
+              <div class="img-preview img-close m-t-6" *ngIf="imagePreview">
+                <img [src]="imagePreview" alt="Preview" style="width: 100%; height: 200px; object-fit: contain;" />
+                <!-- <button type="button" mat-icon-button class="remove-icon" (click)="removeImage()">
+                  <mat-icon>cancel</mat-icon>
+                </button> -->
+              </div>
             </div>
 
 
@@ -251,8 +259,11 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Dial Code</mat-label>
                 <mat-select formControlName="dial_code">
-                  <mat-option>45</mat-option>
+                  <mat-option value="45">45</mat-option>
                 </mat-select>
+                 <mat-error *ngIf="form.get('dial_code')?.errors?.['required']">
+                  Dail code is required
+                </mat-error>
               </mat-form-field>
             </div>
 
@@ -261,6 +272,9 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Phone Number</mat-label>
                 <input matInput type="tel" formControlName="mobile" />
+                 <mat-error *ngIf="form.get('mobile')?.errors?.['required']">
+                  Phone number is required
+                </mat-error>
               </mat-form-field>
             </div>
 
@@ -274,9 +288,9 @@
                 <mat-error *ngIf="form.get('dob')?.errors?.['required']">
                   Date of birth is required
                 </mat-error>
-                <mat-error *ngIf="form.get('dob')?.errors?.['invalidDOB']">
+                <!-- <mat-error *ngIf="form.get('dob')?.errors?.['invalidDOB']">
                   Invalid Date of Birth format. Please enter in YYYY-MM-DD.
-                </mat-error>
+                </mat-error> -->
               </mat-form-field>
             </div>
 
@@ -288,6 +302,9 @@
                   <mat-option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality
                     }}</mat-option>
                 </mat-select>
+                 <mat-error *ngIf="form.get('nationalities')?.errors?.['required']">
+                  Nationality is required
+                </mat-error>
               </mat-form-field>
             </div>
 
@@ -298,6 +315,9 @@
                 <mat-select formControlName="country">
                   <mat-option *ngFor="let country of countries" [value]="country">{{ country }}</mat-option>
                 </mat-select>
+                 <mat-error *ngIf="form.get('country')?.errors?.['required']">
+                  Country is required
+                </mat-error>
               </mat-form-field>
             </div>
 
@@ -306,11 +326,14 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Location</mat-label>
                 <input matInput placeholder="Start typing an address..." formControlName="location" />
+                 <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                  Location is required
+                </mat-error>
               </mat-form-field>
             </div>
 
             <!-- Additional Contact Info (Repeater UI) -->
-            <div class="col-lg-12 mt-4" formArrayName="additionalContacts">
+            <div class="col-lg-12 mt-4" formArrayName="additional_contact_info">
               <h4 class="mat-headline-6 m-t-24 m-b-20">Additional Contact Information</h4>
               <!-- Example Row -->
               <div class="row align-items-center" *ngFor="let item of additionalContacts();let i =index"
@@ -318,7 +341,7 @@
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Contact Type</mat-label>
-                    <mat-select formControlName="type">
+                    <mat-select formControlName="contact_type">
                       <mat-option value="Email">Email</mat-option>
                       <mat-option value="LinkedIn">LinkedIn (Profile Link)</mat-option>
                       <mat-option value="Messenger">Messenger</mat-option>
@@ -351,21 +374,22 @@
 
 
           <div class="text-right">
-            <button mat-flat-button matStepperNext [disabled]="form.invalid">Next</button>
+            <button mat-flat-button matStepperNext [disabled]="form.invalid" (click)="onSubmit()">Next</button>
           </div>
         </form>
       </mat-step>
       <mat-step [stepControl]="secondForm">
         <form class="m-t-24" [formGroup]="secondForm">
           <ng-template matStepLabel>Career</ng-template>
-          <div class="row">
+          <div class="row" >
 
             <!-- WORK EXPERIENCE -->
             <div class="col-12 mt-4">
               <h4 class="mat-headline-6 m-t-24 m-b-20">Work Experience</h4>
             </div>
 
-            <ng-container *ngFor="let work of workExperiences; let i = index">
+            <ng-container formArrayName="work_experience_info " *ngFor="let item of getworkExp();let i =index"
+                [formGroupName]="i">
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>From</mat-label>
@@ -396,7 +420,7 @@
               </div>
             </ng-container>
             <div class="col-lg-2 text-end">
-              <button mat-icon-button color="primary" (click)="addContact()">
+              <button mat-icon-button color="primary" (click)="addWorkExp()">
                 <mat-icon>add</mat-icon>
               </button>
               <button mat-icon-button color="primary" class="m-b-20" *ngIf="additionalContacts().length != 1">
