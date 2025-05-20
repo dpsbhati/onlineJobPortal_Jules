@@ -386,6 +386,15 @@ export class JobPostingService {
       const startDate = startDateObj?.value;
       const endDate = endDateObj?.value;
 
+      // ✅ Handle isActive filter separately
+      const isActiveObj = whereClause.find(
+        (p: any) => p.key === 'isActive' && p.value
+      );
+
+      if (typeof isActiveObj?.value === 'boolean') {
+        lwhereClause += ` AND f.isActive = ${isActiveObj.value}`;
+      }
+
       const skills_required = whereClause.find(
         (p: any) => p.key === 'skills_required' && p.value,
       );
