@@ -6,61 +6,137 @@ import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
 import * as moment from 'moment';
-import { CareerInfo } from './entities/career-info.entity';
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectRepository(UserProfile)
     private readonly userProfileRepository: Repository<UserProfile>,
-    @InjectRepository(CareerInfo)
-    private readonly careerInfoRepository: Repository<CareerInfo>,
-  ) { }
+  ) {}
 
-  async create(createUserProfileDto: CreateUserProfileDto, user_id:string) {
+  // async create(createUserProfileDto: CreateUserProfileDto, user_id: string) {
+  //   try {
+  //     const isValidDob = moment(
+  //       createUserProfileDto.dob,
+  //       moment.ISO_8601,
+  //       true,
+  //     ).isValid();
+  //     if (!isValidDob) {
+  //       return WriteResponse(
+  //         400,
+  //         {},
+  //         'Invalid datetime format for dob. Expected ISO 8601 format.',
+  //       );
+  //     }
+
+  //     const formattedDob = moment(createUserProfileDto.dob).toISOString();
+
+  //     const newProfile = this.userProfileRepository.create({
+  //       ...createUserProfileDto,
+  //       dob: formattedDob,
+  //       nationalities: JSON.stringify(createUserProfileDto.nationalities),
+  //       additional_contact_info: JSON.stringify(
+  //         createUserProfileDto.additional_contact_info,
+  //       ),
+  //       work_experience_info: JSON.stringify(
+  //         createUserProfileDto.work_experience_info,
+  //       ),
+  //       education_info: JSON.stringify(createUserProfileDto.education_info),
+  //       course_info: JSON.stringify(createUserProfileDto.course_info),
+  //       certification_info: JSON.stringify(
+  //         createUserProfileDto.certification_info,
+  //       ),
+  //       other_experience_info: JSON.stringify(
+  //         createUserProfileDto.other_experience_info,
+  //       ),
+  //       project_info: JSON.stringify(createUserProfileDto.project_info),
+  //       language_spoken_info: JSON.stringify(
+  //         createUserProfileDto.language_spoken_info,
+  //       ),
+  //       language_written_info: JSON.stringify(
+  //         createUserProfileDto.language_written_info,
+  //       ),
+  //       notice_period_info: JSON.stringify(
+  //         createUserProfileDto.notice_period_info,
+  //       ),
+  //       current_salary_info: JSON.stringify(
+  //         createUserProfileDto.current_salary_info,
+  //       ),
+  //       expected_salary_info: JSON.stringify(
+  //         createUserProfileDto.expected_salary_info,
+  //       ),
+  //       preferences_info: JSON.stringify(createUserProfileDto.preferences_info),
+  //       additional_info: JSON.stringify(createUserProfileDto.additional_info),
+  //       vacancy_source_info: JSON.stringify(
+  //         createUserProfileDto.vacancy_source_info,
+  //       ),
+  //       created_by: user_id,
+  //       updated_by: user_id,
+  //     });
+
+  //     const updatedProfile = await this.userProfileRepository.update(
+  //       { user_id: user_id },
+  //       newProfile,
+  //     );
+
+  //     return WriteResponse(
+  //       200,
+  //       createUserProfileDto,
+  //       'User profile updated successfully.',
+  //     );
+  //   } catch (error) {
+  //     return WriteResponse(
+  //       500,
+  //       {},
+  //       error.message || 'An unexpected error occurred.',
+  //     );
+  //   }
+  // }
+
+  async create(createUserProfileDto: CreateUserProfileDto, user_id: string) {
     try {
-      const isValidDob = moment(
-        createUserProfileDto.dob,
-        moment.ISO_8601,
-        true,
-      ).isValid();
-      if (!isValidDob) {
-        return WriteResponse(
-          400,
-          {},
-          'Invalid datetime format for dob. Expected ISO 8601 format.',
-        );
+      // Validate DOB format
+      if (!moment(createUserProfileDto.dob, moment.ISO_8601, true).isValid()) {
+        return WriteResponse(400, {}, 'Invalid datetime format for dob.');
       }
 
       const formattedDob = moment(createUserProfileDto.dob).toISOString();
 
-      const newProfile = this.userProfileRepository.create({
+      // Helper to stringify if value exists else null
+      const toJson = (val: any) => (val ? JSON.stringify(val) : null);
+
+      const profilePayload = {
         ...createUserProfileDto,
         dob: formattedDob,
-        nationalities: JSON.stringify(createUserProfileDto.nationalities),
-        additional_contact_info: JSON.stringify(createUserProfileDto.additional_contact_info),
+        nationalities: toJson(createUserProfileDto.nationalities),
+        additional_contact_info: toJson(
+          createUserProfileDto.additional_contact_info,
+        ),
+        work_experience_info: toJson(createUserProfileDto.work_experience_info),
+        education_info: toJson(createUserProfileDto.education_info),
+        course_info: toJson(createUserProfileDto.course_info),
+        certification_info: toJson(createUserProfileDto.certification_info),
+        other_experience_info: toJson(
+          createUserProfileDto.other_experience_info,
+        ),
+        project_info: toJson(createUserProfileDto.project_info),
+        language_spoken_info: toJson(createUserProfileDto.language_spoken_info),
+        language_written_info: toJson(
+          createUserProfileDto.language_written_info,
+        ),
+        notice_period_info: toJson(createUserProfileDto.notice_period_info),
+        current_salary_info: toJson(createUserProfileDto.current_salary_info),
+        expected_salary_info: toJson(createUserProfileDto.expected_salary_info),
+        preferences_info: toJson(createUserProfileDto.preferences_info),
+        additional_info: toJson(createUserProfileDto.additional_info),
+        vacancy_source_info: toJson(createUserProfileDto.vacancy_source_info),
         created_by: user_id,
         updated_by: user_id,
-      });
+      };
 
+      const newProfile = this.userProfileRepository.create(profilePayload);
 
-      const updatedProfile = await this.userProfileRepository.update(
-        { user_id: user_id },
-        newProfile 
-      );
-
-      if (createUserProfileDto.career_info && Array.isArray(createUserProfileDto.career_info)) {
-        // Map each career_info item to add user_id
-        const careerInfoEntities = createUserProfileDto.career_info.map((item) => {
-          return {
-            ...item,
-            user_id: user_id, // assign user_id here
-          };
-        });
-  
-        // Save all career info objects in careerInfoRepository (bulk save if supported)
-        await this.careerInfoRepository.save(careerInfoEntities);
-      }
+      await this.userProfileRepository.update({ user_id }, newProfile);
 
       return WriteResponse(
         200,
@@ -116,9 +192,9 @@ export class UserProfileService {
         );
       }
       if (profile.user?.userProfile) {
-  delete profile.user.userProfile;
-  delete profile.user.password;
-}
+        delete profile.user.userProfile;
+        delete profile.user.password;
+      }
 
       return WriteResponse(
         200,
