@@ -71,7 +71,7 @@ export class JobDetailsComponent {
   ngOnInit() {
       this.jobId = this.route.snapshot.paramMap.get('id') as string;
        this.user = JSON.parse(localStorage.getItem('user') || '{}');
-   
+
     this.userDetailsForm.patchValue({
       job_id: this.jobId,
       user_id: this.user?.id
@@ -220,7 +220,7 @@ export class JobDetailsComponent {
           if (response.statusCode === 200) {
             this.loader.hide();
             this.toastr.success(response.message);
-            this.router.navigate(['/applicant']);
+            this.router.navigate(['/Applied-Applications']);
           } else {
             this.toastr.warning(response.message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
