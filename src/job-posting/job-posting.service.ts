@@ -65,7 +65,6 @@ export class JobPostingService {
   //   }
   // }
 
-  @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   //   async autoPostJobs() {
   //     try {
   //       const now = new Date();
@@ -144,6 +143,7 @@ export class JobPostingService {
   //       this.logger.error('Error in autoPostJobs scheduler', error);
   //     }
   //   }
+  @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   async autoPostJobs() {
     try {
       const now = new Date();
@@ -197,7 +197,8 @@ export class JobPostingService {
     }
   }
 
-  @Cron('*/1 * * * *') // Runs every minute
+  // @Cron('*/1 * * * *') // Runs every minute
+  @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   async closeExpiredJobs() {
     try {
       // console.log('Running job scheduler to close expired jobs...');
@@ -224,6 +225,24 @@ export class JobPostingService {
         }
       }
 
+      const jobsToReopen = await this.jobPostingRepository.find({
+        where: {
+          is_deleted: false,
+          job_opening: JobOpeningStatus.CLOSE,
+          deadline: MoreThan(currentDateTime),
+        },
+      });
+      // console.log('jobsToReopen----->>', jobsToReopen);
+
+      for (const job of jobsToReopen) {
+        job.job_opening = JobOpeningStatus.OPEN;
+        job.isActive = true;
+        await this.jobPostingRepository.save(job);
+        this.logger.log(
+          `Reopened job with ID ${job.id} due to extended deadline.`,
+        );
+      }
+
       const jobsToClose = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
@@ -238,6 +257,7 @@ export class JobPostingService {
 
         for (const job of jobsToClose) {
           job.job_opening = JobOpeningStatus.CLOSE;
+          job.isActive = false;
           await this.jobPostingRepository.save(job);
           // console.log(`Job with ID ${job.id} marked as "close".`);
         }
@@ -385,6 +405,15 @@ export class JobPostingService {
       );
       const startDate = startDateObj?.value;
       const endDate = endDateObj?.value;
+
+      // ✅ Handle isActive filter separately
+      const isActiveObj = whereClause.find(
+        (p: any) => p.key === 'isActive' && p.value,
+      );
+
+      if (typeof isActiveObj?.value === 'boolean') {
+        lwhereClause += ` AND f.isActive = ${isActiveObj.value}`;
+      }
 
       const skills_required = whereClause.find(
         (p: any) => p.key === 'skills_required' && p.value,
@@ -624,7 +653,7 @@ export class JobPostingService {
       return WriteResponse(
         200,
         true,
-        `Job posting has been ${isActive ? 'activated' : 'deactivated'} successfully.`,
+        `The job has been successfully ${isActive ? 'activated' : 'deactivated'}.`,
       );
     } catch (error) {
       return WriteResponse(
