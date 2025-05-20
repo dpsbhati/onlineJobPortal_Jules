@@ -57,19 +57,18 @@ import { MaterialModule } from 'src/app/material.module'
   styleUrls: ['./edit-profile.component.scss']
 })
 export class EditProfileComponent implements OnInit {
-  // secondFormGroup = this._formBuilder.group({
-  //   secondCtrl: ['', Validators.required]
-  // })
-  // threeFormGroup = this._formBuilder.group({
-  //   secondCtrl: ['', Validators.required]
-  // })
   // Example arrays - aap apne actual data se replace kar dena
   countriesLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
   proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
   currencyList = ['USD', 'EUR', 'PKR', 'GBP', 'INR'];
   departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
   vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
-
+  private readonly allowedImageFormats = [
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ]
+  imagePreview: string | ArrayBuffer | null = null
   skillsArray: string[] = []
   newSkill: string = ''
   userRole: string = ''
@@ -131,7 +130,7 @@ export class EditProfileComponent implements OnInit {
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl('', [Validators.required, this.dobValidator]),
+      dob: new FormControl('', [Validators.required]),
       mobile: new FormControl(
         '',
         this.isApplicant()
@@ -142,58 +141,29 @@ export class EditProfileComponent implements OnInit {
           ]
           : null
       ),
-      nationalities: new FormControl([]),
-      country: new FormControl(null),
-      location: new FormControl(null),
-      dial_code: new FormControl(null),
-      additionalContacts: this.fb.array([])
+      nationalities: new FormControl([], [Validators.required]),
+      country: new FormControl(null, [Validators.required]),
+      location: new FormControl(null, [Validators.required]),
+      dial_code: new FormControl(null, [Validators.required]),
+      profile_image_path: new FormControl(null, [Validators.required]),
+      additional_contact_info: this.fb.array([]),
     })
   }
 
   second() {
     this.secondForm = this.fb.group({
-      firstName: [''],
-      lastName: [''],
-      email: [''],
-      dialCode: [''],
-      phoneNumber: [''],
-      dob: [''],
-      nationality: [[]],
-      country: [''],
-      location: [''],
-      profileImage: [null],
-      additionalContacts: this.fb.array([])
+      work_experience_info: this.fb.array([]),
+      education_info: this.fb.array([]),
+      course_info: this.fb.array([]),
+      certification_info: this.fb.array([]),
+      cv_path: new FormControl(null),
     })
   }
 
   Third() {
     this.thirdForm = this.fb.group({
-      first_name: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z ]*$')
-      ]),
-      last_name: new FormControl('', [
-        Validators.required,
-        // Validators.pattern('^[a-zA-Z0-9 ]+$')
-        Validators.pattern('^[a-zA-Z ]*$')
-      ]),
-      email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl('', [Validators.required, this.dobValidator]), dialCode: [''],
-      mobile: new FormControl(
-        '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.pattern('^[0-9]{10}$'),
-            this.mobileNumberValidator
-          ]
-          : null
-      ),
-      nationality: [[]],
       country: [''],
       location: [''],
-      profileImage: [null],
-      additionalContacts: this.fb.array([])
     })
   }
 
@@ -495,6 +465,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
+    console.log(this.form);
     if (this.userProfileForm.invalid) {
       Object.keys(this.userProfileForm.controls).forEach(key => {
         const control = this.userProfileForm.get(key)
@@ -803,26 +774,144 @@ export class EditProfileComponent implements OnInit {
   ]
 
   additionalContacts() {
-    return (this.form.get('additionalContacts') as FormArray).controls;
+    return (this.form.get('additional_contact_info') as FormArray).controls;
   }
 
   addContact() {
-    (this.form.get('additionalContacts') as FormArray).push(
+    (this.form.get('additional_contact_info') as FormArray).push(
       this.fb.group({
-        type: new FormControl(['']),
+        contact_type: new FormControl(['']),
         value: new FormControl([''])
       })
     )
   }
 
-  removeContact(index: number) {
-    (this.form.get('additionalContacts') as FormArray).removeAt(index)
+  getworkExp() {
+    return (this.secondForm.get('work_experience_info') as FormArray).controls;
   }
-  onFileSelected(event: any) {
-    const file = event.target.files[0]
+
+  addWorkExp() {
+    (this.secondForm.get('work_experience_info') as FormArray).push(
+      this.fb.group({
+        work_experience_from: new FormControl(['']),
+        work_experience_to: new FormControl(['']),
+        work_experience_title: new FormControl(['']),
+        work_experience_employer: new FormControl([''])
+      })
+    )
+  }
+
+  getEducation() {
+    return (this.secondForm.get('education_info') as FormArray).controls;
+  }
+
+  addEducation() {
+    (this.secondForm.get('education_info') as FormArray).push(
+      this.fb.group({
+        education_from: new FormControl(['']),
+        education_to: new FormControl(['']),
+        education_title: new FormControl(['']),
+        education_institute: new FormControl([''])
+      })
+    )
+  }
+
+  getCourse() {
+    return (this.secondForm.get('course_info') as FormArray).controls;
+  }
+
+  addCourse() {
+    (this.secondForm.get('course_info') as FormArray).push(
+      this.fb.group({
+        course_from: new FormControl(['']),
+        course_to: new FormControl(['']),
+        course_title: new FormControl(['']),
+        course_provider: new FormControl([''])
+      })
+    )
+  }
+
+  getCetificate() {
+    return (this.secondForm.get('certification_info') as FormArray).controls;
+  }
+
+  addCertificate() {
+    (this.secondForm.get('certification_info') as FormArray).push(
+      this.fb.group({
+        certification_from: new FormControl(['']),
+        certification_to: new FormControl(['']),
+        certification_title: new FormControl(['']),
+        certification_issuer: new FormControl([''])
+      })
+    )
+  }
+
+  removeContact(index: number) {
+    (this.form.get('additional_contact_info') as FormArray).removeAt(index)
+  }
+
+  getFileName(path: string | null): string {
+    if (!path) return ''
+    // Extract filename from path
+    const parts = path.split(/[\/\\]/)
+    return parts[parts.length - 1]
+  }
+
+  onFileSelected(event: Event, controlName: string): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
     if (file) {
-      this.form.patchValue({ profileImage: file })
-      this.form.get('profileImage')?.updateValueAndValidity()
+      if (!file.type.startsWith('image/')) {
+        this.toaster.warning('Please select an image file.');
+        // Optionally, clear the selected file
+        (event.target as HTMLInputElement).value = ''; // Reset input file
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result; // Set the preview for the selected image
+      };
+      reader.readAsDataURL(file);
+
+      // Your existing compression and upload logic
+      if (this.allowedImageFormats.includes(file.type)) {
+        this.imageCompressionService
+          .compressImage(file)
+          .then((compressedImageUrl: string) => {
+            fetch(compressedImageUrl)
+              .then(res => res.blob())
+              .then(compressedFileBlob => {
+                const compressedFile = new File(
+                  [compressedFileBlob],
+                  file.name,
+                  { type: file.type }
+                );
+
+                // Upload image
+                const folderName = 'user-details';
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userId = user.id;
+                this.adminService
+                  .uploadFile({ folderName, file: compressedFile, userId })
+                  .subscribe(
+                    (response: any) => {
+                      if (response.statusCode === 200) {
+                        this.form.patchValue({
+                          [controlName]: response.data.path
+                        });
+                      } else {
+                        console.error(response.message);
+                      }
+                    },
+                    (error: any) => {
+                      console.error('Error uploading file:', error);
+                    }
+                  );
+              });
+          });
+      }
     }
   }
 
