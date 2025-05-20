@@ -221,18 +221,35 @@ export class JobListComponent implements OnInit {
     this.onPagination();
   }
 
-  onStatusToggleChange(element: any, checked: boolean) {
-  console.log('Status toggle changed for job id:', element.id, 'New value:', checked);
+//   onStatusToggleChange(element: any, checked: boolean) {
+//   console.log('Status toggle changed for job id:', element.id, 'New value:', checked);
 
-  // Example: Update element.job_opening based on toggle (customize as needed)
+ 
+//   element.job_opening = checked ? 'Active' : 'DeActivated';
+
+// }
+
+onStatusToggleChange(element: any, checked: boolean) {
+  // Optimistically update UI
   element.job_opening = checked ? 'Active' : 'DeActivated';
+  element.isActive = checked;
 
-  // Call your API or update the backend accordingly here
-  // this.jobService.updateJobStatus(element.id, element.job_opening).subscribe(...);
-
-  // Optionally refresh the table data or show a notification
+  this.adminService.toggleJobStatus(element.id, checked).subscribe({
+    next: (res) => {
+      // this.toastr.success('Status updated successfully');
+this.toastr.success(res.message);
+ 
+      // Refresh the paginated data to get latest statuses
+      this.onPagination();
+    },
+    error: (err) => {
+      // Revert UI changes on failure
+      element.isActive = !checked;
+      element.job_opening = !checked ? 'Active' : 'DeActivated';
+      this.toastr.error('Failed to update status');
+    },
+  });
 }
-
 
   // onSearch(): void {
 
