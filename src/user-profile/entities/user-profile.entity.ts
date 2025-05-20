@@ -54,6 +54,54 @@ export class UserProfile {
   @Column()
   profile_image_path: string;
 
+  @Column()
+  work_experience_info: string;
+
+  @Column()
+  highest_education_level: string;
+
+  @Column()
+  education_info: string;
+
+  @Column()
+  course_info: string;
+
+  @Column()
+  certification_info: string;
+
+  @Column()
+  cv_path: string;
+
+  @Column()
+  other_experience_info: string;
+
+  @Column()
+  project_info: string;
+
+  @Column()
+  language_spoken_info: string;
+
+  @Column()
+  language_written_info: string;
+
+  @Column()
+  notice_period_info: string;
+
+  @Column()
+  current_salary_info: string;
+
+  @Column()
+  expected_salary_info: string;
+
+  @Column()
+  preferences_info: string;
+
+  @Column()
+  additional_info: string;
+
+  @Column()
+  vacancy_source_info: string;
+
   @Column({ type: 'int' })
   mobile: number;
 

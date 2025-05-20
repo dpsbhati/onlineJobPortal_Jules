@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CareerInfoDto {
-  id: string;
-
-  user_id?: string;
-
+export class WorkExperienceDto {
   @ApiProperty()
   work_experience_from?: Date;
 
@@ -16,10 +12,8 @@ export class CareerInfoDto {
 
   @ApiProperty()
   work_experience_employer?: string;
-
-  @ApiProperty()
-  highest_education_level?: string;
-
+}
+export class EducationDto {
   @ApiProperty()
   education_from?: Date;
 
@@ -31,7 +25,8 @@ export class CareerInfoDto {
 
   @ApiProperty()
   education_institute?: string;
-
+}
+export class CourseDto {
   @ApiProperty()
   course_from?: Date;
 
@@ -43,7 +38,8 @@ export class CareerInfoDto {
 
   @ApiProperty()
   course_provider?: string;
-
+}
+export class CertificationDto {
   @ApiProperty()
   certification_from?: Date;
 
@@ -55,11 +51,4 @@ export class CareerInfoDto {
 
   @ApiProperty()
   certification_issuer?: string;
-
-  @ApiProperty()
-  cv_path?: string;
-
-  createdBy?: string;
-
-  updatedBy?: string;
 }
