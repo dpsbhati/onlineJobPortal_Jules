@@ -27,6 +27,7 @@ export class ApplicationService {
   ) {}
 
   async applyForJob(createApplicationDto: CreateApplicationDto) {
+     try {
     const { job_id, user_id, certification_path } = createApplicationDto;
 
     // Validate the certification file format
@@ -121,6 +122,10 @@ export class ApplicationService {
       savedApplication,
       'Application submitted successfully.',
     );
+    } catch (error) {
+    console.error('Error in applyForJob:', error);
+    return WriteResponse(500, {}, 'Something went wrong.');
+  }
   }
 
   async findAll() {
@@ -154,10 +159,6 @@ export class ApplicationService {
       if (!id) {
         return WriteResponse(400, {}, 'Application ID is required');
       }
-
-      console.log('Searching for application with ID:', id);
-      console.log('Searching for 4333333333333 with ID:', id);
-
       const application = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
