@@ -153,7 +153,6 @@ export class JobListComponent implements OnInit {
           'date_published',
           'deadline',
           'status',
-          'statusToggle',
           'number_of_applicant',
           'actions',
         ]
