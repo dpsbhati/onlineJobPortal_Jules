@@ -18,9 +18,7 @@
           <!-- --------------------------------------------------------------- -->
           <!--  Links -->
           <!-- --------------------------------------------------------------- -->
-          <button mat-button class="m-x-8 f-s-16 text-white">
-            About us
-          </button>
+          <button mat-button class="m-x-8 f-s-16 text-white">About us</button>
           <button mat-button class="m-x-8 f-s-16 text-white">
             Ship Management
           </button>
@@ -30,33 +28,40 @@
           <button mat-button class="m-x-8 f-s-16 text-white">
             Job Opportunities
           </button>
-          <button mat-button class="m-x-8 f-s-16 text-white">
-            Contact
+          <button mat-button class="m-x-8 f-s-16 text-white">Contact</button>
+          <button mat-icon-button (click)="goToLogin()">
+            <mat-icon>person</mat-icon>
           </button>
-          <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
-          <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
-              class="material-icons-custom" /></button>
+          <button mat-icon-button>
+            <img
+              src="./assets/images/Icons/search.svg"
+              alt="Logo"
+              class="material-icons-custom"
+            />
+          </button>
 
           <!-- --------------------------------------------------------------- -->
           <!--  Links -->
           <!-- --------------------------------------------------------------- -->
-
-
         </div>
 
         <!-- Mobile Menu -->
-        <button mat-icon-button (click)="filterNavRight.toggle()" class="d-flex d-lg-none">
+        <button
+          mat-icon-button
+          (click)="filterNavRight.toggle()"
+          class="d-flex d-lg-none"
+        >
           <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
         </button>
       </div>
     </mat-toolbar>
-    <div class="container  m-t-48">
-
-      <div class="header justify-content-start d-flex align-items-center m-b-10">
+    <div class="container m-t-48">
+      <div
+        class="header justify-content-start d-flex align-items-center m-b-10"
+      >
         <button (click)="goBack()" mat-mini-fab class="bg-primary text-white">
           <mat-icon>arrow_back</mat-icon>
         </button>
-
 
         <h2 class="m-l-12">Job Details</h2>
       </div>
@@ -68,9 +73,12 @@
               <div class="row w-100 justify-content-between align-items-center">
                 <div class="col-lg-12">
                   <h2 class="m-b-0">{{ jobDetails?.title }}</h2>
-                  <p class="m-t-6 m-b-0">{{jobDetails?.employer }}</p>
+                  <p class="m-t-6 m-b-0">{{ jobDetails?.employer }}</p>
                   <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center">
-                    <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
+                    <i-tabler
+                      name="map-pin"
+                      class="icon-18 caption-icon"
+                    ></i-tabler>
                     {{ jobDetails?.address }}
                   </p>
                 </div>
@@ -84,15 +92,22 @@
                 <div class="col-lg-12 m-b-10">
                   <div class="row m-b-20">
                     <div class="col-lg-3"><strong>Assignment</strong></div>
-                    <div class="col-lg-8">{{ jobDetails?.assignment_duration }}</div>
-                  </div>
-                  <div class="row m-b-20">
-                    <div class="col-lg-3"><strong>Short Description</strong></div>
-                    <div class="col-lg-8">{{ jobDetails?.short_description }}
+                    <div class="col-lg-8">
+                      {{ jobDetails?.assignment_duration }}
                     </div>
                   </div>
                   <div class="row m-b-20">
-                    <div class="col-lg-3"><strong>Full Description</strong></div>
+                    <div class="col-lg-3">
+                      <strong>Short Description</strong>
+                    </div>
+                    <div class="col-lg-8">
+                      {{ jobDetails?.short_description }}
+                    </div>
+                  </div>
+                  <div class="row m-b-20">
+                    <div class="col-lg-3">
+                      <strong>Full Description</strong>
+                    </div>
                     <div class="col-lg-8">
                       {{ jobDetails?.full_description }}
                     </div>
@@ -101,8 +116,13 @@
                     <div class="col-lg-3"><strong>Required Skills</strong></div>
                     <div class="col-lg-8">
                       <div class="d-flex flex-wrap gap-6">
-                        <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills"> {{ skill
-                          }}</button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          *ngFor="let skill of formattedSkills"
+                        >
+                          {{ skill }}
+                        </button>
                         <!-- <button mat-stroked-button color="primary">TypeScript</button>
                                         <button mat-stroked-button color="primary">HTML/CSS</button>
                                         <button mat-stroked-button color="primary">RxJS</button>
@@ -118,34 +138,52 @@
 
         <div class="col-lg-4">
           <mat-card>
-            <img mat-card-image [src]="jobDetails?.featured_image" alt="Job Image" height="250" width="390">
+            <img
+              mat-card-image
+              [src]="jobDetails?.featured_image"
+              alt="Job Image"
+              height="250"
+              width="390"
+            />
             <mat-card-content>
               <div class="row">
                 <div class="col-lg-12 m-b-16">
-                  <strong class="m-r-6">Employment Type:</strong> {{ jobDetails?.job_type }}
+                  <strong class="m-r-6">Employment Type:</strong>
+                  {{ jobDetails?.job_type }}
                 </div>
                 <div class="col-lg-12 m-b-16">
-                  <strong class="m-r-6">Salary:</strong> ${{ jobDetails?.start_salary | number }}
+                  <strong class="m-r-6">Salary:</strong> ${{
+                    jobDetails?.start_salary | number
+                  }}
                 </div>
                 <div class="col-lg-12 m-b-16">
-                  <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date: 'MMM d, y' }}
+                  <strong class="m-r-6">Deadline:</strong>
+                  {{ jobDetails?.deadline | date : "MMM d, y" }}
                 </div>
                 <div class="col-lg-12 m-b-16">
-                  <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }}
+                  <strong class="m-r-6">Experience:</strong>
+                  {{ jobDetails?.required_experience }}
                 </div>
                 <div class="col-lg-12 m-b-16">
-                  <strong class="m-r-6">Posted on:</strong> <span> {{ jobDetails?.posted_date | date: 'MMM d, y'
-                    }}</span>
+                  <strong class="m-r-6">Posted on:</strong>
+                  <span>
+                    {{ jobDetails?.posted_date | date : "MMM d, y" }}</span
+                  >
                 </div>
               </div>
-              <button *ngIf="showApplyButton" mat-flat-button class="w-100" color="primary" (click)="onApplyNowClick()">
+              <button
+                *ngIf="showApplyButton"
+                mat-flat-button
+                class="w-100"
+                color="primary"
+                (click)="onApplyNowClick()"
+              >
                 Apply Now
               </button>
             </mat-card-content>
           </mat-card>
         </div>
       </div>
-
     </div>
 
     <!-- <div
@@ -165,31 +203,127 @@
     </div>
   </div>
 </div> -->
-    <div *ngIf="showLoginSignupDialog" class="dialog-overlay" role="dialog" aria-modal="true"
-      aria-labelledby="dialogTitle" (click)="onCancel()">
+    <div
+      *ngIf="showLoginSignupDialog"
+      class="dialog-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dialogTitle"
+      (click)="onCancel()"
+    >
       <div class="dialog-box" (click)="$event.stopPropagation()">
-        <div class="dialog-header d-flex align-items-center justify-content-between">
+        <div
+          class="dialog-header d-flex align-items-center justify-content-between"
+        >
           <h2 id="dialogTitle" class="m-0">Login or Signup</h2>
-          <button mat-icon-button aria-label="Close dialog" (click)="onCancel()">
+          <button
+            mat-icon-button
+            aria-label="Close dialog"
+            (click)="onCancel()"
+          >
             <i-tabler name="x" class="icon-20"></i-tabler>
           </button>
         </div>
-        <p>To proceed with your job application, please log in to your account or register as a new user.</p>
+        <p>
+          To proceed with your job application, please log in to your account or
+          register as a new user.
+        </p>
         <div class="dialog-actions">
           <button mat-flat-button (click)="onLogin()">Login</button>
-          <button mat-flat-button color="primary" (click)="onSignup()">Signup</button>
+          <button mat-flat-button color="primary" (click)="onSignup()">
+            Signup
+          </button>
           <!-- <button mat-button (click)="onCancel()">Cancel</button> -->
         </div>
       </div>
     </div>
 
+    <!-- //Apply Now// -->
+    <div
+      *ngIf="showApplyModal"
+      class="dialog-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="applyDialogTitle"
+      (click)="closeApplyModal()"
+    >
+      <div class="dialog-box" (click)="$event.stopPropagation()">
+        <div
+          class="dialog-header d-flex align-items-center justify-content-between"
+        >
+          <h2 id="applyDialogTitle" class="m-0">Apply for Job</h2>
+          <button
+            mat-icon-button
+            aria-label="Close dialog"
+            (click)="closeApplyModal()"
+          >
+            <i-tabler name="x" class="icon-20"></i-tabler>
+          </button>
+        </div>
 
+        <p>
+          We'll use your profile data to apply for this job. To make changes,
+          click Edit Profile. Otherwise, click Submit.
+        </p>
+
+        <form [formGroup]="userDetailsForm">
+      <h3 class="additional-info-heading">Additional Information</h3>
+      <mat-form-field appearance="fill" class="w-100 m-b-16">
+        <textarea
+          matInput
+          placeholder="Enter additional information"
+          formControlName="additional_info"
+          rows="4"
+        ></textarea>
+        <mat-error
+          *ngIf="
+            userDetailsForm.get('additional_info')?.hasError('required') &&
+            (userDetailsForm.get('additional_info')?.touched || submitted)
+          "
+        >
+          Additional Information is required.
+        </mat-error>
+        <mat-error
+          *ngIf="
+            userDetailsForm.get('additional_info')?.hasError('maxlength') &&
+            (userDetailsForm.get('additional_info')?.touched || submitted)
+          "
+        >
+          Additional Information cannot exceed 500 characters.
+        </mat-error>
+      </mat-form-field>
+
+        <div class="dialog-actions">
+          <button
+            mat-button
+            class="edit-profile-btn"
+            (click)="goToEditProfile()"
+          >
+            Edit Profile
+          </button>
+          <button
+            mat-flat-button
+            color="primary"
+            class="submit-btn"
+            (click)="submitApplication()"
+          >
+            Submit
+          </button>
+        </div>
+        </form>
+      </div>
+    </div>
   </mat-sidenav-content>
 
   <!-- ------------------------------------------------------------------
     Mobile Sidebar
     ------------------------------------------------------------------ -->
-  <mat-sidenav #filterNavRight mode="over" position="end" class="filter-sidebar">
+  <mat-sidenav
+    #filterNavRight
+    mode="over"
+    position="end"
+    class="filter-sidebar"
+  >
     <a mat-button>About us</a>
     <a mat-button>Ship Management</a>
     <a mat-button>Crew Management</a>
