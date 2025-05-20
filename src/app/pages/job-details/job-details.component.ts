@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core'
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons'
-import { ToastrModule } from 'ngx-toastr';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
@@ -21,13 +21,15 @@ import { ApplyJobComponent } from '../admin/apply-job/apply-job.component';
     FormsModule,
     RouterModule,
     ToastrModule,
-    BrandingComponent
+    BrandingComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
 export class JobDetailsComponent {
-
+  showApplyModal = false;
+  applyAdditionalInfo = '';
 
   jobDetails: any;
   showLoginSignupDialog = false;
@@ -36,6 +38,10 @@ export class JobDetailsComponent {
   id: any;
   userRole: string = '';
   formattedSkills: string[] = [];
+  userDetailsForm: FormGroup;
+  submitted = false;
+  jobId: any;
+  user: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,11 +51,31 @@ export class JobDetailsComponent {
     private loader: LoaderService,
     private authService: AuthService,
     public dialog: MatDialog,
+    private toastr: ToastrService,
+
   ) {
     this.userRole = this.authService.getUserRole();
+    this.userDetailsForm = new FormGroup({
+      job_id: new FormControl(this.jobId),
+      user_id: new FormControl(this.user),
+
+      additional_info: new FormControl('', [
+        Validators.required,
+        // Validators.minLength(5),
+        Validators.maxLength(500),
+        // this.minLengthWithContent(5),
+      ]),
+    });
   }
 
   ngOnInit() {
+      this.jobId = this.route.snapshot.paramMap.get('id') as string;
+       this.user = JSON.parse(localStorage.getItem('user') || '{}');
+   
+    this.userDetailsForm.patchValue({
+      job_id: this.jobId,
+      user_id: this.user?.id
+    });
     this.id = this.route.snapshot.paramMap.get('id') as string;
     if (this.id) {
       this.loadJobDetails(this.id);
@@ -154,20 +180,67 @@ export class JobDetailsComponent {
 
   onApplyNowClick() {
     if (this.authService.isLoggedIn()) {
+      this.showApplyModal = true;
       // Redirect if logged in
-      const dialogRef = this.dialog.open(ApplyJobComponent, {
-        // disableClose: true,
-        data: { jobId: this.id }
-      });
+      // const dialogRef = this.dialog.open(ApplyJobComponent, {
+      //   // disableClose: true,
+      //   data: { jobId: this.id }
+      // });
 
-      dialogRef.afterClosed().subscribe((result) => {
-        // console.log(`Dialog result: ${result}`);
-        this.dialog.closeAll();
-      });
+      // dialogRef.afterClosed().subscribe((result) => {
+      //   // console.log(`Dialog result: ${result}`);
+      //   this.dialog.closeAll();
+      // });
     } else {
       // Show popup inline in this component
       this.showLoginSignupDialog = true;
     }
+  }
+
+  goToEditProfile() {
+    this.closeApplyModal();
+    this.router.navigate(['/edit-profile']); // apka edit profile route
+  }
+
+  submitApplication(): void {
+    this.loader.show();
+    this.submitted = true;
+
+    if (this.userDetailsForm.valid) {
+      const formData = this.userDetailsForm.value;
+
+      const apiPayload = {
+        ...formData,
+        job_id: this.jobId,
+        user_id: this.user?.id,
+      };
+
+      this.adminService.applyJobs(apiPayload).subscribe({
+        next: (response: any) => {
+          if (response.statusCode === 200) {
+            this.loader.hide();
+            this.toastr.success(response.message);
+            this.router.navigate(['/applicant']);
+          } else {
+            this.toastr.warning(response.message);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        },
+        error: (error: any) => {
+          this.loader.hide();
+          this.toastr.error(error.error?.message || 'Failed to apply for job');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    } else {
+      this.loader.hide();
+    }
+    this.loader.hide();
+  }
+
+  closeApplyModal() {
+    this.showApplyModal = false;
+    this.applyAdditionalInfo = '';
   }
 
   onLogin() {
