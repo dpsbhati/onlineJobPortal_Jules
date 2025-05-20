@@ -132,32 +132,32 @@ export class EditProfileComponent implements OnInit {
 
   firstForm() {
     this.form = this.fb.group({
-      first_name: new FormControl('', [
+      first_name: new FormControl(null, [
         Validators.required,
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
-      last_name: new FormControl('', [
+      last_name: new FormControl(null, [
         Validators.required,
         // Validators.pattern('^[a-zA-Z0-9 ]+$')
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl('', [Validators.required]),
+      dob: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
       mobile: new FormControl(
         '',
-        // this.isApplicant() ?
-        [
-          Validators.required,
-          Validators.pattern('^[0-9]{10}$'),
-          this.mobileNumberValidator
-        ]
-        // : null
+        this.isApplicant() ?
+          [
+            Validators.required,
+            Validators.pattern('^[0-9]{10}$'),
+            this.mobileNumberValidator
+          ]
+          : null
       ),
-      nationalities: new FormControl([], [Validators.required]),
-      country: new FormControl(null, [Validators.required]),
-      location: new FormControl(null, [Validators.required]),
-      dial_code: new FormControl(null, [Validators.required]),
-      profile_image_path: new FormControl(null, [Validators.required]),
+      nationalities: new FormControl([], this.isApplicant() ? [Validators.required] : null),
+      country: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      location: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      dial_code: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      profile_image_path: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
       additional_contact_info: this.fb.array([]),
     })
   }
@@ -631,64 +631,67 @@ export class EditProfileComponent implements OnInit {
         if (response.statusCode === 200 && response.data) {
           const data = response.data
 
-          let keySkills = []
-          if (data.key_skills) {
-            try {
-              keySkills = JSON.parse(data.key_skills).map((skill: string) =>
-                skill.replace('/', '')
-              )
-            } catch (e) {
-              keySkills = Array.isArray(data.key_skills) ? data.key_skills : []
-            }
-          }
+          // let keySkills = []
+          // if (data.key_skills) {
+          //   try {
+          //     keySkills = JSON.parse(data.key_skills).map((skill: string) =>
+          //       skill.replace('/', '')
+          //     )
+          //   } catch (e) {
+          //     keySkills = Array.isArray(data.key_skills) ? data.key_skills : []
+          //   }
+          // }
 
-          const dob = data.dob
-            ? new Date(data.dob).toISOString().split('T')[0]
-            : null
-          const expectedSalary = data.expected_salary
-            ? data.expected_salary
-              .toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            : ''
+          // const dob = data.dob
+          //   ? new Date(data.dob).toISOString().split('T')[0]
+          //   : null
+          // const expectedSalary = data.expected_salary
+          //   ? data.expected_salary
+          //     .toString()
+          //     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+          //   : ''
 
-          this.userProfileForm.patchValue({
-            first_name: data.first_name || '',
-            last_name: data.last_name || '',
-            email: this.userEmail,
-            dob: dob,
-            gender: data.gender || '',
-            mobile: data.mobile || null,
-            key_skills: keySkills,
-            work_experiences: data.work_experiences || '',
-            current_company: data.current_company || '',
-            expected_salary: expectedSalary
-          })
-
+          // this.userProfileForm.patchValue({
+          //   first_name: data.first_name || '',
+          //   last_name: data.last_name || '',
+          //   email: this.userEmail,
+          //   dob: dob,
+          //   gender: data.gender || '',
+          //   mobile: data.mobile || null,
+          //   key_skills: keySkills,
+          //   work_experiences: data.work_experiences || '',
+          //   current_company: data.current_company || '',
+          //   expected_salary: expectedSalary
+          // })
+          this.form.patchValue(response.data);
+          this.secondForm.patchValue(response.data);
+          this.thirdForm.patchValue(response.data);
+          this.fourthForm.patchValue(response.data);
           this.userId = data.id || userId
-          this.skillsArray = keySkills
-          this.userProfileForm.markAsPristine()
+          // this.skillsArray = keySkills
+          // this.userProfileForm.markAsPristine()
 
-          if (this.isApplicant()) {
-            const applicantControls = [
-              'dob',
-              'gender',
-              'mobile',
-              'key_skills',
-              'work_experiences',
-              'expected_salary'
-            ]
-            applicantControls.forEach(controlName => {
-              const control = this.userProfileForm.get(controlName)
-              if (control) {
-                control.setValidators([Validators.required])
-                control.updateValueAndValidity()
-              }
-            })
-          }
-        } else {
-          this.toaster.error(
-            response.message || 'Failed to retrieve user profile data'
-          )
+          //   if (this.isApplicant()) {
+          //     const applicantControls = [
+          //       'dob',
+          //       'gender',
+          //       'mobile',
+          //       'key_skills',
+          //       'work_experiences',
+          //       'expected_salary'
+          //     ]
+          //     applicantControls.forEach(controlName => {
+          //       const control = this.userProfileForm.get(controlName)
+          //       if (control) {
+          //         control.setValidators([Validators.required])
+          //         control.updateValueAndValidity()
+          //       }
+          //     })
+          //   }
+          // } else {
+          //   this.toaster.error(
+          //     response.message || 'Failed to retrieve user profile data'
+          //   )
         }
       },
       error: (error: any) => {
