@@ -234,10 +234,20 @@ export class JobListComponent implements OnInit {
 }
 
 
-  onSearch(): void {
-    this.pageConfig.curPage = 1;
-    this.onPagination();
+  // onSearch(): void {
+
+  //   this.pageConfig.curPage = 1;
+  //   this.onPagination();
+  // }
+onSearch(): void {
+  // Trim leading and trailing spaces from search text
+  if (this.filters.all) {
+    this.filters.all = this.filters.all.trim();
   }
+
+  this.pageConfig.curPage = 1;
+  this.onPagination();
+}
 
   onInputChange(event: any): void {
     if (!this.filters.all) {
