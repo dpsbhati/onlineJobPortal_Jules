@@ -93,12 +93,14 @@ export class UserProfileService {
   //   }
   // }
 
-  async create(createUserProfileDto: CreateUserProfileDto, user_id: string) {
+  async create(createUserProfileDto: CreateUserProfileDto, user_id: string,req) {
     try {
       // Validate DOB format
+      if(req.user.role !== 'admin') {
       if (!moment(createUserProfileDto.dob, moment.ISO_8601, true).isValid()) {
         return WriteResponse(400, {}, 'Invalid datetime format for dob.');
       }
+    }
 
       const formattedDob = moment(createUserProfileDto.dob).toISOString();
 
@@ -194,6 +196,42 @@ export class UserProfileService {
       if (profile.user?.userProfile) {
         delete profile.user.userProfile;
         delete profile.user.password;
+      }
+
+      const userProfile = profile.user.userProfile;
+
+      // List all fields that need JSON parsing
+      const jsonFields = [
+        'nationalities',
+        'additional_contact_info',
+        'work_experience_info',
+        'education_info',
+        'course_info',
+        'certification_info',
+        'other_experience_info',
+        'project_info',
+        'language_spoken_info',
+        'language_written_info',
+        'notice_period_info',
+        'current_salary_info',
+        'expected_salary_info',
+        'preferences_info',
+        'additional_info',
+        'vacancy_source_info',
+      ];
+
+      // Parse JSON fields safely
+      for (const field of jsonFields) {
+        if (userProfile[field]) {
+          try {
+            userProfile[field] = JSON.parse(userProfile[field]);
+          } catch {
+            // If parsing fails, keep original or set to null/empty array as needed
+            userProfile[field] = null; // or userProfile[field] = userProfile[field];
+          }
+        } else {
+          userProfile[field] = null;
+        }
       }
 
       return WriteResponse(

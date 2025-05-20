@@ -34,7 +34,7 @@ export class UserProfileController {
   @ApiOperation({ summary: 'Update user profile' })
   async create(@Body() createUserProfileDto: CreateUserProfileDto, @Req() req) {
     const user_id = req.user.id;
-    return this.userProfileService.create(createUserProfileDto, user_id);
+    return this.userProfileService.create(createUserProfileDto, user_id,req);
   }
 
 

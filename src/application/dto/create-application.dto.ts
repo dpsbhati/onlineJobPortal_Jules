@@ -51,12 +51,12 @@ export class CreateApplicationDto {
     description: 'Additional information provided by the applicant (optional).',
     example: 'Looking for a flexible work schedule.',
   })
-  @IsString({ message: 'additional_info must be a valid string.' })
-  @Validate(IsNotWhitespace)
-  @Transform(({ value }) => value?.trim())
-  @IsOptional()
-  @MaxLength(500, {
-    message: 'Additional information cannot exceed 500 characters.',
-  })
+  // @IsString({ message: 'additional_info must be a valid string.' })
+  // @Validate(IsNotWhitespace)
+  // @Transform(({ value }) => value?.trim())
+  // @IsOptional()
+  // @MaxLength(500, {
+  //   message: 'Additional information cannot exceed 500 characters.',
+  // })
   additional_info?: string;
 }
