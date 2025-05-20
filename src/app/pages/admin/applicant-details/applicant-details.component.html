@@ -87,13 +87,9 @@
            <div class="row m-b-16">
             <div class="col-lg-4"><label>Nationalities:</label></div>
             <div class="col-lg-8">
-              <strong>
-                {{
-                  (applicantDetails.user.userProfile?.dial_code
-                    ? applicantDetails.user.userProfile.dial_code + " "
-                    : "") + (applicantDetails.user.userProfile?.mobile || "-")
-                }}
-              </strong>
+              <strong>{{
+                applicantDetails.user.userProfile?.nationalities || '-'
+              }}</strong>
             </div>
           </div>
 
@@ -101,11 +97,7 @@
             <div class="col-lg-4"><label>Country of Residence:</label></div>
             <div class="col-lg-8">
               <strong>
-                {{
-                  (applicantDetails.user.userProfile?.dial_code
-                    ? applicantDetails.user.userProfile.dial_code + " "
-                    : "") + (applicantDetails.user.userProfile?.mobile || "-")
-                }}
+                {{applicantDetails.user.userProfile?.country || '-'}}
               </strong>
             </div>
           </div>
@@ -114,11 +106,7 @@
             <div class="col-lg-4"><label>Location:</label></div>
             <div class="col-lg-8">
               <strong>
-                {{
-                  (applicantDetails.user.userProfile?.dial_code
-                    ? applicantDetails.user.userProfile.dial_code + " "
-                    : "") + (applicantDetails.user.userProfile?.mobile || "-")
-                }}
+               {{applicantDetails.user.userProfile?.location || '-'}}
               </strong>
             </div>
           </div>
@@ -150,7 +138,7 @@
             <div class="col-lg-4"><label>Highest Education Level:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.work_experiences || "-"
+                applicantDetails.user.userProfile?.highest_education_level || "-"
               }}</strong>
             </div>
           </div>
@@ -159,7 +147,7 @@
             <div class="col-lg-4"><label>Education:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.work_experiences || "-"
+                applicantDetails.user.userProfile?.education_info || "-"
               }}</strong>
             </div>
           </div>
@@ -168,7 +156,7 @@
             <div class="col-lg-4"><label>Courses:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.work_experiences || "-"
+                applicantDetails.user.userProfile?.course_info || "-"
               }}</strong>
             </div>
           </div>
@@ -213,7 +201,7 @@
             <div class="col-lg-4"><label>Other Experience:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.current_company || "-"
+                applicantDetails.user.userProfile?.other_experience_info || "-"
               }}</strong>
             </div>
           </div>
@@ -221,7 +209,7 @@
             <div class="col-lg-4"><label>Projects:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.work_experiences || "-"
+                applicantDetails.user.userProfile?.project_info || "-"
               }}</strong>
             </div>
           </div>
@@ -278,28 +266,28 @@
           <div class="row m-b-16" *ngIf="applicantDetails.description">
             <div class="col-lg-4"><label>Language Skills - Spoken:</label></div>
             <div class="col-lg-8">
-              <strong>{{ applicantDetails.description || "-" }}</strong>
+              <strong>{{ applicantDetails.user.userProfile?.language_spoken_info || "-" }}</strong>
             </div>
           </div>
 
           <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
             <div class="col-lg-4"><label>Language Skills - Written:</label></div>
             <div class="col-lg-8">
-              <strong>{{ applicantDetails.additional_info || "-" }}</strong>
+               <strong>{{ applicantDetails.user.userProfile?.language_written_info || "-" }}</strong>
             </div>
           </div>
 
            <div class="row m-b-16" *ngIf="applicantDetails.description">
             <div class="col-lg-4"><label>Notice Period and Availability:</label></div>
             <div class="col-lg-8">
-              <strong>{{ applicantDetails.description || "-" }}</strong>
+                <strong>{{ applicantDetails.user.userProfile?.notice_period_info || "-" }}</strong>
             </div>
           </div>
 
           <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
             <div class="col-lg-4"><label>Current Salary (Annual):</label></div>
             <div class="col-lg-8">
-              <strong>{{ applicantDetails.additional_info || "-" }}</strong>
+              <strong>{{ applicantDetails.user.userProfile?.current_salary || "-" }}</strong>
             </div>
           </div>
         </mat-card-content>

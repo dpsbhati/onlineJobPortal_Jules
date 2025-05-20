@@ -84,6 +84,10 @@ export class EditProfileComponent implements OnInit {
   form: FormGroup;
   secondForm: FormGroup;
   thirdForm: FormGroup;
+  fourthForm: FormGroup;
+  fileError: string | null = null;
+  fileUploaded: File | null = null;
+  uploadedFileName: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -115,7 +119,15 @@ export class EditProfileComponent implements OnInit {
     this.firstForm();
     this.second();
     this.Third();
-    this.addContact()
+    this.fourth();
+    this.addContact();
+    this.addWorkExp();
+    this.addCourse();
+    this.addCertificate();
+    this.addOtherExp();
+    this.addProjects();
+    this.addLangSpoken();
+    this.addLangWritten();
   }
 
   firstForm() {
@@ -133,13 +145,13 @@ export class EditProfileComponent implements OnInit {
       dob: new FormControl('', [Validators.required]),
       mobile: new FormControl(
         '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.pattern('^[0-9]{10}$'),
-            this.mobileNumberValidator
-          ]
-          : null
+        // this.isApplicant() ?
+        [
+          Validators.required,
+          Validators.pattern('^[0-9]{10}$'),
+          this.mobileNumberValidator
+        ]
+        // : null
       ),
       nationalities: new FormControl([], [Validators.required]),
       country: new FormControl(null, [Validators.required]),
@@ -157,14 +169,44 @@ export class EditProfileComponent implements OnInit {
       course_info: this.fb.array([]),
       certification_info: this.fb.array([]),
       cv_path: new FormControl(null),
+      highest_education_level: new FormControl(null)
     })
   }
 
   Third() {
     this.thirdForm = this.fb.group({
-      country: [''],
-      location: [''],
+      other_experience_info: this.fb.array([]),
+      project_info: this.fb.array([]),
     })
+  }
+
+  fourth() {
+    this.fourthForm = this.fb.group({
+      language_spoken_info: this.fb.array([]),
+      language_written_info: this.fb.array([]),
+      notice_period_info: this.fb.group({
+        notice_period_months: [0, Validators.min(0)],
+        commence_work_date: [null]
+      }),
+      current_salary_info: this.fb.group({
+        currency: [''],
+        amount: [0, Validators.min(0)]
+      }),
+      expected_salary_info: this.fb.group({
+        currency: [''],
+        amount: [0, Validators.min(0)]
+      }),
+      preferences_info: this.fb.group({
+        department: [[]],
+        location: [[]]
+      }),
+      additional_info: this.fb.group({
+        additional_info: ['']
+      }),
+      vacancy_source_info: this.fb.group({
+        vacancy_source: ['']
+      })
+    });
   }
 
   isAdmin(): boolean {
@@ -465,36 +507,35 @@ export class EditProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.form);
-    if (this.userProfileForm.invalid) {
-      Object.keys(this.userProfileForm.controls).forEach(key => {
-        const control = this.userProfileForm.get(key)
-        if (control?.invalid) {
-          control.markAsTouched()
-          this.showValidationMessage(key)
-        }
-      })
-      this.scrollToTop()
-      return
-    }
+    // if (this.userProfileForm.invalid) {
+    //   Object.keys(this.userProfileForm.controls).forEach(key => {
+    //     const control = this.userProfileForm.get(key)
+    //     if (control?.invalid) {
+    //       control.markAsTouched()
+    //       this.showValidationMessage(key)
+    //     }
+    //   })
+    //   this.scrollToTop()
+    //   return
+    // }
     this.loader.show()
 
-    const formValues = this.userProfileForm.value
-    // Format the Date of Birth (dob) if it's set
-    if (formValues.dob) {
-      formValues.dob = this.formatDate(formValues.dob)
-    }
-    const formattedSkills = formValues.key_skills.map(
-      (skill: string) => `/${skill}`
-    )
+    // const formValues = this.userProfileForm.value
+    // // Format the Date of Birth (dob) if it's set
+    // if (formValues.dob) {
+    //   formValues.dob = this.formatDate(formValues.dob)
+    // }
+    // const formattedSkills = formValues.key_skills.map(
+    //   (skill: string) => `/${skill}`
+    // )
 
     const payload = {
-      ...formValues,
-      key_skills: JSON.stringify(formattedSkills),
-      mobile: formValues.mobile ? +formValues.mobile : null,
-      role: this.userRole
+      ...this.form.value,
+      ...this.secondForm.value,
+      ...this.thirdForm.value,
+      ...this.fourthForm.value
     }
-
+    console.log(payload);
     this.userService.SaveUserProfile(payload).subscribe({
       next: (response: any) => {
         this.loader.hide()
@@ -780,8 +821,8 @@ export class EditProfileComponent implements OnInit {
   addContact() {
     (this.form.get('additional_contact_info') as FormArray).push(
       this.fb.group({
-        contact_type: new FormControl(['']),
-        value: new FormControl([''])
+        contact_type: new FormControl(null),
+        value: new FormControl(null)
       })
     )
   }
@@ -793,10 +834,10 @@ export class EditProfileComponent implements OnInit {
   addWorkExp() {
     (this.secondForm.get('work_experience_info') as FormArray).push(
       this.fb.group({
-        work_experience_from: new FormControl(['']),
-        work_experience_to: new FormControl(['']),
-        work_experience_title: new FormControl(['']),
-        work_experience_employer: new FormControl([''])
+        work_experience_from: new FormControl(null),
+        work_experience_to: new FormControl(null),
+        work_experience_title: new FormControl(null),
+        work_experience_employer: new FormControl(null)
       })
     )
   }
@@ -808,10 +849,39 @@ export class EditProfileComponent implements OnInit {
   addEducation() {
     (this.secondForm.get('education_info') as FormArray).push(
       this.fb.group({
-        education_from: new FormControl(['']),
-        education_to: new FormControl(['']),
-        education_title: new FormControl(['']),
-        education_institute: new FormControl([''])
+        education_from: new FormControl(null),
+        education_to: new FormControl(null),
+        education_title: new FormControl(null),
+        education_institute: new FormControl(null)
+      })
+    )
+  }
+
+  getOtherExp() {
+    return (this.thirdForm.get('other_experience_info') as FormArray).controls;
+  }
+
+  addOtherExp() {
+    (this.thirdForm.get('other_experience_info') as FormArray).push(
+      this.fb.group({
+        other_experience_from: new FormControl(null),
+        other_experience_to: new FormControl(null),
+        other_experience_description: new FormControl(null)
+      })
+    )
+  }
+
+  getProjects() {
+    return (this.thirdForm.get('project_info') as FormArray).controls;
+  }
+
+  addProjects() {
+    (this.thirdForm.get('project_info') as FormArray).push(
+      this.fb.group({
+        project_from: new FormControl(null),
+        project_to: new FormControl(null),
+        project_name: new FormControl(null),
+        project_role: new FormControl(null)
       })
     )
   }
@@ -823,10 +893,10 @@ export class EditProfileComponent implements OnInit {
   addCourse() {
     (this.secondForm.get('course_info') as FormArray).push(
       this.fb.group({
-        course_from: new FormControl(['']),
-        course_to: new FormControl(['']),
-        course_title: new FormControl(['']),
-        course_provider: new FormControl([''])
+        course_from: new FormControl(null),
+        course_to: new FormControl(null),
+        course_title: new FormControl(null),
+        course_provider: new FormControl(null)
       })
     )
   }
@@ -838,16 +908,66 @@ export class EditProfileComponent implements OnInit {
   addCertificate() {
     (this.secondForm.get('certification_info') as FormArray).push(
       this.fb.group({
-        certification_from: new FormControl(['']),
-        certification_to: new FormControl(['']),
-        certification_title: new FormControl(['']),
-        certification_issuer: new FormControl([''])
+        certification_from: new FormControl(null),
+        certification_to: new FormControl(null),
+        certification_title: new FormControl(null),
+        certification_issuer: new FormControl(null)
       })
     )
   }
 
+  addLangSpoken() {
+    (this.fourthForm.get('language_spoken_info') as FormArray).push(
+      this.fb.group({
+        language: new FormControl(null),
+        proficiency: new FormControl(null)
+      })
+    )
+  }
+
+  addLangWritten() {
+    (this.fourthForm.get('language_written_info') as FormArray).push(
+      this.fb.group({
+        language: new FormControl(null),
+        proficiency: new FormControl(null)
+      })
+    )
+  }
+
+  removeLangSpoken(index: number) {
+    (this.fourthForm.get('language_spoken_info') as FormArray).removeAt(index)
+  }
+
+  removeLangWritten(index: number) {
+    (this.fourthForm.get('language_written_info') as FormArray).removeAt(index)
+  }
+
   removeContact(index: number) {
     (this.form.get('additional_contact_info') as FormArray).removeAt(index)
+  }
+
+  removeWorkExp(index: number) {
+    (this.secondForm.get('work_experience_info') as FormArray).removeAt(index)
+  }
+
+  removeEducation(index: number) {
+    (this.form.get('education_info') as FormArray).removeAt(index)
+  }
+
+  removeCourse(index: number) {
+    (this.secondForm.get('course_info') as FormArray).removeAt(index)
+  }
+
+  removeCertificate(index: number) {
+    (this.secondForm.get('certification_info') as FormArray).removeAt(index)
+  }
+
+  removeOtherExp(index: number) {
+    (this.thirdForm.get('other_experience_info') as FormArray).removeAt(index)
+  }
+
+  removeProjects(index: number) {
+    (this.thirdForm.get('project_info') as FormArray).removeAt(index)
   }
 
   getFileName(path: string | null): string {
@@ -915,8 +1035,69 @@ export class EditProfileComponent implements OnInit {
     }
   }
 
-  workExperiences = [{}] // allow dynamic add/remove later
-  educations = [{}]
-  courses = [{}]
-  certifications = [{}]
+  onFileChange(event: Event, controlName: string): void {
+    console.log(event)
+    const fileInput = event.target as HTMLInputElement;
+    const files = fileInput?.files;
+
+    if (!files) {
+      return;
+    }
+
+    const validFormats = ['application/pdf', 'application/msword'];
+    const maxFileSize = 5 * 1024 * 1024;
+
+    const file = files[0];
+
+    if (!validFormats.includes(file.type)) {
+      this.fileError = 'Invalid file format. Only PDF files are allowed.';
+      this.uploadedFileName = null;
+      return;
+    }
+
+    if (file.size > maxFileSize) {
+      this.fileError = 'File size should not exceed 5 MB.';
+      return;
+    }
+    this.loader.show();
+
+    this.fileError = null;
+    this.fileUploaded = file;
+    this.uploadedFileName = file.name
+
+    // Make API call for CV upload
+    const folderName = 'user-details';
+    const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
+
+    this.adminService.uploadFile({ folderName, file, userId }).subscribe(
+      (response: any) => {
+        if (response.statusCode === 200) {
+          // this.toastr.success(response.message);
+          this.secondForm.patchValue({
+            [controlName]: response.data.path
+          });
+          this.loader.hide();
+        } else {
+          // this.toastr.warning(response.message);
+          this.loader.hide();
+        }
+      },
+      error => {
+        // this.toastr.error('Error uploading CV file. Please try again.');
+        console.error(error);
+      }
+    );
+
+    // Reset file input to allow selecting the same file again
+    fileInput.value = '';
+  }
+
+  getlanguageSpoken() {
+    return (this.fourthForm.get('language_spoken_info') as FormArray).controls;
+  }
+
+  getlanguageWritten() {
+    return (this.fourthForm.get('language_written_info') as FormArray).controls;
+  }
+
 }
