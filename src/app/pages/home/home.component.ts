@@ -56,12 +56,25 @@ export class HomeComponent {
    isLoading: boolean = false;
     total: number = 0;
    jobPostingList:any;
+  //  pageConfig: any = {
+  //   curPage: 1,
+  //   perPage: 9,
+  //   sortBy: "created_at",
+  //   direction: "desc",
+  //   whereClause: [],
+  // }
    pageConfig: any = {
     curPage: 1,
     perPage: 9,
     sortBy: "created_at",
     direction: "desc",
-    whereClause: [],
+    whereClause: [
+      {
+        key: "isActive",
+        value: true,
+        operator: "="
+      }
+    ],
   }
   // ranks = ['Captain', 'Chief Engineer', 'Oiler']
   employers = ['Maersk', 'Anglo-Eastern', 'Bernhard Schulte']
@@ -96,6 +109,18 @@ export class HomeComponent {
         this.uniqueRanks = [...new Set(allRanks)] as string[];
       }
     });
+  }
+   private ensureIsActiveFilter() {
+    const exists = this.pageConfig.whereClause.some(
+      (filter: any) => filter.key === 'isActive'
+    );
+    if (!exists) {
+      this.pageConfig.whereClause.push({
+        key: 'isActive',
+        operator: '=',
+        value: true,
+      });
+    }
   }
   onRankChange(rankValue: string): void {
   this.pageConfig.curPage = 1;  // reset page on filter change
