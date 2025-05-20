@@ -57,21 +57,18 @@ import { MaterialModule } from 'src/app/material.module'
   styleUrls: ['./edit-profile.component.scss']
 })
 export class EditProfileComponent implements OnInit {
-  firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required]
-  })
-  secondFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required]
-  })
-  threeFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required]
-  })
+  // secondFormGroup = this._formBuilder.group({
+  //   secondCtrl: ['', Validators.required]
+  // })
+  // threeFormGroup = this._formBuilder.group({
+  //   secondCtrl: ['', Validators.required]
+  // })
   // Example arrays - aap apne actual data se replace kar dena
-countriesLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
-proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
-currencyList = ['USD', 'EUR', 'PKR', 'GBP', 'INR'];
-departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
-vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
+  countriesLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
+  proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
+  currencyList = ['USD', 'EUR', 'PKR', 'GBP', 'INR'];
+  departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
+  vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
 
   skillsArray: string[] = []
   newSkill: string = ''
@@ -85,8 +82,11 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
   errorMessage: string = ''
   userId: string | null = null
   userEmail: string = ''
+  form: FormGroup;
+  secondForm: FormGroup;
+  thirdForm: FormGroup;
 
-  constructor (
+  constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private route: ActivatedRoute,
@@ -98,10 +98,9 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     private _formBuilder: FormBuilder
   ) {
     this.userRole = localStorage.getItem('role') || ''
-    // console.log('Current user role:', this.userRole);
   }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     this.initializeForm()
     const userStr = localStorage.getItem('user')
 
@@ -114,8 +113,45 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
         this.loadUserData(user.id)
       }
     }
+    this.firstForm();
+    this.second();
+    this.Third();
+    this.addContact()
+  }
 
+  firstForm() {
     this.form = this.fb.group({
+      first_name: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z ]*$')
+      ]),
+      last_name: new FormControl('', [
+        Validators.required,
+        // Validators.pattern('^[a-zA-Z0-9 ]+$')
+        Validators.pattern('^[a-zA-Z ]*$')
+      ]),
+      email: new FormControl({ value: this.userEmail || '', disabled: true }),
+      dob: new FormControl('', [Validators.required, this.dobValidator]),
+      mobile: new FormControl(
+        '',
+        this.isApplicant()
+          ? [
+            Validators.required,
+            Validators.pattern('^[0-9]{10}$'),
+            this.mobileNumberValidator
+          ]
+          : null
+      ),
+      nationalities: new FormControl([]),
+      country: new FormControl(null),
+      location: new FormControl(null),
+      dial_code: new FormControl(null),
+      additionalContacts: this.fb.array([])
+    })
+  }
+
+  second() {
+    this.secondForm = this.fb.group({
       firstName: [''],
       lastName: [''],
       email: [''],
@@ -128,19 +164,48 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
       profileImage: [null],
       additionalContacts: this.fb.array([])
     })
-
-    this.addContact()
   }
 
-  isAdmin (): boolean {
+  Third() {
+    this.thirdForm = this.fb.group({
+      first_name: new FormControl('', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z ]*$')
+      ]),
+      last_name: new FormControl('', [
+        Validators.required,
+        // Validators.pattern('^[a-zA-Z0-9 ]+$')
+        Validators.pattern('^[a-zA-Z ]*$')
+      ]),
+      email: new FormControl({ value: this.userEmail || '', disabled: true }),
+      dob: new FormControl('', [Validators.required, this.dobValidator]), dialCode: [''],
+      mobile: new FormControl(
+        '',
+        this.isApplicant()
+          ? [
+            Validators.required,
+            Validators.pattern('^[0-9]{10}$'),
+            this.mobileNumberValidator
+          ]
+          : null
+      ),
+      nationality: [[]],
+      country: [''],
+      location: [''],
+      profileImage: [null],
+      additionalContacts: this.fb.array([])
+    })
+  }
+
+  isAdmin(): boolean {
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase()
   }
 
-  isApplicant (): boolean {
+  isApplicant(): boolean {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase()
   }
 
-  initializeForm (): void {
+  initializeForm(): void {
     this.userProfileForm = new FormGroup({
       first_name: new FormControl('', [
         Validators.required,
@@ -161,52 +226,52 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
         '',
         this.isApplicant()
           ? [
-              Validators.required,
-              Validators.pattern('^[0-9]{10}$'),
-              this.mobileNumberValidator
-            ]
+            Validators.required,
+            Validators.pattern('^[0-9]{10}$'),
+            this.mobileNumberValidator
+          ]
           : null
       ),
       key_skills: new FormControl(
         [],
         this.isApplicant()
           ? [
-              Validators.required,
-              Validators.min(2),
-              Validators.maxLength(50),
-              this.SkillArrayValidator(1, 10),
-              this.skillsValidator(2, 50)
-            ]
+            Validators.required,
+            Validators.min(2),
+            Validators.maxLength(50),
+            this.SkillArrayValidator(1, 10),
+            this.skillsValidator(2, 50)
+          ]
           : null
       ),
       work_experiences: new FormControl(
         '',
         this.isApplicant()
           ? [
-              Validators.required,
-              this.twoDigitWorkExperienceValidator.bind(this)
-            ]
+            Validators.required,
+            this.twoDigitWorkExperienceValidator.bind(this)
+          ]
           : null
       ),
       current_company: new FormControl(
         '',
         this.isApplicant()
           ? [
-              Validators.required,
-              Validators.pattern('^[a-zA-Z0-9 ]+$'),
-              Validators.maxLength(100)
-            ]
+            Validators.required,
+            Validators.pattern('^[a-zA-Z0-9 ]+$'),
+            Validators.maxLength(100)
+          ]
           : null
       ),
       expected_salary: new FormControl(
         '',
         this.isApplicant()
           ? [
-              Validators.required,
-              Validators.pattern('^[0-9]*$'),
-              Validators.min(1),
-              this.expectedSalaryValidator()
-            ]
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+            Validators.min(1),
+            this.expectedSalaryValidator()
+          ]
           : null
       )
     })
@@ -214,9 +279,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     Object.keys(this.userProfileForm.controls).forEach(key => {
       const control = this.userProfileForm.get(key)
       if (control) {
-        console.log(key, 'Control')
         control.valueChanges.subscribe(() => {
-          console.log('touched', control.touched, key)
           if (control.touched) {
             this.showValidationMessage(key)
           }
@@ -224,11 +287,10 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
       }
     })
 
-    console.log(this.userProfileForm)
     // this.addTrimValidators();
   }
 
-  skillsValidator (minLength: number, maxLength: number): ValidatorFn {
+  skillsValidator(minLength: number, maxLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const skills = control.value
       if (!Array.isArray(skills)) {
@@ -256,7 +318,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  SkillArrayValidator (min: number, max: number): ValidatorFn {
+  SkillArrayValidator(min: number, max: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const skills = control.value
       if (!Array.isArray(skills)) {
@@ -272,7 +334,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  mobileNumberValidator (control: AbstractControl): ValidationErrors | null {
+  mobileNumberValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value
     if (!value) return null
     const mobileStr = value.toString().trim()
@@ -282,7 +344,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     return null
   }
 
-  onMobileInput () {
+  onMobileInput() {
     const mobileControl = this.userProfileForm.get('mobile')
     if (mobileControl && mobileControl.value) {
       const digitsOnly = mobileControl.value
@@ -298,11 +360,10 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  showValidationMessage (fieldName: string) {
+  showValidationMessage(fieldName: string) {
     const control = this.userProfileForm.get(fieldName)
     if (control?.invalid && control.touched) {
       const errors = control.errors
-      console.log(errors, 'ERRORS')
       if (errors) {
         if (errors['required']) {
           this.toaster.warning(`${this.formatFieldName(fieldName)} is required`)
@@ -324,7 +385,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
       }
     }
   }
-  dobValidator (control: AbstractControl): ValidationErrors | null {
+  dobValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value
     if (!value) {
       return null // No value means we don't show any error yet (waiting for the user to type something)
@@ -340,14 +401,14 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     return null // Return null when the date format is valid
   }
 
-  private formatFieldName (fieldName: string): string {
+  private formatFieldName(fieldName: string): string {
     return fieldName
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
 
-  get isUpdateButtonDisabled (): boolean {
+  get isUpdateButtonDisabled(): boolean {
     if (this.isAdmin()) {
       const firstNameValue = this.userProfileForm?.get('first_name')?.value
       const lastNameValue = this.userProfileForm?.get('last_name')?.value
@@ -390,7 +451,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     return true
   }
 
-  addTrimValidators (): void {
+  addTrimValidators(): void {
     Object.keys(this.userProfileForm.controls).forEach(controlName => {
       const control = this.userProfileForm.get(controlName)
       if (control) {
@@ -406,7 +467,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     })
   }
 
-  twoDigitWorkExperienceValidator (
+  twoDigitWorkExperienceValidator(
     control: AbstractControl
   ): ValidationErrors | null {
     const value = control.value
@@ -421,7 +482,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     return null
   }
 
-  formatSalary (controlName: string): void {
+  formatSalary(controlName: string): void {
     const control = this.userProfileForm.get(controlName)
     if (control && control.value) {
       const unformattedValue = control.value.toString().replace(/[^0-9]/g, '')
@@ -433,7 +494,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  onSubmit (): void {
+  onSubmit(): void {
     if (this.userProfileForm.invalid) {
       Object.keys(this.userProfileForm.controls).forEach(key => {
         const control = this.userProfileForm.get(key)
@@ -476,7 +537,6 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
       },
       error: error => {
         this.loader.hide()
-        console.error('Error updating profile:', error)
         this.toaster.error(
           error.error?.message || 'An error occurred while updating the profile'
         )
@@ -486,7 +546,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
   }
 
   // Helper function to format the Date of Birth to YYYY-MM-DD format
-  formatDate (date: Date): string {
+  formatDate(date: Date): string {
     // Set the time to midnight to avoid timezone issues
     const localDate = new Date(date)
     localDate.setHours(0, 0, 0, 0) // Set the time to midnight
@@ -498,7 +558,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     return `${year}-${month}-${day}` // Returns in 'YYYY-MM-DD' format
   }
 
-  restrictToNumbers (event: KeyboardEvent): void {
+  restrictToNumbers(event: KeyboardEvent): void {
     const inputChar = String.fromCharCode(event.charCode)
     const inputElement = event.target as HTMLInputElement
     const currentValue = inputElement.value
@@ -528,7 +588,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  onBlur (event: FocusEvent): void {
+  onBlur(event: FocusEvent): void {
     const inputElement = event.target as HTMLInputElement
     const value = inputElement.value
 
@@ -549,7 +609,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  loadUserData (userId: string): void {
+  loadUserData(userId: string): void {
     this.loader.show()
 
     this.userService.getUserById(userId).subscribe({
@@ -566,7 +626,6 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
                 skill.replace('/', '')
               )
             } catch (e) {
-              console.warn('Error parsing key_skills:', e)
               keySkills = Array.isArray(data.key_skills) ? data.key_skills : []
             }
           }
@@ -576,8 +635,8 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
             : null
           const expectedSalary = data.expected_salary
             ? data.expected_salary
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             : ''
 
           this.userProfileForm.patchValue({
@@ -622,16 +681,15 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
       },
       error: (error: any) => {
         this.loader.hide()
-        console.error('Error fetching user profile data:', error)
         this.toaster.error(
           error.error?.message ||
-            'An error occurred while fetching user profile data'
+          'An error occurred while fetching user profile data'
         )
       }
     })
   }
 
-  addSkill (): void {
+  addSkill(): void {
     const skill = this.newSkill.trim()
     if (!skill) {
       //  this.toaster.warning('Skill cannot be empty.');
@@ -652,26 +710,26 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  removeSkill (index: number): void {
+  removeSkill(index: number): void {
     this.skillsArray.splice(index, 1)
     this.updateSkillsInForm()
   }
 
-  updateSkillsInForm (): void {
+  updateSkillsInForm(): void {
     this.userProfileForm.get('key_skills')?.setValue(this.skillsArray)
     this.userProfileForm.get('key_skills')?.markAsTouched()
   }
 
-  onSkillEnter (event: any): void {
+  onSkillEnter(event: any): void {
     event.preventDefault() // prevent form submit or validation triggering
     this.addSkill()
   }
 
-  preventFormSubmit (event: any): void {
+  preventFormSubmit(event: any): void {
     event.preventDefault() // Prevent form-wide submit behavior
     event.stopPropagation() // Stop the event from bubbling up
   }
-  onInputFocus (): void {
+  onInputFocus(): void {
     // Manually mark the input field as touched to trigger validation error
     this.userProfileForm.get('key_skills')?.markAsTouched()
   }
@@ -687,7 +745,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
   //     return null;
   //   };
   // }
-  expectedSalaryValidator (): ValidatorFn {
+  expectedSalaryValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value
       if (!value) return null // Allow empty value as valid
@@ -699,15 +757,15 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  navigate () {
+  navigate() {
     this.router.navigate(['job-list'])
   }
 
-  goBack (): void {
+  goBack(): void {
     this.router.navigate(['job-list'])
   }
 
-  private scrollToTop (): void {
+  private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
   // onInputChange(event: Event): void {
@@ -723,7 +781,7 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
   //   }
   // }
 
-  restrictNumeric (event: KeyboardEvent): void {
+  restrictNumeric(event: KeyboardEvent): void {
     const regex = /^[a-zA-Z\s]*$/ // Regex for allowing only alphabets and spaces
     const inputChar = String.fromCharCode(event.charCode)
     if (!regex.test(inputChar)) {
@@ -731,7 +789,6 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     }
   }
 
-  form: FormGroup
 
   countryDialCodes = ['+91', '+1', '+44', '+971']
   countries = ['India', 'USA', 'UK', 'UAE']
@@ -745,26 +802,25 @@ vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement A
     'Whatsapp'
   ]
 
-  get additionalContacts () {
-    return this.form.get('additionalContacts') as FormArray
+  additionalContacts() {
+    return (this.form.get('additionalContacts') as FormArray).controls;
   }
 
-  addContact () {
-    this.additionalContacts.push(
+  addContact() {
+    (this.form.get('additionalContacts') as FormArray).push(
       this.fb.group({
-        type: [''],
-        value: ['']
+        type: new FormControl(['']),
+        value: new FormControl([''])
       })
     )
   }
 
-  removeContact (index: number) {
-    this.additionalContacts.removeAt(index)
+  removeContact(index: number) {
+    (this.form.get('additionalContacts') as FormArray).removeAt(index)
   }
-  onFileSelected (event: any) {
+  onFileSelected(event: any) {
     const file = event.target.files[0]
     if (file) {
-      console.log('Selected file:', file.name)
       this.form.patchValue({ profileImage: file })
       this.form.get('profileImage')?.updateValueAndValidity()
     }
