@@ -39,7 +39,9 @@
               class="material-icons-custom"
             />
           </button>
-          <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
+          <button mat-icon-button (click)="goToLogin()">
+            <mat-icon>person</mat-icon>
+          </button>
           <!-- <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
               class="material-icons-custom" /></button> -->
 
@@ -265,54 +267,55 @@
         </div>
 
         <p>
-          We'll use your profile data to apply for this job. To make changes,
-          click Edit Profile. Otherwise, click Submit.
+          Your application will be submitted using your current profile
+          information. To make any changes before submitting, please select Edit
+          Profile. If no changes are needed, click Submit to Apply.
         </p>
 
         <form [formGroup]="userDetailsForm">
-      <h3 class="additional-info-heading">Additional Information</h3>
-      <mat-form-field appearance="fill" class="w-100 m-b-16">
-        <textarea
-          matInput
-          placeholder="Enter additional information"
-          formControlName="additional_info"
-          rows="4"
-        ></textarea>
-        <mat-error
-          *ngIf="
-            userDetailsForm.get('additional_info')?.hasError('required') &&
-            (userDetailsForm.get('additional_info')?.touched || submitted)
-          "
-        >
-          Additional Information is required.
-        </mat-error>
-        <mat-error
-          *ngIf="
-            userDetailsForm.get('additional_info')?.hasError('maxlength') &&
-            (userDetailsForm.get('additional_info')?.touched || submitted)
-          "
-        >
-          Additional Information cannot exceed 500 characters.
-        </mat-error>
-      </mat-form-field>
+          <h3 class="additional-info-heading">Additional Information</h3>
+          <mat-form-field appearance="fill" class="w-100 m-b-16">
+            <textarea
+              matInput
+              placeholder="Enter additional information"
+              formControlName="additional_info"
+              rows="4"
+            ></textarea>
+            <mat-error
+              *ngIf="
+                userDetailsForm.get('additional_info')?.hasError('required') &&
+                (userDetailsForm.get('additional_info')?.touched || submitted)
+              "
+            >
+              Additional Information is required.
+            </mat-error>
+            <mat-error
+              *ngIf="
+                userDetailsForm.get('additional_info')?.hasError('maxlength') &&
+                (userDetailsForm.get('additional_info')?.touched || submitted)
+              "
+            >
+              Additional Information cannot exceed 500 characters.
+            </mat-error>
+          </mat-form-field>
 
-        <div class="dialog-actions">
-          <button
-            mat-button
-            class="edit-profile-btn"
-            (click)="goToEditProfile()"
-          >
-            Edit Profile
-          </button>
-          <button
-            mat-flat-button
-            color="primary"
-            class="submit-btn"
-            (click)="submitApplication()"
-          >
-            Submit
-          </button>
-        </div>
+          <div class="dialog-actions">
+            <button
+              mat-button
+              class="edit-profile-btn"
+              (click)="goToEditProfile()"
+            >
+              Edit Profile
+            </button>
+            <button
+              mat-flat-button
+              color="primary"
+              class="submit-btn"
+              (click)="submitApplication()"
+            >
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </div>
