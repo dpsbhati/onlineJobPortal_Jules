@@ -136,7 +136,7 @@ export class ApplyJobComponent {
           if (response.statusCode === 200) {
             this.loader.hide();
             this.toastr.success(response.message);
-            this.router.navigate(['/applicant']);
+            this.router.navigate(['/Applied-Applications']);
             this.dialogRef.close();
           } else {
             this.toastr.warning(response.message);

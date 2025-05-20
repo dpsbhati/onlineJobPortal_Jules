@@ -60,13 +60,13 @@ import { CoreService } from 'src/app/services/core.service';
 })
 export class BrandingComponent {
   options = this.settings.getOptions();
-   userRole: string | null = null;
+  userRole: string | null = null;
 
   constructor(private settings: CoreService, private router: Router) {
-     this.loadUserRole();
+    this.loadUserRole();
   }
 
-   loadUserRole() {
+  loadUserRole() {
     try {
       const userData = localStorage.getItem('user');
       if (userData) {
@@ -82,8 +82,6 @@ export class BrandingComponent {
   onLogoClick(): void {
     if (this.userRole === 'admin') {
       this.router.navigate(['/dashboard']);
-    } else if (this.userRole === 'applicant') {
-      this.router.navigate(['/Applied-Applications']);
     } else {
       this.router.navigate(['/']);
     }

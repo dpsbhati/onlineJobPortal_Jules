@@ -255,7 +255,7 @@
             </div>
 
             <!-- Dial Code -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Dial Code</mat-label>
                 <mat-select formControlName="dial_code">
@@ -268,7 +268,7 @@
             </div>
 
             <!-- Phone Number -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Phone Number</mat-label>
                 <input matInput type="tel" formControlName="mobile" />
@@ -279,7 +279,7 @@
             </div>
 
             <!-- Date of Birth -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Date of Birth</mat-label>
                 <input matInput [matDatepicker]="dobPicker" formControlName="dob" />
@@ -295,7 +295,7 @@
             </div>
 
             <!-- Nationalities -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Nationalities</mat-label>
                 <mat-select multiple formControlName="nationalities">
@@ -309,7 +309,7 @@
             </div>
 
             <!-- Country of Residence -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Country of Residence</mat-label>
                 <mat-select formControlName="country">
@@ -322,7 +322,7 @@
             </div>
 
             <!-- Location -->
-            <div class="col-lg-4">
+            <div class="col-lg-4" *ngIf="isApplicant()">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Location</mat-label>
                 <input matInput placeholder="Start typing an address..." formControlName="location" />
@@ -333,7 +333,7 @@
             </div>
 
             <!-- Additional Contact Info (Repeater UI) -->
-            <div class="col-lg-12 mt-4" formArrayName="additional_contact_info">
+            <div class="col-lg-12 mt-4" formArrayName="additional_contact_info" *ngIf="isApplicant()">
               <h4 class="mat-headline-6 m-t-24 m-b-20">Additional Contact Information</h4>
               <!-- Example Row -->
               <div class="row align-items-center" *ngFor="let item of additionalContacts();let i =index"
@@ -374,11 +374,13 @@
 
 
           <div class="text-right">
-            <button mat-flat-button matStepperNext [disabled]="form.invalid">Next</button>
+            <button mat-flat-button matStepperNext [disabled]="form.invalid" *ngIf="isApplicant()">Next</button>
+            <button mat-flat-button matStepperNext [disabled]="form.invalid" (click)="onSubmit()"
+              *ngIf="!isApplicant()">Save</button>
           </div>
         </form>
       </mat-step>
-      <mat-step [stepControl]="secondForm">
+      <mat-step [stepControl]="secondForm" *ngIf="isApplicant()">
         <form class="m-t-24" [formGroup]="secondForm">
           <ng-template matStepLabel>Career</ng-template>
           <div class="row">
@@ -624,7 +626,7 @@
           </div>
         </form>
       </mat-step>
-      <mat-step [stepControl]="thirdForm">
+      <mat-step [stepControl]="thirdForm" *ngIf="isApplicant()">
         <form class="m-t-24" [formGroup]="thirdForm">
           <ng-template matStepLabel>Other Experience & Projects</ng-template>
           <!-- Other Experience Section -->
@@ -706,7 +708,7 @@
           </div>
         </form>
       </mat-step>
-      <mat-step [stepControl]="fourthForm" label="Additional Information">
+      <mat-step [stepControl]="fourthForm" label="Additional Information" *ngIf="isApplicant()">
         <form [formGroup]="fourthForm">
 
           <!-- Language Skills - Spoken -->
