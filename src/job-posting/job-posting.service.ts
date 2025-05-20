@@ -344,7 +344,7 @@ export class JobPostingService {
       sortBy = sortBy || 'created_at'; // Default sorting by created_at
       direction = direction || 'DESC'; // Default to DESC
 
-      let lwhereClause = `f.isActive = true AND f.is_deleted = false`;
+      let lwhereClause = `f.is_deleted = false`;
       const fieldsToSearch = [
         'job_type',
         'rank',
