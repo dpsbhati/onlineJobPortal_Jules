@@ -4,29 +4,41 @@
   <mat-card-content>
     <div class="row justify-content-between align-items-center">
       <div class="col-xl-4 col-lg-4 col-md-12">
-
         <mat-form-field appearance="outline">
           <mat-label>Search</mat-label>
 
-          <input matInput [(ngModel)]="filters.all" (keyup.enter)="onSearch()" placeholder="Search..." />
+          <input
+            matInput
+            [(ngModel)]="filters.all"
+            (keyup.enter)="onSearch()"
+            placeholder="Search..."
+          />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
       <div class="col-xl-8 col-lg-8 col-md-12">
         <div class="row align-items-center">
           <div class="col-xl-1 col-lg-1 col-md-12">
-            <h4 class="mb-20"> Filters </h4>
+            <h4 class="mb-20">Filters</h4>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Job Type</mat-label>
-              <mat-select [(ngModel)]="filters.job_type" (selectionChange)="onSearch()">
+              <mat-select
+                [(ngModel)]="filters.job_type"
+                (selectionChange)="onSearch()"
+              >
                 <mat-option value="Full-Time">Full Time</mat-option>
                 <mat-option value="Part-Time">Part Time</mat-option>
                 <mat-option value="Contract">Contract</mat-option>
               </mat-select>
-              <button *ngIf="filters.job_type" matSuffix mat-icon-button aria-label="Clear"
-                (click)="clearFilter($event, 'job_type')">
+              <button
+                *ngIf="filters.job_type"
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="clearFilter($event, 'job_type')"
+              >
                 <mat-icon>clear</mat-icon>
               </button>
             </mat-form-field>
@@ -34,13 +46,21 @@
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Rank</mat-label>
-              <mat-select [(ngModel)]="filters.rank" (selectionChange)="onSearch()">
+              <mat-select
+                [(ngModel)]="filters.rank"
+                (selectionChange)="onSearch()"
+              >
                 <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
                   {{ rank }}
                 </mat-option>
               </mat-select>
-              <button *ngIf="filters.rank" matSuffix mat-icon-button aria-label="Clear"
-                (click)="clearFilter($event, 'rank')">
+              <button
+                *ngIf="filters.rank"
+                matSuffix
+                mat-icon-button
+                aria-label="Clear"
+                (click)="clearFilter($event, 'rank')"
+              >
                 <mat-icon>clear</mat-icon>
               </button>
             </mat-form-field>
@@ -48,9 +68,10 @@
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Status</mat-label>
-              <mat-select [(ngModel)]="filters.
-              job_opening
-              " (selectionChange)="onSearch()">
+              <mat-select
+                [(ngModel)]="filters.job_opening"
+                (selectionChange)="onSearch()"
+              >
                 <mat-option value="Hold">Hold</mat-option>
                 <mat-option value="Active">Active</mat-option>
                 <mat-option value="Close">Close</mat-option>
@@ -58,7 +79,12 @@
             </mat-form-field>
           </div>
           <div class="col-xl-1 col-lg-2 col-md-3">
-            <button mat-button color="primary" class="mb-20" (click)="clearSearch()">
+            <button
+              mat-button
+              color="primary"
+              class="mb-20"
+              (click)="clearSearch()"
+            >
               Clear
             </button>
           </div>
@@ -72,94 +98,118 @@
   <mat-card-content>
     <div class="table-responsive">
       <!-- Table -->
-      <table mat-table [dataSource]="jobPostingList" matSort class="mat-elevation-z8">
-
+      <table
+        mat-table
+        [dataSource]="jobPostingList"
+        matSort
+        class="mat-elevation-z8"
+      >
         <!-- Position Column -->
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let element; let i = index">
-            {{(pageConfig.curPage - 1) * pageConfig.perPage + i + 1}}
+            {{ (pageConfig.curPage - 1) * pageConfig.perPage + i + 1 }}
           </td>
         </ng-container>
         <!-- Title Column -->
         <ng-container matColumnDef="title">
           <th mat-header-cell *matHeaderCellDef>Job Title</th>
-          <td mat-cell *matCellDef="let element">{{element.title}}</td>
+          <td mat-cell *matCellDef="let element">{{ element.title }}</td>
         </ng-container>
 
         <!-- Job Type Column -->
         <ng-container matColumnDef="job_type">
           <th mat-header-cell *matHeaderCellDef>Job Type</th>
-          <td mat-cell *matCellDef="let element">{{element.job_type}}</td>
+          <td mat-cell *matCellDef="let element">{{ element.job_type }}</td>
         </ng-container>
 
         <!-- Employer Column -->
         <ng-container matColumnDef="employer">
           <th mat-header-cell *matHeaderCellDef>Employer</th>
-          <td mat-cell *matCellDef="let element">{{element.employer}}</td>
+          <td mat-cell *matCellDef="let element">{{ element.employer }}</td>
         </ng-container>
 
         <!-- Salary Column -->
         <ng-container matColumnDef="salary">
           <th mat-header-cell *matHeaderCellDef>Salary</th>
           <td mat-cell *matCellDef="let element">
-            {{formatSalary(element.start_salary)}}
+            {{ formatSalary(element.start_salary) }}
           </td>
         </ng-container>
 
         <!-- Date Published Column -->
         <ng-container matColumnDef="date_published">
           <th mat-header-cell *matHeaderCellDef>Published Date</th>
-          <td mat-cell *matCellDef="let element">{{element.date_published | date:'mediumDate'}}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.date_published | date : "mediumDate" }}
+          </td>
         </ng-container>
 
         <!-- Deadline Column -->
         <ng-container matColumnDef="deadline">
           <th mat-header-cell *matHeaderCellDef>Deadline</th>
-          <td mat-cell *matCellDef="let element">{{element.deadline | date:'mediumDate'}}</td>
+          <td mat-cell *matCellDef="let element">
+            {{ element.deadline | date : "mediumDate" }}
+          </td>
         </ng-container>
 
         <!-- Number of Applicant Column -->
         <ng-container matColumnDef="number_of_applicant">
           <th mat-header-cell *matHeaderCellDef>Application Count</th>
           <td mat-cell *matCellDef="let element">
-            {{element.application_number}}
+            {{ element.application_number }}
           </td>
         </ng-container>
 
         <!-- Status Column -->
         <ng-container matColumnDef="status" *ngIf="isAdmin()">
-
-          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <th class="text-center" mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let element">
+            
+            <div class="d-flex gap-2 align-items-center">
+
             <!-- <span
-              class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted bg-light-secondary text-secondary">
-              {{element.job_opening | titlecase}}
-            </span> -->
-            <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
+              class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
+              [ngClass]="{
         'bg-light-secondary text-secondary': element.job_opening == 'Active',
         'bg-light-warning text-warning': element.job_opening == 'Hold',
         'bg-light-error  text-error ': element.job_opening == 'Close',
-      }">
-              {{ element.job_opening||'-' }}
-            </span>
+      }"
+            >
+              {{ element.job_opening || "-" }}
+            </span> -->
+            <span
+  class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12"
+  [ngClass]="{
+    'bg-light-secondary text-secondary': element.isActive,
+    'bg-light-error text-error': !element.isActive
+  }"
+>
+  {{ element.isActive ? 'Active' : 'DeActivated' }}
+</span>
+
+
+            <!-- <mat-slide-toggle
+              [(ngModel)]="element.isActive"
+              (change)="onStatusToggleChange(element, $event.checked)"
+              color="primary"
+              aria-label="Toggle status"
+            >
+            </mat-slide-toggle> -->
+            <mat-slide-toggle
+  [(ngModel)]="element.isActive"
+  (change)="onStatusToggleChange(element, $event.checked)"
+  color="primary"
+  aria-label="Toggle status"
+></mat-slide-toggle>
+
+            </div>
+
           </td>
         </ng-container>
 
         <!-- Toggle Column -->
-<ng-container matColumnDef="statusToggle" *ngIf="isAdmin()">
-  <th mat-header-cell *matHeaderCellDef>Toggle</th>
-  <td mat-cell *matCellDef="let element">
-    <mat-slide-toggle
-      [(ngModel)]="element.isActive"
-      (change)="onStatusToggleChange(element, $event.checked)"
-      color="primary"
-      aria-label="Toggle status"
-    >
-    </mat-slide-toggle>
-  </td>
-</ng-container>
-
+       
 
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
@@ -169,7 +219,6 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-
               <!-- <button mat-menu-item (click)="viewJobPostDetails()">
                 <mat-icon>visibility</mat-icon>
                 <span>View Details</span>
@@ -179,15 +228,26 @@
                 <mat-icon>visibility</mat-icon>
                 <span>View Details</span>
               </button>
-              <button mat-menu-item (click)="viewapplicationDetails(element.id)">
+              <button
+                mat-menu-item
+                (click)="viewapplicationDetails(element.id)"
+              >
                 <mat-icon>visibility</mat-icon>
                 <span>View Application</span>
               </button>
-              <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
+              <button
+                mat-menu-item
+                (click)="editJob(element.id)"
+                *ngIf="isAdmin()"
+              >
                 <mat-icon>edit</mat-icon>
                 Edit
               </button>
-              <button mat-menu-item (click)="deleteJob(element.id)" *ngIf="isAdmin()">
+              <button
+                mat-menu-item
+                (click)="deleteJob(element.id)"
+                *ngIf="isAdmin()"
+              >
                 <mat-icon>delete</mat-icon>
                 Delete
               </button>
@@ -196,11 +256,13 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+          <td
+            class="mat-cell text-center"
+            [attr.colspan]="displayedColumns.length"
+          >
             <div class="no-records-message">
-
               <span class="text-danger ms-2">No records found</span>
             </div>
           </td>
@@ -208,9 +270,15 @@
       </table>
     </div>
     <!-- Pagination -->
-    <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
-      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
-      aria-label="Select page">
+    <mat-paginator
+      [length]="total"
+      [pageSize]="pageConfig.perPage"
+      [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+      aria-label="Select page"
+    >
     </mat-paginator>
   </mat-card-content>
 </mat-card>

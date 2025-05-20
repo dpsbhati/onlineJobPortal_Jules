@@ -91,4 +91,14 @@ export class AdminService {
   // updateApplicationStatus(id: string, payload: any): Observable<any> {
   //   return this.genericService.Post('applications/update', { id, ...payload });
   // }
+
+
+  toggleJobStatus(id: string, isActive: boolean): Observable<any> {
+  const params = new URLSearchParams();
+  params.set('id', id);
+  params.set('isActive', String(isActive));
+
+  // Using genericService.Get but with query params
+  return this.genericService.Get(`job-posting/toggle-job-status?${params.toString()}`);
+}
 }

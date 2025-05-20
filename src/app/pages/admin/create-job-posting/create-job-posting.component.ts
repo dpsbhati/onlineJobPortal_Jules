@@ -268,6 +268,7 @@ export class CreateJobPostingComponent {
         next: (response: any) => {
           this.loader.hide();
           if (response.statusCode === 200) {
+            this.toaster.success(response.message);
             this.router.navigate(['/job-list']);
           } else {
             console.error(response.message);

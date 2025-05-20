@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CoreService } from 'src/app/services/core.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { CoreService } from 'src/app/services/core.service';
     <div
       class="branding d-none d-lg-flex align-items-center justify-content-left"
     >
-      <a [routerLink]="['/']" class="d-flex align-items-center">
+      <a (click)="onLogoClick()" class="d-flex align-items-center">
         <span class="branding-text f-w-100">
           <img
             class="logo1"
@@ -60,6 +60,33 @@ import { CoreService } from 'src/app/services/core.service';
 })
 export class BrandingComponent {
   options = this.settings.getOptions();
+   userRole: string | null = null;
 
-  constructor(private settings: CoreService) {}
+  constructor(private settings: CoreService, private router: Router) {
+     this.loadUserRole();
+  }
+
+   loadUserRole() {
+    try {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        this.userRole = user.role || null;
+      }
+    } catch (e) {
+      this.userRole = null;
+      console.error('Error parsing user data from localStorage', e);
+    }
+  }
+
+  onLogoClick(): void {
+    if (this.userRole === 'admin') {
+      this.router.navigate(['/dashboard']);
+    } else if (this.userRole === 'applicant') {
+      this.router.navigate(['/Applied-Applications']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
 }

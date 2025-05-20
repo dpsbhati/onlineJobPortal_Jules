@@ -36,6 +36,12 @@ export const navItems: NavItem[] = [
     route: 'Applied-Applications',
     visibleForRoles: ['applicant']
   },
+   {
+    displayName: 'List of Jobs',
+    iconName: 'point',
+    route: '/',
+    visibleForRoles: ['applicant']
+  },
   {
     displayName: 'View Applications',
     iconName: 'dashboard',
