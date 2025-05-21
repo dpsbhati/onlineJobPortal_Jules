@@ -137,6 +137,15 @@ statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
     this.pageConfig.whereClause = this.helperService.getAllFilters(
       this.filters
     );
+     this.pageConfig.whereClause = this.pageConfig.whereClause.map((filter: any) => {
+    if (filter.key === 'all') {
+      return {
+        ...filter,
+        key: 'all_job_post'
+      };
+    }
+    return filter;
+  });
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
