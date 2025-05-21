@@ -84,6 +84,7 @@ export class AppliedApplicationsComponent implements OnInit {
   allData: any;
   total: any;
   appliedData: any
+statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
 
   filters = {
     all: '',
@@ -93,12 +94,11 @@ export class AppliedApplicationsComponent implements OnInit {
   };
 
   displayedColumns: string[] = [
-    'name',
-    'email',
-    'applied_at',
-    'work_experiences',
-    'status',
-    'action'
+    'job_title',
+  'employment_type',
+  'applied_at',
+  'status',
+  'action'
   ]
 
   @ViewChild(MatPaginator) paginator!: MatPaginator

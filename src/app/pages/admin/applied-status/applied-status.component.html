@@ -4,10 +4,26 @@
   </button>
 
 
-  <h2 class="m-l-12">Application Detail</h2>
+  <h2 class="m-l-12">Application Detail </h2>
 
 </div>
-
+  <mat-card class="cardWithShadow">
+    <mat-card-content>
+      <mat-card-title class="m-b-16"> Application Status </mat-card-title>
+      <div class="d-flex align-items-center justify-content-between gap-6">
+        <div class="d-flex align-items-center justify-content-between gap-6">
+          <label>Current Status:</label>
+          <span
+            class="status-badge"
+           [ngClass]="jobDetails.status?.toLowerCase()"
+          >
+           {{ jobDetails.status || '-' }}
+          </span>
+        </div>
+      
+      </div>
+    </mat-card-content>
+  </mat-card>
 <div class="row">
   <div class="col-lg-8">
     <mat-card>
@@ -97,11 +113,11 @@
         {{ jobDetails?.job?.application_instruction }} -->
 
         <!-- <hr class="m-b-16 m-t-16 " /> -->
-        <div class="d-flex  align-items-center">
+        <!-- <div class="d-flex  align-items-center">
 
           <h4>Current Status</h4>
           <button mat-flat-button class="bg-secondary text-white m-l-12">{{jobDetails?.job?.jobpost_status}}</button>
-        </div>
+        </div> -->
 
       </mat-card-content>
     </mat-card>
