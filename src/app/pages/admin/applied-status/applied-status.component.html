@@ -15,7 +15,7 @@
           <label>Current Status:</label>
           <span
             class="status-badge"
-           [ngClass]="jobDetails.status?.toLowerCase()"
+           [ngClass]="jobDetails?.status?.toLowerCase()"
           >
            {{ jobDetails?.status || '-' }}
           </span>
