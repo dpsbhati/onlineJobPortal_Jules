@@ -61,7 +61,6 @@ export class ApplicationsComponent {
     'position',
     'name',
     'email',
-    'experience',
     'appliedDate',
     'jobPost',
     'status',
