@@ -108,6 +108,13 @@ export class UserProfileService {
         }
       }
 
+      // Check age >= 18
+      // const dobMoment = moment(createUserProfileDto.dob);
+      // const age = moment().diff(dobMoment, 'years');
+      // if (age < 18) {
+      //   return WriteResponse(400, {}, 'User must be at least 18 years old.');
+      // }
+
       const formattedDob = moment(createUserProfileDto.dob).toISOString();
 
       // Helper to stringify if value exists else null

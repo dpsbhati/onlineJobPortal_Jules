@@ -96,6 +96,9 @@ export class CreateUserProfileDto {
   @ApiProperty()
   cv_path: string;
 
+  @ApiProperty()
+  cv_name: string;
+
   @ApiProperty({ type: [OtherExperienceInfoDto] })
   other_experience_info: OtherExperienceInfoDto[];
 

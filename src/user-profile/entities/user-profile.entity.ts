@@ -73,6 +73,9 @@ export class UserProfile {
   cv_path: string;
 
   @Column()
+  cv_name: string;
+
+  @Column()
   other_experience_info: string;
 
   @Column()
