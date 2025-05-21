@@ -80,7 +80,7 @@
             <div class="col-lg-4"><label>Date of Birth:</label></div>
             <div class="col-lg-8">
               <strong>{{
-                applicantDetails.user.userProfile?.dob | date
+                formatUTCDateToReadable(applicantDetails.user.userProfile?.dob) 
               }}</strong>
             </div>
           </div>
@@ -177,11 +177,11 @@
                   <strong>
                     {{ work.work_experience_title }} at
                     {{ work.work_experience_employer }} ({{
-                      work.work_experience_from | date : "dd/MM/yyyy"
+                      formatUTCDateToReadable(work.work_experience_from)
                     }}
                     -
                     {{
-                      work.work_experience_to | date : "dd/MM/yyyy"
+                      formatUTCDateToReadable(work.work_experience_to)
                     }}) </strong
                   ><br />
                 </div>
@@ -200,8 +200,8 @@
             </div>
           </div>
 
-          <hr>
-          <div class="row ">
+          <hr />
+          <div class="row">
             <div class="col-lg-4">
               <mat-card-title class="m-b-8"> Education: </mat-card-title>
             </div>
@@ -219,8 +219,8 @@
                   "
                 >
                   <strong>{{ course.course_title }}</strong>
-                  ({{ course.course_from | date }} -
-                  {{ course.course_to | date }}) -
+                  ({{ formatUTCDateToReadable(course.course_from)}} -
+                  {{ formatUTCDateToReadable(course.course_to)}}) -
                   {{ course.course_provider }}
                 </li>
               </ul>
@@ -239,8 +239,8 @@
                   "
                 >
                   <strong>{{ cert.certification_title }}</strong>
-                  ({{ cert.certification_from | date }} -
-                  {{ cert.certification_to | date }}) -
+                  ({{ formatUTCDateToReadable(cert.certification_from)}} -
+                  {{ formatUTCDateToReadable(cert.certification_to)}}) -
                   {{ cert.certification_issuer }}
                 </li>
               </ul>
@@ -289,7 +289,8 @@
           <div class="row m-b-16">
             <div class="col-lg-4 p-16"><label>Other Experience:</label></div>
             <div class="col-lg-8">
-              <ul class="p-l-16"
+              <ul
+                class="p-l-16"
                 *ngIf="
                   applicantDetails.user.userProfile?.other_experience_info
                     ?.length;
@@ -303,8 +304,8 @@
                   "
                 >
                   <strong>{{ exp.other_experience_description }}</strong>
-                  ({{ exp.other_experience_from | date }} -
-                  {{ exp.other_experience_to | date }})
+                  ({{ formatUTCDateToReadable(exp.other_experience_from)}} -
+                  {{ formatUTCDateToReadable(exp.other_experience_to) || 'Present'}})
                 </li>
               </ul>
               <ng-template #noOtherExperience>
@@ -315,7 +316,8 @@
           <div class="row m-b-16">
             <div class="col-lg-4 p-16"><label>Projects:</label></div>
             <div class="col-lg-8">
-              <ul class="p-l-16"
+              <ul
+                class="p-l-16"
                 *ngIf="
                   applicantDetails.user.userProfile?.project_info?.length;
                   else noProjects
@@ -327,8 +329,8 @@
                   "
                 >
                   <strong>{{ proj.project_name }}</strong>
-                  ({{ proj.project_from | date }} -
-                  {{ proj.project_to | date }}) - Role: {{ proj.project_role }}
+                  ({{ formatUTCDateToReadable(proj.project_from)}} -
+                  {{ formatUTCDateToReadable(proj.project_to) || 'Present'}}) - Role: {{ proj.project_role }}
                 </li>
               </ul>
               <ng-template #noProjects>
@@ -516,15 +518,15 @@
         </mat-card-content>
       </mat-card>
 
-       <mat-card>
+      <mat-card>
         <img
-              mat-card-image
-              [src]="applicantDetails?.user.userProfile?.profile_image_path"
-              alt="Job Image"
-              height="250"
-              width="390"
-              style="object-fit: contain;"
-            />
+          mat-card-image
+          [src]="applicantDetails?.user.userProfile?.profile_image_path"
+          alt="Job Image"
+          height="250"
+          width="390"
+          style="object-fit: contain"
+        />
       </mat-card>
 
       <mat-card>
@@ -546,12 +548,33 @@
             <a
               style="white-space: nowrap"
               mat-flat-button
-              [href]="applicantDetails.cv_path"
+              [href]="applicantDetails.user.userProfile?.cv_path"
               target="_blank"
             >
               Download CV
             </a>
           </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content>
+          <mat-card-title class="m-b-16"
+            >Additional Information Comment</mat-card-title
+          >
+
+          <div
+            *ngIf="
+              applicantDetails?.additional_info &&
+                applicantDetails?.additional_info.trim().length > 0;
+              else noComment
+            "
+          >
+            <p>{{ applicantDetails?.additional_info }}</p>
+          </div>
+          <ng-template #noComment>
+            <p><em>No comments available.</em></p>
+          </ng-template>
         </mat-card-content>
       </mat-card>
 

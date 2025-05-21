@@ -64,7 +64,7 @@ export class ApplicantDetailsComponent {
   }
 
  formatUTCDateToReadable(utcDateStr: string): string {
-  if (!utcDateStr) return '-';
+  if (!utcDateStr) return '';
   
   const utcDate = new Date(utcDateStr);
   
