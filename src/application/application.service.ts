@@ -556,7 +556,6 @@ export class ApplicationService {
         'comments',
         'additional_info',
         'certification_path',
-        'applied_at',
         'job.title',
         'user.email',
         'userProfile.first_name',
@@ -568,6 +567,25 @@ export class ApplicationService {
       if (email) {
         lwhereClause += ` AND user.email LIKE :email`;
         parameters.email = `%${email.value}%`;
+      }
+      const title = whereClause.find((p) => p.key === 'title' && p.value);
+      if (title) {
+        lwhereClause += ` AND job.title LIKE :title`;
+        parameters.title = `%${title.value}%`;
+      }
+      const job_type = whereClause.find((p) => p.key === 'job_type' && p.value);
+      if (job_type) {
+        lwhereClause += ` AND job.job_type LIKE :job_type`;
+        parameters.job_type = `%${job_type.value}%`;
+      }
+
+      // 🔍 Exact applied_at date match
+      const appliedAt = whereClause.find(
+        (p) => p.key === 'applied_at' && p.value,
+      );
+      if (appliedAt) {
+        lwhereClause += ` AND DATE(app.applied_at) = :appliedAt`;
+        parameters.appliedAt = appliedAt.value;
       }
 
       const first_name = whereClause.find(
@@ -611,6 +629,26 @@ export class ApplicationService {
 
           fieldsToSearch.forEach((_, idx) => {
             parameters[`all_search_${idx}`] = `%${allValues}%`;
+          });
+        }
+        // ✅ ALL JOB POST SEARCH - job fields only
+        const allJobPost = whereClause.find(
+          (p) => p.key === 'all_job_post',
+        )?.value;
+
+        if (allJobPost) {
+          console.log('inside allJobPost');
+
+          const jobFieldsToSearch = ['job.title', 'job.job_type'];
+
+          const allJobPostSearchConditions = jobFieldsToSearch
+            .map((field, idx) => `${field} LIKE :all_job_post_${idx}`)
+            .join(' OR ');
+
+          lwhereClause += ` AND (${allJobPostSearchConditions})`;
+
+          jobFieldsToSearch.forEach((_, idx) => {
+            parameters[`all_job_post_${idx}`] = `%${allJobPost}%`;
           });
         }
       }
