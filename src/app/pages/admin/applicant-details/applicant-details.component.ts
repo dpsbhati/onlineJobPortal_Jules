@@ -12,15 +12,19 @@ import { MatTableModule } from '@angular/material/table';
 import { TablerIconsModule } from 'angular-tabler-icons';
 @Component({
   selector: 'app-applicant-details',
-  imports: [ CommonModule,
+  imports: [CommonModule,
     FormsModule,
-    RouterModule,MatTableModule ,TablerIconsModule,
-  MaterialModule,ToastrModule],
+    RouterModule, MatTableModule, TablerIconsModule,
+    MaterialModule, ToastrModule],
   templateUrl: './applicant-details.component.html',
   styleUrl: './applicant-details.component.scss'
 })
 export class ApplicantDetailsComponent {
-   formattedCourseInfo: string = '-';
+  noticePeriodFormatted:string = '-';
+  languageSpokenFormatted: string = '-';
+  languageWrittenFormatted: string = '-';
+  formattedCourseInfo: string = '';
+  formattedCertificationInfo: string = '';
   jobId: string = '';
   userId: string = '';
   applicantDetails: any = null;
@@ -36,7 +40,7 @@ export class ApplicantDetailsComponent {
     private adminService: AdminService,
     private notifyService: NotifyService,
     private loader: LoaderService,
-    private toastr :ToastrService
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -52,16 +56,61 @@ export class ApplicantDetailsComponent {
     });
   }
 
+  formatLanguages(langs: any): string {
+    if (langs && langs.length > 0) {
+      return langs.map((lang: any) => `${lang.language} (${lang.proficiency})`).join(', ');
+    }
+    return '-';
+  }
+
+ formatUTCDateToReadable(utcDateStr: string): string {
+  if (!utcDateStr) return '-';
+  
+  const utcDate = new Date(utcDateStr);
+  
+  // Use toLocaleDateString with options for full month name
+  return utcDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC'  // Isse timezone shift avoid hota hai
+  });
+}
+
+formatPreferences(prefs: any): string {
+  if (!prefs) return '-';
+
+  const parts: string[] = [];
+
+  if (prefs.department?.length) {
+    parts.push(`Department: ${prefs.department.join(', ')}`);
+  }
+
+  if (prefs.location?.length) {
+    parts.push(`Locations: ${prefs.location.join(', ')}`);
+  }
+
+  return parts.length ? parts.join(' | ') : '-';
+}
+
+
   loadApplicantDetails() {
-      this.loader.show();
-      // this.isLoading = true;
+    this.loader.show();
+    // this.isLoading = true;
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
-          this.adminComments = this.applicantDetails.comments ;
+          this.adminComments = this.applicantDetails.comments;
 
+          this.languageSpokenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_spoken_info);
+          this.languageWrittenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_written_info);
+          this.noticePeriodFormatted = this.applicantDetails.user?.userProfile?.notice_period_info
+            ? (this.applicantDetails.user.userProfile.notice_period_info.notice_period_months ?? '-') +
+            ' months, ' +
+            this.formatUTCDateToReadable(this.applicantDetails.user.userProfile.notice_period_info.commence_work_date)
+            : '-';
           // Parse key skills
           if (response.data.user?.userProfile?.key_skills) {
             try {
@@ -76,26 +125,37 @@ export class ApplicantDetailsComponent {
 
           // Get certifications from courses_and_certification array
           this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-           // ====== New: Format course_info here ======
-        const courses = response.data.user?.userProfile?.course_info;
-        if (courses && courses.length > 0) {
-          const validCourses = courses
-            .map((c: any) => {
-              const title = c.course_title || '';
-              if (!title) return null;
-              const from = c.course_from ? `From ${c.course_from}` : '';
-              const to = c.course_to ? `To ${c.course_to}` : '';
+          // Format course_info
+          const courses = response.data.user?.userProfile?.course_info || [];
+          if (courses.length > 0) {
+            this.formattedCourseInfo = courses.map((c: any) => {
+              const from = c.course_from ? new Date(c.course_from).toLocaleDateString() : '';
+              const to = c.course_to ? new Date(c.course_to).toLocaleDateString() : '';
               let dateRange = '';
               if (from && to) dateRange = ` (${from} - ${to})`;
               else if (from) dateRange = ` (${from})`;
               else if (to) dateRange = ` (${to})`;
-              return title + dateRange;
-            })
-            .filter((x: any) => x !== null);
-          this.formattedCourseInfo = validCourses.length > 0 ? validCourses.join('; ') : '-';
-        } else {
-          this.formattedCourseInfo = '-';
-        }
+              return `${c.course_title || '-'}${dateRange} - ${c.course_provider || '-'}`;
+            }).join(', ');
+          } else {
+            this.formattedCourseInfo = '-';
+          }
+
+          // Format certification_info similarly
+          const certifications = response.data.user?.userProfile?.certification_info || [];
+          if (certifications.length > 0) {
+            this.formattedCertificationInfo = certifications.map((c: any) => {
+              const from = c.certification_from ? new Date(c.certification_from).toLocaleDateString() : '';
+              const to = c.certification_to ? new Date(c.certification_to).toLocaleDateString() : '';
+              let dateRange = '';
+              if (from && to) dateRange = ` (${from} - ${to})`;
+              else if (from) dateRange = ` (${from})`;
+              else if (to) dateRange = ` (${to})`;
+              return `${c.certification_title || '-'}${dateRange} - ${c.certification_issuer || '-'}`;
+            }).join('; ');
+          } else {
+            this.formattedCertificationInfo = '-';
+          }
           // this.isLoading = false;
           this.loader.hide();
         } else {
