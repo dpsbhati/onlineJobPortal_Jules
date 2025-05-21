@@ -20,9 +20,9 @@ import { TablerIconsModule } from 'angular-tabler-icons';
   styleUrl: './applicant-details.component.scss'
 })
 export class ApplicantDetailsComponent {
-  noticePeriodFormatted:string = '-';
-  languageSpokenFormatted: string = '-';
-  languageWrittenFormatted: string = '-';
+  noticePeriodFormatted:string = '';
+  languageSpokenFormatted: string = '';
+  languageWrittenFormatted: string = '';
   formattedCourseInfo: string = '';
   formattedCertificationInfo: string = '';
   jobId: string = '';
@@ -56,6 +56,32 @@ export class ApplicantDetailsComponent {
     });
   }
 
+ formatProjectDuration(fromDate?: any | null, toDate?: any | null): string {
+  const fromFormatted = this.formatUTCDateToReadable(fromDate);
+  const toFormatted = this.formatUTCDateToReadable(toDate);
+
+  if (!fromDate && !toDate) {
+    return '-';
+  }
+
+  if (fromDate && !toDate) {
+    return `${fromFormatted} - Present`;
+  }
+
+  if (fromDate && toDate) {
+    return `${fromFormatted} - ${toFormatted}`;
+  }
+
+  if (!fromDate && toDate) {
+    return `- - ${toFormatted}`;
+  }
+
+  return '-'; // fallback
+}
+
+
+
+
   formatLanguages(langs: any): string {
     if (langs && langs.length > 0) {
       return langs.map((lang: any) => `${lang.language} (${lang.proficiency})`).join(', ');
@@ -67,7 +93,8 @@ export class ApplicantDetailsComponent {
   if (!utcDateStr) return '';
   
   const utcDate = new Date(utcDateStr);
-  
+    if (isNaN(utcDate.getTime())) return '';
+
   // Use toLocaleDateString with options for full month name
   return utcDate.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -78,7 +105,7 @@ export class ApplicantDetailsComponent {
 }
 
 formatPreferences(prefs: any): string {
-  if (!prefs) return '-';
+  if (!prefs) return '';
 
   const parts: string[] = [];
 
@@ -90,7 +117,7 @@ formatPreferences(prefs: any): string {
     parts.push(`Locations: ${prefs.location.join(', ')}`);
   }
 
-  return parts.length ? parts.join(' | ') : '-';
+  return parts.length ? parts.join(' | ') : '';
 }
 
 

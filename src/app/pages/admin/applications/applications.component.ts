@@ -211,30 +211,56 @@ export class ApplicationsComponent {
         this.loader.hide();
         if (response.statusCode === 200) {
           this.totalApplications = response.count || 0;
-          this.dataSource.data = response.data.map(
-            (app: any, index: number) => ({
-              position: index + 1 + this.pageIndex * this.pageSize,
-              name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
-              email: app.user?.email,
-              dateOfApplication: new Date(app.applied_at).toLocaleDateString(
-                'en-US',
-                {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                }
-              ),
-              application_id: app?.id,
-              experience: app?.work_experiences,
-              jobPost: app.job?.title,
-              applications: app?.count,
-              status: app?.status,
-              all: app?.all,
-              user_id: app?.user_id,
-              job_id: app?.job_id,
-            })
-          );
+          // this.dataSource.data = response.data.map(
+          //   (app: any, index: number) => ({
+          //     position: index + 1 + this.pageIndex * this.pageSize,
+          //     name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
+          //     email: app.user?.email,
+          //     dateOfApplication: new Date(app.applied_at).toLocaleDateString(
+          //       'en-US',
+          //       {
+          //         weekday: 'long',
+          //         year: 'numeric',
+          //         month: 'long',
+          //         day: 'numeric',
+          //       }
+          //     ),
+          //     application_id: app?.id,
+          //     experience: app?.work_experiences,
+          //     jobPost: app.job?.title,
+          //     applications: app?.count,
+          //     status: app?.status,
+          //     all: app?.all,
+          //     user_id: app?.user_id,
+          //     job_id: app?.job_id,
+          //   })
+
+           this.dataSource.data = response.data.map((app: any, index: number) => {
+          const rawImagePath = app.user?.userProfile?.profile_image_path || '';
+          const profileImageUrl = rawImagePath ? rawImagePath.replace(/\\/g, '/') : null;
+
+          return {
+            position: index + 1 + this.pageIndex * this.pageSize,
+            name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
+            email: app.user?.email,
+            dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }),
+            application_id: app?.id,
+            experience: app?.work_experiences,
+            jobPost: app.job?.title,
+            applications: app?.count,
+            status: app?.status,
+            all: app?.all,
+            user_id: app?.user_id,
+            job_id: app?.job_id,
+            profileImageUrl,  // <-- Added profile image URL here
+          };
+        });
+          ;
         } else {
           // this.toaster.warning(response.message);
           this.dataSource.data = [];
@@ -321,6 +347,15 @@ export class ApplicationsComponent {
     // debugger
     this.router.navigate(['/applicant-details', application_id]);
   }
+
+viewJobDetails(jobId:any): void {
+  if (jobId) {
+    this.router.navigate(['/job-post-details', jobId]);
+  } else {
+    this.toaster.warning('Job ID not found.');
+  }
+}
+
 
   deleteApplicant(application_id: any): void {
     // debugger

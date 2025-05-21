@@ -13,12 +13,24 @@
       <div class="d-flex align-items-center justify-content-between gap-6">
         <div class="d-flex align-items-center justify-content-between gap-6">
           <label>Current Status:</label>
-          <span
+          <!-- <span
             class="status-badge"
-           [ngClass]="jobDetails.status?.toLowerCase()"
+           [ngClass]="jobDetails?.status?.toLowerCase()"
           >
            {{ jobDetails?.status || '-' }}
-          </span>
+          </span> -->
+
+           <span
+        class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12"
+        [ngClass]="{
+          'bg-light-secondary text-secondary': jobDetails?.status?.toLowerCase() === 'hired',
+          'bg-light-warning text-warning': jobDetails?.status?.toLowerCase() === 'pending',
+          'bg-light-error  text-error ': jobDetails?.status?.toLowerCase() === 'rejected',
+          'bg-light-success  text-success': jobDetails?.status?.toLowerCase() === 'shortlisted'
+        }"
+      >
+        {{ jobDetails?.status || '-' }}
+      </span>
         </div>
       
       </div>
@@ -107,20 +119,20 @@
     </mat-card>
 
 
-    <!-- <mat-card>
+    <mat-card>
       <mat-card-content>
-        <h4 class="m-b-10">Comments</h4>
-        {{ jobDetails?.job?.application_instruction }}
+        <h4 class="m-b-10">Admin Comment</h4>
+        {{ jobDetails?.comments}}
 
-        <hr class="m-b-16 m-t-16 " />
+        <!-- <hr class="m-b-16 m-t-16 " />
         <div class="d-flex  align-items-center">
 
           <h4>Current Status</h4>
           <button mat-flat-button class="bg-secondary text-white m-l-12">{{jobDetails?.job?.jobpost_status}}</button>
-        </div>
+        </div> -->
 
       </mat-card-content>
-    </mat-card> -->
+    </mat-card>
 
 
   </div>
