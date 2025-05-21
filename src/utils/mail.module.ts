@@ -19,15 +19,15 @@ if (process.env.NODE_ENV === 'development') {
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com', // Your SMTP server
-        port: 587, // SMTP port
+        host: process.env.MAIL_HOST, // Your SMTP server
+        port: parseInt(process.env.MAIL_PORT), // SMTP port
         auth: {
-          user: 'sarfaraz.f9460@gmail.com',
-          pass: 'wciirazzhwdhppaw',
+          user: process.env.MAIL_USERNAME, // Your SMTP username
+          pass: process.env.MAIL_PASSWORD, // Your SMTP password
         },
       },
       defaults: {
-        from: '"No Reply" <noreply@example.com>',
+        from: process.env.MAIL_FROM, // Default sender address
       },
       template: {
         dir: templateDirectory,

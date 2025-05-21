@@ -1,6 +1,5 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
@@ -9,15 +8,11 @@ import {
   PrimaryColumn,
   Generated,
   OneToOne,
-  JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { ApiProperty } from '@nestjs/swagger';
 import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 import { applications } from 'src/application/entities/application.entity';
-import { Application } from 'express';
 import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 import { CareerType } from '../enums/career-type.enum';
 
@@ -39,7 +34,6 @@ export class Users {
   @Column()
   refreshToken: string;
 
-  // @Exclude()
   @Column()
   password: string;
 
@@ -80,22 +74,12 @@ export class Users {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // @Column({ nullable: true })
-  // resetPasswordToken: string;
-
-  // @Column({ type: 'timestamp', nullable: true })
-  // resetPasswordExpires: Date;
-
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
     if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
     }
-  }
-
-  async validateResetToken(token: string) {
-    // return this.resetPasswordToken === token && new Date();
   }
 
   @OneToOne(() => UserProfile, (profile) => profile.user, { eager: true })

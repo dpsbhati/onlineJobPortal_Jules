@@ -15,22 +15,20 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { JobScheduler } from './linkedin/linkedin.service';
 import { FacebookModule } from './facebook/facebook.module';
 import { CoursesAndCertificationModule } from './courses_and_certification/courses_and_certification.module';
-import { AttachmentModule } from './attachment/attachment.module';
 import { ConfigService } from './config.service';
 import { ConfigModule } from './config.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RanksModule } from './ranks/ranks.module';
 
-
 @Module({
   imports: [
     // ConfigModule.forRoot({
-    //   isGlobal: true, 
+    //   isGlobal: true,
     //   // Ensures ConfigService is available globally
     // }),
     ConfigModule,
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, MailModule,ScheduleModule.forRoot()],
+      imports: [ConfigModule, MailModule, ScheduleModule.forRoot()],
       // useFactory: async (configService: ConfigService) => ({
       //   type: 'mysql',
       //   host: configService.get<string>('DB_HOST', ''),
@@ -44,9 +42,8 @@ import { RanksModule } from './ranks/ranks.module';
       //   autoLoadEntities: true,
       // }),
       useFactory: (configService: ConfigService) =>
-      configService.getTypeOrmConfig(),
+        configService.getTypeOrmConfig(),
       inject: [ConfigService], // Inject ConfigService
-    
     }),
     UserModule,
     JobPostingModule,
@@ -56,19 +53,13 @@ import { RanksModule } from './ranks/ranks.module';
     LinkedinModule,
     FacebookModule,
     CoursesAndCertificationModule,
-    AttachmentModule,
     NotificationsModule,
     RanksModule,
-    
-    
   ],
   providers: [JobScheduler],
-
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

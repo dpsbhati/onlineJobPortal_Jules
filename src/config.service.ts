@@ -28,23 +28,4 @@ export class ConfigService {
       // logging:true,
     };
   }
-
-  getMailerConfig(): MailerOptions {
-    return {
-      transport: {
-        host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT, 10),
-        ignoreTLS: process.env.MAIL_IGNORE_TLS === 'true',
-        secure: process.env.MAIL_SECURE === 'true',
-        service: process.env.MAIL_SERVICE,
-        auth: {
-          user: process.env.MAIL_USERNAME,
-          pass: process.env.MAIL_PASSWORD,
-        },
-      },
-      defaults: {
-        from: process.env.MAIL_FROM,
-      },
-    };
-  }
 }

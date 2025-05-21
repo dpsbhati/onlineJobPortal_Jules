@@ -21,7 +21,6 @@ import {
 import { forgetPasswordDto } from './dto/create-user.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { JwtService } from '@nestjs/jwt';
 import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -30,7 +29,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private jwtService: JwtService,
   ) {}
 
   @Post('register')

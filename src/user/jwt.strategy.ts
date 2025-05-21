@@ -2,19 +2,19 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { UserService } from 'src/user/user.service';
-// import { EmploymentDetailsService } from 'src/employment_details/employment_details.service';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'jobportal', // Replace with your own secret key
+      secretOrKey: process.env.JWT_SECRET, // Replace with your own secret key
     });
   }
 
   async validate(payload) {
-    console.log(payload);
     const user = await this.authService.validateUserById(payload.id);
     if (!user) {
       throw new UnauthorizedException();

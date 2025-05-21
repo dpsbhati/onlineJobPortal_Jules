@@ -160,6 +160,7 @@ export class UserService {
           : 'User created successfully. Please verify your email to complete registration.',
       );
     } catch (error) {
+      console.log(error);
       return WriteResponse(
         500,
         {},
@@ -329,15 +330,6 @@ export class UserService {
 
       const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${verificationToken}`;
 
-      // const message = `
-      //   You are receiving this email because a request to reset your password was received for your account.
-
-      //   Click the link below to reset your password:
-      //   ${resetLink}
-
-      //   If you did not request a password reset, please ignore this email or contact our support team immediately.
-      // `;
-
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
         'Reset Password',
@@ -383,7 +375,7 @@ export class UserService {
         );
       }
 
-      if (user.isPasswordReset&&user.resetToken===null) {
+      if (user.isPasswordReset && user.resetToken === null) {
         return WriteResponse(
           400,
           false,
@@ -391,7 +383,7 @@ export class UserService {
         );
       }
 
-      if (user.resetToken!==token) {
+      if (user.resetToken !== token) {
         return WriteResponse(
           400,
           false,
@@ -403,7 +395,7 @@ export class UserService {
       await this.userRepository.update(userId, {
         password: await bcrypt.hash(newPassword, 10),
         isPasswordReset: true,
-        resetToken: null
+        resetToken: null,
       });
 
       return WriteResponse(200, {
@@ -440,7 +432,7 @@ export class UserService {
         return WriteResponse(404, {}, 'User not found.');
       }
 
-      if(user.isEmailVerified) {
+      if (user.isEmailVerified) {
         return WriteResponse(200, {}, 'Your email is already verified.');
       }
       // Update the user's email verification status
