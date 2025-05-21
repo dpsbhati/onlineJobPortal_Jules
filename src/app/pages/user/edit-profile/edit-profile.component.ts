@@ -26,7 +26,9 @@ import { UserService } from '../../../core/services/user/user.service'
 import { AdminService } from '../../../core/services/admin/admin.service'
 import { ImageCompressionService } from '../../../core/services/image/image-compression.service'
 import { NotifyService } from '../../../core/services/notify.service'
-
+import countries from '../../../core/helpers/country.json'
+import currency from '../../../core/helpers/currency.json'
+import languages from '../../../core/helpers/languages.json'
 import { UserRole } from '../../../core/enums/roles.enum'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { ToastrService } from 'ngx-toastr'
@@ -60,7 +62,6 @@ export class EditProfileComponent implements OnInit {
   // Example arrays - aap apne actual data se replace kar dena
   countriesLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
   proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
-  currencyList = ['USD', 'EUR', 'PKR', 'GBP', 'INR'];
   departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
   vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
   private readonly allowedImageFormats = [
@@ -88,6 +89,9 @@ export class EditProfileComponent implements OnInit {
   fileError: string | null = null;
   fileUploaded: File | null = null;
   uploadedFileName: string | null = null;
+  countryList = countries
+  currencyList = currency
+  languageList = languages
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +126,7 @@ export class EditProfileComponent implements OnInit {
     this.fourth();
     this.addContact();
     this.addWorkExp();
+    this.addEducation();
     this.addCourse();
     this.addCertificate();
     this.addOtherExp();
@@ -629,18 +634,7 @@ export class EditProfileComponent implements OnInit {
         this.loader.hide()
 
         if (response.statusCode === 200 && response.data) {
-          const data = response.data
-
-          // let keySkills = []
-          // if (data.key_skills) {
-          //   try {
-          //     keySkills = JSON.parse(data.key_skills).map((skill: string) =>
-          //       skill.replace('/', '')
-          //     )
-          //   } catch (e) {
-          //     keySkills = Array.isArray(data.key_skills) ? data.key_skills : []
-          //   }
-          // }
+          const data = response.data;
 
           // const dob = data.dob
           //   ? new Date(data.dob).toISOString().split('T')[0]
@@ -651,26 +645,17 @@ export class EditProfileComponent implements OnInit {
           //     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
           //   : ''
 
-          // this.userProfileForm.patchValue({
-          //   first_name: data.first_name || '',
-          //   last_name: data.last_name || '',
-          //   email: this.userEmail,
-          //   dob: dob,
-          //   gender: data.gender || '',
-          //   mobile: data.mobile || null,
-          //   key_skills: keySkills,
-          //   work_experiences: data.work_experiences || '',
-          //   current_company: data.current_company || '',
-          //   expected_salary: expectedSalary
-          // })
           this.form.patchValue(response.data);
           this.secondForm.patchValue(response.data);
           this.thirdForm.patchValue(response.data);
           this.fourthForm.patchValue(response.data);
           this.userId = data.id || userId
-          // this.skillsArray = keySkills
-          // this.userProfileForm.markAsPristine()
-
+          if (data.profile_image_path) {
+            this.imagePreview = data.profile_image_path;
+          }
+          if (data.cv_path) {
+            this.uploadedFileName = data.cv_path;
+          }
           //   if (this.isApplicant()) {
           //     const applicantControls = [
           //       'dob',
@@ -1101,6 +1086,10 @@ export class EditProfileComponent implements OnInit {
 
   getlanguageWritten() {
     return (this.fourthForm.get('language_written_info') as FormArray).controls;
+  }
+
+  filteredCountryList() {
+    return this.countryList?.filter(country => country.nationalities && country.nationalities.length > 0) || [];
   }
 
 }

@@ -259,8 +259,9 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Dial Code</mat-label>
                 <mat-select formControlName="dial_code">
-                  <mat-option value="45">45</mat-option>
-                </mat-select>
+                  <mat-option *ngFor="let country of countryList" [value]="country.dial_code">
+                    {{ country.name }} ({{ country.dial_code }})
+                  </mat-option> </mat-select>
                 <mat-error *ngIf="form.get('dial_code')?.errors?.['required']">
                   Dail code is required
                 </mat-error>
@@ -299,8 +300,9 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Nationalities</mat-label>
                 <mat-select multiple formControlName="nationalities">
-                  <mat-option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality
-                    }}</mat-option>
+                  <mat-option *ngFor="let country of filteredCountryList()" [value]="country.nationalities">
+                    {{ country.nationalities }}
+                  </mat-option>
                 </mat-select>
                 <mat-error *ngIf="form.get('nationalities')?.errors?.['required']">
                   Nationality is required
@@ -313,8 +315,9 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Country of Residence</mat-label>
                 <mat-select formControlName="country">
-                  <mat-option *ngFor="let country of countries" [value]="country">{{ country }}</mat-option>
-                </mat-select>
+                  <mat-option *ngFor="let country of countryList" [value]="country.name">
+                    {{ country.name }}
+                  </mat-option> </mat-select>
                 <mat-error *ngIf="form.get('country')?.errors?.['required']">
                   Country is required
                 </mat-error>
@@ -719,7 +722,7 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Language</mat-label>
                   <mat-select formControlName="language">
-                    <mat-option *ngFor="let lang of countriesLanguages" [value]="lang">{{ lang }}</mat-option>
+                    <mat-option *ngFor="let lang of languageList" [value]="lang.name">{{ lang.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -750,7 +753,7 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Language</mat-label>
                   <mat-select formControlName="language">
-                    <mat-option *ngFor="let lang of countriesLanguages" [value]="lang">{{ lang }}</mat-option>
+                    <mat-option *ngFor="let lang of languageList" [value]="lang.name">{{ lang.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -805,7 +808,8 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Currency</mat-label>
                 <mat-select formControlName="currency">
-                  <mat-option *ngFor="let curr of currencyList" [value]="curr">{{ curr }}</mat-option>
+                  <mat-option *ngFor="let curr of currencyList" [value]="curr.code">{{ curr.currency }}
+                    ({{curr.code}})</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
@@ -824,7 +828,8 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Currency</mat-label>
                 <mat-select formControlName="currency">
-                  <mat-option *ngFor="let curr of currencyList" [value]="curr">{{ curr }}</mat-option>
+                  <mat-option *ngFor="let curr of currencyList" [value]="curr.currency">{{ curr.currency }}
+                    ({{curr.code}})</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
@@ -845,8 +850,9 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Location(s)</mat-label>
                 <mat-select formControlName="location" multiple>
-                  <mat-option *ngFor="let loc of countriesLanguages" [value]="loc">{{ loc }}</mat-option>
-                </mat-select>
+                  <mat-option *ngFor="let country of countryList" [value]="country.name">
+                    {{ country.name }}
+                  </mat-option> </mat-select>
               </mat-form-field>
             </div>
           </div>
