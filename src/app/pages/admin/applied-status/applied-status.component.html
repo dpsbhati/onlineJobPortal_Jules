@@ -13,12 +13,24 @@
       <div class="d-flex align-items-center justify-content-between gap-6">
         <div class="d-flex align-items-center justify-content-between gap-6">
           <label>Current Status:</label>
-          <span
+          <!-- <span
             class="status-badge"
            [ngClass]="jobDetails?.status?.toLowerCase()"
           >
            {{ jobDetails?.status || '-' }}
-          </span>
+          </span> -->
+
+           <span
+        class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12"
+        [ngClass]="{
+          'bg-light-secondary text-secondary': jobDetails?.status?.toLowerCase() === 'hired',
+          'bg-light-warning text-warning': jobDetails?.status?.toLowerCase() === 'pending',
+          'bg-light-error  text-error ': jobDetails?.status?.toLowerCase() === 'rejected',
+          'bg-light-success  text-success': jobDetails?.status?.toLowerCase() === 'shortlisted'
+        }"
+      >
+        {{ jobDetails?.status || '-' }}
+      </span>
         </div>
       
       </div>
