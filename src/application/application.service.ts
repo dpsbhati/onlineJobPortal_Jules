@@ -113,9 +113,17 @@ export class ApplicationService {
         return WriteResponse(404, [], 'No applications found.');
       }
 
+      // Remove password from nested user
+      const sanitizedApplications = applications.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
+
       return WriteResponse(
         200,
-        applications,
+        sanitizedApplications,
         'Applications retrieved successfully.',
       );
     } catch (error) {
@@ -187,7 +195,7 @@ export class ApplicationService {
         comments: application.comments || 'No comments available',
         status: application.status || 'No status available',
       };
-
+      delete response.user.password;
       return WriteResponse(
         200,
         response,
@@ -274,11 +282,18 @@ export class ApplicationService {
       if (!applications.length) {
         return WriteResponse(404, [], `No records found.`);
       }
+      // Remove password from nested user
+      const sanitizedApplications = applications.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
 
       // Return only the count of applications in the response
       return WriteResponse(
         200,
-        { applications, count: applications.length },
+        { sanitizedApplications, count: sanitizedApplications.length },
         'Applications found successfully.',
       );
     } catch (error) {
@@ -379,8 +394,26 @@ export class ApplicationService {
         .getRawAndEntities();
 
       // Merge raw application_count back into each job
+      // const result = jobs.entities.map((job, index) => {
+      //   const raw = jobs.raw[index];
+      //   return {
+      //     ...job,
+      //     application_count: parseInt(raw.application_count || '0'),
+      //   };
+      // });
+      // Merge raw application_count back into each job
       const result = jobs.entities.map((job, index) => {
         const raw = jobs.raw[index];
+
+        // Remove user password from each application
+        if (job.applications?.length) {
+          for (const app of job.applications) {
+            if (app.user?.password) {
+              delete app.user.password;
+            }
+          }
+        }
+
         return {
           ...job,
           application_count: parseInt(raw.application_count || '0'),
@@ -599,6 +632,13 @@ export class ApplicationService {
       if (!list.length) {
         return WriteResponse(404, [], 'No records found.');
       }
+      // Remove password from nested user
+      const sanitizedApplications = list.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
 
       return paginateResponse(list, totalCount, curPage, perPage);
     } catch (error) {
