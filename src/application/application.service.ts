@@ -113,9 +113,17 @@ export class ApplicationService {
         return WriteResponse(404, [], 'No applications found.');
       }
 
+      // Remove password from nested user
+      const sanitizedApplications = applications.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
+
       return WriteResponse(
         200,
-        applications,
+        sanitizedApplications,
         'Applications retrieved successfully.',
       );
     } catch (error) {
@@ -187,7 +195,7 @@ export class ApplicationService {
         comments: application.comments || 'No comments available',
         status: application.status || 'No status available',
       };
-
+      delete response.user.password;
       return WriteResponse(
         200,
         response,
@@ -274,11 +282,18 @@ export class ApplicationService {
       if (!applications.length) {
         return WriteResponse(404, [], `No records found.`);
       }
+      // Remove password from nested user
+      const sanitizedApplications = applications.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
 
       // Return only the count of applications in the response
       return WriteResponse(
         200,
-        { applications, count: applications.length },
+        { sanitizedApplications, count: sanitizedApplications.length },
         'Applications found successfully.',
       );
     } catch (error) {
@@ -379,8 +394,26 @@ export class ApplicationService {
         .getRawAndEntities();
 
       // Merge raw application_count back into each job
+      // const result = jobs.entities.map((job, index) => {
+      //   const raw = jobs.raw[index];
+      //   return {
+      //     ...job,
+      //     application_count: parseInt(raw.application_count || '0'),
+      //   };
+      // });
+      // Merge raw application_count back into each job
       const result = jobs.entities.map((job, index) => {
         const raw = jobs.raw[index];
+
+        // Remove user password from each application
+        if (job.applications?.length) {
+          for (const app of job.applications) {
+            if (app.user?.password) {
+              delete app.user.password;
+            }
+          }
+        }
+
         return {
           ...job,
           application_count: parseInt(raw.application_count || '0'),
@@ -523,7 +556,6 @@ export class ApplicationService {
         'comments',
         'additional_info',
         'certification_path',
-        'applied_at',
         'job.title',
         'user.email',
         'userProfile.first_name',
@@ -535,6 +567,25 @@ export class ApplicationService {
       if (email) {
         lwhereClause += ` AND user.email LIKE :email`;
         parameters.email = `%${email.value}%`;
+      }
+      const title = whereClause.find((p) => p.key === 'title' && p.value);
+      if (title) {
+        lwhereClause += ` AND job.title LIKE :title`;
+        parameters.title = `%${title.value}%`;
+      }
+      const job_type = whereClause.find((p) => p.key === 'job_type' && p.value);
+      if (job_type) {
+        lwhereClause += ` AND job.job_type LIKE :job_type`;
+        parameters.job_type = `%${job_type.value}%`;
+      }
+
+      // 🔍 Exact applied_at date match
+      const appliedAt = whereClause.find(
+        (p) => p.key === 'applied_at' && p.value,
+      );
+      if (appliedAt) {
+        lwhereClause += ` AND DATE(app.applied_at) = :appliedAt`;
+        parameters.appliedAt = appliedAt.value;
       }
 
       const first_name = whereClause.find(
@@ -580,6 +631,26 @@ export class ApplicationService {
             parameters[`all_search_${idx}`] = `%${allValues}%`;
           });
         }
+        // ✅ ALL JOB POST SEARCH - job fields only
+        const allJobPost = whereClause.find(
+          (p) => p.key === 'all_job_post',
+        )?.value;
+
+        if (allJobPost) {
+          console.log('inside allJobPost');
+
+          const jobFieldsToSearch = ['job.title', 'job.job_type'];
+
+          const allJobPostSearchConditions = jobFieldsToSearch
+            .map((field, idx) => `${field} LIKE :all_job_post_${idx}`)
+            .join(' OR ');
+
+          lwhereClause += ` AND (${allJobPostSearchConditions})`;
+
+          jobFieldsToSearch.forEach((_, idx) => {
+            parameters[`all_job_post_${idx}`] = `%${allJobPost}%`;
+          });
+        }
       }
 
       const skip = (curPage - 1) * perPage;
@@ -599,6 +670,13 @@ export class ApplicationService {
       if (!list.length) {
         return WriteResponse(404, [], 'No records found.');
       }
+      // Remove password from nested user
+      const sanitizedApplications = list.map((app) => {
+        if (app.user) {
+          delete app.user.password;
+        }
+        return app;
+      });
 
       return paginateResponse(list, totalCount, curPage, perPage);
     } catch (error) {
