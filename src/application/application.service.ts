@@ -260,7 +260,7 @@ export class ApplicationService {
       const skip = (curPage - 1) * perPage;
 
       // Fetch the applications for the current page based on job_id
-      const applications = await this.applicationRepository
+      const sanitizedApplications = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
         .leftJoinAndSelect('app.user', 'user')
@@ -273,11 +273,11 @@ export class ApplicationService {
         .getMany();
 
       // If no applications are found
-      if (!applications.length) {
+      if (!sanitizedApplications.length) {
         return WriteResponse(404, [], `No records found.`);
       }
       // Remove password from nested user
-      const sanitizedApplications = applications.map((app) => {
+      const applications = sanitizedApplications.map((app) => {
         if (app.user) {
           delete app.user.password;
         }
@@ -287,7 +287,7 @@ export class ApplicationService {
       // Return only the count of applications in the response
       return WriteResponse(
         200,
-        { sanitizedApplications, count: sanitizedApplications.length },
+        { applications, count: sanitizedApplications.length },
         'Applications found successfully.',
       );
     } catch (error) {
