@@ -418,7 +418,7 @@ mat-label {
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   max-width: 480px;    /* increased from 320px */
   width: 100%;
-  min-height: 320px;   /* ensure some minimum height */
+  // min-height: 320px;   /* ensure some minimum height */
   display: flex;
   flex-direction: column;
   justify-content: space-between;

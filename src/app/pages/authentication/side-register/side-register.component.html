@@ -18,63 +18,36 @@
               <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>First Name</mat-label>
                 <input matInput formControlName="firstName" />
-                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('required')">
-                  First Name is required.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('minlength')">
-                  First Name must be at least 2 characters.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('pattern')">
-                  First Name must contain only alphabets.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('maxlength')">
-                  First Name cannot exceed 50 characters.
-                </mat-error>
+                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('required')">First Name is required.</mat-error>
+                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('minlength')">First Name must be at least 2 characters. </mat-error>
+                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('pattern')"> First Name must contain only alphabets.  </mat-error>
+                <mat-error *ngIf="registrationForm.get('firstName')?.hasError('maxlength')"> First Name cannot exceed 50 characters. </mat-error>
               </mat-form-field>
-
-              <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
+            <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Last Name</mat-label>
                 <input matInput formControlName="lastName" />
-                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('required')">
-                  Last Name is required.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('minlength')">
-                  Last Name must be at least 2 characters.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('pattern')">
-                  Last Name must contain only alphabets.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('maxlength')">
-                  Last Name cannot exceed 50 characters.
-                </mat-error>
+                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('required')">Last Name is required.</mat-error>
+                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('minlength')">Last Name must be at least 2 characters.</mat-error>
+                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('pattern')"> Last Name must contain only alphabets. </mat-error>
+                <mat-error *ngIf="registrationForm.get('lastName')?.hasError('maxlength')">Last Name cannot exceed 50 characters.</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Email</mat-label>
                 <input matInput type="email" formControlName="email" />
-                <mat-error *ngIf="registrationForm.get('email')?.hasError('required')">
-                  Email is required.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('email')?.hasError('email')">
-                  Invalid email format.
-                </mat-error>
+                <mat-error *ngIf="registrationForm.get('email')?.hasError('required')"> Email is required. </mat-error>
+                <mat-error *ngIf="registrationForm.get('email')?.hasError('email')"> Invalid email format.</mat-error>
               </mat-form-field>
 
               <mat-form-field appearance="outline" class="w-100 m-b-20" color="primary">
                 <mat-label>Password</mat-label>
                 <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" />
-                <button mat-icon-button matSuffix (click)="togglePasswordVisibility($event)"
-                  [attr.aria-label]="'Show or hide password'">
+                <button mat-icon-button matSuffix (click)="togglePasswordVisibility($event)" [attr.aria-label]="'Show or hide password'">
                   <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
-                <mat-error *ngIf="registrationForm.get('password')?.hasError('required')">
-                  Password is required.
-                </mat-error>
-                <mat-error *ngIf="registrationForm.get('password')?.hasError('minlength')">
-                  Password must be at least 6 characters.
-                </mat-error>
-                <small *ngIf="registrationForm.get('password')?.errors?.['pattern']" style="color: red">
-                  Password must contain:
+                <mat-error *ngIf="registrationForm.get('password')?.hasError('required')">Password is required.</mat-error>
+                <mat-error *ngIf="registrationForm.get('password')?.hasError('minlength')">Password must be at least 6 characters.</mat-error>
+                <small *ngIf="registrationForm.get('password')?.errors?.['pattern']" style="color: red"> Password must contain:
                   <ul>
                     <li>At least 8 characters</li>
                     <li>At least one uppercase letter (A-Z)</li>
@@ -91,30 +64,17 @@
                   <mat-option value="At sea">At sea</mat-option>
                   <mat-option value="Onshore">Onshore</mat-option>
                 </mat-select>
-                <mat-error *ngIf="registrationForm.get('career')?.hasError('required')">
-                  Career is required.
-                </mat-error>
+                <mat-error *ngIf="registrationForm.get('career')?.hasError('required')"> Career is required.</mat-error>
               </mat-form-field>
               <mat-checkbox color="primary" formControlName="isJobAlerts">I want to receive job alerts.</mat-checkbox>
-              <mat-checkbox color="primary" formControlName="isNewsLetters">I want to receive
-                newsletters.</mat-checkbox>
+              <mat-checkbox color="primary" formControlName="isNewsLetters">I want to receive newsletters.</mat-checkbox>
               <mat-checkbox color="primary m-b-20" formControlName="isPrivacyPolicy">I accept the terms of Privacy
                 Policy.</mat-checkbox>
-              <mat-error *ngIf="registrationForm.get('isPrivacyPolicy')?.value != true && registrationForm.valid">
-                Please accept terms of Privacy Policy.
-              </mat-error>
-              <button mat-flat-button color="primary" class="w-100"
-                [disabled]="registrationForm.invalid || registrationForm.get('isPrivacyPolicy')?.value != true"
-                (click)="onSubmit()">
-                Register
-              </button>
+              <mat-error *ngIf="registrationForm.get('isPrivacyPolicy')?.value != true && registrationForm.valid"> Please accept terms of Privacy Policy. </mat-error>
+              <button mat-flat-button color="primary" class="w-100" [disabled]="registrationForm.invalid || registrationForm.get('isPrivacyPolicy')?.value != true" (click)="onSubmit()"> Register </button>
             </form>
-
-            <span class="d-block f-w-500 d-block m-t-24">
-              Already have an Account?
-              <a [routerLink]="['/authentication/login']" class="text-decoration-none text-primary f-w-500 f-s-14">
-                Sign In
-              </a>
+            <span class="d-block f-w-500 d-block m-t-24"> Already have an Account?
+              <a [routerLink]="['/authentication/login']" class="text-decoration-none text-primary f-w-500 f-s-14"> Sign In </a>
             </span>
           </div>
         </div>

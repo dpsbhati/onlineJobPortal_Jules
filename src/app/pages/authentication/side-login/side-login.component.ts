@@ -97,13 +97,11 @@ export class AppSideLoginComponent implements OnInit {
 
     // Subscribe to remember device changes
     this.form.get('rememberDevice')?.valueChanges.subscribe(checked => {
-      // console.log('Remember device changed:', checked);
       this.handleRememberDeviceChange(checked);
     });
   }
 
   loadSavedCredentials(): void {
-    // console.log('Loading saved credentials');
     const savedData = localStorage.getItem(this.STORAGE_KEY);
 
     if (savedData) {
@@ -117,22 +115,17 @@ export class AppSideLoginComponent implements OnInit {
             password: data.password,
             rememberDevice: true
           });
-          // console.log('Credentials loaded into form');
         } else {
-          // console.log('Saved credentials expired');
           this.clearSavedCredentials();
         }
       } catch (error) {
-        console.error('Error loading saved credentials:', error);
         this.clearSavedCredentials();
       }
     }
   }
 
   saveCredentials(): void {
-    // console.log('Saving credentials');
     const rememberDevice = this.form.get('rememberDevice')?.value;
-
     if (rememberDevice) {
       const rememberMeData: RememberMeData = {
         email: this.form.get('email')?.value,
@@ -142,14 +135,12 @@ export class AppSideLoginComponent implements OnInit {
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
-      // console.log('Credentials saved to localStorage');
     } else {
       this.clearSavedCredentials();
     }
   }
 
   clearSavedCredentials(): void {
-    // console.log('Clearing saved credentials');
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
@@ -187,15 +178,11 @@ export class AppSideLoginComponent implements OnInit {
       const response = await this._authService.login({ email, password }).toPromise();
 
       if (response && response.statusCode === 200) {
-        // console.log('Login successful, handling remember me');
         this.saveCredentials(); // This will check rememberDevice value internally
-        // this.toastr.success(response.message);
         // Set token and user data
         this._authService.accessToken = response.data.token;
         const userData = response.data.User;
         await this._authService.setCurrentUser(userData);
-
-        // this.showMessage('Login successful!');
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
@@ -207,7 +194,6 @@ export class AppSideLoginComponent implements OnInit {
         this.toastr.warning(response?.message || 'Invalid credentials. Please try again.',);
       }
     } catch (error: any) {
-      console.error('Login error:', error);
       if (error.error && error.error.message) {
         this.toastr.error(error.error.message,);
       } else {

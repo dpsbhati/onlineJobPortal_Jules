@@ -15,9 +15,7 @@
             {{ applicantDetails.status || "-" }}
           </span> -->
 
-          <span
-            class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
-            [ngClass]="{
+          <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
               'bg-light-secondary text-secondary':
                 applicantDetails.status.toLowerCase() === 'hired',
               'bg-light-warning text-warning':
@@ -26,8 +24,7 @@
                 applicantDetails.status.toLowerCase() === 'rejected',
               'bg-light-success  text-success':
                 applicantDetails.status.toLowerCase() === 'shortlisted'
-            }"
-          >
+            }">
             {{ applicantDetails.status || "-" }}
           </span>
         </div>
@@ -54,10 +51,8 @@
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Name:</label></div>
             <div class="col-lg-8">
-              <span
-                >{{ applicantDetails.user.userProfile?.first_name || "-" }}
-                {{ applicantDetails.user.userProfile?.last_name || "-" }}</span
-              >
+              <span>{{ applicantDetails.user.userProfile?.first_name || "-" }}
+                {{ applicantDetails.user.userProfile?.last_name || "-" }}</span>
             </div>
           </div>
           <div class="row m-b-16">
@@ -79,9 +74,9 @@
             <div class="col-lg-8">
               <span>
                 {{
-                  (applicantDetails.user.userProfile?.dial_code
-                    ? applicantDetails.user.userProfile.dial_code + " "
-                    : "") + (applicantDetails.user.userProfile?.mobile || "-")
+                (applicantDetails.user.userProfile?.dial_code
+                ? applicantDetails.user.userProfile.dial_code + " "
+                : "") + (applicantDetails.user.userProfile?.mobile || "-")
                 }}
               </span>
             </div>
@@ -92,7 +87,7 @@
             <div class="col-lg-8">
               <span>{{
                 formatUTCDateToReadable(applicantDetails.user.userProfile?.dob)
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -101,7 +96,7 @@
             <div class="col-lg-8">
               <span>{{
                 applicantDetails.user.userProfile?.nationalities || "-"
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -124,39 +119,32 @@
           </div>
           <hr />
           <div class="row m-b-16 m-t-16">
-            <div
-              [ngClass]="{
+            <div [ngClass]="{
                 'col-lg-12':
                   applicantDetails.user.userProfile?.additional_contact_info
                     ?.length > 0,
                 'col-lg-4':
                   !applicantDetails.user.userProfile?.additional_contact_info
-              }"
-            >
+              }">
               <mat-card-title class="m-b-16">
                 Additional Contact Information:
               </mat-card-title>
             </div>
             <div class="col-lg-8">
               {{
-                applicantDetails.user.userProfile?.additional_contact_info
-                  ? ""
-                  : "-"
+              applicantDetails.user.userProfile?.additional_contact_info
+              ? ""
+              : "-"
               }}
             </div>
           </div>
-          <div
-            *ngIf="
+          <div *ngIf="
               applicantDetails.user.userProfile?.additional_contact_info?.length
-            "
-          >
-            <div
-              class="row m-b-16"
-              *ngFor="
+            ">
+            <div class="row m-b-16" *ngFor="
                 let contact of applicantDetails.user.userProfile
                   .additional_contact_info
-              "
-            >
+              ">
               <div class="col-lg-4">
                 <label>{{ contact.contact_type || "-" }}:</label>
               </div>
@@ -187,29 +175,24 @@
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Work Experience:</label></div>
             <div class="col-lg-8">
-              <ng-container
-                *ngIf="
+              <ng-container *ngIf="
                   applicantDetails?.user?.userProfile?.work_experience_info
                     ?.length;
                   else noWorkExp
-                "
-              >
-                <div
-                  *ngFor="
+                ">
+                <div *ngFor="
                     let work of applicantDetails.user.userProfile
                       .work_experience_info
-                  "
-                >
+                  ">
                   <span>
                     {{ work.work_experience_title }} at
                     {{ work.work_experience_employer }} ({{
-                      formatUTCDateToReadable(work.work_experience_from)
+                    formatUTCDateToReadable(work.work_experience_from)
                     }}
                     -
                     {{
-                      formatUTCDateToReadable(work.work_experience_to)
-                    }}) </span
-                  ><br />
+                    formatUTCDateToReadable(work.work_experience_to)
+                    }}) </span><br />
                 </div>
               </ng-container>
               <ng-template #noWorkExp>-</ng-template>
@@ -221,8 +204,8 @@
             <div class="col-lg-8">
               <span>{{
                 applicantDetails?.user?.userProfile?.highest_education_level ||
-                  "-"
-              }}</span>
+                "-"
+                }}</span>
             </div>
           </div>
 
@@ -238,19 +221,15 @@
               <label>Courses:</label>
             </div>
             <div class="col-lg-8">
-              <ng-container
-                *ngIf="
+              <ng-container *ngIf="
                   applicantDetails.user.userProfile?.course_info?.length > 0;
                   else noCourses
-                "
-              >
+                ">
                 <ul class="p-l-16">
-                  <li
-                    *ngFor="
+                  <li *ngFor="
                       let course of applicantDetails.user.userProfile
                         .course_info
-                    "
-                  >
+                    ">
                     <span>{{ course.course_title }}</span>
                     ({{ formatUTCDateToReadable(course.course_from) }} -
                     {{ formatUTCDateToReadable(course.course_to) }}) -
@@ -267,20 +246,16 @@
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Certifications:</label></div>
             <div class="col-lg-8">
-              <ng-container
-                *ngIf="
+              <ng-container *ngIf="
                   applicantDetails.user.userProfile?.certification_info
                     ?.length > 0;
                   else noCertifications
-                "
-              >
+                ">
                 <ul class="p-l-16">
-                  <li
-                    *ngFor="
+                  <li *ngFor="
                       let cert of applicantDetails.user.userProfile
                         .certification_info
-                    "
-                  >
+                    ">
                     <span>{{ cert.certification_title }}</span>
                     ({{ formatUTCDateToReadable(cert.certification_from) }} -
                     {{ formatUTCDateToReadable(cert.certification_to) }}) -
@@ -335,20 +310,15 @@
           <div class="row m-b-16">
             <div class="col-lg-4 p-16"><label>Other Experience:</label></div>
             <div class="col-lg-8">
-              <ul
-                class="p-l-16"
-                *ngIf="
+              <ul class="p-l-16" *ngIf="
                   applicantDetails.user.userProfile?.other_experience_info
                     ?.length;
                   else noOtherExperience
-                "
-              >
-                <li
-                  *ngFor="
+                ">
+                <li *ngFor="
                     let exp of applicantDetails.user.userProfile
                       .other_experience_info
-                  "
-                >
+                  ">
                   <span>{{ exp.other_experience_description }}</span>
                   ({{ formatUTCDateToReadable(exp.other_experience_from) }} -
                   {{ formatUTCDateToReadable(exp.other_experience_to) }})
@@ -362,21 +332,16 @@
           <div class="row m-b-16">
             <div class="col-lg-4 p-16"><label>Projects:</label></div>
             <div class="col-lg-8">
-              <ul
-                class="p-l-16"
-                *ngIf="
+              <ul class="p-l-16" *ngIf="
                   applicantDetails.user.userProfile?.project_info?.length;
                   else noProjects
-                "
-              >
-                <li
-                  *ngFor="
+                ">
+                <li *ngFor="
                     let proj of applicantDetails.user.userProfile.project_info
-                  "
-                >
+                  ">
                   <span>{{ proj.project_name }}</span>
                   ({{
-                    formatProjectDuration(proj.project_from, proj.project_to)
+                  formatProjectDuration(proj.project_from, proj.project_to)
                   }}) - Role: {{ proj.project_role }}
                 </li>
               </ul>
@@ -468,13 +433,13 @@
             <div class="col-lg-8">
               <span>
                 {{
-                  applicantDetails.user?.userProfile?.current_salary_info
-                    ? (applicantDetails.user.userProfile.current_salary_info
-                        .amount || "-") +
-                      " " +
-                      (applicantDetails.user.userProfile.current_salary_info
-                        .currency || "")
-                    : "-"
+                applicantDetails.user?.userProfile?.current_salary_info
+                ? (applicantDetails.user.userProfile.current_salary_info
+                .amount || "-") +
+                " " +
+                (applicantDetails.user.userProfile.current_salary_info
+                .currency || "")
+                : "-"
                 }}
               </span>
             </div>
@@ -485,13 +450,13 @@
             <div class="col-lg-8">
               <span>
                 {{
-                  applicantDetails.user?.userProfile?.expected_salary_info
-                    ? (applicantDetails.user.userProfile.expected_salary_info
-                        .amount || "-") +
-                      " " +
-                      (applicantDetails.user.userProfile.expected_salary_info
-                        .currency || "")
-                    : "-"
+                applicantDetails.user?.userProfile?.expected_salary_info
+                ? (applicantDetails.user.userProfile.expected_salary_info
+                .amount || "-") +
+                " " +
+                (applicantDetails.user.userProfile.expected_salary_info
+                .currency || "")
+                : "-"
                 }}
               </span>
             </div>
@@ -502,9 +467,9 @@
             <div class="col-lg-8">
               <span>{{
                 formatPreferences(
-                  applicantDetails.user?.userProfile?.preferences_info
+                applicantDetails.user?.userProfile?.preferences_info
                 )
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -513,8 +478,8 @@
             <div class="col-lg-8">
               <span>
                 {{
-                  applicantDetails.user?.userProfile?.additional_info
-                    ?.additional_info || "-"
+                applicantDetails.user?.userProfile?.additional_info
+                ?.additional_info || "-"
                 }}
               </span>
             </div>
@@ -527,8 +492,8 @@
             <div class="col-lg-8">
               <span>
                 {{
-                  applicantDetails.user?.userProfile?.vacancy_source_info
-                    ?.vacancy_source || "-"
+                applicantDetails.user?.userProfile?.vacancy_source_info
+                ?.vacancy_source || "-"
                 }}
               </span>
             </div>
@@ -544,21 +509,14 @@
           </mat-card-title>
           <div class="certification-item" *ngFor="let cert of certifications">
             <h4 class="m-b-0">{{ cert.organization_name }}</h4>
-            <p
-              *ngIf="
+            <p *ngIf="
                 cert.certification_description ||
                 cert.certification_description === null
-              "
-            >
+              ">
               <span>Description:</span>
               {{ cert.certification_description || "Not Available" }}
             </p>
-            <a
-              *ngIf="cert.certification_file"
-              [href]="cert.certification_file"
-              target="_blank"
-              mat-button
-            >
+            <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank" mat-button>
               View Certificate
             </a>
           </div>
@@ -566,39 +524,39 @@
       </mat-card>
 
       <mat-card>
-        <img
-          mat-card-image
-          [src]="applicantDetails?.user.userProfile?.profile_image_path"
-          alt="Job Image"
-          height="250"
-          width="390"
-          style="object-fit: contain"
-        />
+        <mat-card-content>
+
+          <mat-card-title class="m-b-16"> Profile Image </mat-card-title>
+          <div class="d-flex align-items-center justify-content-center">
+            <img mat-card-image [src]="applicantDetails?.user.userProfile?.profile_image_path" alt="Job Image"
+              height="250" width="390" style="object-fit: cover;
+    border-radius: 201px !important;
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;" />
+          </div>
+        </mat-card-content>
+
       </mat-card>
 
       <mat-card *ngIf="applicantDetails.user.userProfile?.cv_path">
         <mat-card-content>
           <mat-card-title class="m-b-16"> Documents </mat-card-title>
-          <div
-            class="d-flex align-items-center justify-content-between gap-6"
-            *ngIf="applicantDetails.user.userProfile?.cv_path"
-          >
+          <div class="d-flex align-items-center justify-content-between gap-6"
+            *ngIf="applicantDetails.user.userProfile?.cv_path">
             <div class="">
               <h4 class="m-b-0">CV/Resume</h4>
               <h5 class="m-b-0 m-t-0">
                 {{
-                  extractFileName(applicantDetails.user.userProfile?.cv_path)
+                extractFileName(applicantDetails.user.userProfile?.cv_path)
                 }}
               </h5>
             </div>
 
-            <a
-              class="p-x-16"
-              style="white-space: nowrap"
-              mat-flat-button
-              [href]="applicantDetails.user.userProfile?.cv_path"
-              target="_blank"
-            >
+            <a class="p-x-16" style="white-space: nowrap" mat-flat-button
+              [href]="applicantDetails.user.userProfile?.cv_path" target="_blank">
               Download CV
             </a>
           </div>
@@ -607,17 +565,13 @@
 
       <mat-card>
         <mat-card-content>
-          <mat-card-title class="m-b-16"
-            >Additional Information Comment</mat-card-title
-          >
+          <mat-card-title class="m-b-16">Additional Information Comment</mat-card-title>
 
-          <div
-            *ngIf="
+          <div *ngIf="
               applicantDetails?.additional_info &&
                 applicantDetails?.additional_info.trim().length > 0;
               else noComment
-            "
-          >
+            ">
             <p>{{ applicantDetails?.additional_info }}</p>
           </div>
           <ng-template #noComment>
@@ -630,19 +584,9 @@
         <mat-card-content>
           <mat-card-title class="m-b-16"> Admin Comment </mat-card-title>
           <mat-form-field appearance="outline" class="w-100">
-            <textarea
-              [(ngModel)]="adminComments"
-              rows="5"
-              matInput
-              placeholder="Add your comments here..."
-            ></textarea>
+            <textarea [(ngModel)]="adminComments" rows="5" matInput placeholder="Add your comments here..."></textarea>
           </mat-form-field>
-          <button
-            mat-flat-button
-            class="w-100"
-            (click)="updateStatus()"
-            color="primary"
-          >
+          <button mat-flat-button class="w-100" (click)="updateStatus()" color="primary">
             Save
           </button>
         </mat-card-content>

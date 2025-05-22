@@ -369,33 +369,40 @@ viewJobDetails(jobId:any): void {
         if (res.statusCode === 200 && res.data?.applications) {
           this.totalApplications = res.data.count || 0;
 
-          this.dataSource.data = res.data.applications.map(
-            (app: any, index: number) => ({
-              position: index + 1 + this.pageIndex * this.pageSize,
-              name: `${app.user?.userProfile?.first_name || ''} ${app.user?.userProfile?.last_name || ''}`,
-              email: app.user?.email || '',
+         this.dataSource.data = res.data.applications.map((app: any, index: number) => {
+          // Safely get profile image path string
+          const rawImagePath = app.user?.userProfile?.profile_image_path || '';
+
+          // Replace backslashes with forward slashes (for URLs)
+          const profileImageUrl = rawImagePath ? rawImagePath.replace(/\\/g, '/') : null;
+
+          return {
+            position: index + 1 + this.pageIndex * this.pageSize,
+            name: `${app.user?.userProfile?.first_name || ''} ${app.user?.userProfile?.last_name || ''}`,
+            email: app.user?.email || '',
               dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              }),
-              application_id: app?.id,
-              experience: app?.work_experiences || '',
-              jobPost: app.job?.title || '',
-              applications: app?.count || 0,
-              status: app?.status || '',
-              all: app?.all,
-              user_id: app?.user?.id || '',
-              job_id: app?.job_id || ''
-            })
-          );
-        } else {
-          // this.toaster.warning(res.message || 'No applications found');
-          this.dataSource.data = [];
-          this.totalApplications = 0;
-        }
-      },
+        year: 'numeric',
+      month: 'long',
+       day: 'numeric',
+}),
+
+            application_id: app?.id,
+            experience: app?.work_experiences || '',
+            jobPost: app.job?.title || '',
+            applications: app?.count || 0,
+            status: app?.status || '',
+            all: app?.all,
+            user_id: app?.user?.id || '',
+            job_id: app?.job_id || '',
+            profileImageUrl,  // Add profile image URL here
+          };
+        });
+      } else {
+        // this.toaster.warning(res.message || 'No applications found');
+        this.dataSource.data = [];
+        this.totalApplications = 0;
+      }
+    },
       error: (err: any) => {
         this.loader.hide();
         this.dataSource.data = [];
