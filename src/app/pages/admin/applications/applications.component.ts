@@ -155,7 +155,9 @@ export class ApplicationsComponent {
       });
   }
 
-
+  goBack() {
+    this.router.navigate(['/job-list']);
+  }
   fetchApplications() {
     this.loader.show();
 
