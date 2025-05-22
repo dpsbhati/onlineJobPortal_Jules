@@ -262,11 +262,63 @@ export class ApplicationsComponent {
     this.fetchApplications()
   }
 
+  // onFilterChange(filterType: string, value: any): void {
+  //   this.selectedFilters[filterType] = value;
+  //   this.pageConfig.curPage = 1;
+  //   this.fetchApplications();
+  // }
   onFilterChange(filterType: string, value: any): void {
-    this.selectedFilters[filterType] = value;
-    this.pageConfig.curPage = 1;
-    this.fetchApplications();
+  this.selectedFilters[filterType] = value;
+  this.pageIndex = 0;
+
+  // ✅ Step 1: Build whereClause
+  let whereClause = this.helper.getAllFilters(this.selectedFilters);
+
+  // ✅ Step 2: Replace "rank" with "all" (like) filter
+  if (this.selectedFilters.rank) {
+    whereClause = whereClause.filter(clause => clause.key !== 'rank');
+    whereClause.push({
+      key: 'all',
+      value: this.selectedFilters.rank,
+      operator: 'like',
+    });
   }
+
+  // ✅ Step 3: Add "all" filter if search text is entered
+  if (this.selectedFilters.all) {
+    whereClause.push({
+      key: 'all',
+      value: this.selectedFilters.all,
+      operator: 'like',
+    });
+  }
+
+  // ✅ Step 4: Add "status" filter
+  if (this.selectedFilters.status) {
+    whereClause.push({
+      key: 'status',
+      value: this.selectedFilters.status,
+      operator: 'eq',
+    });
+  }
+
+  // ✅ Step 5: Conditional API call
+  if (this.applicantId) {
+    this.pageConfig = {
+      ...this.pageConfig,
+      curPage: this.pageIndex + 1,
+      perPage: this.pageSize,
+      sortBy: this.sortBy,
+      direction: this.direction,
+      job_id: this.applicantId,
+      whereClause,
+    };
+    this.onjobviewapplicationPagination();
+  } else {
+    this.fetchApplications(); // internally builds whereClause again
+  }
+}
+
 
   onSearch() {
     throw new Error('Method not implemented.');
@@ -284,19 +336,47 @@ export class ApplicationsComponent {
     this.fetchApplications();
   }
 
-  clearFilters() {
-    this.selectedFilters = {
-      all: null,
-      job_id: null,
-      status: null,
-      rank: null,
+  // clearFilters() {
+  //   this.selectedFilters = {
+  //     all: null,
+  //     job_id: null,
+  //     status: null,
+  //     rank: null,
+  //   };
+  //   this.pageIndex = 0;
+  //   if (this.paginator) {
+  //     this.paginator.firstPage();
+  //   }
+  //   this.fetchApplications();
+  // }
+clearFilters(): void {
+  this.selectedFilters = {
+    all: null,
+    job_id: null,
+    status: null,
+    rank: null,
+  };
+  this.pageIndex = 0;
+
+  if (this.paginator) this.paginator.firstPage();
+
+  let whereClause: any[] = [];
+
+  if (this.applicantId) {
+    this.pageConfig = {
+      ...this.pageConfig,
+      curPage: 1,
+      perPage: this.pageSize,
+      sortBy: this.sortBy,
+      direction: this.direction,
+      job_id: this.applicantId,
+      whereClause,
     };
-    this.pageIndex = 0;
-    if (this.paginator) {
-      this.paginator.firstPage();
-    }
+    this.onjobviewapplicationPagination();
+  } else {
     this.fetchApplications();
   }
+}
 
   viewApplicantDetails(application_id: any): void {
     this.router.navigate(['/applicant-details', application_id]);
