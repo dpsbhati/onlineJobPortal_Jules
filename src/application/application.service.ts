@@ -226,17 +226,22 @@ export class ApplicationService {
       };
 
       const fieldsToSearch = [
-        'status',
-        'description',
-        'comments',
-        'additional_info',
-        'certification_path',
-        'applied_at',
+        'CONCAT(userProfile.first_name, " ", userProfile.last_name)',
+        'app.job_id',
+        'app.description',
+        'app.comments',
+        'app.additional_info', // ✅ Fully qualified
+        'app.certification_path',
         'job.title',
         'user.email',
         'userProfile.first_name',
+        'userProfile.last_name',
       ];
-
+      const status = whereClause.find((p) => p.key === 'status' && p.value);
+      if (status) {
+        lwhereClause += ` AND app.status LIKE :status`;
+        parameters.status = `%${status.value}%`;
+      }
       // Dynamically adding search filters
       if (Array.isArray(whereClause)) {
         fieldsToSearch.forEach((field) => {
@@ -521,12 +526,13 @@ export class ApplicationService {
       }
 
       const fieldsToSearch = [
-        'status',
-        'job_id',
-        'description',
-        'comments',
-        'additional_info',
-        'certification_path',
+        'CONCAT(userProfile.first_name, " ", userProfile.last_name)',
+
+        'app.job_id',
+        'app.description',
+        'app.comments',
+        'app.additional_info', // ✅ Fully qualified
+        'app.certification_path',
         'job.title',
         'user.email',
         'userProfile.first_name',
@@ -543,6 +549,11 @@ export class ApplicationService {
       if (title) {
         lwhereClause += ` AND job.title LIKE :title`;
         parameters.title = `%${title.value}%`;
+      }
+      const status = whereClause.find((p) => p.key === 'status' && p.value);
+      if (status) {
+        lwhereClause += ` AND app.status LIKE :status`;
+        parameters.status = `%${status.value}%`;
       }
       const job_type = whereClause.find((p) => p.key === 'job_type' && p.value);
       if (job_type) {
