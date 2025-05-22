@@ -84,34 +84,7 @@ export class AppSideRegisterComponent {
     });
   }
 
-  // onSubmit(): void {
-  //   this.loader.show();
-  //   if (this.registrationForm.invalid) {
-  //     return;
-  //   }
-  //   this.trimFormValues();
-  //   this.loading = true;
-  //   this.errorMessage = null;
 
-  //   this.authService.registerUser(this.registrationForm.value).subscribe({
-  //     next: (res: any) => {
-  //       if (res.statusCode === 200 || res.statusCode === 201) {
-
-  //         this.router.navigate(['authentication/login']);
-  //       this.toastr.success(res.message)
-  //       this.loader.hide();
-  //         this.loading = false;
-  //       } else {
-  //        this.toastr.warning(res.message)
-  //        this.loader.hide();
-  //       }
-  //     },
-  //     error: (error: any) => {
-  //       this.toastr.error = error.error?.message ||'An error occurred during registration.';
-  //       this.loader.hide();
-  //     },
-  //   });
-  // }
 
   onSubmit(): void {
     this.loader.show();
