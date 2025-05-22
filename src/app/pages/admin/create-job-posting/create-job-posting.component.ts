@@ -157,8 +157,6 @@ export class CreateJobPostingComponent {
         posted_date: new FormControl('', Validators.required),
         jobpost_status: new FormControl('Draft'),
         job_type_post: new FormControl('', Validators.required)
-        // work_type: new FormControl(''),
-        // file_path: new FormControl(null),
       },
     )
   }
@@ -190,20 +188,20 @@ export class CreateJobPostingComponent {
         Validators.required,
         this.deadlineValidator(this.todaysDate)
       ])
-    //  this.listenToJobPostingStatus();
+
   }
   addSkill(): void {
     const skill = this.newSkill.trim()
     if (!skill) {
-      // this.notify.showWarning('Skill cannot be empty.');
+
       return
     }
     if (skill.length < 2) {
-      // this.notify.showWarning('Skill must be at least 2 characters long.');
+
       return
     }
     if (skill.length > 50) {
-      // this.notify.showWarning('Skill cannot exceed 50 characters.');
+
       return
     }
     if (skill && !this.skillsArray.includes(skill)) {
@@ -254,9 +252,7 @@ export class CreateJobPostingComponent {
       if (formValues.start_salary) {
         formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
       }
-      // if (formValues.end_salary) {
-      //   formValues.end_salary = parseInt(formValues?.end_salary.replace(/,/g, ''), 10);
-      // }
+
       if (!formValues.id) {
         delete formValues.id;
       }
@@ -299,18 +295,7 @@ export class CreateJobPostingComponent {
     this.jobForm.get('skills_required')?.markAsTouched()
   }
 
-  // listenToJobPostingStatus(): void {
-  //   this.jobForm.get('job_type_post')?.valueChanges.subscribe((value) => {
-  //     const postedAtControl = this.jobForm.get('posted_at');
-  //     if (value === 'Schedulelater') {
-  //       postedAtControl?.setValidators([Validators.required,  this.postedAtValidator()]);
-  //     } else {
-  //       postedAtControl?.clearValidators();
-  //       postedAtControl?.setValue(''); // Clear the value
-  //     }
-  //     postedAtControl?.updateValueAndValidity();
-  //   });
-  // }
+
   validateMinimumTime(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -469,9 +454,7 @@ export class CreateJobPostingComponent {
       if (response.statusCode === 200 && response.data) {
         const data = response.data
         this.loader.hide();
-        //  console.log(data);
-        // const formattedImageUrl = data.featured_image.replace(/\\/g, '/');
-        // this.jobForm.patchValue({featured_image: formattedImageUrl,});
+
         const formattedDatePublished = formatDate(
           data.date_published,
           'yyyy-MM-dd',
@@ -548,78 +531,19 @@ export class CreateJobPostingComponent {
           posted_date: formattedpostedAtDate,
           jobpost_status: data.jobpost_status || 'Draft',
           job_type_post: data.job_type_post
-          // work_type: data.work_type || '',
-          // file_path: data.file || null,
+
         })
         if (data.featured_image) {
           this.imagePreview = data.featured_image;
         } else {
           this.loader.hide();
         }
-        // console.error('Failed to retrieve job posting data', response.message)
+
       }
     })
   }
 
-  // onFileSelected(event: Event, controlName: string): void {
-  //   const file = (event.target as HTMLInputElement).files?.[0]
 
-  //  if (file) {
-  //   if (!file.type.startsWith('image/')) {
-  //     this.toaster.warning('Please select an image file.');
-  //     // Optionally, clear the selected file
-  //     (event.target as HTMLInputElement).value = ''; // Reset input file
-  //     return;
-  //   }
-  //     // Create preview
-  //     const reader = new FileReader()
-  //     reader.onload = () => {
-  //       this.imagePreview = reader.result
-  //     }
-  //     reader.readAsDataURL(file)
-
-  //     // Your existing compression and upload logic
-  //     if (this.allowedImageFormats.includes(file.type)) {
-  //       this.imageCompressionService
-  //         .compressImage(file)
-  //         .then((compressedImageUrl: string) => {
-  //           fetch(compressedImageUrl)
-  //             .then(res => res.blob())
-  //             .then(compressedFileBlob => {
-  //               const compressedFile = new File(
-  //                 [compressedFileBlob],
-  //                 file.name,
-  //                 { type: file.type }
-  //               )
-
-  //               // this.jobForm.patchValue({ [controlName]: compressedFile });
-  //               const folderName = 'job-postings'
-  //               const user = JSON.parse(localStorage.getItem('user') || '{}')
-  //               const userId = user.id
-  //               this.adminService
-  //                 .uploadFile({ folderName, file: compressedFile, userId })
-  //                 .subscribe(
-  //                   (response: any) => {
-  //                     if (response.statusCode === 200) {
-  //                       // this.notify.showSuccess(response.message);
-  //                       this.jobForm.patchValue({
-  //                         [controlName]: response.data.path
-  //                       })
-  //                     } else {
-  //                       // this.notify.showWarning(response.message);
-  //                     }
-  //                   },
-  //                   (error: any) => {
-  //                     console.error('Error uploading file:', error)
-  //                   }
-  //                 )
-  //             })
-  //         })
-  //     } else {
-  //       // this.notify.showWarning("Invalid image format")
-  //     }
-  //   }
-  // }
   onFileSelected(event: Event, controlName: string): void {
   const file = (event.target as HTMLInputElement).files?.[0];
 
@@ -685,107 +609,6 @@ export class CreateJobPostingComponent {
     })
     this.imagePreview = null
   }
-  // onSubmit (): void {
-  //   // debugger
-
-  //   if (this.jobForm.valid) {
-  //     this.sanitizeFormValues()
-  //     const formValues = this.jobForm.value
-  //     // if (formValues.posted_at) {
-  //     //   const localDate = new Date(formValues.posted_at);
-  //     //   formValues.posted_at = localDate.toISOString(); // Convert to UTC ISO format
-  //     // }
-  //     //     if (formValues.posted_at) {
-  //     //   const localDate = new Date(formValues.posted_at);
-  //     //   formValues.posted_at = localDate.toISOString(); // Convert to ISO format
-  //     // }
-  //     //  const jobTypeControl = this.jobForm.get('job_type');
-  //     //  if (jobTypeControl) {
-  //     //    formValues.job_type.setValue(jobTypeControl.value.toUpperCase(), { emitEvent: false });
-  //     //   }
-
-  //     if (formValues.start_salary) {
-  //       formValues.start_salary = parseInt(
-  //         formValues.start_salary.replace(/,/g, ''),
-  //         10
-  //       )
-  //     }
-  //     if (formValues.end_salary) {
-  //       formValues.end_salary = parseInt(
-  //         formValues.end_salary.replace(/,/g, ''),
-  //         10
-  //       )
-  //     }
-  //     if (!formValues.id) {
-  //       delete formValues.id
-  //     }
-
-  //     formValues.skills_required = JSON.stringify(formValues.skills_required)
-  //     // if (this.isEditMode) {
-
-  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-  //     //     if (response.statusCode === 200) {
-  //     //       this.notify.showSuccess(response.message);
-  //     //       this.router.navigate(['/job-list']);
-  //     //     }
-  //     //     else{
-  //     //       this.notify.showError(response.message);
-  //     //       this.spinner.hide();
-  //     //     }
-  //     //   });
-  //     // } else {
-
-  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe(response => {
-  //     //     if (response.statusCode === 200) {
-  //     //       this.notify.showSuccess(response.message);
-  //     //       this.router.navigate(['/job-list']);
-  //     //     }
-  //     //     else{
-  //     //       this.notify.showWarning(response.message);
-  //     //       this.spinner.hide();
-  //     //     }
-  //     //   });
-  //     this.loader.show();
-
-  //     this.adminService.createOrUpdateJobPosting(formValues).subscribe({
-  //       next: (response: any) => {
-  //         if (response.statusCode === 200) {
-  //           this.loader.hide();
-  //           // this.notify.showSuccess(response.message);
-  //           this.router.navigate(['/job-list'])
-  //         } else {
-  //           // this.notify.showError(response.message);
-  //         }
-  //       },
-  //       error: (error: any) => {
-  //         // this.notify.showError(error.error?.message);
-  //         window.scrollTo({ top: 0, behavior: 'smooth' })
-  //       }
-  //     })
-  //     // } else {
-  //     //   this.spinner.show();
-  //     //   this.adminService.createOrUpdateJobPosting(formValues).subscribe({
-  //     //     next: (response) => {
-  //     //       this.spinner.hide();
-  //     //       if (response.statusCode === 200) {
-  //     //         this.notify.showSuccess(response.message);
-  //     //         this.router.navigate(['/job-list']);
-  //     //       } else {
-  //     //         this.notify.showError(response.message );
-  //     //       }
-  //     //     },
-  //     //     error: (error) => {
-  //     //       this.spinner.hide();
-  //     //       this.notify.showError(error.error?.message );
-  //     //       window.scrollTo({ top: 0, behavior: 'smooth' });
-  //     //     }
-  //     //   });
-  //   } else {
-  //     this.loader.hide();
-  //     // this.notify.showWarning("Failed to update the form")
-  //   }
-  // }
-
 
   allrankslist() {
     this.adminService.getallranks().subscribe((res: any) => {
