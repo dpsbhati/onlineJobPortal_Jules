@@ -380,12 +380,12 @@ viewJobDetails(jobId:any): void {
             position: index + 1 + this.pageIndex * this.pageSize,
             name: `${app.user?.userProfile?.first_name || ''} ${app.user?.userProfile?.last_name || ''}`,
             email: app.user?.email || '',
-            dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            }),
+              dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+      month: 'long',
+       day: 'numeric',
+}),
+
             application_id: app?.id,
             experience: app?.work_experiences || '',
             jobPost: app.job?.title || '',
