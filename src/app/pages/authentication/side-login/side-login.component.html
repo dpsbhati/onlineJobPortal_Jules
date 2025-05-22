@@ -3,37 +3,20 @@
     <div class="col-lg-7 col-xl-8 bg-gredient p-0">
       <div class="p-24 h-100">
         <app-auth-branding></app-auth-branding>
-
-        <div
-          class="align-items-center justify-content-center img-height d-none d-lg-flex"
-        >
-         
-        </div>
+        <div class="align-items-center justify-content-center img-height d-none d-lg-flex"> </div>
       </div>
     </div>
     <div class="col-lg-5 col-xl-4 p-0 bg-white">
-      <div
-        class="p-32 d-flex align-items-start align-items-lg-center justify-content-center h-100"
-      >
+      <div class="p-32 d-flex align-items-start align-items-lg-center justify-content-center h-100" >
         <div class="row justify-content-center w-100">
           <div class="col-lg-9 max-width-form">
             <h4 class="f-w-700 f-s-24 m-0">Welcome to Admin Portal</h4>
-
-
-
             <div class="or-border m-t-30" style="font-size: 14px;">sign in with</div>
-
             <form class="m-t-30" [formGroup]="form" (ngSubmit)="submit()">
-              <mat-form-field
-              appearance="outline"
-              class="w-100 m-b-20"
-              color="primary"
-              >
+              <mat-form-field appearance="outline" class="w-100 m-b-20"  color="primary">
               <mat-label>Email</mat-label>
                 <input matInput formControlName="email" type="email" />
-                <mat-error *ngIf="form.get('email')?.hasError('required')">
-                 Email is required
-                </mat-error>
+                <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required </mat-error>
                 <mat-error *ngIf="form.get('email')?.hasError('email')">Please enter a valid email.</mat-error>
               </mat-form-field>
 
@@ -71,19 +54,13 @@
                 [disabled]="!form.valid || isLoading"
               >
                 <div class="d-flex align-items-center justify-content-center">
-                  <!-- <mat-spinner *ngIf="isLoading" [diameter]="20" class="m-r-8"></mat-spinner> -->
                   <span>Sign In</span>
                 </div>
               </button>
             </form>
             <span class="d-block f-w-500 d-block m-t-24"
               >New User?
-              <a
-                [routerLink]="['/authentication/register']"
-                class="text-decoration-none text-primary f-w-500 f-s-14"
-              >
-                Create an account</a
-              >
+              <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">Create an account</a>
             </span>
           </div>
         </div>

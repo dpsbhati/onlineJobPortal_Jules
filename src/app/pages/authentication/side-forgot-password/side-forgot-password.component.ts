@@ -16,15 +16,14 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
   selector: 'app-side-forgot-password',
   standalone: true,
   imports: [
-    RouterModule, 
-    MaterialModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    AppAuthBrandingComponent, 
+    RouterModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    AppAuthBrandingComponent,
     CommonModule,
     MatProgressSpinnerModule,
     ToastrModule
-   
   ],
   templateUrl: './side-forgot-password.component.html',
   styles: [`
@@ -120,8 +119,7 @@ export class SideForgotPasswordComponent implements OnInit {
           this.form.enable();
           this.isLoading = false;
         })
-      )
-      .subscribe({
+      ).subscribe({
         next: (response) => {
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
@@ -131,7 +129,6 @@ export class SideForgotPasswordComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.error('Forgot Password Error:', error);
           this.toastr.error(error.error?.message || 'Enter a valid email');
         }
       });
