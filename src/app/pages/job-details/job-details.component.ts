@@ -58,12 +58,8 @@ export class JobDetailsComponent {
     this.userDetailsForm = new FormGroup({
       job_id: new FormControl(this.jobId),
       user_id: new FormControl(this.user),
-
       additional_info: new FormControl('', [
-
-        // Validators.minLength(5),
         Validators.maxLength(500),
-        // this.minLengthWithContent(5),
       ]),
     });
   }
@@ -82,14 +78,6 @@ export class JobDetailsComponent {
     }
 
   }
-
-  // isAdmin(): boolean {
-  //   return this.userRole.toUpperCase() === UserRole.ADMIN;
-  // }
-
-  // isApplicant(): boolean {
-  //   return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
-  // }
 
   formatSkills(skills: string): string[] {
     try {
@@ -133,13 +121,9 @@ export class JobDetailsComponent {
       error: (error) => {
         this.loader.hide();
         this.notifyService.showError(error?.error?.message);
-        console.error('Error:', error);
       },
     });
   }
-  //       goToLogin() {
-  //   this.router.navigate(['/authentication/login']);
-  // }
   goToLogin() {
     const accessToken = localStorage.getItem('accessToken');
     const userStr = localStorage.getItem('user');
@@ -181,16 +165,6 @@ export class JobDetailsComponent {
   onApplyNowClick() {
     if (this.authService.isLoggedIn()) {
       this.showApplyModal = true;
-      // Redirect if logged in
-      // const dialogRef = this.dialog.open(ApplyJobComponent, {
-      //   // disableClose: true,
-      //   data: { jobId: this.id }
-      // });
-
-      // dialogRef.afterClosed().subscribe((result) => {
-      //   // console.log(`Dialog result: ${result}`);
-      //   this.dialog.closeAll();
-      // });
     } else {
       // Show popup inline in this component
       this.showLoginSignupDialog = true;
