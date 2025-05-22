@@ -235,10 +235,6 @@ export class ExpiredJobPostingComponent implements OnInit {
           id: job.id,
           rank: job.rank,
         }));
-        // Extract unique ranks
-        //   this.uniqueRanks = [
-        //     ...new Set(this.jobList.map((job) => job.rank)),
-        //   ].filter((rank) => rank);
       }
     });
   }
