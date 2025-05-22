@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { FacebookService } from './facebook.service';
 import { CreateFacebookDto } from './dto/create-facebook.dto';
 import { UpdateFacebookDto } from './dto/update-facebook.dto';
@@ -11,6 +19,4 @@ export class FacebookController {
   create(@Body() createFacebookDto: CreateFacebookDto) {
     return this.facebookService.createJobPostFacebook(createFacebookDto);
   }
-
- 
 }

@@ -17,7 +17,9 @@ export class FacebookService {
       });
       return response.data;
     } catch (error) {
-      throw new Error(`Facebook API Error: ${error.response?.data || error.message}`);
+      throw new Error(
+        `Facebook API Error: ${error.response?.data || error.message}`,
+      );
     }
   }
 }
