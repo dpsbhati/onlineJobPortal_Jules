@@ -142,7 +142,6 @@ export class JobListComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err: any) => {
-        console.error('API Error:', err);
         this.isLoading = false;
         this.loader.hide();
         this.toastr.error(err?.error?.message);
@@ -263,7 +262,7 @@ onSearch(): void {
           id: job.id,
           rank: job.rank,
         }));
-      
+
       }
     });
   }
