@@ -95,11 +95,11 @@
         <!-- Email Column -->
         <ng-container matColumnDef="email">
           <th style="width: 120px;" mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
-          <td style="width: 120px;" mat-cell *matCellDef="let element">
-            <div style=" width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              {{ element.email || '-'}}
-            </div>
-          </td>
+         
+          <td style="width: 150px;" mat-cell *matCellDef="let element">
+  {{ element.email || '-' }}
+</td>
+
         </ng-container>
 
         <!-- Mobile Column -->
