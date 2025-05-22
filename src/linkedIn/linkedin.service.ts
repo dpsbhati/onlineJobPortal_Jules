@@ -43,7 +43,6 @@ export class JobScheduler {
 
     try {
       const response = await this.linkedInService.createJobPost(jobContent);
-      console.log('Job posted successfully:', response);
     } catch (error) {
       console.error('Error posting job:', error);
     }

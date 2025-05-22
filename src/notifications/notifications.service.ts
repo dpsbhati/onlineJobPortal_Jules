@@ -27,6 +27,7 @@ export class NotificationsService {
       );
     } catch (error) {
       console.log(error);
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 
@@ -46,6 +47,7 @@ export class NotificationsService {
       );
     } catch (error) {
       console.log(error);
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 
@@ -66,6 +68,7 @@ export class NotificationsService {
       );
     } catch (error) {
       console.log(error);
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 
@@ -86,6 +89,7 @@ export class NotificationsService {
       return WriteResponse(200, true, 'Notification deleted successfully.');
     } catch (error) {
       console.log(error);
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 
