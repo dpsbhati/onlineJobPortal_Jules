@@ -92,12 +92,12 @@ export const navItems: NavItem[] = [
         route: 'expired-job-posting',
         visibleForRoles: ['admin']
       },
-      {
-        displayName: 'All Applicants',
-        iconName: 'point',
-        route: 'all-applicants',
-        visibleForRoles: ['admin']
-      }
+      // {
+      //   displayName: 'All Applicants',
+      //   iconName: 'point',
+      //   route: 'all-applicants',
+      //   visibleForRoles: ['admin']
+      // }
     ]
   },
 
