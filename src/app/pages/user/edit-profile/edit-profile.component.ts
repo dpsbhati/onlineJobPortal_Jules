@@ -124,15 +124,6 @@ export class EditProfileComponent implements OnInit {
     this.second();
     this.Third();
     this.fourth();
-    this.addContact();
-    this.addWorkExp();
-    this.addEducation();
-    this.addCourse();
-    this.addCertificate();
-    this.addOtherExp();
-    this.addProjects();
-    this.addLangSpoken();
-    this.addLangWritten();
   }
 
   firstForm() {
@@ -174,6 +165,7 @@ export class EditProfileComponent implements OnInit {
       course_info: this.fb.array([]),
       certification_info: this.fb.array([]),
       cv_path: new FormControl(null),
+      cv_name: new FormControl(null),
       highest_education_level: new FormControl(null)
     })
   }
@@ -653,9 +645,163 @@ export class EditProfileComponent implements OnInit {
           if (data.profile_image_path) {
             this.imagePreview = data.profile_image_path;
           }
-          if (data.cv_path) {
-            this.uploadedFileName = data.cv_path;
+          if (data.cv_name) {
+            this.uploadedFileName = data.cv_name;
           }
+          const contactsFormArray = this.form.get('additional_contact_info') as FormArray;
+          if (data.additional_contact_info.length > 0) {
+            data.additional_contact_info.forEach((contact: any) => {
+              contactsFormArray.push(
+                this.fb.group({
+                  contact_type: [contact.contact_type || null],
+                  value: [contact.value || null]
+                })
+              );
+            });
+          }
+          else if (data.additional_contact_info.length == 0) {
+            this.addContact();
+          }
+          const workExpArray = this.secondForm.get('work_experience_info') as FormArray;
+          while (workExpArray.length !== 0) {
+            workExpArray.removeAt(0);
+          }
+          if (data.work_experience_info && data.work_experience_info.length > 0) {
+            data.work_experience_info.forEach((item: any) => {
+              workExpArray.push(
+                this.fb.group({
+                  work_experience_from: [item.work_experience_from || null, Validators.required],
+                  work_experience_to: [item.work_experience_to || null, Validators.required],
+                  work_experience_title: [item.work_experience_title || null, Validators.required],
+                  work_experience_employer: [item.work_experience_employer || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.work_experience_info && data.work_experience_info.length === 0) {
+            this.addWorkExp();
+          }
+          const educationArray = this.secondForm.get('education_info') as FormArray;
+          while (educationArray.length !== 0) {
+            educationArray.removeAt(0);
+          }
+          if (data.education_info && data.education_info.length > 0) {
+            data.education_info.forEach((item: any) => {
+              educationArray.push(
+                this.fb.group({
+                  education_from: [item.education_from || null, Validators.required],
+                  education_to: [item.education_to || null, Validators.required],
+                  education_title: [item.education_title || null, Validators.required],
+                  education_institute: [item.education_institute || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.education_info && data.education_info.length === 0) {
+            this.addEducation();
+          }
+          const courseArray = this.secondForm.get('course_info') as FormArray;
+          while (courseArray.length !== 0) {
+            courseArray.removeAt(0);
+          }
+          if (data.course_info && data.course_info.length > 0) {
+            data.course_info.forEach((item: any) => {
+              courseArray.push(
+                this.fb.group({
+                  course_from: [item.course_from || null, Validators.required],
+                  course_to: [item.course_to || null, Validators.required],
+                  course_title: [item.course_title || null, Validators.required],
+                  course_provider: [item.course_provider || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.course_info && data.course_info.length === 0) {
+            this.addCourse();
+          }
+          const certificateArray = this.secondForm.get('certification_info') as FormArray;
+          while (certificateArray.length !== 0) {
+            certificateArray.removeAt(0);
+          }
+          if (data.certification_info && data.certification_info.length > 0) {
+            data.certification_info.forEach((item: any) => {
+              certificateArray.push(
+                this.fb.group({
+                  certification_from: [item.course_from || null, Validators.required],
+                  certification_to: [item.course_to || null, Validators.required],
+                  certification_title: [item.course_title || null, Validators.required],
+                  certification_issuer: [item.course_provider || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.certification_info && data.certification_info.length === 0) {
+            this.addCertificate();
+          }
+          const otherExpArray = this.thirdForm.get('other_experience_info') as FormArray;
+          while (otherExpArray.length !== 0) {
+            otherExpArray.removeAt(0);
+          }
+          if (data.other_experience_info && data.other_experience_info.length > 0) {
+            data.other_experience_info.forEach((item: any) => {
+              otherExpArray.push(
+                this.fb.group({
+                  other_experience_from: [item.other_experience_from || null, Validators.required],
+                  other_experience_to: [item.other_experience_to || null, Validators.required],
+                  other_experience_description: [item.other_experience_description || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.other_experience_info && data.other_experience_info.length === 0) {
+            this.addOtherExp();
+          }
+          const projectsArray = this.thirdForm.get('project_info') as FormArray;
+          while (projectsArray.length !== 0) {
+            projectsArray.removeAt(0);
+          }
+          if (data.project_info && data.project_info.length > 0) {
+            data.project_info.forEach((item: any) => {
+              projectsArray.push(
+                this.fb.group({
+                  project_from: [item.project_from || null, Validators.required],
+                  project_to: [item.project_to || null, Validators.required],
+                  project_name: [item.project_name || null, Validators.required],
+                  project_role: [item.project_role || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.project_info && data.project_info.length === 0) {
+            this.addProjects();
+          }
+          const langSpokenArray = this.fourthForm.get('language_spoken_info') as FormArray;
+          while (langSpokenArray.length !== 0) {
+            langSpokenArray.removeAt(0);
+          }
+          if (data.language_spoken_info && data.language_spoken_info.length > 0) {
+            data.language_spoken_info.forEach((item: any) => {
+              langSpokenArray.push(
+                this.fb.group({
+                  language: [item.language || null, Validators.required],
+                  proficiency: [item.proficiency || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.language_spoken_info && data.language_spoken_info.length === 0) {
+            this.addLangSpoken();
+          }
+          const langWrittenArray = this.fourthForm.get('language_written_info') as FormArray;
+          while (langWrittenArray.length !== 0) {
+            langWrittenArray.removeAt(0);
+          }
+          if (data.language_written_info && data.language_written_info.length > 0) {
+            data.language_written_info.forEach((item: any) => {
+              langWrittenArray.push(
+                this.fb.group({
+                  language: [item.language || null, Validators.required],
+                  proficiency: [item.proficiency || null, Validators.required]
+                })
+              );
+            });
+          } else if (data.language_written_info && data.language_written_info.length === 0) {
+            this.addLangWritten();
+          }
+
           //   if (this.isApplicant()) {
           //     const applicantControls = [
           //       'dob',
@@ -789,19 +935,6 @@ export class EditProfileComponent implements OnInit {
     }
   }
 
-
-  countryDialCodes = ['+91', '+1', '+44', '+971']
-  countries = ['India', 'USA', 'UK', 'UAE']
-  nationalities = ['Indian', 'American', 'British', 'Iraqi']
-  contactTypes = [
-    'Email',
-    'LinkedIn',
-    'Messenger',
-    'Telephone Number',
-    'Viber',
-    'Whatsapp'
-  ]
-
   additionalContacts() {
     return (this.form.get('additional_contact_info') as FormArray).controls;
   }
@@ -809,8 +942,8 @@ export class EditProfileComponent implements OnInit {
   addContact() {
     (this.form.get('additional_contact_info') as FormArray).push(
       this.fb.group({
-        contact_type: new FormControl(null),
-        value: new FormControl(null)
+        contact_type: new FormControl(null, [Validators.required]),
+        value: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -822,10 +955,10 @@ export class EditProfileComponent implements OnInit {
   addWorkExp() {
     (this.secondForm.get('work_experience_info') as FormArray).push(
       this.fb.group({
-        work_experience_from: new FormControl(null),
-        work_experience_to: new FormControl(null),
-        work_experience_title: new FormControl(null),
-        work_experience_employer: new FormControl(null)
+        work_experience_from: new FormControl(null, [Validators.required]),
+        work_experience_to: new FormControl(null, [Validators.required]),
+        work_experience_title: new FormControl(null, [Validators.required]),
+        work_experience_employer: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -837,10 +970,10 @@ export class EditProfileComponent implements OnInit {
   addEducation() {
     (this.secondForm.get('education_info') as FormArray).push(
       this.fb.group({
-        education_from: new FormControl(null),
-        education_to: new FormControl(null),
-        education_title: new FormControl(null),
-        education_institute: new FormControl(null)
+        education_from: new FormControl(null, [Validators.required]),
+        education_to: new FormControl(null, [Validators.required]),
+        education_title: new FormControl(null, [Validators.required]),
+        education_institute: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -852,9 +985,9 @@ export class EditProfileComponent implements OnInit {
   addOtherExp() {
     (this.thirdForm.get('other_experience_info') as FormArray).push(
       this.fb.group({
-        other_experience_from: new FormControl(null),
-        other_experience_to: new FormControl(null),
-        other_experience_description: new FormControl(null)
+        other_experience_from: new FormControl(null, [Validators.required]),
+        other_experience_to: new FormControl(null, [Validators.required]),
+        other_experience_description: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -866,10 +999,10 @@ export class EditProfileComponent implements OnInit {
   addProjects() {
     (this.thirdForm.get('project_info') as FormArray).push(
       this.fb.group({
-        project_from: new FormControl(null),
-        project_to: new FormControl(null),
-        project_name: new FormControl(null),
-        project_role: new FormControl(null)
+        project_from: new FormControl(null, [Validators.required]),
+        project_to: new FormControl(null, [Validators.required]),
+        project_name: new FormControl(null, [Validators.required]),
+        project_role: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -881,10 +1014,10 @@ export class EditProfileComponent implements OnInit {
   addCourse() {
     (this.secondForm.get('course_info') as FormArray).push(
       this.fb.group({
-        course_from: new FormControl(null),
-        course_to: new FormControl(null),
-        course_title: new FormControl(null),
-        course_provider: new FormControl(null)
+        course_from: new FormControl(null, [Validators.required]),
+        course_to: new FormControl(null, [Validators.required]),
+        course_title: new FormControl(null, [Validators.required]),
+        course_provider: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -896,10 +1029,10 @@ export class EditProfileComponent implements OnInit {
   addCertificate() {
     (this.secondForm.get('certification_info') as FormArray).push(
       this.fb.group({
-        certification_from: new FormControl(null),
-        certification_to: new FormControl(null),
-        certification_title: new FormControl(null),
-        certification_issuer: new FormControl(null)
+        certification_from: new FormControl(null, [Validators.required]),
+        certification_to: new FormControl(null, [Validators.required]),
+        certification_title: new FormControl(null, [Validators.required]),
+        certification_issuer: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -907,8 +1040,8 @@ export class EditProfileComponent implements OnInit {
   addLangSpoken() {
     (this.fourthForm.get('language_spoken_info') as FormArray).push(
       this.fb.group({
-        language: new FormControl(null),
-        proficiency: new FormControl(null)
+        language: new FormControl(null, [Validators.required]),
+        proficiency: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -916,8 +1049,8 @@ export class EditProfileComponent implements OnInit {
   addLangWritten() {
     (this.fourthForm.get('language_written_info') as FormArray).push(
       this.fb.group({
-        language: new FormControl(null),
-        proficiency: new FormControl(null)
+        language: new FormControl(null, [Validators.required]),
+        proficiency: new FormControl(null, [Validators.required])
       })
     )
   }
@@ -1024,7 +1157,6 @@ export class EditProfileComponent implements OnInit {
   }
 
   onFileChange(event: Event, controlName: string): void {
-    console.log(event)
     const fileInput = event.target as HTMLInputElement;
     const files = fileInput?.files;
 
@@ -1062,7 +1194,8 @@ export class EditProfileComponent implements OnInit {
         if (response.statusCode === 200) {
           // this.toastr.success(response.message);
           this.secondForm.patchValue({
-            [controlName]: response.data.path
+            [controlName]: response.data.path,
+            cv_name: response.data.originalName
           });
           this.loader.hide();
         } else {
