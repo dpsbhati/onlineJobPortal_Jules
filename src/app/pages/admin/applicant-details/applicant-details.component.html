@@ -10,11 +10,7 @@
       <mat-card-title class="m-b-16"> Application Status </mat-card-title>
       <div class="d-flex align-items-center justify-content-between gap-6">
         <div class="d-flex align-items-center justify-content-between gap-6">
-          <label>Current Status:</label>
-          <!-- <span class="status-badge" [ngClass]="applicantDetails.status?.toLowerCase()">
-            {{ applicantDetails.status || "-" }}
-          </span> -->
-
+          <label>Current Status:</label>     
           <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
               'bg-light-secondary text-secondary':
                 applicantDetails.status.toLowerCase() === 'hired',
@@ -61,14 +57,7 @@
               <span>{{ applicantDetails.user.email || "-" }}</span>
             </div>
           </div>
-          <!-- <div class="row m-b-16">
-            <div class="col-lg-4"><label>Gender:</label></div>
-            <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.gender || "-"
-              }}</span>
-            </div>
-          </div> -->
+        
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Mobile:</label></div>
             <div class="col-lg-8">
@@ -94,27 +83,21 @@
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Nationalities:</label></div>
             <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.nationalities || "-"
-                }}</span>
+              <span>{{ applicantDetails.user.userProfile?.nationalities || "-"}}</span>
             </div>
           </div>
 
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Country of Residence:</label></div>
             <div class="col-lg-8">
-              <span>
-                {{ applicantDetails.user.userProfile?.country || "-" }}
-              </span>
+              <span> {{ applicantDetails.user.userProfile?.country || "-" }}</span>
             </div>
           </div>
 
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Location:</label></div>
             <div class="col-lg-8">
-              <span>
-                {{ applicantDetails.user.userProfile?.location || "-" }}
-              </span>
+              <span>{{ applicantDetails.user.userProfile?.location || "-" }} </span>
             </div>
           </div>
           <hr />
@@ -149,9 +132,7 @@
                 <label>{{ contact.contact_type || "-" }}:</label>
               </div>
               <div class="col-lg-8">
-                <span>
-                  {{ contact.value }}
-                </span>
+                <span>{{ contact.value }} </span>
               </div>
             </div>
           </div>
@@ -164,14 +145,7 @@
           <mat-card-title class="m-b-16">
             Professional Information
           </mat-card-title>
-          <!-- <div class="row m-b-16">
-            <div class="col-lg-4"><label>Current Company:</label></div>
-            <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.current_company || "-"
-              }}</span>
-            </div>
-          </div> -->
+        
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Work Experience:</label></div>
             <div class="col-lg-8">
@@ -202,10 +176,7 @@
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Highest Education Level:</label></div>
             <div class="col-lg-8">
-              <span>{{
-                applicantDetails?.user?.userProfile?.highest_education_level ||
-                "-"
-                }}</span>
+              <span>{{ applicantDetails?.user?.userProfile?.highest_education_level || "-"}}</span>
             </div>
           </div>
 
@@ -269,35 +240,7 @@
             </div>
           </div>
 
-          <!-- <div class="row m-b-16">
-            <div class="col-lg-4"><label>Expected Salary:</label></div>
-            <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.expected_salary || "-"
-              }}</span>
-            </div>
-          </div> -->
-          <!-- <div class="row m-b-16">
-            <div class="col-lg-4"><label>Key Skills:</label></div>
-            <div class="col-lg-8">
-              <button
-                mat-stroked-button
-                color="primary"
-                class="m-l-4"
-                *ngFor="let skill of keySkills"
-              >
-                {{ skill }}
-              </button>
-            </div>
-          </div> -->
-          <!-- <div class="row m-b-16">
-            <div class="col-lg-4"><label>Mobile:</label></div>
-            <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.mobile || "-"
-              }}</span>
-            </div>
-          </div> -->
+      
         </mat-card-content>
       </mat-card>
 
@@ -353,56 +296,17 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- <mat-card
-        class="cardWithShadow"
-        *ngIf="applicantDetails.additional_info || applicantDetails.description"
-      >
-        <mat-card-content>
-          <mat-card-title class="m-b-16">
-            Additional Information
-          </mat-card-title>
-          <div class="row m-b-16" *ngIf="applicantDetails.description">
-            <div class="col-lg-4"><label>Description</label></div>
-            <div class="col-lg-8">
-              <span>{{
-                applicantDetails.user.userProfile?.current_company || "-"
-              }}</span>
-            </div>
-          </div>
-          <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
-            <div class="col-lg-4"><label>Additional Info:</label></div>
-            <div class="col-lg-8">
-              <span>{{ applicantDetails.additional_info || "-" }}</span>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card> -->
-
+  
       <!-- Additional Information -->
       <mat-card class="cardWithShadow">
         <mat-card-content>
           <mat-card-title class="m-b-16">
             Additional Information
           </mat-card-title>
-          <!-- <div class="row m-b-16" *ngIf="applicantDetails.description">
-            <div class="col-lg-4"><label>Description:</label></div>
-            <div class="col-lg-8">
-              <span>{{ applicantDetails.description || "-" }}</span>
-            </div>
-          </div>
-          <div class="row m-b-16" *ngIf="applicantDetails.additional_info">
-            <div class="col-lg-4"><label>Additional Info:</label></div>
-            <div class="col-lg-8">
-              <span>{{ applicantDetails.additional_info || "-" }}</span>
-            </div>
-          </div> -->
-
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Language Skills - Spoken:</label></div>
             <div class="col-lg-8">
-              <span>
-                {{ languageSpokenFormatted }}
-              </span>
+              <span>{{ languageSpokenFormatted }} </span>
             </div>
           </div>
 
@@ -411,9 +315,7 @@
               <label>Language Skills - Written:</label>
             </div>
             <div class="col-lg-8">
-              <span>
-                {{ languageWrittenFormatted }}
-              </span>
+              <span>{{ languageWrittenFormatted }}</span>
             </div>
           </div>
 
@@ -422,9 +324,7 @@
               <label>Notice Period and Availability:</label>
             </div>
             <div class="col-lg-8">
-              <span>
-                {{ noticePeriodFormatted }}
-              </span>
+              <span>  {{ noticePeriodFormatted }}</span>
             </div>
           </div>
 
@@ -513,8 +413,7 @@
                 cert.certification_description ||
                 cert.certification_description === null
               ">
-              <span>Description:</span>
-              {{ cert.certification_description || "Not Available" }}
+              <span>Description:</span>{{ cert.certification_description || "Not Available" }}
             </p>
             <a *ngIf="cert.certification_file" [href]="cert.certification_file" target="_blank" mat-button>
               View Certificate
@@ -549,16 +448,12 @@
             <div class="">
               <h4 class="m-b-0">CV/Resume</h4>
               <h5 class="m-b-0 m-t-0">
-                {{
-                extractFileName(applicantDetails.user.userProfile?.cv_path)
-                }}
+                {{ extractFileName(applicantDetails.user.userProfile?.cv_path) }}
               </h5>
             </div>
 
             <a class="p-x-16" style="white-space: nowrap" mat-flat-button
-              [href]="applicantDetails.user.userProfile?.cv_path" target="_blank">
-              Download CV
-            </a>
+              [href]="applicantDetails.user.userProfile?.cv_path" target="_blank">Download CV</a>
           </div>
         </mat-card-content>
       </mat-card>
@@ -566,7 +461,6 @@
       <mat-card>
         <mat-card-content>
           <mat-card-title class="m-b-16">Additional Information Comment</mat-card-title>
-
           <div *ngIf="
               applicantDetails?.additional_info &&
                 applicantDetails?.additional_info.trim().length > 0;
@@ -586,9 +480,7 @@
           <mat-form-field appearance="outline" class="w-100">
             <textarea [(ngModel)]="adminComments" rows="5" matInput placeholder="Add your comments here..."></textarea>
           </mat-form-field>
-          <button mat-flat-button class="w-100" (click)="updateStatus()" color="primary">
-            Save
-          </button>
+          <button mat-flat-button class="w-100" (click)="updateStatus()" color="primary"> Save</button>
         </mat-card-content>
       </mat-card>
     </div>
