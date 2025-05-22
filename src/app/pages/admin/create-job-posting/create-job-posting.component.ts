@@ -1,15 +1,5 @@
 import { Component } from '@angular/core'
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormControl,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-  FormsModule
-} from '@angular/forms'
+import { FormGroup, Validators,  FormControl, ReactiveFormsModule,  AbstractControl, ValidationErrors, ValidatorFn, FormsModule} from '@angular/forms'
 import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ImageCompressionService } from 'src/app/core/services/image/image-compression.service'
@@ -70,7 +60,6 @@ export class CreateJobPostingComponent {
   imagePreview: string | ArrayBuffer | null = null
   uniqueRanks: string[]
   constructor(
-    private fb: FormBuilder,
     private adminService: AdminService,
     private route: ActivatedRoute,
     private router: Router,
@@ -85,7 +74,6 @@ export class CreateJobPostingComponent {
         id: new FormControl(''),
         job_type: new FormControl('', Validators.required),
         rank: new FormControl('', Validators.required),
-        // skills_required: new FormControl([], Validators.required),
         skills_required: new FormControl(
           [],
           [
@@ -119,9 +107,6 @@ export class CreateJobPostingComponent {
         ]),
         assignment_duration: new FormControl('', [
           Validators.required,
-          // Validators.min(2),
-          // this.minLengthWithoutSpaces(2),
-          // Validators.maxLength(50)
         ]),
         employer: new FormControl('', [
           Validators.required,
@@ -272,7 +257,6 @@ export class CreateJobPostingComponent {
         },
         error: (error: any) => {
           this.loader.hide();
-          console.error(error.error?.message);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       });
@@ -281,7 +265,6 @@ export class CreateJobPostingComponent {
       // Mark all fields as touched to show validation errors
       this.jobForm.markAllAsTouched();
       this.loader.hide();
-      console.warn("Form is invalid", this.jobForm.errors);
     }
   }
 
@@ -478,7 +461,6 @@ export class CreateJobPostingComponent {
           try {
             socialMediaTypes = JSON.parse(data.social_media_type);
           } catch (e) {
-            console.error('Failed to parse social_media_type:', e);
             socialMediaTypes = [];
           }
         } else if (Array.isArray(data.social_media_type)) {
@@ -491,7 +473,6 @@ export class CreateJobPostingComponent {
           try {
             skillsArray = JSON.parse(data.skills_required);
           } catch (e) {
-            console.error('Failed to parse skills_required:', e);
             skillsArray = [];
           }
         } else if (Array.isArray(data.skills_required)) {
