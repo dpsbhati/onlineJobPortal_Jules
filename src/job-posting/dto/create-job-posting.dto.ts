@@ -132,9 +132,6 @@ export class CreateJobPostingDto {
   @IsString({ message: 'short_description must be a valid string.' })
   @Validate(IsNotWhitespace)
   @Transform(({ value }) => value?.trim())
-  // @MaxLength(255, {
-  //   message: 'Short description cannot exceed 255 characters.',
-  // })
   short_description: string;
 
   @ApiProperty({
@@ -159,9 +156,6 @@ export class CreateJobPostingDto {
   applicant_number: number;
 
   @ApiProperty()
-  // @IsNotEmpty({ message: 'end_salary is required.' })
-  // @IsNumber({}, { message: 'end_salary must be a valid number.' })
-  // @Min(0, { message: 'Ending salary must be at least 0.' })
   end_salary: number;
 
   @ApiProperty({
@@ -200,7 +194,6 @@ export class CreateJobPostingDto {
     message: 'Employer name cannot exceed 100 characters.',
   })
   employer: string;
-
 
   @ApiProperty({
     description: 'The skills required for the job',
@@ -242,7 +235,8 @@ export class CreateJobPostingDto {
   @Transform(({ value }) => value?.trim())
   @IsOptional()
   @MaxLength(500, {
-    message: 'Employee experience details cannot exceed 1000employee_experience characters.',
+    message:
+      'Employee experience details cannot exceed 1000employee_experience characters.',
   })
   employee_experience?: string;
 
@@ -259,17 +253,11 @@ export class CreateJobPostingDto {
   })
   required_experience: string;
 
-  // @ApiProperty({
-  //   description: 'The status of the job posting (draft or posted)',
-  //   example: 'draft',
-  // })
-  // @IsOptional()
-  // @IsEnum(['draft', 'posted'], {
-  //   message: 'jobpost_status must be either draft or posted.',
-  // })
-  // jobpost_status?: string;
-
-  @ApiProperty({ default: JobPostStatus.DRAFT, description: 'Job post status', enum: JobPostStatus })
+  @ApiProperty({
+    default: JobPostStatus.DRAFT,
+    description: 'Job post status',
+    enum: JobPostStatus,
+  })
   @IsOptional()
   @IsEnum(JobPostStatus)
   jobpost_status?: JobPostStatus;
@@ -279,8 +267,6 @@ export class CreateJobPostingDto {
     example: '10:30',
   })
   @IsOptional()
-  // @IsDate({ message: 'posted_at must be a valid ISO date.' })
-  // @Type(() => Date)
   posted_at?: string;
 
   @ApiProperty({
@@ -295,10 +281,5 @@ export class CreateJobPostingDto {
     isArray: true,
   })
   @IsOptional()
-  // @IsIn(['facebook', 'linkedin'], {
-  //   message: 'Invalid social_media_type. Allowed values are: facebook, linkedin.',
-  // })
   social_media_type?: any;
-
-  
 }

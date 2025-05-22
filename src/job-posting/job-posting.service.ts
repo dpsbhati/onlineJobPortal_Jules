@@ -29,120 +29,6 @@ export class JobPostingService {
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
 
-  // async create(createJobPostingDto: CreateJobPostingDto): Promise<JobPosting> {
-  //   const jobPosting = this.jobPostingRepository.create(createJobPostingDto);
-  //   return await this.jobPostingRepository.save(jobPosting);
-  // }
-
-  // async createOrUpdate(createJobPostingDto: CreateJobPostingDto) {
-  //   try {
-  //     const { id, ...jobDetails } = createJobPostingDto;
-
-  //     // UPDATE
-  //     if (createJobPostingDto.id) {
-  //       const jobPosting = await this.jobPostingRepository.findOne({
-  //         where: { id: createJobPostingDto.id, is_deleted: false }
-  //       });
-
-  //       if (!jobPosting) return WriteResponse(404, false, 'Job posting not found');
-
-  //       await this.jobPostingRepository.update(createJobPostingDto.id, createJobPostingDto);
-
-  //       const updatedJobPosting = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
-
-  //       return WriteResponse(200, updatedJobPosting, 'Job posting updated successfully');
-  //     }
-
-  //     // CREATE
-
-  //     const newJobPosting = this.jobPostingRepository.create({ is_deleted: false, ...createJobPostingDto });
-  //     await this.jobPostingRepository.save(newJobPosting);
-  //     const jobPostById = await this.jobPostingRepository.findOne({ where: { id: createJobPostingDto.id } });
-  //     return WriteResponse(200, jobPostById, 'Job posting created successfully');
-  //   } catch (error) {
-  //     console.error('Error in createOrUpdate job posting:', error);
-  //     return WriteResponse(500, false, 'Failed to create or update job posting');
-  //   }
-  // }
-
-  //   async autoPostJobs() {
-  //     try {
-  //       const now = new Date();
-  //       // Get "today" as per local time (e.g., IST)
-  //       // Create IST midnight today
-  //       // const now = new Date();
-  //       const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC +5:30
-  //       console.log('IST_OFFSET----->>', IST_OFFSET);
-
-  //       const istNow = new Date(now.getTime() - IST_OFFSET);
-  //       const oneHourMs = 60 * 60 * 1000;
-  //       const currentTime = new Date(istNow.getTime() - oneHourMs);
-  //       // const current24=currentTime.toLocaleDateString('en-US', { hour12: false })
-  //       // console.log('current24----->>', current24);
-  //       // const currentTime = new Date(istNow.getTime() - oneHourMs);
-
-  // // Extract time (HH:mm:ss) from currentTime
-  // const hours = currentTime.getUTCHours().toString().padStart(2, '0');   // 24-hour format (00-23)
-  // const minutes = currentTime.getUTCMinutes().toString().padStart(2, '0'); // (00-59)
-  // // const seconds = currentTime.getUTCSeconds().toString().padStart(2, '0'); // (00-59)
-
-  // const timeOnly = `${hours}:${minutes}`;
-
-  // console.log('Extracted time:', timeOnly); // Example: "07:10:30"
-
-  // const current24Hours=now.getHours()
-  // const current24Minutes=now.getMinutes()
-
-  // const totalTime=`${current24Hours}:${current24Minutes}`
-
-  // console.log('current24----->>',totalTime);
-
-  //       // Get YYYY-MM-DD from IST
-  //       const istYear = istNow.getUTCFullYear();
-  //       const istMonth = istNow.getUTCMonth();
-  //       const istDate = istNow.getUTCDate();
-
-  //       // Create a new UTC date from IST's Y/M/D at midnight
-  //       const todayIST = new Date(Date.UTC(istYear, istMonth, istDate));
-  //       // Format to YYYY-MM-DD string
-  // const istDateString = `${istYear}-${(istMonth + 1).toString().padStart(2, '0')}-${istDate
-  //   .toString()
-  //   .padStart(2, '0')}`;
-
-  // console.log('istDateString ---->>', istDateString);
-
-  //       console.log(
-  //         'todayIST----->>',
-  //         todayIST,
-  //         ' currentTime----->>',
-  //         currentTime,
-  //       );
-
-  //       const jobsToPost = await this.jobPostingRepository.find({
-  //         where: {
-  //           jobpost_status: JobPostStatus.DRAFT,
-  //           is_deleted: false,
-  //           posted_date: istDateString, // Match only today's date
-  //           posted_at: LessThanOrEqual(totalTime),
-  //         },
-  //       });
-  //       console.log('jobsToPost----->>', jobsToPost);
-
-  //       if (jobsToPost.length > 0) {
-  //         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
-
-  //         for (const job of jobsToPost) {
-  //           job.jobpost_status = JobPostStatus.POSTED;
-  //           job.updated_at = new Date();
-  //           await this.jobPostingRepository.save(job);
-  //         }
-
-  //         this.logger.log(`Posted ${jobsToPost.length} jobs.`);
-  //       }
-  //     } catch (error) {
-  //       this.logger.error('Error in autoPostJobs scheduler', error);
-  //     }
-  //   }
   @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   async autoPostJobs() {
     try {
@@ -159,16 +45,12 @@ export class JobPostingService {
       // Concatenate hours and minutes in 24-hour format
       const totalTime = `${formattedHours}:${formattedMinutes}`;
 
-      // console.log('current24----->>', totalTime);  // Example output: "09:05"
-
       // Get the date in YYYY-MM-DD format
       const date = now.getDate();
       const month = now.getMonth() + 1; // Months are zero-indexed in JavaScript, so add 1
       const year = now.getFullYear();
 
       const todayDate = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
-
-      // console.log('todayDate----->>', todayDate);  // Example output: "2025-05-09"
 
       const jobsToPost = await this.jobPostingRepository.find({
         where: {
@@ -178,8 +60,6 @@ export class JobPostingService {
           posted_at: LessThanOrEqual(totalTime),
         },
       });
-
-      // console.log('jobsToPost----->>', jobsToPost);
 
       if (jobsToPost.length > 0) {
         this.logger.log(`Found ${jobsToPost.length} jobs to post.`);
@@ -201,8 +81,6 @@ export class JobPostingService {
   @Cron(CronExpression.EVERY_10_SECONDS) // Runs every minute
   async closeExpiredJobs() {
     try {
-      // console.log('Running job scheduler to close expired jobs...');
-
       const currentDateTime = new Date();
 
       // New functionality: Check for jobs in 'hold' or with today's date as date_published
@@ -215,13 +93,9 @@ export class JobPostingService {
       });
 
       if (jobsToOpen.length > 0) {
-        // console.log(
-        //   `Found ${jobsToOpen.length} jobs to change from 'hold' to 'open'.`,
-        // );
         for (const job of jobsToOpen) {
           job.job_opening = JobOpeningStatus.OPEN;
           await this.jobPostingRepository.save(job);
-          // console.log(`Job with ID ${job.id} marked as "open".`);
         }
       }
 
@@ -232,8 +106,6 @@ export class JobPostingService {
           deadline: MoreThan(currentDateTime),
         },
       });
-      // console.log('jobsToReopen----->>', jobsToReopen);
-
       for (const job of jobsToReopen) {
         job.job_opening = JobOpeningStatus.OPEN;
         job.isActive = true;
@@ -250,16 +122,12 @@ export class JobPostingService {
           deadline: LessThanOrEqual(currentDateTime),
         },
       });
-      // console.log('jobsToClose----->>', jobsToClose);
 
       if (jobsToClose.length > 0) {
-        // console.log(`Found ${jobsToClose.length} jobs with expired deadlines.`);
-
         for (const job of jobsToClose) {
           job.job_opening = JobOpeningStatus.CLOSE;
           job.isActive = false;
           await this.jobPostingRepository.save(job);
-          // console.log(`Job with ID ${job.id} marked as "close".`);
         }
       }
     } catch (error) {
@@ -272,22 +140,9 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-      console.log(
-        'jobDto.job_type_post----------------------------------->>',
-        jobDto.job_type_post,
-      );
-
       if (jobDto.job_type_post === JobTypePost.POST_NOW) {
         jobDto.jobpost_status = JobPostStatus.POSTED;
-        console.log(
-          'jobDto.jobpost_status----------------------------------->>',
-          jobDto.jobpost_status,
-        );
       }
-      console.log(
-        'jobDto.jobpost_status----------------------------------->>',
-        jobDto.jobpost_status,
-      );
 
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
@@ -332,12 +187,6 @@ export class JobPostingService {
       // Save the job posting
       const savedJobPosting =
         await this.jobPostingRepository.save(updatedJobPosting);
-
-      console.log(
-        jobPosting
-          ? `Updated Job Posting with ID: ${savedJobPosting.id}`
-          : `Created Job Posting with ID: ${savedJobPosting.id}`,
-      );
 
       return WriteResponse(
         200,
@@ -456,33 +305,6 @@ export class JobPostingService {
 
       // Handle dynamic search across all fields, including salary
       const allValue = whereClause.find((p) => p.key === 'all')?.value;
-      console.log('allValue: ', allValue);
-
-      // if (allValue) {
-      //   const conditions = fieldsToSearch
-      //     .map((field) => {
-      //       console.log('Checking field: ', field);
-
-      //       // Special handling for numeric fields (salary, start_salary, end_salary)
-      //       if (
-      //         field === 'salary' ||
-      //         field === 'start_salary' ||
-      //         field === 'end_salary'
-      //       ) {
-      //         // Check if allValue is numeric
-      //         if (!isNaN(Number(allValue))) {
-      //           return `f.${field} = ${allValue}`; // Exact match for numbers
-      //         } else {
-      //           return `f.${field} LIKE '%${allValue}%'`; // Fallback for non-numeric search
-      //         }
-      //       } else {
-      //         // Default for string fields
-      //         return `f.${field} LIKE '%${allValue}%'`;
-      //       }
-      //     })
-      //     .join(' OR ');
-      //   lwhereClause += ` AND (${conditions})`;
-      // }
 
       if (allValue) {
         const conditions = fieldsToSearch
@@ -604,7 +426,6 @@ export class JobPostingService {
         ...jobPosting,
         job_type_post: jobPosting.job_type_post || 'Not Specified', // Ensure job_type_post is included
       };
-      console.log('response------->>>', response);
       delete response.user.password;
       return WriteResponse(
         200,
@@ -631,8 +452,6 @@ export class JobPostingService {
 
   async toggleJobStatus(query) {
     try {
-      console.log(typeof query.isActive, '1');
-
       let { id, isActive } = query;
       isActive = isActive === 'true' ? true : false;
 

@@ -1,8 +1,16 @@
 import { applications } from 'src/application/entities/application.entity';
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
 import { Users } from 'src/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 
 export enum JobTypePost {
   POST_NOW = 'Postnow',
@@ -111,14 +119,6 @@ export class JobPosting {
   @Column({ default: true })
   isActive: boolean;
 
-
-
-  // @Column({
-  //   type: 'enum',
-  //   enum: ['draft', 'posted'], 
-  //   nullable: true, 
-  // })
-  // jobpost_status: string;
   @Column({
     type: 'enum',
     enum: JobPostStatus,
@@ -127,29 +127,17 @@ export class JobPosting {
   jobpost_status: JobPostStatus;
 
   @Column({
-    type:'enum',
-    enum:["facebook","linkedin"],
-    nullable:true,
+    type: 'enum',
+    enum: ['facebook', 'linkedin'],
+    nullable: true,
   })
-  social_media_type:string[]
+  social_media_type: string[];
 
   @Column()
   posted_at: String;
-  // For full datetime (date + time)
-// @Column({ type: 'timestamp', nullable: true })
-// posted_at: Date;
 
-// For date only (without time)
-@Column()
-posted_date: string;
-
-
-  // @Column({
-  //   type:'enum',
-  //   enum:["hold","open","close"],
-  //   nullable:true,
-  // })
-  // job_opening:string
+  @Column()
+  posted_date: string;
 
   @Column({
     type: 'enum',
@@ -157,22 +145,16 @@ posted_date: string;
     nullable: true,
   })
   job_opening: JobOpeningStatus;
-  
 
   @Column({ type: 'text', nullable: true })
   application_instruction: string;
 
-  @Column({type:"longtext",nullable:true})
-  employee_experience:string
+  @Column({ type: 'longtext', nullable: true })
+  employee_experience: string;
 
   @OneToMany(() => CoursesAndCertification, (job) => job.job)
   courses_and_certification: CoursesAndCertification[];
 
-  // @Column({
-  // type:'enum',
-  // enum:['postnow','schedulelater'],
-  // nullable:true})
-  // job_type_post:string
   @Column({
     type: 'enum',
     enum: JobTypePost,
@@ -181,10 +163,9 @@ posted_date: string;
   job_type_post: JobTypePost;
 
   @OneToMany(() => applications, (application) => application.job) // Relation with applications
-  applications: applications[]; 
+  applications: applications[];
 
-  @ManyToOne(() => Users, (user) => user.jobPosting,)
-  @JoinColumn({ name: 'created_by'})
+  @ManyToOne(() => Users, (user) => user.jobPosting)
+  @JoinColumn({ name: 'created_by' })
   user: Users;
-
 }

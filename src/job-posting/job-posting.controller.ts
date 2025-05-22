@@ -70,17 +70,6 @@ export class JobPostingController {
     return this.jobPostingService.remove(id);
   }
 
-  // @Post('getOne/:id')
-  // findOne(@Param('id') id: string) {
-  //   return this.jobPostingService.findOne(id);
-  // }
-
-  // @Get('find-one')
-  // @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
-  // async findOne(@Query() query: { key: string; value: string }) {
-  //   return this.jobPostingService.findOne(query.key, query.value);
-  // }
-
   @Get('find-one')
   @ApiOperation({ summary: 'Find a job posting by a key-value pair' })
   @ApiQuery({
@@ -100,12 +89,9 @@ export class JobPostingController {
   @Get('toggle-job-status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  
-  @ApiQuery({name:'id',required:true})
-  @ApiQuery({name:'isActive',required:true})
-  async toggleJobStatus(
-    @Query() query
-  ) {
+  @ApiQuery({ name: 'id', required: true })
+  @ApiQuery({ name: 'isActive', required: true })
+  async toggleJobStatus(@Query() query) {
     return this.jobPostingService.toggleJobStatus(query);
   }
 
