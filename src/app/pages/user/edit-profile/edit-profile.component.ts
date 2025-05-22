@@ -306,19 +306,19 @@ export class EditProfileComponent implements OnInit {
         return { invalidType: true }
       }
       for (const skill of skills) {
-        if (skill.length < minLength) {
+        if (skill?.length < minLength) {
           return {
             minLengthSkill: {
               requiredLength: minLength,
-              actualLength: skill.length
+              actualLength: skill?.length
             }
           }
         }
-        if (skill.length > maxLength) {
+        if (skill?.length > maxLength) {
           return {
             maxLengthSkill: {
               requiredLength: maxLength,
-              actualLength: skill.length
+              actualLength: skill?.length
             }
           }
         }
@@ -333,11 +333,11 @@ export class EditProfileComponent implements OnInit {
       if (!Array.isArray(skills)) {
         return { invalidType: true }
       }
-      if (skills.length < min) {
-        return { minSkills: { required: min, actual: skills.length } }
+      if (skills?.length < min) {
+        return { minSkills: { required: min, actual: skills?.length } }
       }
-      if (skills.length > max) {
-        return { maxSkills: { required: max, actual: skills.length } }
+      if (skills?.length > max) {
+        return { maxSkills: { required: max, actual: skills?.length } }
       }
       return null
     }
@@ -363,7 +363,7 @@ export class EditProfileComponent implements OnInit {
       if (mobileControl.value !== digitsOnly) {
         mobileControl.setValue(digitsOnly, { emitEvent: true })
       }
-      if (digitsOnly.length !== 10) {
+      if (digitsOnly?.length !== 10) {
         mobileControl.setErrors({ invalidMobile: true })
       }
     }
@@ -439,7 +439,7 @@ export class EditProfileComponent implements OnInit {
         this.userProfileForm?.get('expected_salary')?.value
       if (expectedSalaryValue) {
         const numStr = expectedSalaryValue.toString().replace(/,/g, '')
-        if (numStr.length > 7) return true
+        if (numStr?.length > 7) return true
       }
 
       return (
@@ -448,7 +448,7 @@ export class EditProfileComponent implements OnInit {
           if (!control) return true
           const value = control.value
           if (field === 'key_skills') {
-            return !Array.isArray(value) || value.length === 0
+            return !Array.isArray(value) || value?.length === 0
           }
           if (typeof value === 'string') {
             return !value || value.trim() === ''
@@ -580,14 +580,14 @@ export class EditProfileComponent implements OnInit {
     }
 
     // Prevent entering more than 8 digits
-    // if (digitsOnly.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
+    // if (digitsOnly?.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
     //   event.preventDefault(); // Prevent further input if length exceeds 8 digits
     // }
 
     // Check if the input length exceeds 8 digits
     const expectedSalaryControl = this.userProfileForm.get('expected_salary')
 
-    if (digitsOnly.length > 8) {
+    if (digitsOnly?.length > 8) {
       // Set error if more than 8 digits are entered
       expectedSalaryControl?.setErrors({ maxDigits: true })
       event.preventDefault() // Prevent further input
@@ -609,7 +609,7 @@ export class EditProfileComponent implements OnInit {
     if (!value) {
       // If the input is empty, set the "required" error
       expectedSalaryControl?.setErrors({ required: true })
-    } else if (digitsOnly.length > 8) {
+    } else if (digitsOnly?.length > 8) {
       // If the input exceeds 8 digits, set the "maxDigits" error
       expectedSalaryControl?.setErrors({ maxDigits: true })
     } else {
@@ -649,7 +649,7 @@ export class EditProfileComponent implements OnInit {
             this.uploadedFileName = data.cv_name;
           }
           const contactsFormArray = this.form.get('additional_contact_info') as FormArray;
-          if (data.additional_contact_info.length > 0) {
+          if (data.additional_contact_info?.length > 0) {
             data.additional_contact_info.forEach((contact: any) => {
               contactsFormArray.push(
                 this.fb.group({
@@ -659,14 +659,14 @@ export class EditProfileComponent implements OnInit {
               );
             });
           }
-          else if (data.additional_contact_info.length == 0) {
+          else if (data.additional_contact_info?.length == 0 || data.additional_contact_info == null) {
             this.addContact();
           }
           const workExpArray = this.secondForm.get('work_experience_info') as FormArray;
-          while (workExpArray.length !== 0) {
+          while (workExpArray?.length !== 0) {
             workExpArray.removeAt(0);
           }
-          if (data.work_experience_info && data.work_experience_info.length > 0) {
+          if (data.work_experience_info && data.work_experience_info?.length > 0) {
             data.work_experience_info.forEach((item: any) => {
               workExpArray.push(
                 this.fb.group({
@@ -677,14 +677,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.work_experience_info && data.work_experience_info.length === 0) {
+          } else if (!data.work_experience_info || data.work_experience_info?.length === 0) {
             this.addWorkExp();
           }
           const educationArray = this.secondForm.get('education_info') as FormArray;
-          while (educationArray.length !== 0) {
+          while (educationArray?.length !== 0) {
             educationArray.removeAt(0);
           }
-          if (data.education_info && data.education_info.length > 0) {
+          if (data.education_info && data.education_info?.length > 0) {
             data.education_info.forEach((item: any) => {
               educationArray.push(
                 this.fb.group({
@@ -695,14 +695,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.education_info && data.education_info.length === 0) {
+          } else if (!data.education_info || data.education_info?.length === 0) {
             this.addEducation();
           }
           const courseArray = this.secondForm.get('course_info') as FormArray;
-          while (courseArray.length !== 0) {
+          while (courseArray?.length !== 0) {
             courseArray.removeAt(0);
           }
-          if (data.course_info && data.course_info.length > 0) {
+          if (data.course_info && data.course_info?.length > 0) {
             data.course_info.forEach((item: any) => {
               courseArray.push(
                 this.fb.group({
@@ -713,14 +713,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.course_info && data.course_info.length === 0) {
+          } else if (!data.course_info || data.course_info?.length === 0) {
             this.addCourse();
           }
           const certificateArray = this.secondForm.get('certification_info') as FormArray;
-          while (certificateArray.length !== 0) {
+          while (certificateArray?.length !== 0) {
             certificateArray.removeAt(0);
           }
-          if (data.certification_info && data.certification_info.length > 0) {
+          if (data.certification_info && data.certification_info?.length > 0) {
             data.certification_info.forEach((item: any) => {
               certificateArray.push(
                 this.fb.group({
@@ -731,14 +731,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.certification_info && data.certification_info.length === 0) {
+          } else if (!data.certification_info || data.certification_info?.length === 0) {
             this.addCertificate();
           }
           const otherExpArray = this.thirdForm.get('other_experience_info') as FormArray;
-          while (otherExpArray.length !== 0) {
+          while (otherExpArray?.length !== 0) {
             otherExpArray.removeAt(0);
           }
-          if (data.other_experience_info && data.other_experience_info.length > 0) {
+          if (data.other_experience_info && data.other_experience_info?.length > 0) {
             data.other_experience_info.forEach((item: any) => {
               otherExpArray.push(
                 this.fb.group({
@@ -748,14 +748,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.other_experience_info && data.other_experience_info.length === 0) {
+          } else if (!data.other_experience_info || data.other_experience_info?.length === 0) {
             this.addOtherExp();
           }
           const projectsArray = this.thirdForm.get('project_info') as FormArray;
-          while (projectsArray.length !== 0) {
+          while (projectsArray?.length !== 0) {
             projectsArray.removeAt(0);
           }
-          if (data.project_info && data.project_info.length > 0) {
+          if (data.project_info && data.project_info?.length > 0) {
             data.project_info.forEach((item: any) => {
               projectsArray.push(
                 this.fb.group({
@@ -766,14 +766,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.project_info && data.project_info.length === 0) {
+          } else if (!data.project_info || data.project_info?.length === 0) {
             this.addProjects();
           }
           const langSpokenArray = this.fourthForm.get('language_spoken_info') as FormArray;
-          while (langSpokenArray.length !== 0) {
+          while (langSpokenArray?.length !== 0) {
             langSpokenArray.removeAt(0);
           }
-          if (data.language_spoken_info && data.language_spoken_info.length > 0) {
+          if (data.language_spoken_info && data.language_spoken_info?.length > 0) {
             data.language_spoken_info.forEach((item: any) => {
               langSpokenArray.push(
                 this.fb.group({
@@ -782,14 +782,14 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.language_spoken_info && data.language_spoken_info.length === 0) {
+          } else if (!data.language_spoken_info || data.language_spoken_info?.length === 0) {
             this.addLangSpoken();
           }
           const langWrittenArray = this.fourthForm.get('language_written_info') as FormArray;
-          while (langWrittenArray.length !== 0) {
+          while (langWrittenArray?.length !== 0) {
             langWrittenArray.removeAt(0);
           }
-          if (data.language_written_info && data.language_written_info.length > 0) {
+          if (data.language_written_info && data.language_written_info?.length > 0) {
             data.language_written_info.forEach((item: any) => {
               langWrittenArray.push(
                 this.fb.group({
@@ -798,7 +798,7 @@ export class EditProfileComponent implements OnInit {
                 })
               );
             });
-          } else if (data.language_written_info && data.language_written_info.length === 0) {
+          } else if (!data.language_written_info || data.language_written_info?.length === 0) {
             this.addLangWritten();
           }
 
@@ -841,11 +841,11 @@ export class EditProfileComponent implements OnInit {
       //  this.toaster.warning('Skill cannot be empty.');
       return
     }
-    if (skill.length < 2) {
+    if (skill?.length < 2) {
       // this.toaster.warning('Skill must be at least 2 characters long.');
       return
     }
-    if (skill.length > 50) {
+    if (skill?.length > 50) {
       //  this.toaster.warning('Skill cannot exceed 50 characters.');
       return
     }
@@ -885,7 +885,7 @@ export class EditProfileComponent implements OnInit {
   //     const value = control.value;
   //     if (!value) return null;
   //     const numStr = value.toString().replace(/,/g, '');
-  //     if (numStr.length > 7) {
+  //     if (numStr?.length > 7) {
   //       return { maxDigits: true };
   //     }
   //     return null;
@@ -896,7 +896,7 @@ export class EditProfileComponent implements OnInit {
       const value = control.value
       if (!value) return null // Allow empty value as valid
       const numStr = value.toString().replace(/,/g, '') // Remove commas before checking length
-      if (numStr.length > 8) {
+      if (numStr?.length > 8) {
         return { maxDigits: 'Salary should not exceed 8 digits' } // Validation error for too many digits
       }
       return null // No error if the length is valid
@@ -1095,7 +1095,7 @@ export class EditProfileComponent implements OnInit {
     if (!path) return ''
     // Extract filename from path
     const parts = path.split(/[\/\\]/)
-    return parts[parts.length - 1]
+    return parts[parts?.length - 1]
   }
 
   onFileSelected(event: Event, controlName: string): void {
@@ -1222,7 +1222,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   filteredCountryList() {
-    return this.countryList?.filter(country => country.nationalities && country.nationalities.length > 0) || [];
+    return this.countryList?.filter(country => country.nationalities && country.nationalities?.length > 0) || [];
   }
 
 }
