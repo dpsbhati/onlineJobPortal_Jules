@@ -97,13 +97,11 @@ export class AppSideLoginComponent implements OnInit {
 
     // Subscribe to remember device changes
     this.form.get('rememberDevice')?.valueChanges.subscribe(checked => {
-      // console.log('Remember device changed:', checked);
       this.handleRememberDeviceChange(checked);
     });
   }
 
   loadSavedCredentials(): void {
-    // console.log('Loading saved credentials');
     const savedData = localStorage.getItem(this.STORAGE_KEY);
 
     if (savedData) {
@@ -121,7 +119,6 @@ export class AppSideLoginComponent implements OnInit {
           this.clearSavedCredentials();
         }
       } catch (error) {
-        console.error('Error loading saved credentials:', error);
         this.clearSavedCredentials();
       }
     }
@@ -129,7 +126,6 @@ export class AppSideLoginComponent implements OnInit {
 
   saveCredentials(): void {
     const rememberDevice = this.form.get('rememberDevice')?.value;
-
     if (rememberDevice) {
       const rememberMeData: RememberMeData = {
         email: this.form.get('email')?.value,
@@ -183,13 +179,10 @@ export class AppSideLoginComponent implements OnInit {
 
       if (response && response.statusCode === 200) {
         this.saveCredentials(); // This will check rememberDevice value internally
-        // this.toastr.success(response.message);
         // Set token and user data
         this._authService.accessToken = response.data.token;
         const userData = response.data.User;
         await this._authService.setCurrentUser(userData);
-
-        // this.showMessage('Login successful!');
 
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
@@ -201,7 +194,6 @@ export class AppSideLoginComponent implements OnInit {
         this.toastr.warning(response?.message || 'Invalid credentials. Please try again.',);
       }
     } catch (error: any) {
-      console.error('Login error:', error);
       if (error.error && error.error.message) {
         this.toastr.error(error.error.message,);
       } else {
