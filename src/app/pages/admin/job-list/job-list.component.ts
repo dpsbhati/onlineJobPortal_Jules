@@ -38,65 +38,6 @@ import { DeleteComponent } from '../delete/delete.component';
   ],
   templateUrl: './job-list.component.html',
   styleUrls: ['./job-list.component.scss'],
-  // styles: [`
-  //   .breadcrumb-container {
-  //     background-color: #fff;
-  //     padding: 10px 20px;
-  //     border-radius: 4px;
-  //     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  //   }
-  //   .breadcrumb {
-  //     margin: 0;
-  //     padding: 0;
-  //     list-style: none;
-  //     display: flex;
-  //     align-items: center;
-  //   }
-  //   .breadcrumb-item {
-  //     font-size: 14px;
-  //     color: #6c757d;
-  //   }
-  //   .breadcrumb-item:not(:last-child):after {
-  //     content: ">";
-  //     margin: 0 8px;
-  //     color: #6c757d;
-  //   }
-  //   .breadcrumb-item.active {
-  //     color: #495057;
-  //     font-weight: 500;
-  //   }
-  //   .mb-3 {
-  //     margin-bottom: 1rem;
-  //   }
-  //   .loading-overlay {
-  //     position: fixed;
-  //     top: 0;
-  //     left: 0;
-  //     right: 0;
-  //     bottom: 0;
-  //     background-color: rgba(0, 0, 0, 0.7);
-  //     display: flex;
-  //     justify-content: center;
-  //     align-items: center;
-  //     z-index: 9999;
-  //   }
-  //   .loading-text {
-  //     color: white;
-  //     margin-top: 16px;
-  //   }
-  //   .no-records-message {
-  //     display: flex;
-  //     align-items: center;
-  //     justify-content: center;
-  //     padding: 20px;
-  //   }
-  //   .text-danger {
-  //     color: #dc3545;
-  //   }
-  //   .ms-2 {
-  //     margin-left: 0.5rem;
-  //   }
-  // `],
   encapsulation: ViewEncapsulation.None,
 })
 export class JobListComponent implements OnInit {
@@ -180,12 +121,9 @@ export class JobListComponent implements OnInit {
     this.onPagination();
   }
 
-  // viewJobPostDetails(): void {
-  //   this.router.navigate(['/app-applicant-details']);
-  // }
+
 
   onPagination(): void {
-    // this.isLoading = true;
     this.loader.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(
       this.filters
@@ -200,7 +138,6 @@ export class JobListComponent implements OnInit {
           this.jobPostingList = [];
           this.total = 0;
           this.loader.hide();
-          // this.toastr.warning(res.message);
         }
         this.isLoading = false;
       },
@@ -221,13 +158,6 @@ export class JobListComponent implements OnInit {
     this.onPagination();
   }
 
-//   onStatusToggleChange(element: any, checked: boolean) {
-//   console.log('Status toggle changed for job id:', element.id, 'New value:', checked);
-
- 
-//   element.job_opening = checked ? 'Active' : 'DeActivated';
-
-// }
 
 onStatusToggleChange(element: any, checked: boolean) {
   // Optimistically update UI
@@ -236,11 +166,10 @@ onStatusToggleChange(element: any, checked: boolean) {
 
   this.adminService.toggleJobStatus(element.id, checked).subscribe({
     next: (res) => {
-      // this.toastr.success('Status updated successfully');
+
 this.toastr.success(res.message);
- 
-      // Refresh the paginated data to get latest statuses
-      // this.onPagination();
+
+
     },
     error: (err) => {
       // Revert UI changes on failure
@@ -251,11 +180,7 @@ this.toastr.success(res.message);
   });
 }
 
-  // onSearch(): void {
 
-  //   this.pageConfig.curPage = 1;
-  //   this.onPagination();
-  // }
 onSearch(): void {
   // Trim leading and trailing spaces from search text
   if (this.filters.all) {
@@ -338,10 +263,7 @@ onSearch(): void {
           id: job.id,
           rank: job.rank,
         }));
-        // Extract unique ranks
-        // this.uniqueRanks = [
-        //   ...new Set(this.jobList.map((job) => job.rank)),
-        // ].filter((rank) => rank);
+      
       }
     });
   }
