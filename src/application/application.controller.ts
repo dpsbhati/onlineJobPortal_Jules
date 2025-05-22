@@ -54,40 +54,43 @@ export class ApplicationController {
     return this.applicationService.findOne(id);
   }
 
+  @Post('getApplicationsByJobId')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger, // Use the Swagger definition for pagination schema
+    },
+  })
+  async paginateApplicationsByJobId(
+    @Request() req: any,
+    @Body() pagination: IPagination,
+    @Body('job_id') job_id: string, // Receiving job_id separately from pagination
+  ) {
+    return this.applicationService.paginateApplicationsByJobId(
+      req,
+      pagination,
+      job_id,
+    );
+  }
 
- @Post('getApplicationsByJobId')
- @ApiBody({
-   schema: {
-     type: 'object',
-     properties: IPaginationSwagger, // Use the Swagger definition for pagination schema
-   },
- })
- async paginateApplicationsByJobId(
-   @Request() req: any, 
-   @Body() pagination: IPagination,
-   @Body('job_id') job_id: string // Receiving job_id separately from pagination
- ) {
-   return this.applicationService.paginateApplicationsByJobId(req, pagination, job_id);
- }
+  @Post('jobs-with-applications')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+  async paginateJobsWithApplications(
+    @Request() req: any,
+    @Body() pagination: IPagination,
+  ) {
+    return this.applicationService.paginateJobsWithApplications(
+      req,
+      pagination,
+    );
+  }
 
-@Post('jobs-with-applications')
-@ApiBody({
-  schema: {
-    type: 'object',
-    properties: IPaginationSwagger,
-  },
-})
-async paginateJobsWithApplications(
-  @Request() req: any,
-  @Body() pagination: IPagination,
-) {
-  return this.applicationService.paginateJobsWithApplications(req, pagination);
-}
-
-
-
-
-  @Post('update/:id') 
+  @Post('update/:id')
   @ApiOperation({ summary: 'Update a specific application by ID' })
   @ApiParam({
     name: 'id',

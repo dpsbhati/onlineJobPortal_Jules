@@ -225,12 +225,6 @@ export class ApplicationService {
         job_id: job_id, // Filter by the provided job_id
       };
 
-      // const isApplicant = req.user?.role === 'applicant';
-      // if (isApplicant) {
-      //   lwhereClause += ` AND app.user_id = :userId`;
-      //   parameters.userId = req.user.id;
-      // }
-
       const fieldsToSearch = [
         'status',
         'description',
@@ -394,14 +388,6 @@ export class ApplicationService {
         .getRawAndEntities();
 
       // Merge raw application_count back into each job
-      // const result = jobs.entities.map((job, index) => {
-      //   const raw = jobs.raw[index];
-      //   return {
-      //     ...job,
-      //     application_count: parseInt(raw.application_count || '0'),
-      //   };
-      // });
-      // Merge raw application_count back into each job
       const result = jobs.entities.map((job, index) => {
         const raw = jobs.raw[index];
 
@@ -437,14 +423,10 @@ export class ApplicationService {
     user: any,
   ) {
     try {
-      console.log('Updating application with ID:', id);
-
       const application: any = await this.findOne(id);
       if (!application) {
         return WriteResponse(404, {}, `Application with ID ${id} not found.`);
       }
-      console.log('Updating application with application:', application);
-
       const isAdmin = user?.role === 'admin';
 
       if (!isAdmin) {
@@ -486,20 +468,11 @@ export class ApplicationService {
 
       const updatedApplication =
         await this.applicationRepository.save(updateApplicationDto);
-      console.log(
-        'Updating application with updatedApplication:',
-        updatedApplication,
-      );
 
       // Send notification (you can pass relevant information like job title, user details, status)
       const notificationData = {
         application_id: updatedApplication.id, // Accessing the application ID from the 'data' field
         jobTitle: application.data.job.title, // Accessing the job title correctly from 'job'
-        // userName: updatedApplication.user.email, // Accessing the user's email correctly
-        // status:
-        //   ApplicationStatus[
-        //     updatedApplication.status as keyof typeof ApplicationStatus
-        //   ], // Mapping status to enum
         status: updatedApplication.status as ApplicationStatus,
         to: application.data.user.email, // Email of the user to send the notification to
         subject: 'Application Status Update', // Notification subject
@@ -507,8 +480,6 @@ export class ApplicationService {
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
-
-      console.log('savedNotification======>>>>>', savedNotification);
 
       return WriteResponse(
         200,
@@ -637,8 +608,6 @@ export class ApplicationService {
         )?.value;
 
         if (allJobPost) {
-          console.log('inside allJobPost');
-
           const jobFieldsToSearch = ['job.title', 'job.job_type'];
 
           const allJobPostSearchConditions = jobFieldsToSearch
@@ -797,7 +766,6 @@ export class ApplicationService {
 
     try {
       await transporter.sendMail(mailOptions);
-      console.log('Confirmation email sent successfully.');
     } catch (error) {
       console.error('Failed to send confirmation email:', error.message);
     }

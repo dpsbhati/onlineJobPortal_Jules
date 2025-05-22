@@ -20,11 +20,6 @@ export class applications {
   @Column({ type: 'text', nullable: true })
   job_id: string;
 
-  // @ManyToOne(() => JobPosting) // Define relation with JobPosting
-  // @JoinColumn({ name: 'job_id' }) // Map the relation to the existing job_id column
-  // job: JobPosting;
-
-  
   @Column({
     type: 'enum',
     enum: ['Pending', 'Shortlisted', 'Rejected', 'Hired'],
@@ -67,12 +62,6 @@ export class applications {
   
   @Column({ type: 'varchar', length: 255, nullable: true })
   certification_path: string;
-  
-  // @ManyToOne(() => UserProfile, (user_profile) => user_profile.application)
-  // @JoinColumn({ name: 'user_id' })
-  // user_details: JobPosting;
-  
-
   
   @ManyToOne(() => Users,(user) => user.applications) // Define relation with User
   @JoinColumn({ name: 'user_id' }) // Map the relation to the existing user_id column
