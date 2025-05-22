@@ -64,22 +64,11 @@ export class ChangePasswordComponent {
 
     ) {
       this.userRole = localStorage.getItem('role') || '';
-      // console.log('Current user role:', this.userRole);
     }
 
     ngOnInit(): void {
       this.initializeForm();
       const userStr = localStorage.getItem('user');
-
-      // if (userStr) {
-      //   const user = JSON.parse(userStr);
-      //   this.userRole = user.role || '';
-      //   this.userEmail = user.email || '';
-      //   if (user.id) {
-      //     this.isEditMode = true;
-      //     this.loadUserData(user.id);
-      //   }
-      // }
     }
 
     goBack(): void {
@@ -88,10 +77,6 @@ export class ChangePasswordComponent {
 
     initializeForm(): void {
       this.userProfileForm = new FormGroup({
-        // email: new FormControl('', [
-        //   Validators.required,
-        //   Validators.email,
-        // ]),
         oldPassword: new FormControl('', [
           Validators.required,
           // Validators.minLength(8),
@@ -107,9 +92,6 @@ export class ChangePasswordComponent {
           Validators.minLength(8)
         ])
       });
-
-      // Apply the custom password match validator after form initialization
-      // this.userProfileForm.setValidators(this.passwordMatchValidator);
     }
 
 
@@ -127,39 +109,6 @@ export class ChangePasswordComponent {
     get f() {
       return this.userProfileForm.controls;
     }
-
-    // onSubmit(): void {
-    //   this.loader.show();
-    //   // if (this.userProfileForm.invalid) {
-    //   //   this.loader.hide();
-    //   //   return;
-    //   // }
-    //   // this.trimFormValues();
-
-    //   this.errorMessage = null;
-
-    //   this.authService.changepassword(this.userProfileForm.value).subscribe({
-    //     next: (res: any) => {
-    //       console.log(res);
-    //       if (res.statusCode == 200 || res.statusCode == 201) {
-    //         this.loader.hide();
-    //         this.router.navigate(['/authentication/login']);
-    //         this.toaster.success(res.message);
-    //       }
-    //       else {
-    //         this.errorMessage = res.message;
-    //         console.log(res.message,'test')
-    //         this.toaster.warning(res.message)
-    //         this.loader.hide();
-    //       }
-    //     },
-    //     error: (error: any) => {
-    //       this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
-    //       // this.notify.showError(this.errorMessage);
-    //       this.loader.hide();
-    //     }
-    //   });
-    // }
     onSubmit(): void {
   this.loader.show();
   this.errorMessage = null;
