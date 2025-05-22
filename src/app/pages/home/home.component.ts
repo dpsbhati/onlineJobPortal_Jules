@@ -24,7 +24,6 @@ import { BrandingComponent } from "../../layouts/full/vertical/sidebar/branding.
 
 @Component({
   selector: 'app-home',
-  // imports: [TablerIconsModule, MaterialModule, BrandingComponent],
   imports: [
     MatToolbarModule,
     MatButtonModule,
@@ -56,13 +55,6 @@ export class HomeComponent {
    isLoading: boolean = false;
     total: number = 0;
    jobPostingList:any;
-  //  pageConfig: any = {
-  //   curPage: 1,
-  //   perPage: 9,
-  //   sortBy: "created_at",
-  //   direction: "desc",
-  //   whereClause: [],
-  // }
    pageConfig: any = {
     curPage: 1,
     perPage: 9,
@@ -76,7 +68,6 @@ export class HomeComponent {
       }
     ],
   }
-  // ranks = ['Captain', 'Chief Engineer', 'Oiler']
   employers = ['Maersk', 'Anglo-Eastern', 'Bernhard Schulte']
   locations = ['India', 'Philippines', 'Greece']
 
@@ -96,8 +87,6 @@ export class HomeComponent {
   ngOnInit(): void {
       const savedPerPage = localStorage.getItem('jobPagePerPage');
   this.pageConfig.perPage = savedPerPage ? parseInt(savedPerPage, 10) : 9;
-    // this.isLoading = true;
-    // this.allJobList();
     this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
@@ -188,20 +177,6 @@ onLocationChange(event: MatSelectChange): void {
       }
     })
   }
-//   onSearch(): void {
-//   this.pageConfig.curPage = 1;
-//   const trimmedKeyword = this.keyword.trim();
-
-//   if (trimmedKeyword !== '') {
-//     this.pageConfig.whereClause = [
-//       { key: 'all', operator: '=', value: trimmedKeyword }
-//     ];
-//   } else {
-//     this.pageConfig.whereClause = [];
-//   }
-
-//   this.onPagination();
-// }
 onSearch(): void {
   this.pageConfig.curPage = 1;
   const trimmedKeyword = this.keyword.trim();
@@ -240,11 +215,6 @@ onSearch(): void {
   this.onPagination();
 }
 
-
-
-//   goToLogin() {
-//   this.router.navigate(['/authentication/login']);
-// }
 goToLogin() {
   const accessToken = localStorage.getItem('accessToken');
   const userStr = localStorage.getItem('user');
@@ -278,11 +248,6 @@ goToJobDetail(jobId: string) {
   this.router.navigate(['/authentication/Job-Details', jobId]);
 }
 
-  // onPageChange(event: any): void {
-  //   this.pageConfig.curPage = event.pageIndex + 1;
-  //   this.pageConfig.perPage = event.pageSize;
-  //   this.onPagination();
-  // }
   onPageChange(event: any): void {
   this.pageConfig.curPage = event.pageIndex + 1;
   this.pageConfig.perPage = event.pageSize;
