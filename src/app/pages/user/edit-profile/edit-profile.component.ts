@@ -33,6 +33,7 @@ import { UserRole } from '../../../core/enums/roles.enum'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { ToastrService } from 'ngx-toastr'
 import { MaterialModule } from 'src/app/material.module'
+import { MatStepperModule } from '@angular/material/stepper'
 
 @Component({
   selector: 'app-edit-profile',
@@ -53,14 +54,13 @@ import { MaterialModule } from 'src/app/material.module'
     MatCardModule,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatStepperModule
   ],
   templateUrl: './edit-profile.component.html',
   styleUrls: ['./edit-profile.component.scss']
 })
 export class EditProfileComponent implements OnInit {
-  // Example arrays - aap apne actual data se replace kar dena
-  countriesLanguages = ['English', 'Spanish', 'French', 'German', 'Chinese'];
   proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
   departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
   vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
@@ -108,7 +108,6 @@ export class EditProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initializeForm()
     const userStr = localStorage.getItem('user')
 
     if (userStr) {
@@ -134,11 +133,10 @@ export class EditProfileComponent implements OnInit {
       ]),
       last_name: new FormControl(null, [
         Validators.required,
-        // Validators.pattern('^[a-zA-Z0-9 ]+$')
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      dob: new FormControl(null, this.isApplicant() ? [Validators.required, this.adultValidator(18)] : null),
       mobile: new FormControl(
         '',
         this.isApplicant() ?
@@ -165,8 +163,8 @@ export class EditProfileComponent implements OnInit {
       course_info: this.fb.array([]),
       certification_info: this.fb.array([]),
       cv_path: new FormControl(null),
-      cv_name: new FormControl(null),
-      highest_education_level: new FormControl(null)
+      cv_name: new FormControl(null, [Validators.required]),
+      highest_education_level: new FormControl(null, [Validators.required])
     })
   }
 
@@ -212,91 +210,6 @@ export class EditProfileComponent implements OnInit {
 
   isApplicant(): boolean {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase()
-  }
-
-  initializeForm(): void {
-    this.userProfileForm = new FormGroup({
-      first_name: new FormControl('', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z ]*$')
-      ]),
-      last_name: new FormControl('', [
-        Validators.required,
-        // Validators.pattern('^[a-zA-Z0-9 ]+$')
-        Validators.pattern('^[a-zA-Z ]*$')
-      ]),
-      email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl('', [Validators.required, this.dobValidator]),
-      gender: new FormControl(
-        '',
-        this.isApplicant() ? [Validators.required] : null
-      ),
-      mobile: new FormControl(
-        '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.pattern('^[0-9]{10}$'),
-            this.mobileNumberValidator
-          ]
-          : null
-      ),
-      key_skills: new FormControl(
-        [],
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.min(2),
-            Validators.maxLength(50),
-            this.SkillArrayValidator(1, 10),
-            this.skillsValidator(2, 50)
-          ]
-          : null
-      ),
-      work_experiences: new FormControl(
-        '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            this.twoDigitWorkExperienceValidator.bind(this)
-          ]
-          : null
-      ),
-      current_company: new FormControl(
-        '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.pattern('^[a-zA-Z0-9 ]+$'),
-            Validators.maxLength(100)
-          ]
-          : null
-      ),
-      expected_salary: new FormControl(
-        '',
-        this.isApplicant()
-          ? [
-            Validators.required,
-            Validators.pattern('^[0-9]*$'),
-            Validators.min(1),
-            this.expectedSalaryValidator()
-          ]
-          : null
-      )
-    })
-
-    Object.keys(this.userProfileForm.controls).forEach(key => {
-      const control = this.userProfileForm.get(key)
-      if (control) {
-        control.valueChanges.subscribe(() => {
-          if (control.touched) {
-            this.showValidationMessage(key)
-          }
-        })
-      }
-    })
-
-    // this.addTrimValidators();
   }
 
   skillsValidator(minLength: number, maxLength: number): ValidatorFn {
@@ -353,47 +266,6 @@ export class EditProfileComponent implements OnInit {
     return null
   }
 
-  onMobileInput() {
-    const mobileControl = this.userProfileForm.get('mobile')
-    if (mobileControl && mobileControl.value) {
-      const digitsOnly = mobileControl.value
-        .toString()
-        .replace(/\D/g, '')
-        .slice(0, 10)
-      if (mobileControl.value !== digitsOnly) {
-        mobileControl.setValue(digitsOnly, { emitEvent: true })
-      }
-      if (digitsOnly?.length !== 10) {
-        mobileControl.setErrors({ invalidMobile: true })
-      }
-    }
-  }
-
-  showValidationMessage(fieldName: string) {
-    const control = this.userProfileForm.get(fieldName)
-    if (control?.invalid && control.touched) {
-      const errors = control.errors
-      if (errors) {
-        if (errors['required']) {
-          this.toaster.warning(`${this.formatFieldName(fieldName)} is required`)
-          this.scrollToTop()
-        } else if (errors['invalidDOB']) {
-          // Check for invalid DOB error
-          this.toaster.warning(
-            'Invalid Date of Birth format. Please enter in YYYY-MM-DD.'
-          )
-          this.scrollToTop()
-        } else if (fieldName === 'current_company' && errors['pattern']) {
-          this.toaster.warning('Current Company must contain only alphabets')
-          this.scrollToTop()
-        } else if (errors['maxDigits']) {
-          this.toaster.warning('Salary should not exceed 8 digits')
-        } else if (errors['pattern']) {
-          this.toaster.warning('Please enter a valid numeric salary value')
-        }
-      }
-    }
-  }
   dobValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value
     if (!value) {
@@ -504,35 +376,13 @@ export class EditProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // if (this.userProfileForm.invalid) {
-    //   Object.keys(this.userProfileForm.controls).forEach(key => {
-    //     const control = this.userProfileForm.get(key)
-    //     if (control?.invalid) {
-    //       control.markAsTouched()
-    //       this.showValidationMessage(key)
-    //     }
-    //   })
-    //   this.scrollToTop()
-    //   return
-    // }
     this.loader.show()
-
-    // const formValues = this.userProfileForm.value
-    // // Format the Date of Birth (dob) if it's set
-    // if (formValues.dob) {
-    //   formValues.dob = this.formatDate(formValues.dob)
-    // }
-    // const formattedSkills = formValues.key_skills.map(
-    //   (skill: string) => `/${skill}`
-    // )
-
     const payload = {
       ...this.form.value,
       ...this.secondForm.value,
       ...this.thirdForm.value,
       ...this.fourthForm.value
     }
-    console.log(payload);
     this.userService.SaveUserProfile(payload).subscribe({
       next: (response: any) => {
         this.loader.hide()
@@ -627,16 +477,6 @@ export class EditProfileComponent implements OnInit {
 
         if (response.statusCode === 200 && response.data) {
           const data = response.data;
-
-          // const dob = data.dob
-          //   ? new Date(data.dob).toISOString().split('T')[0]
-          //   : null
-          // const expectedSalary = data.expected_salary
-          //   ? data.expected_salary
-          //     .toString()
-          //     .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          //   : ''
-
           this.form.patchValue(response.data);
           this.secondForm.patchValue(response.data);
           this.thirdForm.patchValue(response.data);
@@ -743,7 +583,7 @@ export class EditProfileComponent implements OnInit {
               otherExpArray.push(
                 this.fb.group({
                   other_experience_from: [item.other_experience_from || null, Validators.required],
-                  other_experience_to: [item.other_experience_to || null, Validators.required],
+                  other_experience_to: [item.other_experience_to || null],
                   other_experience_description: [item.other_experience_description || null, Validators.required]
                 })
               );
@@ -760,7 +600,7 @@ export class EditProfileComponent implements OnInit {
               projectsArray.push(
                 this.fb.group({
                   project_from: [item.project_from || null, Validators.required],
-                  project_to: [item.project_to || null, Validators.required],
+                  project_to: [item.project_to || null],
                   project_name: [item.project_name || null, Validators.required],
                   project_role: [item.project_role || null, Validators.required]
                 })
@@ -801,28 +641,6 @@ export class EditProfileComponent implements OnInit {
           } else if (!data.language_written_info || data.language_written_info?.length === 0) {
             this.addLangWritten();
           }
-
-          //   if (this.isApplicant()) {
-          //     const applicantControls = [
-          //       'dob',
-          //       'gender',
-          //       'mobile',
-          //       'key_skills',
-          //       'work_experiences',
-          //       'expected_salary'
-          //     ]
-          //     applicantControls.forEach(controlName => {
-          //       const control = this.userProfileForm.get(controlName)
-          //       if (control) {
-          //         control.setValidators([Validators.required])
-          //         control.updateValueAndValidity()
-          //       }
-          //     })
-          //   }
-          // } else {
-          //   this.toaster.error(
-          //     response.message || 'Failed to retrieve user profile data'
-          //   )
         }
       },
       error: (error: any) => {
@@ -866,43 +684,6 @@ export class EditProfileComponent implements OnInit {
     this.userProfileForm.get('key_skills')?.markAsTouched()
   }
 
-  onSkillEnter(event: any): void {
-    event.preventDefault() // prevent form submit or validation triggering
-    this.addSkill()
-  }
-
-  preventFormSubmit(event: any): void {
-    event.preventDefault() // Prevent form-wide submit behavior
-    event.stopPropagation() // Stop the event from bubbling up
-  }
-  onInputFocus(): void {
-    // Manually mark the input field as touched to trigger validation error
-    this.userProfileForm.get('key_skills')?.markAsTouched()
-  }
-
-  // expectedSalaryValidator(): ValidatorFn {
-  //   return (control: AbstractControl): ValidationErrors | null => {
-  //     const value = control.value;
-  //     if (!value) return null;
-  //     const numStr = value.toString().replace(/,/g, '');
-  //     if (numStr?.length > 7) {
-  //       return { maxDigits: true };
-  //     }
-  //     return null;
-  //   };
-  // }
-  expectedSalaryValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value
-      if (!value) return null // Allow empty value as valid
-      const numStr = value.toString().replace(/,/g, '') // Remove commas before checking length
-      if (numStr?.length > 8) {
-        return { maxDigits: 'Salary should not exceed 8 digits' } // Validation error for too many digits
-      }
-      return null // No error if the length is valid
-    }
-  }
-
   navigate() {
     this.router.navigate(['job-list'])
   }
@@ -914,18 +695,6 @@ export class EditProfileComponent implements OnInit {
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-  // onInputChange(event: Event): void {
-  //   const inputElement = event.target as HTMLInputElement;
-
-  //   // Regular expression to match only letters and spaces
-  //   const regex = /^[a-zA-Z\s]*$/;
-
-  //   // If the value contains any invalid characters, we remove them
-  //   if (!regex.test(value)) {
-  //     value = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
-  //     inputElement.value = value; // Set the modified value back to the input
-  //   }
-  // }
 
   restrictNumeric(event: KeyboardEvent): void {
     const regex = /^[a-zA-Z\s]*$/ // Regex for allowing only alphabets and spaces
@@ -986,7 +755,7 @@ export class EditProfileComponent implements OnInit {
     (this.thirdForm.get('other_experience_info') as FormArray).push(
       this.fb.group({
         other_experience_from: new FormControl(null, [Validators.required]),
-        other_experience_to: new FormControl(null, [Validators.required]),
+        other_experience_to: new FormControl(null),
         other_experience_description: new FormControl(null, [Validators.required])
       })
     )
@@ -1000,7 +769,7 @@ export class EditProfileComponent implements OnInit {
     (this.thirdForm.get('project_info') as FormArray).push(
       this.fb.group({
         project_from: new FormControl(null, [Validators.required]),
-        project_to: new FormControl(null, [Validators.required]),
+        project_to: new FormControl(null),
         project_name: new FormControl(null, [Validators.required]),
         project_role: new FormControl(null, [Validators.required])
       })
@@ -1072,7 +841,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   removeEducation(index: number) {
-    (this.form.get('education_info') as FormArray).removeAt(index)
+    (this.secondForm.get('education_info') as FormArray).removeAt(index)
   }
 
   removeCourse(index: number) {
@@ -1221,8 +990,47 @@ export class EditProfileComponent implements OnInit {
     return (this.fourthForm.get('language_written_info') as FormArray).controls;
   }
 
-  filteredCountryList() {
-    return this.countryList?.filter(country => country.nationalities && country.nationalities?.length > 0) || [];
+  filteredCountryList(): string[] {
+    if (!this.countryList) return [];
+
+    // Extract all nationalities arrays, flatten, and remove duplicates
+    const allNationalities = this.countryList
+      .filter(c => c.nationalities && c.nationalities.length > 0)
+      .map(c => c.nationalities)  // Already arrays
+      .flat();
+
+    // Remove duplicates by converting to Set and back to array
+    return Array.from(new Set(allNationalities));
   }
+
+  adultValidator(minAge = 18): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const val = control.value;
+      if (!val) {
+        control.setErrors(null);
+        return null;
+      }
+
+      const dob = new Date(val);
+      if (isNaN(dob.getTime())) {
+        control.setErrors({ invalidDOB: true });
+        return null; // Return null so Angular doesn't overwrite our manual setErrors
+      }
+
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+      if (age < minAge) {
+        control.setErrors({ tooYoung: true });
+      } else {
+        control.setErrors(null);
+      }
+
+      return null; // Must return null to avoid Angular overwriting manual errors
+    };
+  }
+
 
 }

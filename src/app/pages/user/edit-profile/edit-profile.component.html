@@ -1,188 +1,5 @@
 <mat-card>
 
-
-  <mat-card-content class="d-none">
-    <div *ngIf="apiError" class="alert alert-danger">
-      {{ apiError }}
-    </div>
-
-    <form [formGroup]="userProfileForm" class="profile-form">
-      <div class="row">
-        <!-- First Name -->
-        <div class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>First Name</mat-label>
-            <input matInput formControlName="first_name" placeholder="Enter first name"
-              (keypress)="restrictNumeric($event)" />
-            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['required']">
-              First name is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('first_name')?.errors?.['pattern']">
-              First name can only contain letters and spaces
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Last Name -->
-        <div class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Last Name</mat-label>
-            <input matInput formControlName="last_name" placeholder="Enter last name"
-              (keypress)="restrictNumeric($event)" />
-            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['required']">
-              Last name is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('last_name')?.errors?.['pattern']">
-              Last name can only contain letters, and spaces
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Email -->
-        <div class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Email</mat-label>
-            <input matInput [value]="userEmail" disabled />
-          </mat-form-field>
-        </div>
-
-        <!-- Date of Birth -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Date of Birth</mat-label>
-            <input matInput readonly [matDatepicker]="picker" formControlName="dob" [disabled]="true" readonly />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['required']">
-              Date of birth is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('dob')?.errors?.['invalidDOB']">
-              Invalid Date of Birth format. Please enter in YYYY-MM-DD.
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Gender -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Gender</mat-label>
-            <mat-select formControlName="gender">
-              <mat-option value="">Select Gender</mat-option>
-              <mat-option value="MALE">Male</mat-option>
-              <mat-option value="FEMALE">Female</mat-option>
-              <mat-option value="OTHERS">Other</mat-option>
-            </mat-select>
-            <mat-error *ngIf="userProfileForm.get('gender')?.errors?.['required']">
-              Gender is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Mobile -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile" type="text" placeholder="Enter mobile number"
-              (input)="onMobileInput()" />
-            <mat-error *ngIf="userProfileForm.get('mobile')?.errors?.['required']">
-              Mobile number is required
-            </mat-error>
-            <mat-error
-              *ngIf="userProfileForm.get('mobile')?.errors?.['pattern'] || userProfileForm.get('mobile')?.errors?.['invalidMobile']">
-              Please enter a valid 10-digit mobile number
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Key Skills -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <div class="skills-section">
-            <mat-form-field appearance="outline" class="w-100 mb-2">
-              <mat-label>Add Skill</mat-label>
-              <input matInput [(ngModel)]="newSkill" [ngModelOptions]="{ standalone: true }"
-                placeholder="Enter a skill and press Enter" (keydown.enter)="preventFormSubmit($event)"
-                (focus)="onInputFocus()" (keyup.enter)="addSkill()" />
-
-              <button mat-icon-button matSuffix color="primary" type="button"
-                (keydown.enter)="preventFormSubmit($event)" (click)="addSkill()" [disabled]="!newSkill.trim()">
-                <mat-icon>add</mat-icon>
-              </button>
-            </mat-form-field>
-
-            <mat-chip-listbox>
-              <mat-chip *ngFor="let skill of skillsArray; let i = index" (removed)="removeSkill(i)" [removable]="true">
-                {{ skill }}
-                <mat-icon matChipRemove>cancel</mat-icon>
-              </mat-chip>
-            </mat-chip-listbox>
-
-            <mat-error
-              *ngIf="userProfileForm.get('key_skills')?.touched && userProfileForm.get('key_skills')?.errors?.['required']">
-              At least one skill is required
-            </mat-error>
-          </div>
-        </div>
-
-        <!-- Work Experience -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Work Experience</mat-label>
-            <input matInput formControlName="work_experiences" placeholder="Enter work experience" />
-            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['required']">
-              Work experience is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('work_experiences')?.errors?.['invalidWorkExperience']">
-              Please enter valid work experience (1 or 2 digits followed by
-              optional text)
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Current Company -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Current Company</mat-label>
-            <input matInput formControlName="current_company" placeholder="Enter current company" />
-            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['required']">
-              Current company is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('current_company')?.errors?.['pattern']">
-              Company name must contain only letters and spaces
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Expected Salary -->
-        <div *ngIf="isApplicant()" class="col-lg-4 m-b-16">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Expected Salary</mat-label>
-            <input matInput formControlName="expected_salary" placeholder="Enter expected salary"
-              (input)="formatSalary('expected_salary')" (keypress)="restrictToNumbers($event)"
-              (blur)="onBlur($event)" />
-            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['required']">
-              Expected salary is required
-            </mat-error>
-            <mat-error *ngIf="userProfileForm.get('expected_salary')?.errors?.['maxDigits']">
-              Salary should not exceed 8 digits
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="d-flex justify-content-end mt-4">
-        <button mat-flat-button color="primary" [disabled]="isUpdateButtonDisabled" (click)="onSubmit()">
-          {{ isEditMode ? "Update" : "Create" }}
-        </button>
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
-
-
-
-
-
 <mat-card>
   <mat-card-header>
     <mat-card-title class="d-flex align-items-center gap-6">
@@ -210,7 +27,7 @@
                 (change)="onFileSelected($event, 'profile_image_path')" />
               <div class="img-preview img-close m-t-6" *ngIf="imagePreview">
                 <img [src]="imagePreview" alt="Preview" style="width: 100%; height: 200px; object-fit: contain;" />
-                <!-- <button type="button" mat-icon-button class="remove-icon" (click)="removeImage()">
+                <!-- <button type="button" mat-icon-button class="remove-icon" type="button" (click)="removeImage()">
                   <mat-icon>cancel</mat-icon>
                 </button> -->
               </div>
@@ -289,6 +106,9 @@
                 <mat-error *ngIf="form.get('dob')?.errors?.['required']">
                   Date of birth is required
                 </mat-error>
+                <mat-error *ngIf="form.get('dob')?.errors?.['tooYoung']">
+                  You must be at least 18 years old.
+                </mat-error>
                 <!-- <mat-error *ngIf="form.get('dob')?.errors?.['invalidDOB']">
                   Invalid Date of Birth format. Please enter in YYYY-MM-DD.
                 </mat-error> -->
@@ -300,8 +120,8 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Nationalities</mat-label>
                 <mat-select multiple formControlName="nationalities">
-                  <mat-option *ngFor="let country of filteredCountryList()" [value]="country.nationalities">
-                    {{ country.nationalities }}
+                  <mat-option *ngFor="let country of filteredCountryList()" [value]="country">
+                    {{ country }}
                   </mat-option>
                 </mat-select>
                 <mat-error *ngIf="form.get('nationalities')?.errors?.['required']">
@@ -370,7 +190,7 @@
                   <button mat-icon-button color="primary" (click)="addContact()" type="button">
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" (click)="removeContact(i)"
+                  <button mat-icon-button color="primary" class="m-b-20" type="button" (click)="removeContact(i)"
                     *ngIf="additionalContacts().length != 1">
                     <mat-icon>remove</mat-icon>
                   </button>
@@ -390,7 +210,7 @@
           </div>
         </form>
       </mat-step>
-      <mat-step [stepControl]="secondForm" *ngIf="isApplicant()">
+      <mat-step [stepControl]="secondForm" *ngIf="isApplicant()" [class.disabled]="true">
         <form class="m-t-24" [formGroup]="secondForm">
           <ng-template matStepLabel>Career</ng-template>
           <div class="row">
@@ -455,7 +275,7 @@
                   <button mat-icon-button color="primary" (click)="addWorkExp()" type="button">
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getworkExp().length != 1"
+                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getworkExp().length != 1" type="button"
                     (click)="removeWorkExp(i)">
                     <mat-icon>remove</mat-icon>
                   </button>
@@ -479,6 +299,10 @@
                   <mat-option value="PhD">PhD</mat-option>
                   <mat-option value="Other">Other</mat-option>
                 </mat-select>
+                <mat-error
+                  *ngIf="secondForm.get('highest_education_level')?.hasError('required') && (secondForm.get('highest_education_level')?.touched || secondForm.get('highest_education_level')?.dirty)">
+                  From Date is required
+                </mat-error>
               </mat-form-field>
             </div>
 
@@ -543,7 +367,7 @@
                     <mat-icon>add</mat-icon>
                   </button>
                   <button mat-icon-button color="primary" class="m-b-20" *ngIf="getEducation().length != 1"
-                    (click)="removeEducation(i)">
+                    type="button" (click)="removeEducation(i)">
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
@@ -611,7 +435,7 @@
                   <button mat-icon-button color="primary" (click)="addCourse()" type="button">
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCourse().length != 1"
+                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCourse().length != 1" type="button"
                     (click)="removeCourse(i)">
                     <mat-icon>remove</mat-icon>
                   </button>
@@ -626,17 +450,17 @@
               <h4 class="mat-headline-6 m-t-24 m-b-20">Certifications</h4>
             </div>
 
-            <ng-container formArrayName="course_info">
-              <div *ngFor="let item of getCourse(); let i = index" [formGroupName]="i" class="row">
+            <ng-container formArrayName="certification_info">
+              <div *ngFor="let item of getCetificate(); let i = index" [formGroupName]="i" class="row">
 
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>From</mat-label>
-                    <input matInput formControlName="course_from" readonly [matDatepicker]="courseFrom" />
+                    <input matInput formControlName="certification_from" readonly [matDatepicker]="courseFrom" />
                     <mat-datepicker-toggle matSuffix [for]="courseFrom"></mat-datepicker-toggle>
                     <mat-datepicker #courseFrom></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('course_from')?.hasError('required') && (item.get('course_from')?.touched || item.get('course_from')?.dirty)">
+                      *ngIf="item.get('certification_from')?.hasError('required') && (item.get('certification_from')?.touched || item.get('certification_from')?.dirty)">
                       From Date is required
                     </mat-error>
                   </mat-form-field>
@@ -645,11 +469,11 @@
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>To</mat-label>
-                    <input matInput formControlName="course_to" readonly [matDatepicker]="courseTo" />
+                    <input matInput formControlName="certification_to" readonly [matDatepicker]="courseTo" />
                     <mat-datepicker-toggle matSuffix [for]="courseTo"></mat-datepicker-toggle>
                     <mat-datepicker #courseTo></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('course_to')?.hasError('required') && (item.get('course_to')?.touched || item.get('course_to')?.dirty)">
+                      *ngIf="item.get('certification_to')?.hasError('required') && (item.get('certification_to')?.touched || item.get('certification_to')?.dirty)">
                       To Date is required
                     </mat-error>
                   </mat-form-field>
@@ -657,32 +481,32 @@
 
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Course Title</mat-label>
-                    <input matInput placeholder="Course Name" formControlName="course_title" />
+                    <mat-label>Certification Title</mat-label>
+                    <input matInput placeholder="Course Name" formControlName="certification_title" />
                     <mat-error
-                      *ngIf="item.get('course_title')?.hasError('required') && (item.get('course_title')?.touched || item.get('course_title')?.dirty)">
-                      Course Title is required
+                      *ngIf="item.get('certification_title')?.hasError('required') && (item.get('certification_title')?.touched || item.get('certification_title')?.dirty)">
+                      Certification Title is required
                     </mat-error>
                   </mat-form-field>
                 </div>
 
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Course Provider</mat-label>
-                    <input matInput placeholder="Provider/Institution" formControlName="course_provider" />
+                    <mat-label>Certification Issuer</mat-label>
+                    <input matInput placeholder="Provider/Institution" formControlName="certification_issuer" />
                     <mat-error
-                      *ngIf="item.get('course_provider')?.hasError('required') && (item.get('course_provider')?.touched || item.get('course_provider')?.dirty)">
-                      Course Provider is required
+                      *ngIf="item.get('certification_issuer')?.hasError('required') && (item.get('certification_issuer')?.touched || item.get('certification_issuer')?.dirty)">
+                      Certification Issuer is required
                     </mat-error>
                   </mat-form-field>
                 </div>
 
                 <div class="col-lg-2 text-end">
-                  <button mat-icon-button color="primary" (click)="addCourse()" type="button">
+                  <button mat-icon-button color="primary" (click)="addCertificate()" type="button">
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCourse().length !== 1"
-                    (click)="removeCourse(i)">
+                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCetificate().length !== 1"
+                    type="button" (click)="removeCertificate(i)">
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
@@ -724,7 +548,7 @@
             <button mat-flat-button class="bg-error text-white" matStepperPrevious>
               Back
             </button>
-            <button mat-flat-button matStepperNext >Next</button>
+            <button mat-flat-button matStepperNext [disabled]="secondForm.invalid">Next</button>
           </div>
         </form>
       </mat-step>
@@ -778,7 +602,7 @@
                 <button mat-icon-button color="primary" (click)="addOtherExp()" type="button">
                   <mat-icon>add</mat-icon>
                 </button>
-                <button mat-icon-button color="primary" class="m-b-20" *ngIf="getOtherExp().length != 1"
+                <button mat-icon-button color="primary" class="m-b-20" *ngIf="getOtherExp().length != 1" type="button"
                   (click)="removeOtherExp(i)">
                   <mat-icon>remove</mat-icon>
                 </button>
@@ -846,7 +670,7 @@
                 <button mat-icon-button color="primary" (click)="addProjects()" type="button">
                   <mat-icon>add</mat-icon>
                 </button>
-                <button mat-icon-button color="primary" class="m-b-20" *ngIf="getProjects().length != 1"
+                <button mat-icon-button color="primary" class="m-b-20" *ngIf="getProjects().length != 1" type="button"
                   (click)="removeProjects(i)">
                   <mat-icon>remove</mat-icon>
                 </button>
@@ -859,7 +683,7 @@
             <button mat-flat-button class="bg-error text-white" matStepperPrevious>
               Back
             </button>
-            <button mat-flat-button matStepperNext>Next</button>
+            <button mat-flat-button matStepperNext [disabled]="thirdForm.invalid">Next</button>
           </div>
         </form>
 
@@ -900,7 +724,7 @@
                   <mat-icon>add</mat-icon>
                 </button>
                 <button mat-icon-button color="primary" class="m-b-20" *ngIf="getlanguageSpoken().length != 1"
-                  (click)="removeLangSpoken(i)">
+                  type="button" (click)="removeLangSpoken(i)">
                   <mat-icon>remove</mat-icon>
                 </button>
               </div>
@@ -940,7 +764,7 @@
                   <mat-icon>add</mat-icon>
                 </button>
                 <button mat-icon-button color="primary" class="m-b-20" *ngIf="getlanguageWritten().length != 1"
-                  (click)="removeLangWritten(i)">
+                  type="button" (click)="removeLangWritten(i)">
                   <mat-icon>remove</mat-icon>
                 </button>
               </div>
@@ -1095,7 +919,7 @@
 
           <div class="d-flex justify-content-between m-t-16">
             <button mat-flat-button class="bg-error text-white" matStepperPrevious>Back</button>
-            <button mat-flat-button color="primary" (click)="onSubmit()">Finish</button>
+            <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="fourthForm.invalid">Finish</button>
           </div>
         </form>
 
