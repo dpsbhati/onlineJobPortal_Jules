@@ -44,7 +44,6 @@ export interface Application {
     MaterialModule,
     NgClass,
     MatOption,
-    NgFor,
     FormsModule,
     NgIf,
     ToastrModule,
@@ -222,7 +221,7 @@ export class ApplicationsComponent {
         });
           ;
         } else {
-          // this.toaster.warning(response.message);
+          //  this.toaster.warning(response.message);
           this.dataSource.data = [];
           this.totalApplications = 0;
         }
@@ -262,11 +261,7 @@ export class ApplicationsComponent {
     this.fetchApplications()
   }
 
-  // onFilterChange(filterType: string, value: any): void {
-  //   this.selectedFilters[filterType] = value;
-  //   this.pageConfig.curPage = 1;
-  //   this.fetchApplications();
-  // }
+
   onFilterChange(filterType: string, value: any): void {
   this.selectedFilters[filterType] = value;
   this.pageIndex = 0;
@@ -336,19 +331,7 @@ export class ApplicationsComponent {
     this.fetchApplications();
   }
 
-  // clearFilters() {
-  //   this.selectedFilters = {
-  //     all: null,
-  //     job_id: null,
-  //     status: null,
-  //     rank: null,
-  //   };
-  //   this.pageIndex = 0;
-  //   if (this.paginator) {
-  //     this.paginator.firstPage();
-  //   }
-  //   this.fetchApplications();
-  // }
+  
 clearFilters(): void {
   this.selectedFilters = {
     all: null,
@@ -478,7 +461,7 @@ viewJobDetails(jobId:any): void {
           };
         });
       } else {
-        // this.toaster.warning(res.message || 'No applications found');
+      
         this.dataSource.data = [];
         this.totalApplications = 0;
       }
