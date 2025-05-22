@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { HelperService } from '../../../core/helpers/helper.service';
-import { NotifyService } from '../../../core/services/notify.service';
 import { AuthService } from '../../../core/services/authentication/auth.service';
 import { UserRole } from '../../../core/enums/roles.enum';
 import { MaterialModule } from '../../../material.module';
@@ -14,7 +13,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,7 +30,6 @@ import { DeleteComponent } from '../delete/delete.component';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-
     NgIf,
     ToastrModule,
   ],
@@ -77,7 +74,6 @@ export class JobListComponent implements OnInit {
     private adminService: AdminService,
     private router: Router,
     private helperService: HelperService,
-    private notify: NotifyService,
     private authService: AuthService,
     private loader: LoaderService,
     private toastr: ToastrService,
@@ -110,18 +106,16 @@ export class JobListComponent implements OnInit {
         ];
   }
 
-  isAdmin(): boolean {
-    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
-  }
-
-  ngOnInit(): void {
+ ngOnInit(): void {
     this.isLoading = true;
     this.allJobList();
     this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
 
-
+  isAdmin(): boolean {
+    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
+  }
 
   onPagination(): void {
     this.loader.show();
@@ -156,7 +150,6 @@ export class JobListComponent implements OnInit {
     this.pageConfig.perPage = event.pageSize;
     this.onPagination();
   }
-
 
 onStatusToggleChange(element: any, checked: boolean) {
   // Optimistically update UI
@@ -195,9 +188,11 @@ onSearch(): void {
       this.clearSearch();
     }
   }
+
   viewJobPostDetails(jobId: string): void {
     this.router.navigate(['/job-post-details', jobId]);
   }
+  
   viewapplicationDetails(jobId: string): void {
     this.router.navigate(['/applications', jobId]);
   }
@@ -246,6 +241,7 @@ onSearch(): void {
   formatSalary(value: number): string {
     return '$' + value.toLocaleString('en-IN');
   }
+
   allrankslist() {
     this.adminService.getallranks().subscribe((response: any) => {
       if (response.statusCode === 200) {
@@ -262,7 +258,6 @@ onSearch(): void {
           id: job.id,
           rank: job.rank,
         }));
-
       }
     });
   }
@@ -283,7 +278,6 @@ onSearch(): void {
       job_type: '',
       employer: '',
       rank: '',
-
       job_opening: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
