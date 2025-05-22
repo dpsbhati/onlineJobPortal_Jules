@@ -117,9 +117,7 @@ export class AppSideLoginComponent implements OnInit {
             password: data.password,
             rememberDevice: true
           });
-          // console.log('Credentials loaded into form');
         } else {
-          // console.log('Saved credentials expired');
           this.clearSavedCredentials();
         }
       } catch (error) {
@@ -130,7 +128,6 @@ export class AppSideLoginComponent implements OnInit {
   }
 
   saveCredentials(): void {
-    // console.log('Saving credentials');
     const rememberDevice = this.form.get('rememberDevice')?.value;
 
     if (rememberDevice) {
@@ -142,14 +139,12 @@ export class AppSideLoginComponent implements OnInit {
       };
 
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
-      // console.log('Credentials saved to localStorage');
     } else {
       this.clearSavedCredentials();
     }
   }
 
   clearSavedCredentials(): void {
-    // console.log('Clearing saved credentials');
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
@@ -187,7 +182,6 @@ export class AppSideLoginComponent implements OnInit {
       const response = await this._authService.login({ email, password }).toPromise();
 
       if (response && response.statusCode === 200) {
-        // console.log('Login successful, handling remember me');
         this.saveCredentials(); // This will check rememberDevice value internally
         // this.toastr.success(response.message);
         // Set token and user data
