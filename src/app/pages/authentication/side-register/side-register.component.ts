@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CoreService } from 'src/app/services/core.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -7,16 +6,14 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { AppAuthBrandingComponent } from '../../../layouts/full/vertical/sidebar/auth-branding.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-
-import { NotifyService } from 'src/app/core/services/notify.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
-// Strong password pattern
-const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
-// import { NotifyService } from 'src/app/core/services/notify.service';
 import { NgIf } from '@angular/common';
+// Strong password and email pattern
+const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
+const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
+
 @Component({
   selector: 'app-side-register',
   imports: [RouterModule, MaterialModule, FormsModule, ReactiveFormsModule, AppAuthBrandingComponent, NgIf, ToastrModule],
@@ -56,8 +53,6 @@ export class AppSideRegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private notify: NotifyService,
-
     private _snackBar: MatSnackBar,
     private loader: LoaderService,
     private toastr: ToastrService,
@@ -83,8 +78,6 @@ export class AppSideRegisterComponent {
       panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
     });
   }
-
-
 
   onSubmit(): void {
     this.loader.show();
@@ -113,7 +106,6 @@ export class AppSideRegisterComponent {
       },
       error: (error: any) => {
         this.toastr.error = error.error?.message || 'Registration failed. Please try again.';
-        // this.notify.showError(this.errorMessage);
         this.loader.hide();
       }
     });

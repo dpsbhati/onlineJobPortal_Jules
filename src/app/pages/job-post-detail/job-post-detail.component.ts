@@ -7,7 +7,6 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
-// import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons';
@@ -99,7 +98,6 @@ export class JobPostDetailComponent {
       error: (error) => {
         this.loader.hide();
         this.notifyService.showError(error?.error?.message);
-        console.error('Error:', error);
       },
     });
   }

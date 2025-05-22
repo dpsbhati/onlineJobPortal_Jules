@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +16,6 @@ import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { ImageCompressionService } from 'src/app/core/services/image/image-compression.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { UserService } from 'src/app/core/services/user/user.service';
-import { UserRole } from '../../../core/enums/roles.enum';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
@@ -26,7 +25,6 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
      ReactiveFormsModule,
         FormsModule,
         NgIf,
-        NgFor,
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
@@ -57,29 +55,14 @@ export class ChangePasswordComponent {
       private router: Router,
       private loader: LoaderService,
       private toaster: ToastrService,
-       private authService: AuthService,
-
-          private notify: NotifyService,
-
-
+      private authService: AuthService,
+      private notify: NotifyService
     ) {
       this.userRole = localStorage.getItem('role') || '';
-      // console.log('Current user role:', this.userRole);
     }
 
     ngOnInit(): void {
       this.initializeForm();
-      const userStr = localStorage.getItem('user');
-
-      // if (userStr) {
-      //   const user = JSON.parse(userStr);
-      //   this.userRole = user.role || '';
-      //   this.userEmail = user.email || '';
-      //   if (user.id) {
-      //     this.isEditMode = true;
-      //     this.loadUserData(user.id);
-      //   }
-      // }
     }
 
     goBack(): void {
@@ -88,10 +71,6 @@ export class ChangePasswordComponent {
 
     initializeForm(): void {
       this.userProfileForm = new FormGroup({
-        // email: new FormControl('', [
-        //   Validators.required,
-        //   Validators.email,
-        // ]),
         oldPassword: new FormControl('', [
           Validators.required,
           // Validators.minLength(8),
@@ -107,15 +86,11 @@ export class ChangePasswordComponent {
           Validators.minLength(8)
         ])
       });
-
-      // Apply the custom password match validator after form initialization
-      // this.userProfileForm.setValidators(this.passwordMatchValidator);
     }
 
 
     togglePasswordVisibility() {
       this.passwordVisible = !this.passwordVisible;
-
     }
     togglePasswordVisibility1() {
       this.passwordVisible1 = !this.passwordVisible1;
@@ -127,43 +102,9 @@ export class ChangePasswordComponent {
     get f() {
       return this.userProfileForm.controls;
     }
-
-    // onSubmit(): void {
-    //   this.loader.show();
-    //   // if (this.userProfileForm.invalid) {
-    //   //   this.loader.hide();
-    //   //   return;
-    //   // }
-    //   // this.trimFormValues();
-
-    //   this.errorMessage = null;
-
-    //   this.authService.changepassword(this.userProfileForm.value).subscribe({
-    //     next: (res: any) => {
-    //       console.log(res);
-    //       if (res.statusCode == 200 || res.statusCode == 201) {
-    //         this.loader.hide();
-    //         this.router.navigate(['/authentication/login']);
-    //         this.toaster.success(res.message);
-    //       }
-    //       else {
-    //         this.errorMessage = res.message;
-    //         console.log(res.message,'test')
-    //         this.toaster.warning(res.message)
-    //         this.loader.hide();
-    //       }
-    //     },
-    //     error: (error: any) => {
-    //       this.toaster.error(error.error?.message || 'Change password failed. Please try again.');
-    //       // this.notify.showError(this.errorMessage);
-    //       this.loader.hide();
-    //     }
-    //   });
-    // }
     onSubmit(): void {
   this.loader.show();
   this.errorMessage = null;
-
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
   const email = user?.email || '';
@@ -204,10 +145,8 @@ export class ChangePasswordComponent {
 
 
     passwordMatchValidator() {
-      const password = this.userProfileForm.get('newPassword')?.value;
-      const confirmPassword = this.userProfileForm.get('confirmPassword')?.value;
       // Manually trigger mismatch error if passwords don't match
-      if (password !== confirmPassword) {
+      if (this.userProfileForm.get('newPassword')?.value !== this.userProfileForm.get('confirmPassword')?.value) {
         this.userProfileForm.get('confirmPassword')?.setErrors({ mismatch: true });
       } else {
         // Remove the mismatch error when passwords match
