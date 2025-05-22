@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +16,6 @@ import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { ImageCompressionService } from 'src/app/core/services/image/image-compression.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { UserService } from 'src/app/core/services/user/user.service';
-import { UserRole } from '../../../core/enums/roles.enum';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
@@ -26,7 +25,6 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
      ReactiveFormsModule,
         FormsModule,
         NgIf,
-        NgFor,
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
@@ -57,18 +55,14 @@ export class ChangePasswordComponent {
       private router: Router,
       private loader: LoaderService,
       private toaster: ToastrService,
-       private authService: AuthService,
-
-          private notify: NotifyService,
-
-
+      private authService: AuthService,
+      private notify: NotifyService
     ) {
       this.userRole = localStorage.getItem('role') || '';
     }
 
     ngOnInit(): void {
       this.initializeForm();
-      const userStr = localStorage.getItem('user');
     }
 
     goBack(): void {
@@ -97,7 +91,6 @@ export class ChangePasswordComponent {
 
     togglePasswordVisibility() {
       this.passwordVisible = !this.passwordVisible;
-
     }
     togglePasswordVisibility1() {
       this.passwordVisible1 = !this.passwordVisible1;
@@ -112,7 +105,6 @@ export class ChangePasswordComponent {
     onSubmit(): void {
   this.loader.show();
   this.errorMessage = null;
-
   const userStr = localStorage.getItem('user');
   const user = userStr ? JSON.parse(userStr) : null;
   const email = user?.email || '';
@@ -153,10 +145,8 @@ export class ChangePasswordComponent {
 
 
     passwordMatchValidator() {
-      const password = this.userProfileForm.get('newPassword')?.value;
-      const confirmPassword = this.userProfileForm.get('confirmPassword')?.value;
       // Manually trigger mismatch error if passwords don't match
-      if (password !== confirmPassword) {
+      if (this.userProfileForm.get('newPassword')?.value !== this.userProfileForm.get('confirmPassword')?.value) {
         this.userProfileForm.get('confirmPassword')?.setErrors({ mismatch: true });
       } else {
         // Remove the mismatch error when passwords match

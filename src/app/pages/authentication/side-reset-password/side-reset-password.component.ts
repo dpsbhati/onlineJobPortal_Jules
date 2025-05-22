@@ -92,8 +92,6 @@ export class SideResetPasswordComponent implements OnInit {
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
       ]],
       confirmPassword: ['', Validators.required]
-    }, {
-      // validators: this.passwordMatchValidator
     });
   }
 
@@ -147,11 +145,9 @@ export class SideResetPasswordComponent implements OnInit {
     this.form.disable();
     this.isLoading = true;
 
-    const password = this.form.get('password')?.value;
-
     // ✅ Correct Payload with token
     const payload = {
-      newPassword: password,
+      newPassword: this.form.get('password')?.value,
       token: this.token
     };
 
