@@ -156,9 +156,22 @@
         <!-- Number of Applicant Column -->
         <ng-container matColumnDef="number_of_applicant">
           <th mat-header-cell *matHeaderCellDef>Application Count</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.application_number }}
-          </td>
+         
+          <td mat-cell *matCellDef="let element" class="application-count-cell">
+    <ng-container *ngIf="element.application_number > 0; else zeroCount">
+      <a
+        (click)="viewapplicationDetails(element.id)"
+        class="text-primary application-count-link"
+        (click)="$event.stopPropagation()"
+        style="cursor: pointer; text-decoration: none;"
+      >
+        {{ element.application_number }}
+      </a>
+    </ng-container>
+    <ng-template #zeroCount>
+      <span>{{ element.application_number }}</span>
+    </ng-template>
+  </td>
         </ng-container>
 
         <!-- Status Column -->
