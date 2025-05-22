@@ -109,19 +109,7 @@ export class ApplicationsComponent {
   ) { }
 
   ngOnInit(): void {
-    // this.applicantId = this.route.snapshot.paramMap.get('id')
-    // this.dataSource.paginator = this.paginator
-    // this.dataSource.sort = this.sort
     this.fetchJobPosts()
-    // this.fetchApplications()
-    // this.route.paramMap.subscribe(params => {
-    //   const jobId = params.get('id');
-    //   // console.log('mus',jobId);
-    //   if (jobId) {
-    //     this.pageConfig.job_id = jobId;
-    //     this.onjobviewapplicationPagination(); // Load data once jobId is available
-    //   }
-    // });
     this.allrankslist()
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -152,15 +140,9 @@ export class ApplicationsComponent {
   deleteDialog() {
     const dialogRef = this.dialog.open(DeleteComponent)
     dialogRef.afterClosed().subscribe(result => {
-      // console.log('Dialog result: result')
     })
   }
   fetchJobPosts() {
-    // debugger
-    // const payload = {
-    //   curPage: 1,
-    //   perPage: 10,
-    // };
 
     this.adminService
       .getJobPostings()
@@ -211,29 +193,6 @@ export class ApplicationsComponent {
         this.loader.hide();
         if (response.statusCode === 200) {
           this.totalApplications = response.count || 0;
-          // this.dataSource.data = response.data.map(
-          //   (app: any, index: number) => ({
-          //     position: index + 1 + this.pageIndex * this.pageSize,
-          //     name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
-          //     email: app.user?.email,
-          //     dateOfApplication: new Date(app.applied_at).toLocaleDateString(
-          //       'en-US',
-          //       {
-          //         weekday: 'long',
-          //         year: 'numeric',
-          //         month: 'long',
-          //         day: 'numeric',
-          //       }
-          //     ),
-          //     application_id: app?.id,
-          //     experience: app?.work_experiences,
-          //     jobPost: app.job?.title,
-          //     applications: app?.count,
-          //     status: app?.status,
-          //     all: app?.all,
-          //     user_id: app?.user_id,
-          //     job_id: app?.job_id,
-          //   })
 
            this.dataSource.data = response.data.map((app: any, index: number) => {
           const rawImagePath = app.user?.userProfile?.profile_image_path || '';
@@ -301,12 +260,7 @@ export class ApplicationsComponent {
     this.pageIndex = 0
     this.fetchApplications()
   }
-  // onFilterChange(filterType: string, value: any) {
-  //   this.selectedFilters[filterType] = value;
-  //   this.pageIndex = 0;
-  //   this.fetchApplications();
-  //   this.onSearch();
-  // }
+
   onFilterChange(filterType: string, value: any): void {
     this.selectedFilters[filterType] = value;
     this.pageConfig.curPage = 1;
@@ -344,7 +298,6 @@ export class ApplicationsComponent {
   }
 
   viewApplicantDetails(application_id: any): void {
-    // debugger
     this.router.navigate(['/applicant-details', application_id]);
   }
 
@@ -358,7 +311,6 @@ viewJobDetails(jobId:any): void {
 
 
   deleteApplicant(application_id: any): void {
-    // debugger
     Swal.fire({
       title: 'Are you sure?',
       text: `You are about to delete the applicant.`,
@@ -397,102 +349,6 @@ viewJobDetails(jobId:any): void {
     });
   }
 
-  //   fetchApplications() {
-  //     // this.isLoading = true;
-  //     // debugger
-  //     this.loader.show();
-  //     const whereClause = [];
-
-  //     if (this.selectedFilters.jobPostId) {
-  //       whereClause.push({
-  //         key: 'job_id',
-  //         value: this.selectedFilters.jobPostId,
-  //         operator: '=',
-  //       });
-  //     }
-  //     if (this.selectedFilters.all) {
-  //       whereClause.push({
-  //         key: 'all',
-  //         value: this.selectedFilters.all,
-  //         operator: '=',
-  //       });
-  //     }
-
-  //     if (this.selectedFilters.status) {
-  //       whereClause.push({
-  //         key: 'status',
-  //         value: this.selectedFilters.status,
-  //         operator: '=',
-  //       });
-  //     }
-
-  //     if (this.selectedFilters.rank) {
-  //       whereClause.push({
-  //         key: 'rank',
-  //         value: this.selectedFilters.rank,
-  //         operator: '=',
-  //       });
-  //     }
-
-  //     const payload = {
-  //       curPage: this.pageIndex + 1,
-  //       perPage: this.pageSize,
-  //       sortBy: this.sortBy,
-  //       direction: this.direction,
-  //       whereClause,
-  //     };
-  // //  debugger
-  //     this.adminService
-  //       .applicationPagination(payload)
-  //       .subscribe((response: any) => {
-  //         if (response.statusCode === 200) {
-  //           if (response.data && response.data.length > 0) {
-  //             // console.log('Res --->',response.data)
-  //             this.totalApplications = response.total || response.data.length;
-  //             this.dataSource.data = response.data.map(
-  //               (app: any, index: number) => (
-  //                 // console.log(app),
-  //                 {
-  //                 position: index + 1 + this.pageIndex * this.pageSize,
-  //                 name: `${app.user.userProfile?.first_name} ${app.user.userProfile?.last_name}`,
-  //                 email: app.user.email,
-  //                 mobile: app.user.userProfile?.mobile,
-  //                 // dateOfApplication: new Date(app.applied_at).toDateString(),
-  //                 dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
-  //                   weekday: 'long',
-  //                   year: 'numeric',
-  //                   month: 'long',
-  //                   day: 'numeric'
-  //                 }),
-  //                 application_id : app.id,
-  //                 jobPost: app.job.title,
-  //                 applications: app.count,
-  //                 status: app.status,
-  //                 all: app.all,
-  //                 user_id: app.user_id,
-  //               }),
-  //               // console.log(this.application_id)
-  //             );
-  //             // this.toaster.success(response.message);
-  //             this.loader.hide();
-
-  //             // this.isLoading = false;
-  //           } else {
-  //             // this.isLoading = false;
-  //             this.loader.hide();
-  //             this.toaster.warning(response.message);
-  //             this.dataSource.data = [];
-  //             this.totalApplications = 0;
-  //           }
-  //         } else {
-  //           // this.isLoading = false;
-  //           this.loader.hide();
-  //           this.toaster.error(response.message || 'Failed to fetch data.');
-  //           this.dataSource.data = [];
-  //           this.totalApplications = 0;
-  //         }
-  //       });
-  //   }
 
   onjobviewapplicationPagination(): void {
     this.loader.show();
