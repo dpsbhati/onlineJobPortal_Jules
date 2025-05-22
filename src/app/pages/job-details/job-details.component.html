@@ -32,23 +32,7 @@
           <button mat-icon-button (click)="goToLogin()">
             <mat-icon>person</mat-icon>
           </button>
-          <!-- <button mat-icon-button>
-            <img
-              src="./assets/images/Icons/search.svg"
-              alt="Logo"
-              class="material-icons-custom"
-            />
-          </button> -->
-          <!-- <button mat-icon-button (click)="goToLogin()">
-            <mat-icon>person</mat-icon>
-          </button> -->
-          <!-- <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
-              class="material-icons-custom" /></button> -->
-
-          <!-- --------------------------------------------------------------- -->
-          <!--  Links -->
-          <!-- --------------------------------------------------------------- -->
-        </div>
+                 </div>
 
         <!-- Mobile Menu -->
         <button
@@ -136,10 +120,6 @@
                         >
                           {{ skill }}
                         </button>
-                        <!-- <button mat-stroked-button color="primary">TypeScript</button>
-                                        <button mat-stroked-button color="primary">HTML/CSS</button>
-                                        <button mat-stroked-button color="primary">RxJS</button>
-                                        <button mat-stroked-button color="primary">REST API</button> -->
                       </div>
                     </div>
                   </div>
@@ -198,24 +178,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div
-  *ngIf="showLoginSignupDialog"
-  class="dialog-overlay"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="dialogTitle"
->
-  <div class="dialog-box">
-    <h2 id="dialogTitle">Please Login or Signup</h2>
-    <p>You need to login or sign up to apply for this job.</p>
-    <div class="dialog-actions">
-      <button mat-button (click)="onLogin()">Login</button>
-      <button mat-button color="primary" (click)="onSignup()">Signup</button>
-      <button mat-button (click)="onCancel()">Cancel</button>
-    </div>
-  </div>
-</div> -->
     <div
       *ngIf="showLoginSignupDialog"
       class="dialog-overlay"
@@ -246,7 +208,6 @@
           <button mat-flat-button color="primary" (click)="onSignup()">
             Signup
           </button>
-          <!-- <button mat-button (click)="onCancel()">Cancel</button> -->
         </div>
       </div>
     </div>
@@ -289,14 +250,6 @@
               formControlName="additional_info"
               rows="4"
             ></textarea>
-            <!-- <mat-error
-              *ngIf="
-                userDetailsForm.get('additional_info')?.hasError('required') &&
-                (userDetailsForm.get('additional_info')?.touched || submitted)
-              "
-            >
-              Additional Information is required.
-            </mat-error> -->
             <mat-error
               *ngIf="
                 userDetailsForm.get('additional_info')?.hasError('maxlength') &&
