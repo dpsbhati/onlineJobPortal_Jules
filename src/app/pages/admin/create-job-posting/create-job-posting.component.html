@@ -74,7 +74,7 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Date Published</mat-label>
           <input matInput [matDatepicker]="publishedPicker" id="date_published" formControlName="date_published"
-            [readonly]="isDatePublishedReadonly">
+            [readonly]="isDatePublishedReadonly" (dateChange)="onToDateChange(jobForm.get('date_published'),jobForm.get('deadline'))">
           <mat-datepicker-toggle matSuffix [for]="publishedPicker"></mat-datepicker-toggle>
           <mat-datepicker #publishedPicker></mat-datepicker>
           <mat-error *ngIf="jobForm.get('date_published')?.invalid && jobForm.get('date_published')?.touched">
@@ -88,7 +88,7 @@
         <!-- Deadline -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Deadline</mat-label>
-          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline">
+          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline" (dateChange)="onToDateChange(jobForm.get('date_published'),jobForm.get('deadline'))">
           <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
           <mat-datepicker #deadlinePicker></mat-datepicker>
           <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">

@@ -88,7 +88,6 @@ export class AppliedStatusComponent {
           this.userProfile = this.jobDetails.user?.userProfile;
           if (this.jobDetails?.job?.skills_required) {
             this.formattedSkills = JSON.parse(this.jobDetails?.job?.skills_required);
-            console.log(this.formattedSkills)
           }
           if (this.jobDetails?.job?.social_media_type) {
             this.formattedSocialMedia = JSON.parse(
