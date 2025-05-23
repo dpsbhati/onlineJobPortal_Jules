@@ -1,7 +1,14 @@
 <!-- Filters -->
-  <button  *ngIf="applicantId" (click)="goBack()" mat-mini-fab class="bg-primary text-white m-b-20">
+ <div class="header d-flex align-items-center m-b-16"  *ngIf="applicantId">
+    <button (click)="goBack()" (click)="goBack()" mat-mini-fab class="bg-primary text-white">
       <mat-icon>arrow_back</mat-icon>
     </button>
+  <h2 class="m-l-12">View Applications
+</h2>
+  </div>
+  <!-- <button  *ngIf="applicantId" (click)="goBack()" mat-mini-fab class="bg-primary text-white m-b-20">
+      <mat-icon>arrow_back</mat-icon>
+    </button> -->
 <mat-card class="cardWithShadow">
   
   <mat-card-content>
