@@ -138,9 +138,9 @@ export const PagesRoutes: Routes = [
       {
         path: 'applications/:id',
         component: ApplicationsComponent,
-        data: {
-          title: 'View Applications'
-        }
+        // data: {
+        //   title: 'View Applications'
+        // }
         // canActivate:[AuthGuard]
       },
       {
