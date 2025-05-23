@@ -136,7 +136,7 @@ export class EditProfileComponent implements OnInit {
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl(null, this.isApplicant() ? [Validators.required, this.adultValidator(18)] : null),
+      dob: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
       mobile: new FormControl(
         '',
         this.isApplicant() ?
@@ -212,50 +212,6 @@ export class EditProfileComponent implements OnInit {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase()
   }
 
-  skillsValidator(minLength: number, maxLength: number): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const skills = control.value
-      if (!Array.isArray(skills)) {
-        return { invalidType: true }
-      }
-      for (const skill of skills) {
-        if (skill?.length < minLength) {
-          return {
-            minLengthSkill: {
-              requiredLength: minLength,
-              actualLength: skill?.length
-            }
-          }
-        }
-        if (skill?.length > maxLength) {
-          return {
-            maxLengthSkill: {
-              requiredLength: maxLength,
-              actualLength: skill?.length
-            }
-          }
-        }
-      }
-      return null
-    }
-  }
-
-  SkillArrayValidator(min: number, max: number): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const skills = control.value
-      if (!Array.isArray(skills)) {
-        return { invalidType: true }
-      }
-      if (skills?.length < min) {
-        return { minSkills: { required: min, actual: skills?.length } }
-      }
-      if (skills?.length > max) {
-        return { maxSkills: { required: max, actual: skills?.length } }
-      }
-      return null
-    }
-  }
-
   mobileNumberValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value
     if (!value) return null
@@ -264,115 +220,6 @@ export class EditProfileComponent implements OnInit {
       return { invalidMobile: true }
     }
     return null
-  }
-
-  dobValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value
-    if (!value) {
-      return null // No value means we don't show any error yet (waiting for the user to type something)
-    }
-
-    // Check if the date is in the correct format (YYYY-MM-DD)
-    const regex = /^\d{4}-\d{2}-\d{2}$/
-    if (!regex.test(value)) {
-      return {
-        invalidDOB: 'Invalid Date of Birth format. Please enter in YYYY-MM-DD.'
-      }
-    }
-    return null // Return null when the date format is valid
-  }
-
-  private formatFieldName(fieldName: string): string {
-    return fieldName
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
-
-  get isUpdateButtonDisabled(): boolean {
-    if (this.isAdmin()) {
-      const firstNameValue = this.userProfileForm?.get('first_name')?.value
-      const lastNameValue = this.userProfileForm?.get('last_name')?.value
-      return !firstNameValue?.trim() || !lastNameValue?.trim()
-    } else if (this.isApplicant()) {
-      const requiredFields = [
-        'first_name',
-        'last_name',
-        'dob',
-        'gender',
-        'mobile',
-        'key_skills',
-        'work_experiences',
-        'current_company',
-        'expected_salary'
-      ]
-
-      const expectedSalaryValue =
-        this.userProfileForm?.get('expected_salary')?.value
-      if (expectedSalaryValue) {
-        const numStr = expectedSalaryValue.toString().replace(/,/g, '')
-        if (numStr?.length > 7) return true
-      }
-
-      return (
-        requiredFields.some(field => {
-          const control = this.userProfileForm?.get(field)
-          if (!control) return true
-          const value = control.value
-          if (field === 'key_skills') {
-            return !Array.isArray(value) || value?.length === 0
-          }
-          if (typeof value === 'string') {
-            return !value || value.trim() === ''
-          }
-          return !value
-        }) || !this.userProfileForm.valid
-      )
-    }
-    return true
-  }
-
-  addTrimValidators(): void {
-    Object.keys(this.userProfileForm.controls).forEach(controlName => {
-      const control = this.userProfileForm.get(controlName)
-      if (control) {
-        control.valueChanges.subscribe(value => {
-          if (typeof value === 'string') {
-            const trimmedValue = value.trim()
-            if (value !== trimmedValue) {
-              control.setValue(trimmedValue, { emitEvent: false })
-            }
-          }
-        })
-      }
-    })
-  }
-
-  twoDigitWorkExperienceValidator(
-    control: AbstractControl
-  ): ValidationErrors | null {
-    const value = control.value
-    if (!value) return null
-    const isValid = /^(\d{1,2})(\s*[a-zA-Z]*)?$/.test(value)
-    if (!isValid) {
-      return {
-        invalidWorkExperience:
-          'Each work experience must be a valid number (1 or 2 digits) followed by optional text.'
-      }
-    }
-    return null
-  }
-
-  formatSalary(controlName: string): void {
-    const control = this.userProfileForm.get(controlName)
-    if (control && control.value) {
-      const unformattedValue = control.value.toString().replace(/[^0-9]/g, '')
-      if (!isNaN(unformattedValue)) {
-        const formattedValue =
-          parseInt(unformattedValue).toLocaleString('en-IN')
-        control.setValue(formattedValue, { emitEvent: false })
-      }
-    }
   }
 
   onSubmit(): void {
@@ -402,70 +249,6 @@ export class EditProfileComponent implements OnInit {
         this.scrollToTop()
       }
     })
-  }
-
-  // Helper function to format the Date of Birth to YYYY-MM-DD format
-  formatDate(date: Date): string {
-    // Set the time to midnight to avoid timezone issues
-    const localDate = new Date(date)
-    localDate.setHours(0, 0, 0, 0) // Set the time to midnight
-
-    const year = localDate.getFullYear()
-    const month = ('0' + (localDate.getMonth() + 1)).slice(-2) // Add leading zero if month < 10
-    const day = ('0' + localDate.getDate()).slice(-2) // Add leading zero if day < 10
-
-    return `${year}-${month}-${day}` // Returns in 'YYYY-MM-DD' format
-  }
-
-  restrictToNumbers(event: KeyboardEvent): void {
-    const inputChar = String.fromCharCode(event.charCode)
-    const inputElement = event.target as HTMLInputElement
-    const currentValue = inputElement.value
-
-    const digitsOnly = currentValue.replace(/\D/g, '') // Remove non-digit characters
-
-    // Prevent the input if it's not a number
-    if (/[^0-9]/g.test(inputChar)) {
-      event.preventDefault()
-    }
-
-    // Prevent entering more than 8 digits
-    // if (digitsOnly?.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
-    //   event.preventDefault(); // Prevent further input if length exceeds 8 digits
-    // }
-
-    // Check if the input length exceeds 8 digits
-    const expectedSalaryControl = this.userProfileForm.get('expected_salary')
-
-    if (digitsOnly?.length > 8) {
-      // Set error if more than 8 digits are entered
-      expectedSalaryControl?.setErrors({ maxDigits: true })
-      event.preventDefault() // Prevent further input
-    } else {
-      // Clear maxDigits error if the input length is within limit
-      expectedSalaryControl?.setErrors(null)
-    }
-  }
-
-  onBlur(event: FocusEvent): void {
-    const inputElement = event.target as HTMLInputElement
-    const value = inputElement.value
-
-    // Ensure that the value doesn't exceed 8 digits on blur
-    const digitsOnly = value.replace(/\D/g, '') // Remove non-digit characters
-
-    const expectedSalaryControl = this.userProfileForm.get('expected_salary')
-
-    if (!value) {
-      // If the input is empty, set the "required" error
-      expectedSalaryControl?.setErrors({ required: true })
-    } else if (digitsOnly?.length > 8) {
-      // If the input exceeds 8 digits, set the "maxDigits" error
-      expectedSalaryControl?.setErrors({ maxDigits: true })
-    } else {
-      // Clear errors if the input is valid
-      expectedSalaryControl?.setErrors(null)
-    }
   }
 
   loadUserData(userId: string): void {
@@ -651,37 +434,6 @@ export class EditProfileComponent implements OnInit {
         )
       }
     })
-  }
-
-  addSkill(): void {
-    const skill = this.newSkill.trim()
-    if (!skill) {
-      //  this.toaster.warning('Skill cannot be empty.');
-      return
-    }
-    if (skill?.length < 2) {
-      // this.toaster.warning('Skill must be at least 2 characters long.');
-      return
-    }
-    if (skill?.length > 50) {
-      //  this.toaster.warning('Skill cannot exceed 50 characters.');
-      return
-    }
-    if (skill && !this.skillsArray.includes(skill)) {
-      this.skillsArray.push(skill)
-      this.newSkill = ''
-      this.updateSkillsInForm()
-    }
-  }
-
-  removeSkill(index: number): void {
-    this.skillsArray.splice(index, 1)
-    this.updateSkillsInForm()
-  }
-
-  updateSkillsInForm(): void {
-    this.userProfileForm.get('key_skills')?.setValue(this.skillsArray)
-    this.userProfileForm.get('key_skills')?.markAsTouched()
   }
 
   navigate() {
@@ -928,16 +680,13 @@ export class EditProfileComponent implements OnInit {
   onFileChange(event: Event, controlName: string): void {
     const fileInput = event.target as HTMLInputElement;
     const files = fileInput?.files;
-
     if (!files) {
       return;
     }
 
     const validFormats = ['application/pdf', 'application/msword'];
     const maxFileSize = 5 * 1024 * 1024;
-
     const file = files[0];
-
     if (!validFormats.includes(file.type)) {
       this.fileError = 'Invalid file format. Only PDF files are allowed.';
       this.uploadedFileName = null;
@@ -949,36 +698,28 @@ export class EditProfileComponent implements OnInit {
       return;
     }
     this.loader.show();
-
     this.fileError = null;
     this.fileUploaded = file;
     this.uploadedFileName = file.name
-
-    // Make API call for CV upload
     const folderName = 'user-details';
     const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
-
     this.adminService.uploadFile({ folderName, file, userId }).subscribe(
       (response: any) => {
         if (response.statusCode === 200) {
-          // this.toastr.success(response.message);
           this.secondForm.patchValue({
             [controlName]: response.data.path,
             cv_name: response.data.originalName
           });
           this.loader.hide();
         } else {
-          // this.toastr.warning(response.message);
           this.loader.hide();
         }
       },
       error => {
-        // this.toastr.error('Error uploading CV file. Please try again.');
         console.error(error);
       }
     );
 
-    // Reset file input to allow selecting the same file again
     fileInput.value = '';
   }
 
@@ -992,45 +733,40 @@ export class EditProfileComponent implements OnInit {
 
   filteredCountryList(): string[] {
     if (!this.countryList) return [];
-
     // Extract all nationalities arrays, flatten, and remove duplicates
     const allNationalities = this.countryList
       .filter(c => c.nationalities && c.nationalities.length > 0)
       .map(c => c.nationalities)  // Already arrays
       .flat();
-
     // Remove duplicates by converting to Set and back to array
     return Array.from(new Set(allNationalities));
   }
 
-  adultValidator(minAge = 18): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const val = control.value;
-      if (!val) {
-        control.setErrors(null);
-        return null;
-      }
-
-      const dob = new Date(val);
-      if (isNaN(dob.getTime())) {
-        control.setErrors({ invalidDOB: true });
-        return null; // Return null so Angular doesn't overwrite our manual setErrors
-      }
-
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-
-      if (age < minAge) {
-        control.setErrors({ tooYoung: true });
-      } else {
-        control.setErrors(null);
-      }
-
-      return null; // Must return null to avoid Angular overwriting manual errors
-    };
+  adultValidator(control: any) {
+    const val = control.value;
+    if (!val) {
+      control.setErrors(null);
+    }
+    const dob = new Date(val);
+    if (isNaN(dob.getTime())) {
+      control.setErrors({ invalidDOB: true });
+    }
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) {
+      control.setErrors({ tooYoung: true });
+    } else {
+      control.setErrors(null);
+    }
   }
 
-
+  onToDateChange(from: any, to: any) {
+    const fromDate = new Date(from.value);
+    const toDate = new Date(to.value);
+    if (toDate < fromDate) {
+      to.setErrors({ invalidDateRange: true })
+    }
+  }
 }
