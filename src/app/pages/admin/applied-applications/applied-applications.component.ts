@@ -1,37 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-applied-applications',
-//   imports: [],
-//   templateUrl: './applied-applications.component.html',
-//   styleUrl: './applied-applications.component.scss'
-// })
-// export class AppliedApplicationsComponent {
-
-// }
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-social-media-integration',
-//   imports: [],
-//   templateUrl: './social-media-integration.component.html',
-//   styleUrl: './social-media-integration.component.scss'
-// })
-// export class SocialMediaIntegrationComponent {
-
-// }
-
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-applicant',
-//   imports: [],
-//   templateUrl: './applicant.component.html',
-//   styleUrl: './applicant.component.scss'
-// })
-// export class ApplicantComponent {
-
-// }
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatCardModule } from '@angular/material/card'
@@ -46,14 +12,12 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatSelectModule } from '@angular/material/select'
 import { ActivatedRoute, Router } from '@angular/router'
 import { AuthService } from 'src/app/core/services/authentication/auth.service'
-
 import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { HelperService } from 'src/app/core/helpers/helper.service'
 import { NotifyService } from 'src/app/core/services/notify.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { UserService } from 'src/app/core/services/user/user.service'
 import { FormsModule } from '@angular/forms'
-
 @Component({
   standalone: true,
   imports: [
@@ -84,68 +48,57 @@ export class AppliedApplicationsComponent implements OnInit {
   allData: any;
   total: any;
   appliedData: any
-statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
-
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
   filters = {
     all: '',
     name: '',
     email: '',
     status: '',
   };
-
   displayedColumns: string[] = [
     'job_title',
-  'employment_type',
-  'applied_at',
-  'status',
-  'action'
+    'employment_type',
+    'applied_at',
+    'status',
+    'action'
   ]
-
   @ViewChild(MatPaginator) paginator!: MatPaginator
   userRole: string
-
-    constructor(
-      private authService: AuthService,
-      private route: ActivatedRoute,
-      private userService: UserService,
-      private router: Router,
-      private helperService: HelperService,
-      private notify: NotifyService,
-      private loader: LoaderService,
-    ) {
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private router: Router,
+    private helperService: HelperService,
+    private notify: NotifyService,
+    private loader: LoaderService,
+  ) {
     this.userRole = this.authService.getUserRole();
-   }
+  }
 
   ngOnInit() {
     this.getAllData();
-    // this.dataSource.paginator = this.paginator
     this.onPagination();
-  }
-
-  applyFilter(filterValue: string) {
-    // this.dataSource.filter = filterValue.trim().toLowerCase()
   }
 
   openDialog(action: string, element: any) {
     console.log(action, element)
-    // Dialog open logic yahan add kar sakte ho
   }
 
   onPagination(): void {
-    // this.isLoading = true;
     this.loader.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(
       this.filters
     );
-     this.pageConfig.whereClause = this.pageConfig.whereClause.map((filter: any) => {
-    if (filter.key === 'all') {
-      return {
-        ...filter,
-        key: 'all_job_post'
-      };
-    }
-    return filter;
-  });
+    this.pageConfig.whereClause = this.pageConfig.whereClause.map((filter: any) => {
+      if (filter.key === 'all') {
+        return {
+          ...filter,
+          key: 'all_job_post'
+        };
+      }
+      return filter;
+    });
     this.userService.getAppliedJobs(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
@@ -156,14 +109,11 @@ statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
           this.appliedData = [];
           this.total = 0;
           this.loader.hide();
-          // this.toastr.warning(res.message);
         }
-        // this.isLoading = false;
       },
       error: (err: any) => {
         console.error('API Error:', err);
         this.loader.hide();
-        // this.toastr.error(err?.error?.message);
         this.appliedData = [];
         this.total = 0;
       },
@@ -192,6 +142,7 @@ statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
     this.filters[filterType] = '';
     this.onSearch();
   }
+
   clearSearch(): void {
     this.filters = {
       all: '',

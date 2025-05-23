@@ -45,28 +45,20 @@ export class ApplyJobComponent {
       user_id: new FormControl(this.user),
       work_experiences: new FormControl('', [
         Validators.required,
-        // Validators.pattern('^[0-9]+$'),
         Validators.minLength(1),
         Validators.maxLength(2),
-        // this.minLengthWithContent(1),
       ]),
       additional_info: new FormControl('', [
         Validators.required,
-        // Validators.minLength(5),
         Validators.maxLength(500),
-        // this.minLengthWithContent(5),
       ]),
       description: new FormControl('', [
         Validators.required,
-        // Validators.minLength(15),
         Validators.maxLength(1000),
-        // this.minLengthWithContent(5),
       ]),
       comments: new FormControl('', [
         Validators.required,
-        // Validators.minLength(10),
         Validators.maxLength(500),
-        // this.minLengthWithContent(5),
       ]),
       cv_path: new FormControl('', Validators.required),
       courses_and_certification: new FormControl([], Validators.required),
@@ -83,23 +75,18 @@ export class ApplyJobComponent {
       job_id: this.jobId,
       user_id: this.user?.id
     });
-
   }
+
   minLengthWithContent(minLength: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      // Ensure the control value is not empty, has only numbers, and is at least the specified length
       const value = control.value ? control.value.trim() : '';
-
-      // Check if the value is numeric
       const isNumeric = /^[0-9]+$/.test(value);
-
       if (!value || value.length < minLength || !isNumeric) {
         return { minLengthWithContent: true };
       }
       return null;
     };
   }
-
 
   goBack() {
     this.router.navigate(['/applicant'])
@@ -117,20 +104,14 @@ export class ApplyJobComponent {
   Submit(): void {
     this.loader.show();
     this.submitted = true;
-
     if (this.userDetailsForm.valid && this.fileUploaded) {
       this.sanitizeFormValues();
       const formData = this.userDetailsForm.value;
-      // const apiPayload = {
-      //   ...formData,
-      //   courses_and_certification: this.certificationFiles.map(file => ({
-
       const apiPayload = {
         ...formData,
         job_id: this.jobId,
         user_id: this.user?.id,
       };
-
       this.adminService.applyJobs(apiPayload).subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
@@ -156,43 +137,32 @@ export class ApplyJobComponent {
   }
 
   onFileChange(event: Event, controlName: string): void {
-    // debugger
     this.loader.show();
     const fileInput = event.target as HTMLInputElement;
     const files = fileInput?.files;
-
     if (!files) {
       return;
     }
-
     const validFormats = ['application/pdf', 'application/msword'];
     const maxFileSize = 5 * 1024 * 1024;
-
     if (controlName === 'courses_and_certification') {
-
       Array.from(files).forEach(file => {
         if (!validFormats.includes(file.type)) {
           this.fileError = `Invalid file format. Only PDF and DOC files are allowed.`;
           return;
         }
-
         if (file.size > maxFileSize) {
           this.fileError = `File size should not exceed 5 MB for ${file.name}.`;
           return;
         }
-
         this.fileError = null;
         this.certificationFiles.push(file);
       });
-
-
       const folderName = 'certifications';
       const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
-
       const uploadPromises = this.certificationFiles.map(file =>
         this.adminService.uploadFile({ folderName, file, userId }).toPromise()
       );
-
       Promise.all(uploadPromises)
         .then(responses => {
           const certifications: { organization_name: any; certification_description: string; start_date: string; end_date: string; certification_file: any; }[] = [];
@@ -206,49 +176,36 @@ export class ApplyJobComponent {
                 certification_file: response.data.path,
               });
               this.loader.hide();
-              //  this.toastr.success(response.message);
-
             } else {
               this.loader.hide();
               this.toastr.warning(response.message);
             }
           });
-
           if (certifications.length > 0) {
-            // const existingCertifications = this.userDetailsForm.get(controlName)?.value || [];
             this.userDetailsForm.patchValue({
               [controlName]: [...certifications],
             });
-
           }
         })
     } else if (controlName === 'cv_path') {
-
       const file = files[0];
-
       if (!validFormats.includes(file.type)) {
         this.fileError = 'Invalid file format. Only PDF and DOC files are allowed.';
         this.uploadedFileName = null;
         return;
       }
-
       if (file.size > maxFileSize) {
         this.fileError = 'File size should not exceed 5 MB.';
         return;
       }
-
       this.fileError = null;
       this.fileUploaded = file;
       this.uploadedFileName = file.name
-
-      // Make API call for CV upload
       const folderName = 'user-details';
       const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
-
       this.adminService.uploadFile({ folderName, file, userId }).subscribe(
         (response: any) => {
           if (response.statusCode === 200) {
-            // this.toastr.success(response.message);
             this.userDetailsForm.patchValue({
               [controlName]: response.data.path
             });
@@ -264,8 +221,6 @@ export class ApplyJobComponent {
         }
       );
     }
-
-    // Reset file input to allow selecting the same file again
     fileInput.value = '';
   }
 
@@ -277,21 +232,11 @@ export class ApplyJobComponent {
       this.userDetailsForm.patchValue({
         [controlName]: null,
       });
-      // this.toastr.success('CV removed successfully.');
     } else if (controlName === 'courses_and_certification' && index !== undefined) {
       this.certificationFiles.splice(index, 1);
       this.userDetailsForm.patchValue({
         [controlName]: [...this.certificationFiles],
       });
-
-      // const updatedCertifications = this.userDetailsForm.get(controlName)?.value || [];
-      // updatedCertifications.splice(index, 1);
-      // this.userDetailsForm.patchValue({
-      //   [controlName]: updatedCertifications,
-      // });
-
-      // this.toastr.success('Certification removed successfully.');
-
     }
   }
   onCancel() {

@@ -12,7 +12,6 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module';
-
 @Component({
   selector: 'app-applied-status',
   imports: [
@@ -25,8 +24,6 @@ import { MaterialModule } from 'src/app/material.module';
     MatButtonModule,
     MatInputModule,
   ],
-  //  imports: [MatButtonModule, MatIconModule, TablerIconsModule],
-
   templateUrl: './applied-status.component.html',
   styleUrl: './applied-status.component.scss',
 })
@@ -89,7 +86,6 @@ export class AppliedStatusComponent {
           this.jobDetails = response.data;
           this.user = this.jobDetails.user;
           this.userProfile = this.jobDetails.user?.userProfile;
-
           if (this.jobDetails?.job?.skills_required) {
             this.formattedSkills = JSON.parse(this.jobDetails?.job?.skills_required);
             console.log(this.formattedSkills)
