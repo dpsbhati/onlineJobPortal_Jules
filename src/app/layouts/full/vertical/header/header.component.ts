@@ -1,11 +1,4 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  ViewEncapsulation,
-  ViewChild
-} from '@angular/core'
+import { Component, Output,  EventEmitter, Input, ViewEncapsulation, ViewChild} from '@angular/core'
 import { CoreService } from 'src/app/services/core.service'
 import { MatDialog } from '@angular/material/dialog'
 import { navItems } from '../sidebar/sidebar-data'
@@ -203,7 +196,6 @@ export class HeaderComponent {
     const dialogRef = this.dialog.open(AppSearchDialogComponent)
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(`Dialog result: ${result}`);
     })
   }
 
@@ -436,7 +428,5 @@ export class AppSearchDialogComponent {
 
   navItemsData = navItems.filter(navitem => navitem.displayName)
 
-  // filtered = this.navItemsData.find((obj) => {
-  //   return obj.displayName == this.searchinput;
-  // });
+
 }
