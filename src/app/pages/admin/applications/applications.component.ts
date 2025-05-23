@@ -133,7 +133,6 @@ export class ApplicationsComponent {
   openHeaderDialog() {
     const dialogRef = this.dialog.open(FileuploadComponent);
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('Dialog result: result');
     });
   }
   deleteDialog() {
@@ -203,7 +202,7 @@ export class ApplicationsComponent {
             position: index + 1 + this.pageIndex * this.pageSize,
             name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
             email: app.user?.email,
-           
+
             dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
         year: 'numeric',
       month: 'long',
@@ -333,7 +332,7 @@ export class ApplicationsComponent {
     this.fetchApplications();
   }
 
-  
+
 clearFilters(): void {
   this.selectedFilters = {
     all: null,
@@ -463,7 +462,7 @@ viewJobDetails(jobId:any): void {
           };
         });
       } else {
-      
+
         this.dataSource.data = [];
         this.totalApplications = 0;
       }
