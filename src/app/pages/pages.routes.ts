@@ -91,7 +91,7 @@ export const PagesRoutes: Routes = [
         component: ExpiredJobPostingComponent,
         canActivate: [roleGuard(['admin'])],
         data: {
-          title: 'Expired Job Posting',
+          title: 'Expired Jobs',
           urls: [
             { title: 'Job List' }
             // { title: 'Applications List' },
