@@ -2,14 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-
 import { GenericService } from '../generic.service';
-
-// import { RoleService } from '../role/role.service';
-
-// import { AuthUtils } from 'app/core/auth/auth.utils';
-// import jwtDecode from 'jwt-decode';
-
 import { UserService } from '../user/user.service';
 import { LocalStorageService } from '../local-stoarge.service';
 import { UserRole } from '../../enums/roles.enum';
@@ -60,10 +53,6 @@ export class AuthService {
       setTimeout(resolve, 100);
     });
   }
-
-  // get currentUserValue(): any {
-  //   return this.currentUserSubject.value ?? JSON.parse(localStorage.getItem('user') ?? "");
-  // }
 
   get currentUserValue(): any {
     return this.currentUserSubject.value;
@@ -132,12 +121,7 @@ export class AuthService {
 
   registerUser(user: { id?: string; firstName: string; lastName: string; email: string; password: string; role: UserRole }): Observable<any> {
     return this.genericService.Post('user/register', user)
-    // .pipe(
-    //   catchError((error) => {
-    //     console.error('Error in registerUser:', error);
-    //     return throwError(() => new Error('Failed to register user.'));
-    //   })
-    // );
+
   }
   verifyEmail(payload: { token: string }): Observable<any> {
     return this.genericService.Post('user/verify-email', payload).pipe(
@@ -147,9 +131,7 @@ export class AuthService {
       })
     );
   }
-  // changepassword(payload: { token: string }): Observable<any> {
-  //   return this.genericService.Post('user/change-password', payload)
-  // }
+
   changepassword(payload: {
   email: string;
   oldPassword: string;
@@ -171,44 +153,6 @@ export class AuthService {
     );
   }
 
-  /**
-   * Check the authentication status
-   */
-  // check(): Observable<boolean> {
-  //   if (this._authenticated) {
-  //     return of(true);
-  //   }
-
-  //   if (!this.accessToken) {
-  //     return of(false);
-  //   }
-
-  //   if (AuthUtils.isTokenExpired(this.accessToken)) {
-  //     return of(false);
-  //   }
-
-  //   // Add a default return statement
-  //   return of(false);
-  // }
-
-  /**
-   * Decode JWT Token
-   */
-  // decodeToken(token: string): any {
-  //   if (token) {
-  //     const data = jwtDecode(token);
-  //     if (data) {
-  //       data['token'] = token;
-  //       localStorage.setItem('user', JSON.stringify(data));
-  //       return data;
-  //     }
-  //   }
-  //   return null;
-  // }
-
-  /**
-   * Get the current user
-   */
   getCurrentUser(): any {
     return this.currentUserSubject.value;
   }
