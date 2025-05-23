@@ -136,7 +136,7 @@ export class EditProfileComponent implements OnInit {
         Validators.pattern('^[a-zA-Z ]*$')
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl(null, this.isApplicant() ? [Validators.required, this.adultValidator(18)] : null),
+      dob: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
       mobile: new FormControl(
         '',
         this.isApplicant() ?
@@ -1003,34 +1003,31 @@ export class EditProfileComponent implements OnInit {
     return Array.from(new Set(allNationalities));
   }
 
-  adultValidator(minAge = 18): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const val = control.value;
-      if (!val) {
-        control.setErrors(null);
-        return null;
-      }
-
-      const dob = new Date(val);
-      if (isNaN(dob.getTime())) {
-        control.setErrors({ invalidDOB: true });
-        return null; // Return null so Angular doesn't overwrite our manual setErrors
-      }
-
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-
-      if (age < minAge) {
-        control.setErrors({ tooYoung: true });
-      } else {
-        control.setErrors(null);
-      }
-
-      return null; // Must return null to avoid Angular overwriting manual errors
-    };
+  adultValidator(control: any) {
+    const val = control.value;
+    if (!val) {
+      control.setErrors(null);
+    }
+    const dob = new Date(val);
+    if (isNaN(dob.getTime())) {
+      control.setErrors({ invalidDOB: true });
+    }
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    if (age < 18) {
+      control.setErrors({ tooYoung: true });
+    } else {
+      control.setErrors(null);
+    }
   }
 
-
+  onToDateChange(from: any, to: any) {
+    const fromDate = new Date(from.value);
+    const toDate = new Date(to.value);
+    if (toDate < fromDate) {
+      to.setErrors({ invalidDateRange: true })
+    }
+  }
 }
