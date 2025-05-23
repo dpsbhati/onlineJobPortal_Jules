@@ -66,18 +66,6 @@
 
             <div class="divider"></div>
 
-            <!-- <div class="filter">
-              <img src="./assets/images/Icons/Employer.svg" alt="Logo" class="material-icons-custom" />
-              <mat-form-field class="border-0" appearance="outline">
-                <mat-label>Employers</mat-label>
-                <mat-select [(ngModel)]="selectedRank">
-                  <mat-option>Captain</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-
-            <div class="divider"></div> -->
-
             <div class="filter">
               <img src="./assets/images/Icons/Location.svg" alt="Logo" class="material-icons-custom" />
 
@@ -115,35 +103,6 @@
     </div>
     <div class="container m-t-48">
       <div class="row">
-        <!-- <div *ngFor="let job of jobPostingList" class="col-lg-4 col-sm-6 m-b-20">
-          <div class="job-card mat-elevation-z2">
-            <div class="job-image-wrapper">
-              <img [src]="job.featured_image || './assets/images/noimage.jpg'" alt="Job Image" />
-              <div class="job-date">{{ job.date_published | date:'dd MMM yyyy' }}</div>
-            </div>
-
-            <div class="job-content">
-              <h3 class="job-title">{{ job.title }}</h3>
-              <p class="job-description">
-                {{ job.full_description }}
-              </p>
-              <div style="min-height: 55px;">
-
-                <div class="job-tags job-description" *ngIf="job.skills_required?.length > 0">
-                  <span class="job-tag" *ngFor="let skill of job.skills_required">{{ skill }}</span>
-                </div>
-              </div>
-
-              <div class="job-footer">
-                <a mat-flat-button color="primary" class="bg-primary" (click)="goToJobDetail(job.id)">
-                  Read more
-                </a>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
-
 
         <div *ngFor="let job of jobPostingList" class="col-lg-4 col-sm-6 m-b-20">
           <mat-card class="cardWithShadow position-relative card-hover cursor-pointer h-100 m-b-0 ">

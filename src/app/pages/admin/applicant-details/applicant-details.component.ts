@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -123,7 +122,7 @@ formatPreferences(prefs: any): string {
 
   loadApplicantDetails() {
     this.loader.show();
-    // this.isLoading = true;
+   
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {
@@ -183,7 +182,6 @@ formatPreferences(prefs: any): string {
           } else {
             this.formattedCertificationInfo = '-';
           }
-          // this.isLoading = false;
           this.loader.hide();
         } else {
           this.toastr.warning(response.message);
@@ -197,44 +195,6 @@ formatPreferences(prefs: any): string {
       }
     });
   }
-
-  // loadApplicantDetails() {
-  //   // debugger
-  //   this.spinner.show();
-  //   this.adminService.allApplicantDetails(this.userId).subscribe({
-  //     next: (response: any) => {
-  //       if (response.statusCode === 200) {
-  //         this.applicantDetails = response.data;
-  //         this.selectedStatus = this.applicantDetails.status;
-  //         this.adminComments = this.applicantDetails.comments ;
-
-  //         // Parse key skills
-  //         if (response.data.userProfile?.key_skills) {
-  //           try {
-  //             // Remove forward slashes from skills when displaying
-  //             this.keySkills = JSON.parse(response.data.userProfile.key_skills).map((skill: string) => skill.replace('/', ''));
-  //           } catch (e) {
-  //             console.warn('Error parsing key_skills:', e);
-  //             this.keySkills = Array.isArray(response.data.userProfile.key_skills) ?
-  //               response.data.userProfile.key_skills : [];
-  //           }
-  //         }
-
-
-  //         // Get certifications from courses_and_certification array
-  //         this.certifications = this.applicantDetails.job?.courses_and_certification || [];
-  //       } else {
-  //         this.notifyService.showError('Failed to load applicant details');
-  //       }
-  //       this.spinner.hide();
-  //     },
-  //     error: (error) => {
-  //       this.notifyService.showError('Error loading applicant details');
-  //       this.spinner.hide();
-  //     }
-  //   });
-  // }
-
   updateStatus(): void {
 
     if (!this.userId || !this.selectedStatus) {

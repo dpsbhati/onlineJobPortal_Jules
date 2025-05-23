@@ -59,7 +59,7 @@ export class NotificationsComponent implements OnInit {
   notificationlist:any;
   total: number = 0;
   searchText: string = '';
-  // displayedColumns: string[] = ['#', 'name', 'email', 'mobile'];
+  
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -87,13 +87,8 @@ export class NotificationsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator
 
   ngOnInit () {
-    // this.dataSource.paginator = this.paginator
     this.onPagination();
   }
-
-  // applyFilter (filterValue: string) {
-  //   this.dataSource.filter = filterValue.trim().toLowerCase()
-  // }
 
   isAdmin (): boolean {
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase()
@@ -105,11 +100,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   onPagination(): void {
-    // this.isLoading = true;
     this.loader.show();
-    // this.pageConfig.whereClause = this.helperService.getAllFilters(
-    //   this.filters
-    // );
     this.adminService.notificationPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
@@ -119,14 +110,11 @@ export class NotificationsComponent implements OnInit {
         } else {
           this.notificationlist = [];
           this.total = 0;
-          this.loader.hide();
-          // this.toastr.warning(res.message);
-        }
-        // this.isLoading = false;
+          this.loader.hide();      
+        }   
       },
       error: (err: any) => {
         console.error('API Error:', err);
-        // this.isLoading = false;
         this.loader.hide();
         this.toastr.error(err?.error?.message);
         this.notificationlist = [];
@@ -158,7 +146,6 @@ export class NotificationsComponent implements OnInit {
     } else {
       this.pageConfig.whereClause = []; // 🔄 Clear filters if empty
     }
-
     this.onPagination();
   }
 
