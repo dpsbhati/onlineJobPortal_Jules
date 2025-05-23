@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { FormGroup, Validators,  FormControl, ReactiveFormsModule,  AbstractControl, ValidationErrors, ValidatorFn, FormsModule} from '@angular/forms'
+import { FormGroup, Validators, FormControl, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn, FormsModule } from '@angular/forms'
 import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ImageCompressionService } from 'src/app/core/services/image/image-compression.service'
@@ -171,7 +171,6 @@ export class CreateJobPostingComponent {
       .get('deadline')
       ?.setValidators([
         Validators.required,
-        this.deadlineValidator(this.todaysDate)
       ])
 
   }
@@ -456,30 +455,30 @@ export class CreateJobPostingComponent {
         )
 
         let socialMediaTypes: string[] = [];
-      if (data.social_media_type) {
-        if (typeof data.social_media_type === 'string') {
-          try {
-            socialMediaTypes = JSON.parse(data.social_media_type);
-          } catch (e) {
-            socialMediaTypes = [];
+        if (data.social_media_type) {
+          if (typeof data.social_media_type === 'string') {
+            try {
+              socialMediaTypes = JSON.parse(data.social_media_type);
+            } catch (e) {
+              socialMediaTypes = [];
+            }
+          } else if (Array.isArray(data.social_media_type)) {
+            socialMediaTypes = data.social_media_type;
           }
-        } else if (Array.isArray(data.social_media_type)) {
-          socialMediaTypes = data.social_media_type;
         }
-      }
-       let skillsArray: string[] = [];
-      if (data.skills_required) {
-        if (typeof data.skills_required === 'string') {
-          try {
-            skillsArray = JSON.parse(data.skills_required);
-          } catch (e) {
-            skillsArray = [];
+        let skillsArray: string[] = [];
+        if (data.skills_required) {
+          if (typeof data.skills_required === 'string') {
+            try {
+              skillsArray = JSON.parse(data.skills_required);
+            } catch (e) {
+              skillsArray = [];
+            }
+          } else if (Array.isArray(data.skills_required)) {
+            skillsArray = data.skills_required;
           }
-        } else if (Array.isArray(data.skills_required)) {
-          skillsArray = data.skills_required;
         }
-      }
-      this.skillsArray = skillsArray;
+        this.skillsArray = skillsArray;
 
         const formattedStartSalary = data.start_salary
           ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
@@ -526,62 +525,62 @@ export class CreateJobPostingComponent {
 
 
   onFileSelected(event: Event, controlName: string): void {
-  const file = (event.target as HTMLInputElement).files?.[0];
+    const file = (event.target as HTMLInputElement).files?.[0];
 
-  if (file) {
-    if (!file.type.startsWith('image/')) {
-      this.toaster.warning('Please select an image file.');
-      // Optionally, clear the selected file
-      (event.target as HTMLInputElement).value = ''; // Reset input file
-      return;
-    }
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.toaster.warning('Please select an image file.');
+        // Optionally, clear the selected file
+        (event.target as HTMLInputElement).value = ''; // Reset input file
+        return;
+      }
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result; // Set the preview for the selected image
-    };
-    reader.readAsDataURL(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result; // Set the preview for the selected image
+      };
+      reader.readAsDataURL(file);
 
-    // Your existing compression and upload logic
-    if (this.allowedImageFormats.includes(file.type)) {
-      this.imageCompressionService
-        .compressImage(file)
-        .then((compressedImageUrl: string) => {
-          fetch(compressedImageUrl)
-            .then(res => res.blob())
-            .then(compressedFileBlob => {
-              const compressedFile = new File(
-                [compressedFileBlob],
-                file.name,
-                { type: file.type }
-              );
-
-              // Upload image
-              const folderName = 'job-postings';
-              const user = JSON.parse(localStorage.getItem('user') || '{}');
-              const userId = user.id;
-              this.adminService
-                .uploadFile({ folderName, file: compressedFile, userId })
-                .subscribe(
-                  (response: any) => {
-                    if (response.statusCode === 200) {
-                      this.jobForm.patchValue({
-                        [controlName]: response.data.path
-                      });
-                    } else {
-                      console.error(response.message);
-                    }
-                  },
-                  (error: any) => {
-                    console.error('Error uploading file:', error);
-                  }
+      // Your existing compression and upload logic
+      if (this.allowedImageFormats.includes(file.type)) {
+        this.imageCompressionService
+          .compressImage(file)
+          .then((compressedImageUrl: string) => {
+            fetch(compressedImageUrl)
+              .then(res => res.blob())
+              .then(compressedFileBlob => {
+                const compressedFile = new File(
+                  [compressedFileBlob],
+                  file.name,
+                  { type: file.type }
                 );
-            });
-        });
+
+                // Upload image
+                const folderName = 'job-postings';
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userId = user.id;
+                this.adminService
+                  .uploadFile({ folderName, file: compressedFile, userId })
+                  .subscribe(
+                    (response: any) => {
+                      if (response.statusCode === 200) {
+                        this.jobForm.patchValue({
+                          [controlName]: response.data.path
+                        });
+                      } else {
+                        console.error(response.message);
+                      }
+                    },
+                    (error: any) => {
+                      console.error('Error uploading file:', error);
+                    }
+                  );
+              });
+          });
+      }
     }
   }
-}
 
 
   clearImage() {
@@ -620,19 +619,26 @@ export class CreateJobPostingComponent {
     }
   }
 
- removeImage(): void {
-  this.imagePreview = ''; // Clear the image preview
-  this.jobForm.get('featured_image')?.setValue(null); // Reset the form control value
-  const fileInput: HTMLInputElement = document.querySelector('input[type="file"]')!;
-  fileInput.value = ''; // Reset the file input value
-}
-preventFormSubmit(event: any): void {
-  event.preventDefault();  // Prevent form-wide submit behavior
-  event.stopPropagation(); // Stop the event from bubbling up
-}
-onInputFocus(): void {
-  // Manually mark the input field as touched to trigger validation error
-  this.jobForm.get('skills_required')?.markAsTouched();
-}
+  removeImage(): void {
+    this.imagePreview = ''; // Clear the image preview
+    this.jobForm.get('featured_image')?.setValue(null); // Reset the form control value
+    const fileInput: HTMLInputElement = document.querySelector('input[type="file"]')!;
+    fileInput.value = ''; // Reset the file input value
+  }
+  preventFormSubmit(event: any): void {
+    event.preventDefault();  // Prevent form-wide submit behavior
+    event.stopPropagation(); // Stop the event from bubbling up
+  }
+  onInputFocus(): void {
+    // Manually mark the input field as touched to trigger validation error
+    this.jobForm.get('skills_required')?.markAsTouched();
+  }
 
+  onToDateChange(from: any, to: any) {
+    const fromDate = new Date(from.value);
+    const toDate = new Date(to.value);
+    if (toDate < fromDate) {
+      to.setErrors({ deadlineInvalid: true })
+    }
+  }
 }
