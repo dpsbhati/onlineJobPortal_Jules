@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -19,8 +18,6 @@ import {
 } from '@nestjs/swagger';
 import { UserProfileService } from './user-profile.service';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
-import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('User Profile')
@@ -57,16 +54,6 @@ export class UserProfileController {
     return this.userProfileService.findOne(userId);
   }
 
-
-  // @Post('update-userprofile')
-  // @ApiOperation({ summary: 'Update a user profile' })
-  // @ApiParam({ name: 'id', description: 'The ID of the user profile' })
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateUserProfileDto: UpdateUserProfileDto,
-  // ) {
-  //   return this.userProfileService.update(id, updateUserProfileDto);
-  // }
 
   @Post(':id')
   @ApiOperation({ summary: 'Soft delete a user profile' })

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserProfile } from './entities/user-profile.entity';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
-import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
 import * as moment from 'moment';
 
@@ -13,86 +12,6 @@ export class UserProfileService {
     @InjectRepository(UserProfile)
     private readonly userProfileRepository: Repository<UserProfile>,
   ) {}
-
-  // async create(createUserProfileDto: CreateUserProfileDto, user_id: string) {
-  //   try {
-  //     const isValidDob = moment(
-  //       createUserProfileDto.dob,
-  //       moment.ISO_8601,
-  //       true,
-  //     ).isValid();
-  //     if (!isValidDob) {
-  //       return WriteResponse(
-  //         400,
-  //         {},
-  //         'Invalid datetime format for dob. Expected ISO 8601 format.',
-  //       );
-  //     }
-
-  //     const formattedDob = moment(createUserProfileDto.dob).toISOString();
-
-  //     const newProfile = this.userProfileRepository.create({
-  //       ...createUserProfileDto,
-  //       dob: formattedDob,
-  //       nationalities: JSON.stringify(createUserProfileDto.nationalities),
-  //       additional_contact_info: JSON.stringify(
-  //         createUserProfileDto.additional_contact_info,
-  //       ),
-  //       work_experience_info: JSON.stringify(
-  //         createUserProfileDto.work_experience_info,
-  //       ),
-  //       education_info: JSON.stringify(createUserProfileDto.education_info),
-  //       course_info: JSON.stringify(createUserProfileDto.course_info),
-  //       certification_info: JSON.stringify(
-  //         createUserProfileDto.certification_info,
-  //       ),
-  //       other_experience_info: JSON.stringify(
-  //         createUserProfileDto.other_experience_info,
-  //       ),
-  //       project_info: JSON.stringify(createUserProfileDto.project_info),
-  //       language_spoken_info: JSON.stringify(
-  //         createUserProfileDto.language_spoken_info,
-  //       ),
-  //       language_written_info: JSON.stringify(
-  //         createUserProfileDto.language_written_info,
-  //       ),
-  //       notice_period_info: JSON.stringify(
-  //         createUserProfileDto.notice_period_info,
-  //       ),
-  //       current_salary_info: JSON.stringify(
-  //         createUserProfileDto.current_salary_info,
-  //       ),
-  //       expected_salary_info: JSON.stringify(
-  //         createUserProfileDto.expected_salary_info,
-  //       ),
-  //       preferences_info: JSON.stringify(createUserProfileDto.preferences_info),
-  //       additional_info: JSON.stringify(createUserProfileDto.additional_info),
-  //       vacancy_source_info: JSON.stringify(
-  //         createUserProfileDto.vacancy_source_info,
-  //       ),
-  //       created_by: user_id,
-  //       updated_by: user_id,
-  //     });
-
-  //     const updatedProfile = await this.userProfileRepository.update(
-  //       { user_id: user_id },
-  //       newProfile,
-  //     );
-
-  //     return WriteResponse(
-  //       200,
-  //       createUserProfileDto,
-  //       'User profile updated successfully.',
-  //     );
-  //   } catch (error) {
-  //     return WriteResponse(
-  //       500,
-  //       {},
-  //       error.message || 'An unexpected error occurred.',
-  //     );
-  //   }
-  // }
-
   async create(
     createUserProfileDto: CreateUserProfileDto,
     user_id: string,

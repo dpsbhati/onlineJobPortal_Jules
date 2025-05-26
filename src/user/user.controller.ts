@@ -154,7 +154,6 @@ export class UserController {
     },
   })
   async forgetPassword(
-    // @Body('token') token: string,
     @Body() forgetPasswordDto: forgetPasswordDto,
   ) {
     return this.userService.forgetPassword(forgetPasswordDto);
