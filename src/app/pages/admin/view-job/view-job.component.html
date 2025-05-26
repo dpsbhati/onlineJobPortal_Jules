@@ -85,15 +85,7 @@
 
 
   </div>
-  <!--
-  <ngx-spinner
-    bdColor="rgba(0, 0, 0, 0.8)"
-    size="medium"
-    color="#fff"
-    type="ball-clip-rotate"
-    [fullScreen]="true">
-    <p style="color: white">Loading...</p>
-  </ngx-spinner> -->
+ 
 </div>
 
 <div class="row">
@@ -172,11 +164,7 @@
           <div class="col-lg-12 m-b-16">
             <strong class="m-r-6">Posted on:</strong> <span> {{jobDetails?.posted_date  | date:'MMM,dd yyyy'}}</span>
           </div>
-          <!-- <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Easy to apply:</strong> <span *ngFor="let item of formattedSocialMedia; let last = last; let i = index">
-              {{ item }}<span *ngIf="!last && formattedSocialMedia.length > 1">, </span>
-            </span>
-          </div> -->
+        
         </div>
         <div> <button class="w-100" mat-flat-button color="primary" (click)="applyNow()">Apply now</button></div>
       </mat-card-content>

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { GenericService } from '../generic.service';
 

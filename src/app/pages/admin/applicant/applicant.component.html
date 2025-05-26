@@ -70,18 +70,14 @@
     <mat-card-content>
       <div class="table-responsive">
         <table mat-table [dataSource]="jobPostingList" class="w-100">
-          <!-- <ng-container matColumnDef="#">
-            <th mat-header-cell *matHeaderCellDef>#</th>
-            <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-          </ng-container> -->
-
+       
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Job Name</th>
             <td mat-cell *matCellDef="let element">
               <div class="d-flex align-items-center">
                 <div class="">
                   <p>{{ element.title }}</p>
-                  <!-- <small class="f-s-14">{{ element.rank }}</small> -->
+              
                 </div>
               </div>
             </td>
@@ -139,11 +135,9 @@
               </button>
               <mat-menu #menu="matMenu">
                 <a mat-menu-item (click)="viewJob(element.id)">
-                  <!-- <mat-icon>visibility</mat-icon> -->
                   <span>View Details</span>
                 </a>
                 <button mat-menu-item (click)="applyNow(element.id)">
-                  <!-- <mat-icon>abacus-off</mat-icon> -->
                   <span>Apply Now</span>
                 </button>
               </mat-menu>

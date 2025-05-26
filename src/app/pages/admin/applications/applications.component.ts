@@ -17,9 +17,6 @@ import { HelperService } from 'src/app/core/helpers/helper.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   MatDialog,
-  MatDialogRef,
-  MatDialogActions,
-  MatDialogTitle,
   MatDialogModule,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -417,15 +414,12 @@ viewJobDetails(jobId:any): void {
 
   onjobviewapplicationPagination(): void {
     this.loader.show();
-
     const whereClause = this.helper.getAllFilters(this.selectedFilters);
-
     this.pageConfig.curPage = this.pageIndex + 1;
     this.pageConfig.perPage = this.pageSize;
     this.pageConfig.sortBy = this.sortBy;
     this.pageConfig.direction = this.direction;
     this.pageConfig.whereClause = whereClause;
-
     this.adminService.jobviewapplicationPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         this.loader.hide();

@@ -60,7 +60,6 @@ export class AppHorizontalHeaderComponent {
   
     constructor(
       private settings: CoreService,
-      private vsidenav: CoreService,
       public dialog: MatDialog,
       private translate: TranslateService
     ) {
@@ -71,7 +70,6 @@ export class AppHorizontalHeaderComponent {
       const dialogRef = this.dialog.open(AppHorizontalSearchDialogComponent);
   
       dialogRef.afterClosed().subscribe((result) => {
-        // console.log(`Dialog result: ${result}`);
       });
     }
     private emitOptions() {
@@ -101,10 +99,5 @@ export class AppHorizontalHeaderComponent {
 export class AppHorizontalSearchDialogComponent {
   searchText: string = '';
   navItems = navItems;
-
   navItemsData = navItems.filter((navitem) => navitem.displayName);
-
-  // filtered = this.navItemsData.find((obj) => {
-  //   return obj.displayName == this.searchinput;
-  // });
 }

@@ -1,14 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-applicant',
-//   imports: [],
-//   templateUrl: './applicant.component.html',
-//   styleUrl: './applicant.component.scss'
-// })
-// export class ApplicantComponent {
-
-// }
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -18,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { UserRole } from 'src/app/core/enums/roles.enum';
@@ -30,7 +18,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core'; // And this
+import { MatNativeDateModule } from '@angular/material/core'; // And this
 import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
@@ -43,9 +31,7 @@ import { MatSliderModule } from '@angular/material/slider';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatTableModule, MatPaginatorModule, MatMenuModule, MatSelectModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatSliderModule
-
-    , MatMenuModule, MatSelectModule, FormsModule
+    MatTableModule, MatPaginatorModule, MatMenuModule, MatSelectModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatSliderModule, MatMenuModule, MatSelectModule, FormsModule
   ],
   templateUrl: './applicant.component.html',
   styleUrl: './applicant.component.scss'
@@ -55,18 +41,7 @@ export class ApplicantComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  // ngOnInit() {
-  //   this.dataSource.paginator = this.paginator;
-  // }
-
-  // applyFilter(filterValue: string) {
-  //   this.dataSource.filter = filterValue.trim().toLowerCase();
-  // }
-
-  // openDialog(action: string, element: any) {
-  //   console.log(action, element);
-  //   // Dialog open logic yahan add kar sakte ho
-  // }
+ 
   jobs: any[] = []; // To store job data
   userRole: string = '';
   filters = {
@@ -91,26 +66,10 @@ export class ApplicantComponent implements OnInit {
     floor: 0,
     ceil: 1000000,
     step: 1000,
-    // translate: (value: number, label: LabelType): string => {
-    //   switch (label) {
-    //     case LabelType.Low:
-    //       return "<b>Min salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
-    //     case LabelType.High:
-    //       return "<b>Max salary:</b> $" + `₹${value.toLocaleString('en-IN')}`;
-    //     default:
-    //       return "$" + value;
-    //   }
-    // }
+   
   };
 
-  // filters = {
-  //   all: "",
-  //   title: "",
-  //   job_type: "",
-  //   deadline: "",
-  //   salary_min: this.salaryRange.min,
-  //   salary_max: this.salaryRange.max,
-  // }
+ 
 
   total: number = 0;
   jobPostingList: any[] = [];
@@ -121,7 +80,7 @@ export class ApplicantComponent implements OnInit {
     private helperService: HelperService,
     private notify: NotifyService,
     private loader: LoaderService,
-    // private spinner: NgxSpinnerService,
+
     private authService: AuthService
   ) {
     // Get role from authService
@@ -137,9 +96,6 @@ export class ApplicantComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.fetchJobs();
-    // this.onPagination();
-    // this.initializeDeadlinePicker();
     this.onDateRangeChange()
   }
   onSearch(): void {
@@ -177,7 +133,6 @@ export class ApplicantComponent implements OnInit {
 
   clearFilters(): void {
     this.filters.job_type = ''; // Clear the dropdown
-    // this.filters.date = null;
     this.filters.dateRange = {                 // ✅ Clear date range
       start: null,
       end: null
@@ -215,19 +170,6 @@ export class ApplicantComponent implements OnInit {
     this.router.navigate(['/edit-profile', userID]);
   }
 
-  // deleteJob(jobId: string) {
-  //   if (confirm('Are you sure you want to delete this job?')) {
-  //     this.adminService.deleteJob(jobId).subscribe(
-  //       (response: any) => {
-  //         this.jobs = this.jobs.filter(job => job.id !== jobId);
-  //         this.notify.showSuccess(response.message);
-  //         window.location.reload();
-
-  //       },
-  //     );
-  //   }
-
-  // }
 
   deleteJob(jobId: string) {
     if (confirm('Are you sure you want to delete this job?')) {
@@ -322,10 +264,7 @@ export class ApplicantComponent implements OnInit {
       }
     })
   }
-  // onPageChange(event: any): void {
-  //   this.pageConfig.curPage = event.pageIndex + 1;
-  //   this.onPagination();
-  // }
+
 
   onFilterChange(): void {
     this.pageConfig.curPage = 1; // Reset to the first page
@@ -356,7 +295,7 @@ export class ApplicantComponent implements OnInit {
     // Navigate to login page
     this.router.navigate(['/login']).then(() => {
       // Show success message
-      // this.notify.showSuccess('Logged out successfully');
+      
     });
   }
 
@@ -364,39 +303,7 @@ export class ApplicantComponent implements OnInit {
     this.router.navigate(['/applied-jobs']);
   }
 
-  // Handle search action
-  // onSearch(): void {
-  //   this.pageConfig.curPage = 1; // Reset to the first page
-  //   this.onPagination(); // Trigger the pagination API
-  // }
 
-  // Clear the search field and trigger API
-  // clearSearch(): void {
-  //   this.filters.all = '';
-  //   this.filters.title = "",
-  //     this.filters.job_type = "",
-  //     this.filters.deadline = "",
-  //     // Reset the salary range
-  //     this.salaryRange.min = this.salarySliderOptions.floor; // Reset to slider minimum
-  //   this.salaryRange.max = this.salarySliderOptions.ceil;  // Reset to slider maximum
-
-  //   this.filters.salary_min = this.salaryRange.min;
-  //   this.filters.salary_max = this.salaryRange.max;
-
-  //   // Reset whereClause
-  //   this.pageConfig.whereClause = []; // Clear all filters in whereClause
-
-  //   // Trigger the UI update for the slider
-  //   this.onSalaryRangeChange();
-  //   this.onSearch();
-  // }
-
-  // Trigger API if input becomes empty
-  onInputChange(value: string): void {
-    if (!value.trim()) {
-      // this.clearSearch();
-    }
-  }
   onPageChange(event: any): void {
     this.pageConfig.curPage = event.pageIndex + 1;
     this.pageConfig.perPage = event.pageSize;
@@ -414,13 +321,7 @@ export class ApplicantComponent implements OnInit {
     this.router.navigate(['auth/login']);
   }
 
-  // onSearchWithMinLength(): void {
-  //   if (this.filters.all.trim().length >= 2) {
-  //     this.onSearch(); // Trigger the API call only if 2 or more characters are entered
-  //   } else {
-  //     this.notify.showWarning('Please enter at least 2 characters to search.');
-  //   }
-  // }
+  
 
   viewJob(id: any) {
     this.router.navigate(['/view-job', id]);
@@ -450,29 +351,7 @@ export class ApplicantComponent implements OnInit {
   }
 
 
-  // onDateRangeChange(): void {
-  //   const { start, end } = this.filters.dateRange;
-  //   const whereClause = [];
 
-  //   if (this.filters.job_type) {
-  //     whereClause.push({ key: 'job_type', operator: '=', value: this.filters.job_type });
-  //   }
-
-  //   if (start && end) {
-  //     const startDate = this.formatDateToLocalISO(start);
-  //     const endDate = this.formatDateToLocalISO(end);
-
-  //     whereClause.push({
-  //       key: 'date_published',
-  //       operator: 'between',
-  //       value: [startDate, endDate]
-  //     });
-  //   }
-
-  //   this.pageConfig.curPage = 1;
-  //   this.pageConfig.whereClause = whereClause;
-  //   this.onPagination();
-  // }
   onDateRangeChange(): void {
     const { start, end } = this.filters.dateRange;
     const whereClause: any[] = [];
@@ -483,21 +362,21 @@ export class ApplicantComponent implements OnInit {
 
     // Only add start date if it's provided and formatted correctly
     if (start) {
-      const startDate = this.formatDateToLocalISO(start);
+       this.formatDateToLocalISO(start);
       whereClause.push({
         key: 'startDate', // Change the key to match your backend filter for start date
         operator: '=',   // Use '>=', assuming you want jobs from this date onwards
-        value: startDate
+        value:this.formatDateToLocalISO(start)
       });
     }
 
     // Only add end date if it's provided and formatted correctly
     if (end) {
-      const endDate = this.formatDateToLocalISO(end);
+   this.formatDateToLocalISO(end);
       whereClause.push({
         key: 'endDate', // Change the key to match your backend filter for end date
         operator: '=',  // Use '<=' to filter jobs that are due on or before this date
-        value: endDate
+        value:this.formatDateToLocalISO(end)
       });
     }
 
@@ -505,7 +384,4 @@ export class ApplicantComponent implements OnInit {
     this.pageConfig.whereClause = whereClause; // Ensure the whereClause is updated
     this.onPagination(); // Trigger pagination with updated filters
   }
-
-
-
 }

@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { Router } from '@angular/router'
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatError } from '@angular/material/form-field'; // MatError comes with MatFormFieldModule
+ // MatError comes with MatFormFieldModule
 
 @Component({
   selector: 'app-adduser',

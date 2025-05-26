@@ -1,26 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-social-media-integration',
-//   imports: [],
-//   templateUrl: './social-media-integration.component.html',
-//   styleUrl: './social-media-integration.component.scss'
-// })
-// export class SocialMediaIntegrationComponent {
-
-// }
-
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-applicant',
-//   imports: [],
-//   templateUrl: './applicant.component.html',
-//   styleUrl: './applicant.component.scss'
-// })
-// export class ApplicantComponent {
-
-// }
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatCardModule } from '@angular/material/card'
@@ -91,8 +68,4 @@ export class SocialMediaIntegrationComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase()
   }
 
-  openDialog (action: string, element: any) {
-    console.log(action, element)
-    // Dialog open logic yahan add kar sakte ho
-  }
 }

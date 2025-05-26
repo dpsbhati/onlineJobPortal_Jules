@@ -66,7 +66,7 @@ export class CreateJobPostingComponent {
     private imageCompressionService: ImageCompressionService,
     private loader: LoaderService,
     private toaster: ToastrService
-  ) // private notify :NotifyService,
+  ) 
 
   {
     this.jobForm = new FormGroup(

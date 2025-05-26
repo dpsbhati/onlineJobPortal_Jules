@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class LocalStorageService {
-  // private secretKey = '';
+ 
   constructor() { }
 
   public GetItem(key: string): string | null {

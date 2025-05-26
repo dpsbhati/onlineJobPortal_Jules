@@ -1,9 +1,7 @@
 import {
   Component,
   OnInit,
-  Input,
-  ChangeDetectorRef,
-  OnChanges,
+  ChangeDetectorRef
 } from '@angular/core';
 import { navItems } from './sidebar-data';
 import { Router } from '@angular/router';

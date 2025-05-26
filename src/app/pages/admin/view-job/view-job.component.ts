@@ -7,7 +7,6 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
-// import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module';
 import { TablerIconsModule } from 'angular-tabler-icons'
@@ -87,9 +86,7 @@ export class ViewJobComponent {
           this.formattedSkills = [];
         }
 
-          // if (this.jobDetails.social_media_type) {
-          //   this.formattedSocialMedia = JSON.parse(this.jobDetails.social_media_type);
-          // }
+       
           this.loader.hide();
         } else {
           this.loader.hide();

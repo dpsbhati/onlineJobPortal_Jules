@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { GenericService } from '../generic.service';
-import { UserService } from '../user/user.service';
 import { LocalStorageService } from '../local-stoarge.service';
 import { UserRole } from '../../enums/roles.enum';
 
@@ -13,9 +12,6 @@ import { UserRole } from '../../enums/roles.enum';
 export class AuthService {
   private _authenticated: boolean = false;
   private _httpClient = inject(HttpClient);
-  private _userService = inject(UserService);
-  // private _roleService = inject(RoleService);
-
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
