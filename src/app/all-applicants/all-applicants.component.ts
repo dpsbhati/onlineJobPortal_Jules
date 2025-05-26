@@ -7,22 +7,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { UserRole } from 'src/app/core/enums/roles.enum';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { Router } from '@angular/router';
-import { HelperService } from 'src/app/core/helpers/helper.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { FormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  MatNativeDateModule,
-  provideNativeDateAdapter,
-} from '@angular/material/core'; // And this
+import { MatNativeDateModule} from '@angular/material/core'; // And this
 import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
@@ -45,7 +40,6 @@ import { MatSliderModule } from '@angular/material/slider';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSliderModule,
-
     MatMenuModule,
     MatSelectModule,
     FormsModule,
@@ -98,7 +92,6 @@ export class AllApplicantsComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private router: Router,
-    private helperService: HelperService,
     private notify: NotifyService,
     private loader: LoaderService,
     private authService: AuthService
@@ -115,7 +108,6 @@ export class AllApplicantsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.onPagination();
     this.onDateRangeChange();
   }
 
@@ -169,7 +161,6 @@ export class AllApplicantsComponent implements OnInit {
   fetchJobs(): void {
     this.adminService.getJobPostings().subscribe({
       next: (response: any) => {
-        console.log(response);
         if (response.statusCode === 200) {
           this.jobs = response.data; // Assign the job data to the jobs array
         } else {
@@ -219,7 +210,6 @@ export class AllApplicantsComponent implements OnInit {
           this.loader.hide();
           this.jobPostingList = res.data;
           this.total = res.count;
-          console.log('this', this.jobPostingList);
         } else {
           this.loader.hide();
           this.jobPostingList = [];
@@ -245,12 +235,6 @@ export class AllApplicantsComponent implements OnInit {
   }
 
   navigateToUserProfile(): void {
-    console.log('Navigating with role:', this.userRole);
-    if (this.isAdmin()) {
-      console.log('Navigating as admin');
-    } else if (this.isApplicant()) {
-      console.log('Navigating as applicant');
-    }
     this.router.navigate(['/edit-profile']);
   }
 
@@ -317,20 +301,18 @@ export class AllApplicantsComponent implements OnInit {
     }
 
     if (start) {
-      const startDate = this.formatDateToLocalISO(start);
       whereClause.push({
         key: 'startDate',
         operator: '=',
-        value: startDate,
+        value: this.formatDateToLocalISO(start),
       });
     }
 
     if (end) {
-      const endDate = this.formatDateToLocalISO(end);
       whereClause.push({
         key: 'endDate',
         operator: '=',
-        value: endDate,
+        value: this.formatDateToLocalISO(end),
       });
     }
 
