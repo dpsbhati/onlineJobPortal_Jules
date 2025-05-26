@@ -20,15 +20,7 @@ Indeterminate
 }
 <div class="p-24 rounded bg-light-primary m-t-16">
 <h2 class="f-s-16 f-w-600 m-b-16 example-h2">Result</h2>
-<!-- <mat-progress-spinner
-class="example-margin"
-[mode]= "Indeterminate"
-[value]="value">
-</mat-progress-spinner> -->
-<!-- <div *ngIf="isLoading$ | async" class="spinner-overlay">
-    <mat-progress-spinner [mode]="mode" [diameter]="50"></mat-progress-spinner>
-  </div> -->
-  <div *ngIf="isLoading$ | async" class="spinner-overlay">
+  <div *ngIf="isLoading" class="spinner-overlay">
     <mat-progress-spinner mode="indeterminate" [diameter]="50"></mat-progress-spinner>
   </div>
   
