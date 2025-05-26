@@ -1,39 +1,27 @@
-import { Component, OnInit } from '@angular/core'
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators
-} from '@angular/forms'
-import { Router, ActivatedRoute } from '@angular/router'
-import { NgFor, NgIf } from '@angular/common'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatInputModule } from '@angular/material/input'
-import { MatSelectModule } from '@angular/material/select'
-import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatNativeDateModule } from '@angular/material/core'
-import { MatButtonModule } from '@angular/material/button'
-import { MatChipsModule } from '@angular/material/chips'
-import { MatIconModule } from '@angular/material/icon'
-import { MatCardModule } from '@angular/material/card'
-import { UserService } from '../../../core/services/user/user.service'
-import { AdminService } from '../../../core/services/admin/admin.service'
-import { ImageCompressionService } from '../../../core/services/image/image-compression.service'
-import { NotifyService } from '../../../core/services/notify.service'
-import countries from '../../../core/helpers/country.json'
-import currency from '../../../core/helpers/currency.json'
-import languages from '../../../core/helpers/languages.json'
-import { UserRole } from '../../../core/enums/roles.enum'
-import { LoaderService } from 'src/app/core/services/loader.service'
-import { ToastrService } from 'ngx-toastr'
-import { MaterialModule } from 'src/app/material.module'
-import { MatStepperModule } from '@angular/material/stepper'
+import { Component, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators, } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgFor, NgIf } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { UserService } from '../../../core/services/user/user.service';
+import { AdminService } from '../../../core/services/admin/admin.service';
+import { ImageCompressionService } from '../../../core/services/image/image-compression.service';
+import { UserRole } from '../../../core/enums/roles.enum';
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService } from 'ngx-toastr';
+import { MaterialModule } from 'src/app/material.module';
+import { MatStepperModule } from '@angular/material/stepper';
+import countries from '../../../core/helpers/country.json';
+import currency from '../../../core/helpers/currency.json';
+import languages from '../../../core/helpers/languages.json';
 
 @Component({
   selector: 'app-edit-profile',
@@ -55,33 +43,45 @@ import { MatStepperModule } from '@angular/material/stepper'
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    MatStepperModule
+    MatStepperModule,
   ],
   templateUrl: './edit-profile.component.html',
-  styleUrls: ['./edit-profile.component.scss']
+  styleUrls: ['./edit-profile.component.scss'],
 })
 export class EditProfileComponent implements OnInit {
   proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
-  departmentsList = ['Admin', 'Business Development', 'Crew Management', 'HSEQ', 'HR'];
-  vacancySources = ['Company Website', 'HR', 'Job Portal (LinkedIn)', 'Placement Agency', 'Friend'];
+  departmentsList = [
+    'Admin',
+    'Business Development',
+    'Crew Management',
+    'HSEQ',
+    'HR',
+  ];
+  vacancySources = [
+    'Company Website',
+    'HR',
+    'Job Portal (LinkedIn)',
+    'Placement Agency',
+    'Friend',
+  ];
   private readonly allowedImageFormats = [
     'image/jpeg',
     'image/png',
-    'image/webp'
-  ]
-  imagePreview: string | ArrayBuffer | null = null
-  skillsArray: string[] = []
-  newSkill: string = ''
-  userRole: string = ''
-  userProfileForm!: FormGroup
-  isEditMode = false
-  loading = false
-  apiError: string | null = null
-  fieldErrors: string[] = []
-  successMessage: string = ''
-  errorMessage: string = ''
-  userId: string | null = null
-  userEmail: string = ''
+    'image/webp',
+  ];
+  imagePreview: string | ArrayBuffer | null = null;
+  skillsArray: string[] = [];
+  newSkill: string = '';
+  userRole: string = '';
+  userProfileForm!: FormGroup;
+  isEditMode = false;
+  loading = false;
+  apiError: string | null = null;
+  fieldErrors: string[] = [];
+  successMessage: string = '';
+  errorMessage: string = '';
+  userId: string | null = null;
+  userEmail: string = '';
   form: FormGroup;
   secondForm: FormGroup;
   thirdForm: FormGroup;
@@ -89,34 +89,31 @@ export class EditProfileComponent implements OnInit {
   fileError: string | null = null;
   fileUploaded: File | null = null;
   uploadedFileName: string | null = null;
-  countryList = countries
-  currencyList = currency
-  languageList = languages
+  countryList = countries;
+  currencyList = currency;
+  languageList = languages;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private route: ActivatedRoute,
     private adminService: AdminService,
     private imageCompressionService: ImageCompressionService,
     private router: Router,
     private loader: LoaderService,
     private toaster: ToastrService,
-    private _formBuilder: FormBuilder
   ) {
-    this.userRole = localStorage.getItem('role') || ''
+    this.userRole = localStorage.getItem('role') || '';
   }
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('user')
-
+    const userStr = localStorage.getItem('user');
     if (userStr) {
-      const user = JSON.parse(userStr)
-      this.userRole = user.role || ''
-      this.userEmail = user.email || ''
+      const user = JSON.parse(userStr);
+      this.userRole = user.role || '';
+      this.userEmail = user.email || '';
       if (user.id) {
-        this.isEditMode = true
-        this.loadUserData(user.id)
+        this.isEditMode = true;
+        this.loadUserData(user.id);
       }
     }
     this.firstForm();
@@ -129,31 +126,49 @@ export class EditProfileComponent implements OnInit {
     this.form = this.fb.group({
       first_name: new FormControl(null, [
         Validators.required,
-        Validators.pattern('^[a-zA-Z ]*$')
+        Validators.pattern('^[a-zA-Z ]*$'),
       ]),
       last_name: new FormControl(null, [
         Validators.required,
-        Validators.pattern('^[a-zA-Z ]*$')
+        Validators.pattern('^[a-zA-Z ]*$'),
       ]),
       email: new FormControl({ value: this.userEmail || '', disabled: true }),
-      dob: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      dob: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
       mobile: new FormControl(
         '',
-        this.isApplicant() ?
-          [
+        this.isApplicant()
+          ? [
             Validators.required,
             Validators.pattern('^[0-9]{10}$'),
-            this.mobileNumberValidator
+            this.mobileNumberValidator,
           ]
           : null
       ),
-      nationalities: new FormControl([], this.isApplicant() ? [Validators.required] : null),
-      country: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
-      location: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
-      dial_code: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
-      profile_image_path: new FormControl(null, this.isApplicant() ? [Validators.required] : null),
+      nationalities: new FormControl(
+        [],
+        this.isApplicant() ? [Validators.required] : null
+      ),
+      country: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
+      location: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
+      dial_code: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
+      profile_image_path: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
       additional_contact_info: this.fb.array([]),
-    })
+    });
   }
 
   second() {
@@ -164,15 +179,15 @@ export class EditProfileComponent implements OnInit {
       certification_info: this.fb.array([]),
       cv_path: new FormControl(null),
       cv_name: new FormControl(null, [Validators.required]),
-      highest_education_level: new FormControl(null, [Validators.required])
-    })
+      highest_education_level: new FormControl(null, [Validators.required]),
+    });
   }
 
   Third() {
     this.thirdForm = this.fb.group({
       other_experience_info: this.fb.array([]),
       project_info: this.fb.array([]),
-    })
+    });
   }
 
   fourth() {
@@ -181,129 +196,153 @@ export class EditProfileComponent implements OnInit {
       language_written_info: this.fb.array([]),
       notice_period_info: this.fb.group({
         notice_period_months: [0, Validators.min(0)],
-        commence_work_date: [null]
+        commence_work_date: [null],
       }),
       current_salary_info: this.fb.group({
         currency: [''],
-        amount: [0, Validators.min(0)]
+        amount: [0, Validators.min(0)],
       }),
       expected_salary_info: this.fb.group({
         currency: [''],
-        amount: [0, Validators.min(0)]
+        amount: [0, Validators.min(0)],
       }),
       preferences_info: this.fb.group({
         department: [[]],
-        location: [[]]
+        location: [[]],
       }),
       additional_info: this.fb.group({
-        additional_info: ['']
+        additional_info: [''],
       }),
       vacancy_source_info: this.fb.group({
-        vacancy_source: ['']
-      })
+        vacancy_source: [''],
+      }),
     });
   }
 
-  isAdmin(): boolean {
-    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase()
-  }
-
-  isApplicant(): boolean {
-    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase()
-  }
-
   mobileNumberValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value
-    if (!value) return null
-    const mobileStr = value.toString().trim()
+    const value = control.value;
+    if (!value) return null;
+    const mobileStr = value.toString().trim();
     if (!/^[0-9]{10}$/.test(mobileStr)) {
-      return { invalidMobile: true }
+      return { invalidMobile: true };
     }
-    return null
+    return null;
   }
 
   onSubmit(): void {
-    this.loader.show()
+    this.loader.show();
     const payload = {
       ...this.form.value,
       ...this.secondForm.value,
       ...this.thirdForm.value,
-      ...this.fourthForm.value
-    }
+      ...this.fourthForm.value,
+    };
     this.userService.SaveUserProfile(payload).subscribe({
       next: (response: any) => {
-        this.loader.hide()
+        this.loader.hide();
         if (response.statusCode === 200) {
-          this.toaster.success(response.message)
-          this.router.navigate(['/dashboard'])
+          this.toaster.success(response.message);
+          this.router.navigate(['/dashboard']);
         } else {
-          this.toaster.error(response.message || 'Failed to update profile')
-          this.scrollToTop()
+          this.toaster.error(response.message || 'Failed to update profile');
+          this.scrollToTop();
         }
       },
-      error: error => {
-        this.loader.hide()
+      error: (error) => {
+        this.loader.hide();
         this.toaster.error(
           error.error?.message || 'An error occurred while updating the profile'
-        )
-        this.scrollToTop()
-      }
-    })
+        );
+        this.scrollToTop();
+      },
+    });
+  }
+
+  isAdmin(): boolean {
+    return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
+  }
+
+  isApplicant(): boolean {
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
   loadUserData(userId: string): void {
-    this.loader.show()
-
+    this.loader.show();
     this.userService.getUserById(userId).subscribe({
       next: (response: any) => {
-        this.loader.hide()
-
+        this.loader.hide();
         if (response.statusCode === 200 && response.data) {
           const data = response.data;
           this.form.patchValue(response.data);
           this.secondForm.patchValue(response.data);
           this.thirdForm.patchValue(response.data);
           this.fourthForm.patchValue(response.data);
-          this.userId = data.id || userId
+          this.userId = data.id || userId;
           if (data.profile_image_path) {
             this.imagePreview = data.profile_image_path;
           }
           if (data.cv_name) {
             this.uploadedFileName = data.cv_name;
           }
-          const contactsFormArray = this.form.get('additional_contact_info') as FormArray;
+          const contactsFormArray = this.form.get(
+            'additional_contact_info'
+          ) as FormArray;
           if (data.additional_contact_info?.length > 0) {
             data.additional_contact_info.forEach((contact: any) => {
               contactsFormArray.push(
                 this.fb.group({
                   contact_type: [contact.contact_type || null],
-                  value: [contact.value || null]
+                  value: [contact.value || null],
                 })
               );
             });
-          }
-          else if (data.additional_contact_info?.length == 0 || data.additional_contact_info == null) {
+          } else if (
+            data.additional_contact_info?.length == 0 ||
+            data.additional_contact_info == null
+          ) {
             this.addContact();
           }
-          const workExpArray = this.secondForm.get('work_experience_info') as FormArray;
+          const workExpArray = this.secondForm.get(
+            'work_experience_info'
+          ) as FormArray;
           while (workExpArray?.length !== 0) {
             workExpArray.removeAt(0);
           }
-          if (data.work_experience_info && data.work_experience_info?.length > 0) {
+          if (
+            data.work_experience_info &&
+            data.work_experience_info?.length > 0
+          ) {
             data.work_experience_info.forEach((item: any) => {
               workExpArray.push(
                 this.fb.group({
-                  work_experience_from: [item.work_experience_from || null, Validators.required],
-                  work_experience_to: [item.work_experience_to || null, Validators.required],
-                  work_experience_title: [item.work_experience_title || null, Validators.required],
-                  work_experience_employer: [item.work_experience_employer || null, Validators.required]
+                  work_experience_from: [
+                    item.work_experience_from || null,
+                    Validators.required,
+                  ],
+                  work_experience_to: [
+                    item.work_experience_to || null,
+                    Validators.required,
+                  ],
+                  work_experience_title: [
+                    item.work_experience_title || null,
+                    Validators.required,
+                  ],
+                  work_experience_employer: [
+                    item.work_experience_employer || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
-          } else if (!data.work_experience_info || data.work_experience_info?.length === 0) {
+          } else if (
+            !data.work_experience_info ||
+            data.work_experience_info?.length === 0
+          ) {
             this.addWorkExp();
           }
-          const educationArray = this.secondForm.get('education_info') as FormArray;
+          const educationArray = this.secondForm.get(
+            'education_info'
+          ) as FormArray;
           while (educationArray?.length !== 0) {
             educationArray.removeAt(0);
           }
@@ -311,14 +350,29 @@ export class EditProfileComponent implements OnInit {
             data.education_info.forEach((item: any) => {
               educationArray.push(
                 this.fb.group({
-                  education_from: [item.education_from || null, Validators.required],
-                  education_to: [item.education_to || null, Validators.required],
-                  education_title: [item.education_title || null, Validators.required],
-                  education_institute: [item.education_institute || null, Validators.required]
+                  education_from: [
+                    item.education_from || null,
+                    Validators.required,
+                  ],
+                  education_to: [
+                    item.education_to || null,
+                    Validators.required,
+                  ],
+                  education_title: [
+                    item.education_title || null,
+                    Validators.required,
+                  ],
+                  education_institute: [
+                    item.education_institute || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
-          } else if (!data.education_info || data.education_info?.length === 0) {
+          } else if (
+            !data.education_info ||
+            data.education_info?.length === 0
+          ) {
             this.addEducation();
           }
           const courseArray = this.secondForm.get('course_info') as FormArray;
@@ -331,15 +385,23 @@ export class EditProfileComponent implements OnInit {
                 this.fb.group({
                   course_from: [item.course_from || null, Validators.required],
                   course_to: [item.course_to || null, Validators.required],
-                  course_title: [item.course_title || null, Validators.required],
-                  course_provider: [item.course_provider || null, Validators.required]
+                  course_title: [
+                    item.course_title || null,
+                    Validators.required,
+                  ],
+                  course_provider: [
+                    item.course_provider || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
           } else if (!data.course_info || data.course_info?.length === 0) {
             this.addCourse();
           }
-          const certificateArray = this.secondForm.get('certification_info') as FormArray;
+          const certificateArray = this.secondForm.get(
+            'certification_info'
+          ) as FormArray;
           while (certificateArray?.length !== 0) {
             certificateArray.removeAt(0);
           }
@@ -347,31 +409,60 @@ export class EditProfileComponent implements OnInit {
             data.certification_info.forEach((item: any) => {
               certificateArray.push(
                 this.fb.group({
-                  certification_from: [item.course_from || null, Validators.required],
-                  certification_to: [item.course_to || null, Validators.required],
-                  certification_title: [item.course_title || null, Validators.required],
-                  certification_issuer: [item.course_provider || null, Validators.required]
+                  certification_from: [
+                    item.course_from || null,
+                    Validators.required,
+                  ],
+                  certification_to: [
+                    item.course_to || null,
+                    Validators.required,
+                  ],
+                  certification_title: [
+                    item.course_title || null,
+                    Validators.required,
+                  ],
+                  certification_issuer: [
+                    item.course_provider || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
-          } else if (!data.certification_info || data.certification_info?.length === 0) {
+          } else if (
+            !data.certification_info ||
+            data.certification_info?.length === 0
+          ) {
             this.addCertificate();
           }
-          const otherExpArray = this.thirdForm.get('other_experience_info') as FormArray;
+          const otherExpArray = this.thirdForm.get(
+            'other_experience_info'
+          ) as FormArray;
           while (otherExpArray?.length !== 0) {
             otherExpArray.removeAt(0);
           }
-          if (data.other_experience_info && data.other_experience_info?.length > 0) {
+          if (
+            data.other_experience_info &&
+            data.other_experience_info?.length > 0
+          ) {
             data.other_experience_info.forEach((item: any) => {
               otherExpArray.push(
                 this.fb.group({
-                  other_experience_from: [item.other_experience_from || null, Validators.required],
+                  other_experience_from: [
+                    item.other_experience_from || null,
+                    Validators.required,
+                  ],
                   other_experience_to: [item.other_experience_to || null],
-                  other_experience_description: [item.other_experience_description || null, Validators.required]
+                  other_experience_description: [
+                    item.other_experience_description || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
-          } else if (!data.other_experience_info || data.other_experience_info?.length === 0) {
+          } else if (
+            !data.other_experience_info ||
+            data.other_experience_info?.length === 0
+          ) {
             this.addOtherExp();
           }
           const projectsArray = this.thirdForm.get('project_info') as FormArray;
@@ -382,77 +473,98 @@ export class EditProfileComponent implements OnInit {
             data.project_info.forEach((item: any) => {
               projectsArray.push(
                 this.fb.group({
-                  project_from: [item.project_from || null, Validators.required],
+                  project_from: [
+                    item.project_from || null,
+                    Validators.required,
+                  ],
                   project_to: [item.project_to || null],
-                  project_name: [item.project_name || null, Validators.required],
-                  project_role: [item.project_role || null, Validators.required]
+                  project_name: [
+                    item.project_name || null,
+                    Validators.required,
+                  ],
+                  project_role: [
+                    item.project_role || null,
+                    Validators.required,
+                  ],
                 })
               );
             });
           } else if (!data.project_info || data.project_info?.length === 0) {
             this.addProjects();
           }
-          const langSpokenArray = this.fourthForm.get('language_spoken_info') as FormArray;
+          const langSpokenArray = this.fourthForm.get(
+            'language_spoken_info'
+          ) as FormArray;
           while (langSpokenArray?.length !== 0) {
             langSpokenArray.removeAt(0);
           }
-          if (data.language_spoken_info && data.language_spoken_info?.length > 0) {
+          if (
+            data.language_spoken_info &&
+            data.language_spoken_info?.length > 0
+          ) {
             data.language_spoken_info.forEach((item: any) => {
               langSpokenArray.push(
                 this.fb.group({
                   language: [item.language || null, Validators.required],
-                  proficiency: [item.proficiency || null, Validators.required]
+                  proficiency: [item.proficiency || null, Validators.required],
                 })
               );
             });
-          } else if (!data.language_spoken_info || data.language_spoken_info?.length === 0) {
+          } else if (
+            !data.language_spoken_info ||
+            data.language_spoken_info?.length === 0
+          ) {
             this.addLangSpoken();
           }
-          const langWrittenArray = this.fourthForm.get('language_written_info') as FormArray;
+          const langWrittenArray = this.fourthForm.get(
+            'language_written_info'
+          ) as FormArray;
           while (langWrittenArray?.length !== 0) {
             langWrittenArray.removeAt(0);
           }
-          if (data.language_written_info && data.language_written_info?.length > 0) {
+          if (
+            data.language_written_info &&
+            data.language_written_info?.length > 0
+          ) {
             data.language_written_info.forEach((item: any) => {
               langWrittenArray.push(
                 this.fb.group({
                   language: [item.language || null, Validators.required],
-                  proficiency: [item.proficiency || null, Validators.required]
+                  proficiency: [item.proficiency || null, Validators.required],
                 })
               );
             });
-          } else if (!data.language_written_info || data.language_written_info?.length === 0) {
+          } else if (
+            !data.language_written_info ||
+            data.language_written_info?.length === 0
+          ) {
             this.addLangWritten();
           }
         }
       },
       error: (error: any) => {
-        this.loader.hide()
+        this.loader.hide();
         this.toaster.error(
           error.error?.message ||
           'An error occurred while fetching user profile data'
-        )
-      }
-    })
+        );
+      },
+    });
   }
 
   navigate() {
-    this.router.navigate(['job-list'])
+    this.router.navigate(['job-list']);
   }
 
   goBack(): void {
-    this.router.navigate(['job-list'])
-  }
-
-  private scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    this.router.navigate(['job-list']);
   }
 
   restrictNumeric(event: KeyboardEvent): void {
-    const regex = /^[a-zA-Z\s]*$/ // Regex for allowing only alphabets and spaces
-    const inputChar = String.fromCharCode(event.charCode)
+    const regex = /^[a-zA-Z\s]*$/; // Regex for allowing only alphabets and spaces
+    const inputChar = String.fromCharCode(event.charCode);
     if (!regex.test(inputChar)) {
-      event.preventDefault() // Prevent the input if it doesn't match the regex
+      event.preventDefault(); // Prevent the input if it doesn't match the regex
     }
   }
 
@@ -464,9 +576,9 @@ export class EditProfileComponent implements OnInit {
     (this.form.get('additional_contact_info') as FormArray).push(
       this.fb.group({
         contact_type: new FormControl(null, [Validators.required]),
-        value: new FormControl(null, [Validators.required])
+        value: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   getworkExp() {
@@ -479,9 +591,9 @@ export class EditProfileComponent implements OnInit {
         work_experience_from: new FormControl(null, [Validators.required]),
         work_experience_to: new FormControl(null, [Validators.required]),
         work_experience_title: new FormControl(null, [Validators.required]),
-        work_experience_employer: new FormControl(null, [Validators.required])
+        work_experience_employer: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   getEducation() {
@@ -494,9 +606,9 @@ export class EditProfileComponent implements OnInit {
         education_from: new FormControl(null, [Validators.required]),
         education_to: new FormControl(null, [Validators.required]),
         education_title: new FormControl(null, [Validators.required]),
-        education_institute: new FormControl(null, [Validators.required])
+        education_institute: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   getOtherExp() {
@@ -508,9 +620,11 @@ export class EditProfileComponent implements OnInit {
       this.fb.group({
         other_experience_from: new FormControl(null, [Validators.required]),
         other_experience_to: new FormControl(null),
-        other_experience_description: new FormControl(null, [Validators.required])
+        other_experience_description: new FormControl(null, [
+          Validators.required,
+        ]),
       })
-    )
+    );
   }
 
   getProjects() {
@@ -523,9 +637,9 @@ export class EditProfileComponent implements OnInit {
         project_from: new FormControl(null, [Validators.required]),
         project_to: new FormControl(null),
         project_name: new FormControl(null, [Validators.required]),
-        project_role: new FormControl(null, [Validators.required])
+        project_role: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   getCourse() {
@@ -538,9 +652,9 @@ export class EditProfileComponent implements OnInit {
         course_from: new FormControl(null, [Validators.required]),
         course_to: new FormControl(null, [Validators.required]),
         course_title: new FormControl(null, [Validators.required]),
-        course_provider: new FormControl(null, [Validators.required])
+        course_provider: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   getCetificate() {
@@ -553,75 +667,75 @@ export class EditProfileComponent implements OnInit {
         certification_from: new FormControl(null, [Validators.required]),
         certification_to: new FormControl(null, [Validators.required]),
         certification_title: new FormControl(null, [Validators.required]),
-        certification_issuer: new FormControl(null, [Validators.required])
+        certification_issuer: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   addLangSpoken() {
     (this.fourthForm.get('language_spoken_info') as FormArray).push(
       this.fb.group({
         language: new FormControl(null, [Validators.required]),
-        proficiency: new FormControl(null, [Validators.required])
+        proficiency: new FormControl(null, [Validators.required]),
       })
-    )
+    );
+  }
+
+  getlanguageSpoken() {
+    return (this.fourthForm.get('language_spoken_info') as FormArray).controls;
+  }
+
+  getlanguageWritten() {
+    return (this.fourthForm.get('language_written_info') as FormArray).controls;
   }
 
   addLangWritten() {
     (this.fourthForm.get('language_written_info') as FormArray).push(
       this.fb.group({
         language: new FormControl(null, [Validators.required]),
-        proficiency: new FormControl(null, [Validators.required])
+        proficiency: new FormControl(null, [Validators.required]),
       })
-    )
+    );
   }
 
   removeLangSpoken(index: number) {
-    (this.fourthForm.get('language_spoken_info') as FormArray).removeAt(index)
+    (this.fourthForm.get('language_spoken_info') as FormArray).removeAt(index);
   }
 
   removeLangWritten(index: number) {
-    (this.fourthForm.get('language_written_info') as FormArray).removeAt(index)
+    (this.fourthForm.get('language_written_info') as FormArray).removeAt(index);
   }
 
   removeContact(index: number) {
-    (this.form.get('additional_contact_info') as FormArray).removeAt(index)
+    (this.form.get('additional_contact_info') as FormArray).removeAt(index);
   }
 
   removeWorkExp(index: number) {
-    (this.secondForm.get('work_experience_info') as FormArray).removeAt(index)
+    (this.secondForm.get('work_experience_info') as FormArray).removeAt(index);
   }
 
   removeEducation(index: number) {
-    (this.secondForm.get('education_info') as FormArray).removeAt(index)
+    (this.secondForm.get('education_info') as FormArray).removeAt(index);
   }
 
   removeCourse(index: number) {
-    (this.secondForm.get('course_info') as FormArray).removeAt(index)
+    (this.secondForm.get('course_info') as FormArray).removeAt(index);
   }
 
   removeCertificate(index: number) {
-    (this.secondForm.get('certification_info') as FormArray).removeAt(index)
+    (this.secondForm.get('certification_info') as FormArray).removeAt(index);
   }
 
   removeOtherExp(index: number) {
-    (this.thirdForm.get('other_experience_info') as FormArray).removeAt(index)
+    (this.thirdForm.get('other_experience_info') as FormArray).removeAt(index);
   }
 
   removeProjects(index: number) {
-    (this.thirdForm.get('project_info') as FormArray).removeAt(index)
-  }
-
-  getFileName(path: string | null): string {
-    if (!path) return ''
-    // Extract filename from path
-    const parts = path.split(/[\/\\]/)
-    return parts[parts?.length - 1]
+    (this.thirdForm.get('project_info') as FormArray).removeAt(index);
   }
 
   onFileSelected(event: Event, controlName: string): void {
     const file = (event.target as HTMLInputElement).files?.[0];
-
     if (file) {
       if (!file.type.startsWith('image/')) {
         this.toaster.warning('Please select an image file.');
@@ -629,28 +743,25 @@ export class EditProfileComponent implements OnInit {
         (event.target as HTMLInputElement).value = ''; // Reset input file
         return;
       }
-
       // Create preview
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result; // Set the preview for the selected image
       };
       reader.readAsDataURL(file);
-
       // Your existing compression and upload logic
       if (this.allowedImageFormats.includes(file.type)) {
         this.imageCompressionService
           .compressImage(file)
           .then((compressedImageUrl: string) => {
             fetch(compressedImageUrl)
-              .then(res => res.blob())
-              .then(compressedFileBlob => {
+              .then((res) => res.blob())
+              .then((compressedFileBlob) => {
                 const compressedFile = new File(
                   [compressedFileBlob],
                   file.name,
                   { type: file.type }
                 );
-
                 // Upload image
                 const folderName = 'user-details';
                 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -661,7 +772,7 @@ export class EditProfileComponent implements OnInit {
                     (response: any) => {
                       if (response.statusCode === 200) {
                         this.form.patchValue({
-                          [controlName]: response.data.path
+                          [controlName]: response.data.path,
                         });
                       } else {
                         console.error(response.message);
@@ -683,7 +794,6 @@ export class EditProfileComponent implements OnInit {
     if (!files) {
       return;
     }
-
     const validFormats = ['application/pdf', 'application/msword'];
     const maxFileSize = 5 * 1024 * 1024;
     const file = files[0];
@@ -692,7 +802,6 @@ export class EditProfileComponent implements OnInit {
       this.uploadedFileName = null;
       return;
     }
-
     if (file.size > maxFileSize) {
       this.fileError = 'File size should not exceed 5 MB.';
       return;
@@ -700,7 +809,7 @@ export class EditProfileComponent implements OnInit {
     this.loader.show();
     this.fileError = null;
     this.fileUploaded = file;
-    this.uploadedFileName = file.name
+    this.uploadedFileName = file.name;
     const folderName = 'user-details';
     const userId = JSON.parse(localStorage.getItem('user') || '{}').id;
     this.adminService.uploadFile({ folderName, file, userId }).subscribe(
@@ -708,35 +817,26 @@ export class EditProfileComponent implements OnInit {
         if (response.statusCode === 200) {
           this.secondForm.patchValue({
             [controlName]: response.data.path,
-            cv_name: response.data.originalName
+            cv_name: response.data.originalName,
           });
           this.loader.hide();
         } else {
           this.loader.hide();
         }
       },
-      error => {
+      (error) => {
         console.error(error);
       }
     );
-
     fileInput.value = '';
-  }
-
-  getlanguageSpoken() {
-    return (this.fourthForm.get('language_spoken_info') as FormArray).controls;
-  }
-
-  getlanguageWritten() {
-    return (this.fourthForm.get('language_written_info') as FormArray).controls;
   }
 
   filteredCountryList(): string[] {
     if (!this.countryList) return [];
     // Extract all nationalities arrays, flatten, and remove duplicates
     const allNationalities = this.countryList
-      .filter(c => c.nationalities && c.nationalities.length > 0)
-      .map(c => c.nationalities)  // Already arrays
+      .filter((c) => c.nationalities && c.nationalities.length > 0)
+      .map((c) => c.nationalities) // Already arrays
       .flat();
     // Remove duplicates by converting to Set and back to array
     return Array.from(new Set(allNationalities));
@@ -766,7 +866,11 @@ export class EditProfileComponent implements OnInit {
     const fromDate = new Date(from.value);
     const toDate = new Date(to.value);
     if (toDate < fromDate) {
-      to.setErrors({ invalidDateRange: true })
+      to.setErrors({ invalidDateRange: true });
     }
+  }
+
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

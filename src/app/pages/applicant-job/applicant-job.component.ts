@@ -26,11 +26,12 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule,
   ],
   templateUrl: './applicant-job.component.html',
-  styleUrls: ['./applicant-job.component.scss'] // ✅ Corrected
+  styleUrls: ['./applicant-job.component.scss']
 })
+
 export class ApplicantJobComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   displayedColumns: string[] = ['#', 'name', 'email', 'mobile', 'city', 'applications', 'action'];
-  
   dataSource = new MatTableDataSource<any>([
     {
       id: 1,
@@ -50,8 +51,6 @@ export class ApplicantJobComponent implements OnInit {
     }
   ]);
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
   }
@@ -61,10 +60,7 @@ export class ApplicantJobComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   
-
   clearFilters() {
     this.dataSource.filter = '';
-    // Reset any dropdowns etc. here if you add them in future
   }
-
 }

@@ -11,7 +11,6 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { MaterialModule } from 'src/app/material.module'
 import { BrandingComponent } from "../../layouts/full/vertical/sidebar/branding.component";
 import { MatDialog } from '@angular/material/dialog';
-import { ApplyJobComponent } from '../admin/apply-job/apply-job.component';
 
 @Component({
   selector: 'app-job-details',
@@ -30,7 +29,6 @@ import { ApplyJobComponent } from '../admin/apply-job/apply-job.component';
 export class JobDetailsComponent {
   showApplyModal = false;
   applyAdditionalInfo = '';
-
   jobDetails: any;
   showLoginSignupDialog = false;
   loading: boolean = true;
@@ -65,9 +63,8 @@ export class JobDetailsComponent {
   }
 
   ngOnInit() {
-      this.jobId = this.route.snapshot.paramMap.get('id') as string;
-       this.user = JSON.parse(localStorage.getItem('user') || '{}');
-
+    this.jobId = this.route.snapshot.paramMap.get('id') as string;
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
     this.userDetailsForm.patchValue({
       job_id: this.jobId,
       user_id: this.user?.id
@@ -76,13 +73,11 @@ export class JobDetailsComponent {
     if (this.id) {
       this.loadJobDetails(this.id);
     }
-
   }
 
   formatSkills(skills: string): string[] {
     try {
       if (!skills) return [];
-      // Parse the JSON string and remove any special characters
       const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
       return parsedSkills.map((skill: string) =>
         skill.replace(/["\[\]]/g, '').trim()
@@ -103,7 +98,6 @@ export class JobDetailsComponent {
           if (Array.isArray(this.jobDetails.skills_required)) {
             this.formattedSkills = this.jobDetails.skills_required;
           } else if (typeof this.jobDetails.skills_required === 'string') {
-            // If for some reason it's a string, parse it safely
             try {
               this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
             } catch {
@@ -124,71 +118,53 @@ export class JobDetailsComponent {
       },
     });
   }
+
   goToLogin() {
     const accessToken = localStorage.getItem('accessToken');
     const userStr = localStorage.getItem('user');
-
     if (!accessToken || !userStr) {
-      // Not logged in, send to login page
       this.router.navigate(['/authentication/login']);
       return;
     }
-
     try {
       const user = JSON.parse(userStr);
       const role = user.role?.toLowerCase();
-
       if (role === 'admin') {
         this.router.navigate(['/applications']);
       } else if (role === 'applicant') {
         this.router.navigate(['/Applied-Applications']);
       } else {
-        // Default fallback if role unknown
         this.router.navigate(['/authentication/login']);
       }
     } catch (error) {
-      // Parsing error or other issue, fallback to login page
       console.error('Error parsing user from localStorage:', error);
       this.router.navigate(['/authentication/login']);
     }
-  }
-
-
-
-  navigate() {
-    this.router.navigate([`/user-details/${this.id}`]);
-  }
-  goBack() {
-    this.router.navigate(['/home']);
   }
 
   onApplyNowClick() {
     if (this.authService.isLoggedIn()) {
       this.showApplyModal = true;
     } else {
-      // Show popup inline in this component
       this.showLoginSignupDialog = true;
     }
   }
 
   goToEditProfile() {
     this.closeApplyModal();
-    this.router.navigate(['/edit-profile']); // apka edit profile route
+    this.router.navigate(['/edit-profile']); 
   }
 
   submitApplication(): void {
     this.loader.show();
     this.submitted = true;
-
     if (this.userDetailsForm.valid) {
       const formData = this.userDetailsForm.value;
-
       const apiPayload = {
         ...formData,
         job_id: this.jobId,
         user_id: this.user?.id,
       };
-
       this.adminService.applyJobs(apiPayload).subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
@@ -231,6 +207,13 @@ export class JobDetailsComponent {
     this.showLoginSignupDialog = false;
   }
 
+  navigate() {
+    this.router.navigate([`/user-details/${this.id}`]);
+  }
+  goBack() {
+    this.router.navigate(['/home']);
+  }
+
   get isApplicant(): boolean {
     return this.userRole.toLowerCase() === 'applicant';
   }
@@ -238,20 +221,15 @@ export class JobDetailsComponent {
   get isAdmin(): boolean {
     return this.userRole.toLowerCase() === 'admin';
   }
+
   get showApplyButton(): boolean {
-    // Agar login nahi hai (userRole blank), ya role applicant hai → button dikhao
-    // Agar role admin hai → button mat dikhao
     let user: any = localStorage.getItem('user');
     if (JSON.parse(user)?.role.toLowerCase() === 'admin') {
       return false; // Not logged in, show button
     }
     else {
-      // const role = this.userRole.toLowerCase();
       return true;
     }
   }
-
-
-
 }
 

@@ -8,10 +8,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppAuthBrandingComponent } from 'src/app/layouts/full/vertical/sidebar/auth-branding.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { NotifyService } from 'src/app/core/services/notify.service';
 import { finalize } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-side-forgot-password',
   standalone: true,
@@ -69,18 +69,17 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
   `]
 })
 export class SideForgotPasswordComponent implements OnInit {
+  form: FormGroup;
   options = this.settings.getOptions();
   isLoading: boolean = false;
-  form: FormGroup;
 
   constructor(
     private settings: CoreService,
     private _formBuilder: FormBuilder,
     private _router: Router,
     private _authService: AuthService,
-    private _notifyService: NotifyService,
-    private toastr : ToastrService,
-  ) {}
+    private toastr: ToastrService,
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -92,10 +91,6 @@ export class SideForgotPasswordComponent implements OnInit {
     });
   }
 
-  get f() {
-    return this.form.controls;
-  }
-
   async submit(): Promise<void> {
     if (this.form.invalid) {
       if (this.form.get('email')?.hasError('required')) {
@@ -105,14 +100,9 @@ export class SideForgotPasswordComponent implements OnInit {
       }
       return;
     }
-
     this.form.disable();
     this.isLoading = true;
-
-    // Get email from form
     const email = this.form.get('email')?.value;
-
-    // Call forgot password service
     this._authService.forgotPassword(email)
       .pipe(
         finalize(() => {
@@ -137,7 +127,12 @@ export class SideForgotPasswordComponent implements OnInit {
   navigateToLogin(): void {
     this._router.navigate(['/authentication/login']);
   }
-  navigate () {
+
+  navigate() {
     this._router.navigate(['/authentication/login'])
+  }
+
+  get f() {
+    return this.form.controls;
   }
 }

@@ -1,9 +1,9 @@
-import { Component, ViewEncapsulation, ViewChild } from '@angular/core'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatInputModule } from '@angular/material/input'
-import { MatPaginatorModule } from '@angular/material/paginator'
-import { MatSortModule } from '@angular/material/sort'
-import { TablerIconsModule } from 'angular-tabler-icons'
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { TablerIconsModule } from 'angular-tabler-icons';
 import {
   ApexChart,
   ChartComponent,
@@ -19,46 +19,45 @@ import {
   ApexFill,
   ApexMarkers,
   ApexResponsive,
-  NgApexchartsModule
-} from 'ng-apexcharts'
-import { MaterialModule } from 'src/app/material.module'
-// import { TablerIconsModule } from 'angular-tabler-icons'
-import {   ApexNonAxisChartSeries} from 'ng-apexcharts'
+  NgApexchartsModule,
+} from 'ng-apexcharts';
+import { MaterialModule } from 'src/app/material.module';
+import { ApexNonAxisChartSeries } from 'ng-apexcharts';
 
 export interface salesChart {
-  series: ApexAxisChartSeries | any
-  chart: ApexChart | any
-  dataLabels: ApexDataLabels | any
-  plotOptions: ApexPlotOptions | any
-  responsive: ApexResponsive[] | any
-  yaxis: ApexYAxis | any
-  xaxis: ApexXAxis | any
-  fill: ApexFill | any
-  tooltip: ApexTooltip | any
-  stroke: ApexStroke | any
-  legend: ApexLegend | any
-  grid: ApexGrid | any
-  colors: string[] | any
-  marker: ApexMarkers | any
+  series: ApexAxisChartSeries | any;
+  chart: ApexChart | any;
+  dataLabels: ApexDataLabels | any;
+  plotOptions: ApexPlotOptions | any;
+  responsive: ApexResponsive[] | any;
+  yaxis: ApexYAxis | any;
+  xaxis: ApexXAxis | any;
+  fill: ApexFill | any;
+  tooltip: ApexTooltip | any;
+  stroke: ApexStroke | any;
+  legend: ApexLegend | any;
+  grid: ApexGrid | any;
+  colors: string[] | any;
+  marker: ApexMarkers | any;
 }
 interface productcard {
-  id: number
-  color: string
-  title: string
-  value: number
-  subtitle: string
+  id: number;
+  color: string;
+  title: string;
+  value: number;
+  subtitle: string;
 }
 export interface ourvisitorChart {
-  series: ApexNonAxisChartSeries | any
-  chart: ApexChart | any
-  responsive: ApexResponsive[] | any
-  labels: any
-  tooltip: ApexTooltip | any
-  legend: ApexLegend | any
-  colors: string[] | any
-  stroke: any
-  dataLabels: ApexDataLabels | any
-  plotOptions: ApexPlotOptions | any
+  series: ApexNonAxisChartSeries | any;
+  chart: ApexChart | any;
+  responsive: ApexResponsive[] | any;
+  labels: any;
+  tooltip: ApexTooltip | any;
+  legend: ApexLegend | any;
+  colors: string[] | any;
+  stroke: any;
+  dataLabels: ApexDataLabels | any;
+  plotOptions: ApexPlotOptions | any;
 }
 @Component({
   selector: 'app-starter',
@@ -70,53 +69,47 @@ export interface ourvisitorChart {
     MatFormFieldModule,
     NgApexchartsModule,
     TablerIconsModule,
-    MaterialModule,
     MatInputModule,
-    NgApexchartsModule,
-    MaterialModule,
-    TablerIconsModule
   ],
   styleUrls: ['./starter.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class StarterComponent {
+  @ViewChild('chart') chart: ChartComponent = Object.create(null);
+  @ViewChild('chart2') chart2: ChartComponent = Object.create(null);
+  public salesChart!: Partial<salesChart> | any;
+  public ourvisitorChart!: Partial<ourvisitorChart> | any;
+
   productcard: productcard[] = [
     {
-        id: 1,
-        color: 'mat-primary',
-        title: '25',
-        subtitle: 'Total Open Jobs',
-        value: 25
-      },
-      {
-        id: 2,
-        color: 'mat-secondary',
-        title: '05',
-        subtitle: 'Jobs Applied',
-        value: 5
-      },
-      {
-        id: 3,
-        color: 'mat-success',
-        title: '02',
-        subtitle: 'Applications in Review',
-        value: 2
-      },
-      {
-        id: 4,
-        color: 'mat-warn',
-        title: '01',
-        subtitle: 'Offers Received',
-        value: 1
-      }
-  ]
-  @ViewChild('chart') chart: ChartComponent = Object.create(null)
-
-  public ourvisitorChart!: Partial<ourvisitorChart> | any
-
-  @ViewChild('chart2') chart2: ChartComponent = Object.create(null)
-
-  public salesChart!: Partial<salesChart> | any
+      id: 1,
+      color: 'mat-primary',
+      title: '25',
+      subtitle: 'Total Open Jobs',
+      value: 25,
+    },
+    {
+      id: 2,
+      color: 'mat-secondary',
+      title: '05',
+      subtitle: 'Jobs Applied',
+      value: 5,
+    },
+    {
+      id: 3,
+      color: 'mat-success',
+      title: '02',
+      subtitle: 'Applications in Review',
+      value: 2,
+    },
+    {
+      id: 4,
+      color: 'mat-warn',
+      title: '01',
+      subtitle: 'Offers Received',
+      value: 1,
+    },
+  ];
 
   constructor() {
     // Sales Chart for Job Applicants
@@ -125,13 +118,13 @@ export class StarterComponent {
         {
           name: 'Applied',
           data: [20, 35, 25, 40, 30, 50, 45], // Job applications per day
-          color: 'var(--mat-sys-primary)'
+          color: 'var(--mat-sys-primary)',
         },
         {
           name: 'Shortlisted',
           data: [10, 20, 15, 25, 20, 30, 28], // Shortlisted candidates
-          color: 'var(--mat-sys-secondary)'
-        }
+          color: 'var(--mat-sys-secondary)',
+        },
       ],
       chart: {
         fontFamily: 'inherit',
@@ -141,61 +134,61 @@ export class StarterComponent {
         offsetY: 10,
         offsetX: -15,
         toolbar: {
-          show: false
-        }
+          show: false,
+        },
       },
       grid: {
         show: true,
         strokeDashArray: 3,
-        borderColor: 'rgba(0,0,0,.1)'
+        borderColor: 'rgba(0,0,0,.1)',
       },
       plotOptions: {
         bar: {
           horizontal: false,
           columnWidth: '30%',
           endingShape: 'flat',
-          borderRadius: 4
-        }
+          borderRadius: 4,
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
         show: true,
         width: 5,
-        colors: ['transparent']
+        colors: ['transparent'],
       },
       xaxis: {
         type: 'category',
         categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         axisTicks: {
-          show: false
+          show: false,
         },
         axisBorder: {
-          show: false
+          show: false,
         },
         labels: {
           style: {
-            colors: '#a1aab2'
-          }
-        }
+            colors: '#a1aab2',
+          },
+        },
       },
       yaxis: {
         labels: {
           style: {
-            colors: '#a1aab2'
-          }
-        }
+            colors: '#a1aab2',
+          },
+        },
       },
       fill: {
         opacity: 1,
-        colors: ['#1B84FF', '#43CED7']
+        colors: ['#1B84FF', '#43CED7'],
       },
       tooltip: {
-        theme: 'dark'
+        theme: 'dark',
       },
       legend: {
-        show: false
+        show: false,
       },
       responsive: [
         {
@@ -204,13 +197,13 @@ export class StarterComponent {
             stroke: {
               show: false,
               width: 5,
-              colors: ['transparent']
-            }
-          }
-        }
-      ]
+              colors: ['transparent'],
+            },
+          },
+        },
+      ],
     };
-  
+
     // Our Visitor Chart for Applicant Source
     this.ourvisitorChart = {
       series: [60, 25, 10, 5], // Source percentage
@@ -218,13 +211,13 @@ export class StarterComponent {
       chart: {
         type: 'donut',
         height: 245,
-        fontFamily: 'inherit'
+        fontFamily: 'inherit',
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        width: 0
+        width: 0,
       },
       plotOptions: {
         pie: {
@@ -235,53 +228,52 @@ export class StarterComponent {
               show: true,
               name: {
                 show: true,
-                offsetY: 7
+                offsetY: 7,
               },
               value: {
-                show: false
+                show: false,
               },
               total: {
                 show: true,
                 color: '#a1aab2',
                 fontSize: '13px',
-                label: 'Applicants Source'
-              }
-            }
-          }
-        }
+                label: 'Applicants Source',
+              },
+            },
+          },
+        },
       },
       colors: [
         'var(--mat-sys-primary)',
         'var(--mat-sys-secondary)',
         '#eceff180',
-        '#725AF2'
+        '#725AF2',
       ],
       tooltip: {
         show: true,
-        fillSeriesColor: false
+        fillSeriesColor: false,
       },
       legend: {
-        show: false
+        show: false,
       },
       responsive: [
         {
           breakpoint: 1025,
           options: {
             chart: {
-              height: 270
-            }
-          }
+              height: 270,
+            },
+          },
         },
         {
           breakpoint: 426,
           options: {
             chart: {
-              height: 250
-            }
-          }
-        }
-      ]
+              height: 250,
+            },
+          },
+        },
+      ],
     };
   }
-  
 }
