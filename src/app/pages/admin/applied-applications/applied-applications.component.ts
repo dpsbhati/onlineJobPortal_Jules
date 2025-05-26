@@ -76,11 +76,6 @@ export class AppliedApplicationsComponent implements OnInit {
     this.getAllData();
     this.onPagination();
   }
-
-  openDialog(action: string, element: any) {
-    console.log(action, element)
-  }
-
   onPagination(): void {
     this.loader.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(

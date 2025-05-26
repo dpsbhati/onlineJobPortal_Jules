@@ -146,7 +146,7 @@ export class ApplicantComponent implements OnInit {
   fetchJobs(): void {
     this.adminService.getJobPostings().subscribe({
       next: (response: any) => {
-        console.log(response)
+    
         if (response.statusCode === 200) {
           this.jobs = response.data; // Assign the job data to the jobs array
         } else {
@@ -277,15 +277,7 @@ export class ApplicantComponent implements OnInit {
 
   navigateToUserProfile(): void {
     // Log the current role for debugging
-    console.log('Navigating with role:', this.userRole);
-
-    if (this.isAdmin()) {
-      console.log('Navigating as admin');
-    } else if (this.isApplicant()) {
-      console.log('Navigating as applicant');
-    }
-
-    this.router.navigate(['/edit-profile']);
+       this.router.navigate(['/edit-profile']);
   }
 
   logout() {
