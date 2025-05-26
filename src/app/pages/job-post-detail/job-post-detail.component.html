@@ -80,10 +80,7 @@
       </mat-card>
     </div>
     <div class="col-12">
-
-
     </div>
-
   </div>
 
   <div class="row">
@@ -92,12 +89,12 @@
         <mat-card-content>
           <div class="row w-100 justify-content-between align-items-center">
             <div class="col-lg-12">
-              <h2 class="m-b-0">{{ jobDetails?.title }}</h2> <!-- Dynamic title -->
-              <p class="m-t-6 m-b-0">{{ jobDetails?.employer }}</p> <!-- Dynamic job type -->
+              <h2 class="m-b-0">{{ jobDetails?.title }}</h2>
+              <p class="m-t-6 m-b-0">{{ jobDetails?.employer }}</p> 
               <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center">
                 <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
                 {{ jobDetails?.address }}
-              </p> <!-- Dynamic address -->
+              </p>
             </div>
           </div>
         </mat-card-content>
@@ -109,19 +106,19 @@
             <div class="col-lg-12 m-b-10">
               <div class="row m-b-20">
                 <div class="col-lg-3"><strong>Assignment</strong></div>
-                <div class="col-lg-8">{{ jobDetails?.assignment_duration }}</div> <!-- Dynamic assignment -->
+                <div class="col-lg-8">{{ jobDetails?.assignment_duration }}</div> 
               </div>
               <div class="row m-b-20">
                 <div class="col-lg-3"><strong>Short Description</strong></div>
-                <div class="col-lg-8">{{ jobDetails?.short_description }}</div> <!-- Dynamic short description -->
+                <div class="col-lg-8">{{ jobDetails?.short_description }}</div>
               </div>
               <div class="row m-b-20">
                 <div class="col-lg-3"><strong>Full Description</strong></div>
-                <div class="col-lg-8">{{ jobDetails?.full_description }}</div> <!-- Dynamic full description -->
+                <div class="col-lg-8">{{ jobDetails?.full_description }}</div>
               </div>
                 <div class="row m-b-20">
                 <div class="col-lg-3"><strong>Application Instruction</strong></div>
-                <div class="col-lg-8">{{ jobDetails?.application_instruction }}</div> <!-- Dynamic full description -->
+                <div class="col-lg-8">{{ jobDetails?.application_instruction }}</div> 
               </div>
               <div class="row m-b-20">
                 <div class="col-lg-3"><strong>Required Skills</strong></div>
@@ -130,7 +127,7 @@
                     <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
                       {{ skill }}
                     </button>
-                  </div> <!-- Dynamic skills list -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -142,23 +139,22 @@
     <div class="col-lg-4">
       <mat-card>
         <img mat-card-image [src]="jobDetails?.featured_image" alt="Job Image" height="250" width="390" height="250" width="390">
-        <!-- Dynamically bind image URL from `jobDetails.featured_image` -->
         <mat-card-content>
           <div class="row">
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Employment Type:</strong> {{ jobDetails?.job_type }} <!-- Dynamic job type -->
+              <strong class="m-r-6">Employment Type:</strong> {{ jobDetails?.job_type }}
             </div>
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Salary:</strong> {{ jobDetails?.start_salary | currency }} <!-- Dynamic salary -->
+              <strong class="m-r-6">Salary:</strong> {{ jobDetails?.start_salary | currency }}
             </div>
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }} <!-- Dynamic deadline -->
+              <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.deadline | date:'mediumDate' }}
             </div>
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }} <!-- Dynamic experience -->
+              <strong class="m-r-6">Experience:</strong> {{ jobDetails?.required_experience }}
             </div>
             <div class="col-lg-12 m-b-16">
-              <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_date ? (jobDetails?.posted_date | date:'mediumDate') : '-' }}</span> <!-- Dynamic posted date -->
+              <strong class="m-r-6">Posted on:</strong> <span>{{ jobDetails?.posted_date ? (jobDetails?.posted_date | date:'mediumDate') : '-' }}</span>
             </div>
           </div>
         </mat-card-content>

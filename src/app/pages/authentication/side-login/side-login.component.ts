@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserRole } from 'src/app/core/enums/roles.enum';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
+
 interface RememberMeData {
   email: string;
   password: string;
@@ -66,11 +67,12 @@ interface RememberMeData {
     }
   `]
 })
+
 export class AppSideLoginComponent implements OnInit {
+  form: FormGroup;
   options = this.settings.getOptions();
   showPassword: boolean = false;
   isLoading: boolean = false;
-  form: FormGroup;
   private readonly STORAGE_KEY = 'rememberMeData';
   private readonly EXPIRY_DAYS = 7;
 
@@ -88,27 +90,12 @@ export class AppSideLoginComponent implements OnInit {
     this.loadSavedCredentials();
   }
 
-  initializeForm(): void {
-    this.form = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required]),
-      rememberDevice: new FormControl(false)
-    });
-
-    // Subscribe to remember device changes
-    this.form.get('rememberDevice')?.valueChanges.subscribe(checked => {
-      this.handleRememberDeviceChange(checked);
-    });
-  }
-
-  loadSavedCredentials(): void {
+   loadSavedCredentials(): void {
     const savedData = localStorage.getItem(this.STORAGE_KEY);
-
     if (savedData) {
       try {
         const data: RememberMeData = JSON.parse(savedData);
         const expiryTime = data.timestamp + (this.EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-
         if (new Date().getTime() < expiryTime) {
           this.form.patchValue({
             email: data.email,
@@ -123,6 +110,17 @@ export class AppSideLoginComponent implements OnInit {
       }
     }
   }
+  
+  initializeForm(): void {
+    this.form = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required]),
+      rememberDevice: new FormControl(false)
+    });
+    this.form.get('rememberDevice')?.valueChanges.subscribe(checked => {
+      this.handleRememberDeviceChange(checked);
+    });
+  }
 
   saveCredentials(): void {
     const rememberDevice = this.form.get('rememberDevice')?.value;
@@ -133,7 +131,6 @@ export class AppSideLoginComponent implements OnInit {
         timestamp: new Date().getTime(),
         remember:this.form.get('rememberDevice')?.value
       };
-
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(rememberMeData));
     } else {
       this.clearSavedCredentials();
@@ -142,10 +139,6 @@ export class AppSideLoginComponent implements OnInit {
 
   clearSavedCredentials(): void {
     localStorage.removeItem(this.STORAGE_KEY);
-  }
-
-  get f() {
-    return this.form.controls;
   }
 
   togglePasswordVisibility(): void {
@@ -170,20 +163,16 @@ export class AppSideLoginComponent implements OnInit {
       }
       return;
     }
-
     this.isLoading = true;
-
     try {
       const { email, password } = this.form.value;
       const response = await this._authService.login({ email, password }).toPromise();
-
       if (response && response.statusCode === 200) {
-        this.saveCredentials(); // This will check rememberDevice value internally
+        this.saveCredentials(); 
         // Set token and user data
         this._authService.accessToken = response.data.token;
         const userData = response.data.User;
         await this._authService.setCurrentUser(userData);
-
         // Navigate based on role
         if (userData.role === UserRole.ADMIN) {
           await this._router.navigate(['/applications'], { replaceUrl: true });
@@ -218,5 +207,10 @@ export class AppSideLoginComponent implements OnInit {
 
   navigateToNewuserRegistartion(): void {
     this._router.navigate(['/auth/new-user-registration']);
+  }
+
+  
+  get f() {
+    return this.form.controls;
   }
 }

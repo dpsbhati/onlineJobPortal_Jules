@@ -4,15 +4,9 @@ import { AppErrorComponent } from './error/error.component'
 import { AppSideLoginComponent } from './side-login/side-login.component'
 import { AppSideRegisterComponent } from './side-register/side-register.component'
 import { EmailActivationComponent } from './email-activation/email-activation.component'
-import { CreateJobPostingComponent } from '../admin/create-job-posting/create-job-posting.component'
-import {
-  Application,
-  ApplicationsComponent
-} from '../admin/applications/applications.component'
-import { ApplicantDetailsComponent } from '../admin/applicant-details/applicant-details.component'
 import { DevelopmentPageComponent } from './development-page/development-page.component'
-import { HomeComponent } from '../home/home.component'
 import { JobDetailsComponent } from '../job-details/job-details.component'
+
 export const AuthenticationRoutes: Routes = [
   {
     path: '',
@@ -45,11 +39,7 @@ export const AuthenticationRoutes: Routes = [
             c => c.SideResetPasswordComponent
           )
       },
-      {
-        path: 'error',
-        loadComponent: () =>
-          import('./error/error.component').then(c => c.AppErrorComponent)
-      },
+     
       {
         path: 'Development-page',
         loadComponent: () =>
@@ -73,9 +63,12 @@ export const AuthenticationRoutes: Routes = [
       {
         path: 'Job-Details/:id',
         component: JobDetailsComponent
-        // canActivate: [AuthGuard]
       },
-
+       {
+        path: 'error',
+        loadComponent: () =>
+          import('./error/error.component').then(c => c.AppErrorComponent)
+      }
     ]
   }
 ]

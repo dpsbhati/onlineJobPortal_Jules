@@ -6,11 +6,9 @@ import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { AppAuthBrandingComponent } from '../../../layouts/full/vertical/sidebar/auth-branding.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { NgIf } from '@angular/common';
-// Strong password and email pattern
 const PASSWORD_PATTERN = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$';
 const EMAIL_PATTERN = '^[a-z0-9._%+-]+@(?:[a-z0-9-]+\\.)[a-z]{2,}$';
 
@@ -23,7 +21,6 @@ export class AppSideRegisterComponent {
   showPassword: boolean = false;
   loading: boolean = false;
   errorMessage: string | null = null;
-
   registrationForm: FormGroup = new FormGroup({
     firstName: new FormControl('', [
       Validators.required,
@@ -53,7 +50,6 @@ export class AppSideRegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private _snackBar: MatSnackBar,
     private loader: LoaderService,
     private toastr: ToastrService,
   ) { }
@@ -70,15 +66,6 @@ export class AppSideRegisterComponent {
     this.registrationForm.setValue(trimmedValues);
   }
 
-  private showMessage(message: string, isError: boolean = false): void {
-    this._snackBar.open(message, 'Close', {
-      duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
-    });
-  }
-
   onSubmit(): void {
     this.loader.show();
     if (this.registrationForm.invalid) {
@@ -88,7 +75,6 @@ export class AppSideRegisterComponent {
     this.trimFormValues();
     this.loading = true;
     this.errorMessage = null;
-
     this.authService.registerUser(this.registrationForm.value).subscribe({
       next: (res: any) => {
         if (res.statusCode == 200 || res.statusCode == 201) {

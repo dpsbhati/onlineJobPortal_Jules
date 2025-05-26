@@ -1,23 +1,14 @@
 <mat-sidenav-container class="bg-white">
   <mat-sidenav-content>
-    <!-- ------------------------------------------------------------------
-    Header
-    ------------------------------------------------------------------ -->
+    <!-- Header -->
     <mat-toolbar class="topbar topbar-xl">
       <div class="container full-width p-xs-6">
-        <!-- --------------------------------------------------------------- -->
         <div class="branding p-x-0">
           <app-branding></app-branding>
         </div>
-
-        <!-- --------------------------------------------------------------- -->
-
         <span class="flex-1-auto"></span>
-
         <div class="d-none d-lg-flex">
-          <!-- --------------------------------------------------------------- -->
-          <!--  Links -->
-          <!-- --------------------------------------------------------------- -->
+          <!-- Links -->
           <button mat-button class="m-x-8 f-s-16 text-white">About us</button>
           <button mat-button class="m-x-8 f-s-16 text-white">
             Ship Management
@@ -32,7 +23,7 @@
           <button mat-icon-button (click)="goToLogin()">
             <mat-icon>person</mat-icon>
           </button>
-                 </div>
+        </div>
 
         <!-- Mobile Menu -->
         <button
@@ -101,12 +92,12 @@
                       {{ jobDetails?.full_description }}
                     </div>
                   </div>
-                   <div class="row m-b-20">
+                  <div class="row m-b-20">
                     <div class="col-lg-3">
                       <strong>Application Instruction</strong>
                     </div>
                     <div class="col-lg-8">
-                      {{ jobDetails?.application_instruction}}
+                      {{ jobDetails?.application_instruction }}
                     </div>
                   </div>
                   <div class="row m-b-20" *ngIf="formattedSkills.length > 0">
@@ -237,8 +228,9 @@
 
         <p>
           Your application will be submitted using your current profile
-          information. To make any changes before submitting, please select <b>Edit
-          Profile</b>. If no changes are needed, click <b>Submit</b> to Apply.
+          information. To make any changes before submitting, please select
+          <b>Edit Profile</b>. If no changes are needed, click <b>Submit</b> to
+          Apply.
         </p>
 
         <form [formGroup]="userDetailsForm">
@@ -282,9 +274,7 @@
     </div>
   </mat-sidenav-content>
 
-  <!-- ------------------------------------------------------------------
-    Mobile Sidebar
-    ------------------------------------------------------------------ -->
+  <!-- Mobile Sidebar -->
   <mat-sidenav
     #filterNavRight
     mode="over"

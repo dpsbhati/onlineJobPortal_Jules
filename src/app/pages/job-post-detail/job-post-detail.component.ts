@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastrModule } from 'ngx-toastr';
 import { UserRole } from 'src/app/core/enums/roles.enum';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -48,14 +48,6 @@ export class JobPostDetailComponent {
     }
   }
 
-  isAdmin(): boolean {
-    return this.userRole.toUpperCase() === UserRole.ADMIN;
-  }
-
-  isApplicant(): boolean {
-    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
-  }
-
   formatSkills(skills: string): string[] {
     try {
       if (!skills) return [];
@@ -78,17 +70,16 @@ export class JobPostDetailComponent {
           this.jobDetails = response.data;
           this.loader.hide();
           if (Array.isArray(this.jobDetails.skills_required)) {
-          this.formattedSkills = this.jobDetails.skills_required;
-        } else if (typeof this.jobDetails.skills_required === 'string') {
-          // If for some reason it's a string, parse it safely
-          try {
-            this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
-          } catch {
+            this.formattedSkills = this.jobDetails.skills_required;
+          } else if (typeof this.jobDetails.skills_required === 'string') {
+            try {
+              this.formattedSkills = JSON.parse(this.jobDetails.skills_required);
+            } catch {
+              this.formattedSkills = [];
+            }
+          } else {
             this.formattedSkills = [];
           }
-        } else {
-          this.formattedSkills = [];
-        }
           this.loader.hide();
         } else {
           this.loader.hide();
@@ -100,6 +91,14 @@ export class JobPostDetailComponent {
         this.notifyService.showError(error?.error?.message);
       },
     });
+  }
+
+  isAdmin(): boolean {
+    return this.userRole.toUpperCase() === UserRole.ADMIN;
+  }
+
+  isApplicant(): boolean {
+    return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
   goBack() {
