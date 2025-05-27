@@ -102,7 +102,9 @@ export class ApplicantDetailsComponent {
     timeZone: 'UTC'  // Isse timezone shift avoid hota hai
   });
 }
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
 formatPreferences(prefs: any): string {
   if (!prefs) return '';
 

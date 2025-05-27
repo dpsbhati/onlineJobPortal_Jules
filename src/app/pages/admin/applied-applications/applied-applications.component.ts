@@ -110,7 +110,9 @@ export class AppliedApplicationsComponent implements OnInit {
       },
     });
   }
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
   onPageChange(event: any): void {
     this.pageConfig.curPage = event.pageIndex + 1;
     this.pageConfig.perPage = event.pageSize;

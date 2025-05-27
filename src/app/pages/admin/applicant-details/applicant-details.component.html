@@ -11,7 +11,7 @@
       <div class="d-flex align-items-center justify-content-between gap-6">
         <div class="d-flex align-items-center justify-content-between gap-6">
           <label>Current Status:</label>     
-          <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
+          <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
               'bg-light-secondary text-secondary':
                 applicantDetails.status.toLowerCase() === 'hired',
               'bg-light-warning text-warning':
@@ -20,11 +20,26 @@
                 applicantDetails.status.toLowerCase() === 'rejected',
               'bg-light-success  text-success':
                 applicantDetails.status.toLowerCase() === 'shortlisted',
+                 'bg-light-success  text-info':
+                applicantDetails.status.toLowerCase() === 'shortlisted',
                 
                
             }">
             {{ applicantDetails.status || "-" }}
-          </span>
+          </span> -->
+
+
+           <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
+        'bg-light-secondary text-secondary': applicantDetails.status.toLowerCase() === 'hired',
+        'bg-light-warning text-warning': applicantDetails.status.toLowerCase() === 'pending',
+        'bg-light-error  text-error ': applicantDetails.status.toLowerCase() === 'rejected',
+        'bg-light-shortlisted  text-success-shortlisted': applicantDetails.status.toLowerCase() === 'shortlisted',
+        'bg-light-success-1 text-success ': applicantDetails.status?.toLowerCase() === 'approved',
+  'bg-light-primary text-primary': applicantDetails.status?.toLowerCase() === 'processed',
+            'bg-light  bg-light-error': toLowerCaseSafe(applicantDetails.status) === 'endorsed',
+            'bg-light-success bg-light ': toLowerCaseSafe(applicantDetails.status) === 'deployed'
+      }"> {{ applicantDetails.status||'-' }}
+            </span>
         </div>
         <div class="status-change">
           <mat-form-field appearance="outline" class="w-100">

@@ -10,13 +10,27 @@
     <div class="d-flex align-items-center justify-content-between gap-6">
       <div class="d-flex align-items-center justify-content-between gap-6">
         <label>Current Status:</label>
-        <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
+        <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
           'bg-light-secondary text-secondary': jobDetails?.status?.toLowerCase() === 'hired',
           'bg-light-warning text-warning': jobDetails?.status?.toLowerCase() === 'pending',
           'bg-light-error  text-error ': jobDetails?.status?.toLowerCase() === 'rejected',
           'bg-light-success  text-success': jobDetails?.status?.toLowerCase() === 'shortlisted'
         }">{{ jobDetails?.status || '-' }}
-        </span>
+        </span> -->
+
+
+
+         <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
+        'bg-light-secondary text-secondary': jobDetails.status.toLowerCase() === 'hired',
+        'bg-light-warning text-warning': jobDetails.status.toLowerCase() === 'pending',
+        'bg-light-error  text-error ': jobDetails.status.toLowerCase() === 'rejected',
+        'bg-light-shortlisted  text-success-shortlisted': jobDetails.status.toLowerCase() === 'shortlisted',
+        'bg-light-success-1 text-success ': jobDetails.status?.toLowerCase() === 'approved',
+  'bg-light-primary text-primary': jobDetails.status?.toLowerCase() === 'processed',
+            'bg-light  bg-light-error': toLowerCaseSafe(jobDetails.status) === 'endorsed',
+            'bg-light-success bg-light ': toLowerCaseSafe(jobDetails.status) === 'deployed'
+      }"> {{ jobDetails.status||'-' }}
+            </span>
       </div>
     </div>
   </mat-card-content>

@@ -371,7 +371,9 @@ viewJobDetails(jobId:any): void {
   }
 }
 
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
   deleteApplicant(application_id: any): void {
     Swal.fire({
       title: 'Are you sure?',
