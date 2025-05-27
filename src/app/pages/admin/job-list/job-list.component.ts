@@ -84,7 +84,7 @@ export class JobListComponent implements OnInit {
       ? [
           'position',
           'title',
-          'job_type',
+         
           'employer',
           'salary',
           'date_published',
@@ -96,7 +96,6 @@ export class JobListComponent implements OnInit {
       : [
           'position',
           'title',
-          'job_type',
           'employer',
           'salary',
           'date_published',
