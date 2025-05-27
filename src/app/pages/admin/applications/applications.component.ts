@@ -17,9 +17,6 @@ import { HelperService } from 'src/app/core/helpers/helper.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   MatDialog,
-  MatDialogRef,
-  MatDialogActions,
-  MatDialogTitle,
   MatDialogModule,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -133,7 +130,6 @@ export class ApplicationsComponent {
   openHeaderDialog() {
     const dialogRef = this.dialog.open(FileuploadComponent);
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('Dialog result: result');
     });
   }
   deleteDialog() {
@@ -203,7 +199,7 @@ export class ApplicationsComponent {
             position: index + 1 + this.pageIndex * this.pageSize,
             name: `${app.user?.userProfile?.first_name} ${app.user?.userProfile?.last_name}`,
             email: app.user?.email,
-           
+
             dateOfApplication: new Date(app.applied_at).toLocaleDateString('en-US', {
         year: 'numeric',
       month: 'long',
@@ -333,7 +329,7 @@ export class ApplicationsComponent {
     this.fetchApplications();
   }
 
-  
+
 clearFilters(): void {
   this.selectedFilters = {
     all: null,
@@ -418,15 +414,12 @@ viewJobDetails(jobId:any): void {
 
   onjobviewapplicationPagination(): void {
     this.loader.show();
-
     const whereClause = this.helper.getAllFilters(this.selectedFilters);
-
     this.pageConfig.curPage = this.pageIndex + 1;
     this.pageConfig.perPage = this.pageSize;
     this.pageConfig.sortBy = this.sortBy;
     this.pageConfig.direction = this.direction;
     this.pageConfig.whereClause = whereClause;
-
     this.adminService.jobviewapplicationPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         this.loader.hide();
@@ -463,7 +456,7 @@ viewJobDetails(jobId:any): void {
           };
         });
       } else {
-      
+
         this.dataSource.data = [];
         this.totalApplications = 0;
       }

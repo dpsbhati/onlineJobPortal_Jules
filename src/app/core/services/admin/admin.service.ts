@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { GenericService } from '../generic.service';
 
 @Injectable({
@@ -88,10 +86,6 @@ export class AdminService {
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post(`applications/update/${id}`, payload);
   }
-  // updateApplicationStatus(id: string, payload: any): Observable<any> {
-  //   return this.genericService.Post('applications/update', { id, ...payload });
-  // }
-
 
   toggleJobStatus(id: string, isActive: boolean): Observable<any> {
   const params = new URLSearchParams();

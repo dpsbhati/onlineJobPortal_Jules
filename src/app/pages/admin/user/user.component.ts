@@ -1,14 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-user',
-//   imports: [],
-//   templateUrl: './user.component.html',
-//   styleUrl: './user.component.scss'
-// })
-// export class UserComponent {
-
-// }
 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -99,45 +88,6 @@ export class UserComponent implements OnInit {
       return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
     }
 
-  openDialog(action: string, element: any) {
-    console.log(action, element);
-    // Dialog open logic yahan add kar sakte ho
-  }
-  // onPagination(): void {
-  //   // this.isLoading = true;
-  //   this.loader.show();
-  //   this.pageConfig.whereClause = this.helperService.getAllFilters(this.filters);
-  //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
-  //     next: (res: any) => {
-  //       // console.log('API Response:', res);
-  //       if (res.statusCode === 200) {
-  //         this.jobPostingList = res.data;
-  //         this.total = res.count || 0;
-  //         this.loader.hide();
-  //         console.log('Loaded jobs:', this.jobPostingList);
-  //       } else {
-  //         this.jobPostingList = [];
-  //         this.total = 0;
-  //         this.loader.hide();
-  //         this.toastr.warning(res.message);
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     error: (err: any) => {
-  //       console.error('API Error:', err);
-  //       this.isLoading = false;
-  //       this.loader.hide();
-  //       this.toastr.error(err?.error?.message);
-  //       this.jobPostingList = [];
-  //       this.total = 0;
-  //     }
-  //   });
-  // }
 
-  // onPageChange(event: any): void {
-  //   this.pageConfig.curPage = event.pageIndex + 1;
-  //   this.pageConfig.perPage = event.pageSize;
-  //   this.onPagination();
-  // }
 
 }

@@ -37,8 +37,7 @@ export const JwtInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): 
         newReq = req.clone({
             headers: req.headers.
             set('Authorization', 'Bearer ' + authService.accessToken)
-            // .set('ngrok-skip-browser-warning', '1234 ')
-            // .set('User-Agent', 'CustomUserAgent/1.0 (Compatible; Testing/1.0)')
+            
         });
     }
 

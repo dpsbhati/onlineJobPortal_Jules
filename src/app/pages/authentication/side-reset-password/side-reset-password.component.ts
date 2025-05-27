@@ -12,6 +12,7 @@ import { NotifyService } from 'src/app/core/services/notify.service';
 import { finalize } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-side-reset-password',
   standalone: true,
@@ -22,37 +23,39 @@ import { ToastrService } from 'ngx-toastr';
     ReactiveFormsModule,
     AppAuthBrandingComponent,
     CommonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './side-reset-password.component.html',
-  styles: [`
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .loading-text {
-      color: white;
-      margin-top: 16px;
-    }
-    .highlight-message {
-      background-color: #E3F2FD;
-      color: #1565C0;
-      padding: 12px 16px;
-      border-radius: 4px;
-      border-left: 4px solid #1565C0;
-      margin: 16px 0;
-      display: inline-block;
-      width: 100%;
-    }
-  `]
+  styles: [
+    `
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      .loading-text {
+        color: white;
+        margin-top: 16px;
+      }
+      .highlight-message {
+        background-color: #e3f2fd;
+        color: #1565c0;
+        padding: 12px 16px;
+        border-radius: 4px;
+        border-left: 4px solid #1565c0;
+        margin: 16px 0;
+        display: inline-block;
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class SideResetPasswordComponent implements OnInit {
   options = this.settings.getOptions();
@@ -69,12 +72,11 @@ export class SideResetPasswordComponent implements OnInit {
     private _route: ActivatedRoute,
     private _authService: AuthService,
     private _notifyService: NotifyService,
-    private toastr : ToastrService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
-    // Get token from URL
-    this._route.queryParams.subscribe(params => {
+    this._route.queryParams.subscribe((params) => {
       this.token = params['token'];
       if (!this.token) {
         this._notifyService.showError('Invalid or expired reset token');
@@ -86,12 +88,17 @@ export class SideResetPasswordComponent implements OnInit {
 
   initializeForm(): void {
     this.form = this._formBuilder.group({
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
-      ]],
-      confirmPassword: ['', Validators.required]
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+          ),
+        ],
+      ],
+      confirmPassword: ['', Validators.required],
     });
   }
 
@@ -107,15 +114,6 @@ export class SideResetPasswordComponent implements OnInit {
     }
   }
 
-  // Called on input change to trigger validation
-  onInputChange() {
-    this.passwordMatchValidator();
-  }
-
-  get f() {
-    return this.form.controls;
-  }
-
   getPasswordErrorMessage() {
     if (this.f['password'].hasError('required')) {
       return 'Password is required';
@@ -129,29 +127,27 @@ export class SideResetPasswordComponent implements OnInit {
     return '';
   }
 
-   async submit(): Promise<void> {
+  async submit(): Promise<void> {
     if (!this.token) {
       this.toastr.error('Reset token missing');
       return;
     }
-
     if (this.form.invalid) {
       if (this.form.errors?.['mismatch']) {
-        this._notifyService.showError('New password and confirm password do not match');
+        this._notifyService.showError(
+          'New password and confirm password do not match'
+        );
       }
       return;
     }
-
     this.form.disable();
     this.isLoading = true;
-
-    // ✅ Correct Payload with token
     const payload = {
       newPassword: this.form.get('password')?.value,
-      token: this.token
+      token: this.token,
     };
-
-    this._authService.resetPassword(payload)
+    this._authService
+      .resetPassword(payload)
       .pipe(
         finalize(() => {
           this.form.enable();
@@ -170,11 +166,20 @@ export class SideResetPasswordComponent implements OnInit {
         error: (error) => {
           console.error('Reset Password Error:', error);
           this.toastr.error(error.error?.message || 'Failed to reset password');
-        }
+        },
       });
+  }
+
+  // Called on input change to trigger validation
+  onInputChange() {
+    this.passwordMatchValidator();
   }
 
   navigateToLogin(): void {
     this._router.navigate(['/authentication/login']);
+  }
+
+   get f() {
+    return this.form.controls;
   }
 }

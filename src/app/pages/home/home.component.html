@@ -1,26 +1,15 @@
 <mat-sidenav-container class="bg-white">
   <mat-sidenav-content>
-    <!-- ------------------------------------------------------------------
-    Header
-    ------------------------------------------------------------------ -->
+    <!-- Header -->
     <mat-toolbar class="topbar topbar-xl">
       <div class="container full-width p-xs-6">
-        <!-- --------------------------------------------------------------- -->
         <div class="branding p-x-0">
           <app-branding></app-branding>
         </div>
-
-        <!-- --------------------------------------------------------------- -->
-
         <span class="flex-1-auto"></span>
-
         <div class="d-none d-lg-flex">
-          <!-- --------------------------------------------------------------- -->
-          <!--  Links -->
-          <!-- --------------------------------------------------------------- -->
-          <button mat-button class="m-x-8 f-s-16 text-white">
-            About us
-          </button>
+          <!-- Links -->
+          <button mat-button class="m-x-8 f-s-16 text-white">About us</button>
           <button mat-button class="m-x-8 f-s-16 text-white">
             Ship Management
           </button>
@@ -30,22 +19,18 @@
           <button mat-button class="m-x-8 f-s-16 text-white">
             Job Opportunities
           </button>
-          <button mat-button class="m-x-8 f-s-16 text-white">
-            Contact
+          <button mat-button class="m-x-8 f-s-16 text-white">Contact</button>
+          <button mat-icon-button (click)="goToLogin()">
+            <mat-icon>person</mat-icon>
           </button>
-          <button mat-icon-button (click)="goToLogin()"><mat-icon>person</mat-icon></button>
-          <!-- <button mat-icon-button> <img src="./assets/images/Icons/search.svg" alt="Logo"
-              class="material-icons-custom" /></button> -->
-
-          <!-- --------------------------------------------------------------- -->
-          <!--  Links -->
-          <!-- --------------------------------------------------------------- -->
-
-
         </div>
 
         <!-- Mobile Menu -->
-        <button mat-icon-button (click)="filterNavRight.toggle()" class="d-flex d-lg-none">
+        <button
+          mat-icon-button
+          (click)="filterNavRight.toggle()"
+          class="d-flex d-lg-none"
+        >
           <i-tabler name="menu-2" class="icon-20 d-flex"></i-tabler>
         </button>
       </div>
@@ -55,104 +40,159 @@
         <div class="col-12">
           <div class="search-bar">
             <div class="filter">
-              <img src="./assets/images/Icons/Ranks.svg" alt="Logo" class="material-icons-custom" />
+              <img
+                src="./assets/images/Icons/Ranks.svg"
+                alt="Logo"
+                class="material-icons-custom"
+              />
               <mat-form-field appearance="outline">
                 <mat-label>Rank</mat-label>
-                <mat-select [(ngModel)]="selectedRank" (selectionChange)="onRankChange($event.value)">
-                  <mat-option *ngFor="let rank of uniqueRanks" [value]="rank"> {{ rank }}</mat-option>
+                <mat-select
+                  [(ngModel)]="selectedRank"
+                  (selectionChange)="onRankChange($event.value)"
+                >
+                  <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
+                    {{ rank }}</mat-option
+                  >
                 </mat-select>
               </mat-form-field>
             </div>
-
             <div class="divider"></div>
-
             <div class="filter">
-              <img src="./assets/images/Icons/Location.svg" alt="Logo" class="material-icons-custom" />
-
+              <img
+                src="./assets/images/Icons/Location.svg"
+                alt="Logo"
+                class="material-icons-custom"
+              />
               <mat-form-field appearance="outline">
                 <mat-label>Location</mat-label>
-                <mat-select [(ngModel)]="selectedLocation" (selectionChange)="onLocationChange($event)">
-                  <mat-option *ngFor="let country of countryList" [value]="country.code">{{ country.name }} ({{
-                    country.code }})</mat-option>
+                <mat-select
+                  [(ngModel)]="selectedLocation"
+                  (selectionChange)="onLocationChange($event)"
+                >
+                  <mat-option
+                    *ngFor="let country of countryList"
+                    [value]="country.code"
+                    >{{ country.name }} ({{ country.code }})</mat-option
+                  >
                 </mat-select>
               </mat-form-field>
             </div>
-
             <div class="divider"></div>
-
             <div class="input-keyword">
               <span class="material-icons material-icons-custom">apps</span>
               <mat-form-field appearance="outline">
                 <mat-label>Your keyword...</mat-label>
-                <input matInput placeholder="Your keyword..." [(ngModel)]="keyword" (keydown.enter)="onSearch()"
-                  autocomplete="off" />
+                <input
+                  matInput
+                  placeholder="Your keyword..."
+                  [(ngModel)]="keyword"
+                  (keydown.enter)="onSearch()"
+                  autocomplete="off"
+                />
               </mat-form-field>
             </div>
-
-            <button mat-flat-button color="primary" class="bg-primary" (click)="onSearch()">
+            <button
+              mat-flat-button
+              color="primary"
+              class="bg-primary"
+              (click)="onSearch()"
+            >
               Search
             </button>
-              <button mat-flat-button color="primary" class="bg-primary" (click)="clearFilters()">
+            <button
+              mat-flat-button
+              color="primary"
+              class="bg-primary"
+              (click)="clearFilters()"
+            >
               Clear
             </button>
           </div>
         </div>
-
       </div>
-
     </div>
     <div class="container m-t-48">
       <div class="row">
-
-        <div *ngFor="let job of jobPostingList" class="col-lg-4 col-sm-6 m-b-20">
-          <mat-card class="cardWithShadow position-relative card-hover cursor-pointer h-100 m-b-0 ">
-            <img mat-card-image [src]="job.featured_image || './assets/images/noimage.jpg'" alt="Job Image"
-              alt="Photo of a Shiba Inu" class="Job-Image" />
-            <div class="card-overlay h-100 d-flex p-16 p-y-0 align-items-end justify-content-end">
-              <span class="f-s-12 f-w-600 m-y-16 bg-white rounded-pill p-x-8">{{ job.date_published | date:'dd MMM yyyy'
-                }}</span>
+        <div
+          *ngFor="let job of jobPostingList"
+          class="col-lg-4 col-sm-6 m-b-20"
+        >
+          <mat-card
+            class="cardWithShadow position-relative card-hover cursor-pointer h-100 m-b-0"
+          >
+            <img
+              mat-card-image
+              [src]="job.featured_image || './assets/images/noimage.jpg'"
+              alt="Job Image"
+              alt="Photo of a Shiba Inu"
+              class="Job-Image"
+            />
+            <div
+              class="card-overlay h-100 d-flex p-16 p-y-0 align-items-end justify-content-end"
+            >
+              <span class="f-s-12 f-w-600 m-y-16 bg-white rounded-pill p-x-8">{{
+                job.date_published | date : "dd MMM yyyy"
+              }}</span>
             </div>
             <mat-card-content class="card-home">
-              <mat-card-title class="mat-headline-6 m-t-10">{{ job.title }}</mat-card-title>
+              <mat-card-title class="mat-headline-6 m-t-10">{{
+                job.title
+              }}</mat-card-title>
               <p class="job-description">
                 {{ job.full_description }}
               </p>
-              <div style="min-height: 70px;">
-
-                <div class="job-tags job-description" *ngIf="job.skills_required?.length > 0">
-                  <span class="tags f-s-14 p-x-10 p-y-2 m-b-12 d-inline-block rounded-pill m-r-4"
-                    *ngFor="let skill of job.skills_required">{{ skill }}</span>
+              <div style="min-height: 70px">
+                <div
+                  class="job-tags job-description"
+                  *ngIf="job.skills_required?.length > 0"
+                >
+                  <span
+                    class="tags f-s-14 p-x-10 p-y-2 m-b-12 d-inline-block rounded-pill m-r-4"
+                    *ngFor="let skill of job.skills_required"
+                    >{{ skill }}</span
+                  >
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <a mat-flat-button color="primary" class="bg-primary" (click)="goToJobDetail(job.id)">
+                <a
+                  mat-flat-button
+                  color="primary"
+                  class="bg-primary"
+                  (click)="goToJobDetail(job.id)"
+                >
                   Read more
                 </a>
               </div>
             </mat-card-content>
           </mat-card>
         </div>
-        <div *ngIf="jobPostingList?.length === 0" class="no-records-message col-12 text-center">
+        <div
+          *ngIf="jobPostingList?.length === 0"
+          class="no-records-message col-12 text-center"
+        >
           No record found.
         </div>
-
-
-
-
       </div>
-
     </div>
-    <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
-      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
-      aria-label="Select page">
+    <mat-paginator
+      [length]="total"
+      [pageSize]="pageConfig.perPage"
+      [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+      aria-label="Select page"
+    >
     </mat-paginator>
-
   </mat-sidenav-content>
-
-  <!-- ------------------------------------------------------------------
-    Mobile Sidebar
-    ------------------------------------------------------------------ -->
-  <mat-sidenav #filterNavRight mode="over" position="end" class="filter-sidebar">
+  <!-- Mobile Sidebar -->
+  <mat-sidenav
+    #filterNavRight
+    mode="over"
+    position="end"
+    class="filter-sidebar"
+  >
     <a mat-button>About us</a>
     <a mat-button>Ship Management</a>
     <a mat-button>Crew Management</a>

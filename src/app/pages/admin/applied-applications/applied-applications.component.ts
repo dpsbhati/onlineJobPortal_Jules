@@ -7,12 +7,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTableModule } from '@angular/material/table'
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator'
-import { MatTableDataSource } from '@angular/material/table'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatSelectModule } from '@angular/material/select'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Router } from '@angular/router'
 import { AuthService } from 'src/app/core/services/authentication/auth.service'
-import { AdminService } from 'src/app/core/services/admin/admin.service'
 import { HelperService } from 'src/app/core/helpers/helper.service'
 import { NotifyService } from 'src/app/core/services/notify.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
@@ -66,11 +64,9 @@ export class AppliedApplicationsComponent implements OnInit {
   userRole: string
   constructor(
     private authService: AuthService,
-    private route: ActivatedRoute,
     private userService: UserService,
     private router: Router,
     private helperService: HelperService,
-    private notify: NotifyService,
     private loader: LoaderService,
   ) {
     this.userRole = this.authService.getUserRole();
@@ -80,11 +76,6 @@ export class AppliedApplicationsComponent implements OnInit {
     this.getAllData();
     this.onPagination();
   }
-
-  openDialog(action: string, element: any) {
-    console.log(action, element)
-  }
-
   onPagination(): void {
     this.loader.show();
     this.pageConfig.whereClause = this.helperService.getAllFilters(

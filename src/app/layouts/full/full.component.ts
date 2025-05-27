@@ -1,4 +1,4 @@
-import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
@@ -7,7 +7,6 @@ import { AppSettings } from 'src/app/config';
 import { filter } from 'rxjs/operators';
 import { NavigationEnd, Router } from '@angular/router';
 import { navItems } from './vertical/sidebar/sidebar-data';
-import { NavService } from '../../services/nav.service';
 import { AppNavItemComponent } from './vertical/sidebar/nav-item/nav-item.component';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
@@ -19,9 +18,6 @@ import { HeaderComponent } from './vertical/header/header.component';
 import { AppHorizontalHeaderComponent } from './horizontal/header/header.component';
 import { AppHorizontalSidebarComponent } from './horizontal/sidebar/sidebar.component';
 import { AppBreadcrumbComponent } from './shared/breadcrumb/breadcrumb.component';
-// import { CustomizerComponent } from './shared/customizer/customizer.component';
-import { AppAuthBrandingComponent } from './vertical/sidebar/auth-branding.component';
-import { AppSideLoginComponent } from 'src/app/pages/authentication/side-login/side-login.component';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -57,8 +53,7 @@ interface quicklinks {
     HeaderComponent,
     AppHorizontalHeaderComponent,
     AppHorizontalSidebarComponent,
-    AppBreadcrumbComponent,
-    // CustomizerComponent,
+    AppBreadcrumbComponent
   ],
   templateUrl: './full.component.html',
   styleUrls: [],
@@ -66,7 +61,6 @@ interface quicklinks {
 })
 export class FullComponent implements OnInit {
   navItems = navItems;
-
   @ViewChild('leftsidenav')
   public sidenav: MatSidenav;
   resView = false;
@@ -194,10 +188,8 @@ export class FullComponent implements OnInit {
 
   constructor(
     private settings: CoreService,
-    private mediaMatcher: MediaMatcher,
     private router: Router,
-    private breakpointObserver: BreakpointObserver,
-    private navService: NavService
+    private breakpointObserver: BreakpointObserver
   ) {
     this.htmlElement = document.querySelector('html')!;
     this.layoutChangesSubscription = this.breakpointObserver

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { GenericService } from '../generic.service';
 
@@ -26,12 +26,6 @@ export class UserService {
     return this._user.asObservable();
   }
 
-  //user pagination api
-  // userPagination(payload) {
-  //     // return this._generic.Post<any>(`user/pagination`, payload);
-  //     return this._generic.Get<any>(`user/get-All`);
-  // }
-
   getUserById(userId: string): Observable<any> {
     const key = 'id';
     return this.genericService.Get<any>(`user-profile/get-one?id=${userId}`);
@@ -45,14 +39,6 @@ export class UserService {
 
     return this.genericService.Post('uploads/files', formData);
   }
-
-  // getAllComapny(): Observable<any> {
-  //     return this._generic.Get<any>(`company/getAllCompanies`);
-  // }
-
-  // getAllRole(): Observable<any> {
-  //     return this._generic.Get<any>(`role/getAll`);
-  // }
 
   SaveUserProfile(data: any): Observable<any> {
     return this.genericService.Post<any>(`user-profile/update-user-profile`, data);

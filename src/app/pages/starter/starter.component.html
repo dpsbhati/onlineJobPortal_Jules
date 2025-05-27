@@ -9,8 +9,11 @@
         <mat-card-subtitle class="f-s-14 f-w-400 m-t-0 m-b-10">
           {{ productcard.subtitle }}
         </mat-card-subtitle>
-        <mat-progress-bar mode="determinate" class="{{ productcard.color }}"
-          value="{{productcard.value}}"></mat-progress-bar>
+        <mat-progress-bar
+          mode="determinate"
+          class="{{ productcard.color }}"
+          value="{{ productcard.value }}"
+        ></mat-progress-bar>
       </mat-card-content>
     </mat-card>
   </div>
@@ -26,23 +29,30 @@
           <div>
             <div class="hstack gap-12 align-items-center flex-row">
               <div class="hstack gap-4 text-primary flex-row">
-                <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
                 <span class="f-s-14">Applied</span>
               </div>
               <div class="hstack gap-4 text-secondary flex-row">
-                <!-- <i-tabler name="circle-filled" class="icon-12"></i-tabler> -->
                 <span class="f-s-14">Shortlisted</span>
               </div>
             </div>
           </div>
         </div>
-        
 
-        <apx-chart [series]="salesChart.series" [dataLabels]="salesChart.dataLabels" [chart]="salesChart.chart"
-          [legend]="salesChart.legend" [xaxis]="salesChart.xaxis" [yaxis]="salesChart.yaxis" [grid]="salesChart.grid"
-          [stroke]="salesChart.stroke" [fill]="salesChart.fill" [tooltip]="salesChart.tooltip"
-          [colors]="salesChart.colors" [responsive]="salesChart.responsive"
-          [plotOptions]="salesChart.plotOptions"></apx-chart>
+        <apx-chart
+          [series]="salesChart.series"
+          [dataLabels]="salesChart.dataLabels"
+          [chart]="salesChart.chart"
+          [legend]="salesChart.legend"
+          [xaxis]="salesChart.xaxis"
+          [yaxis]="salesChart.yaxis"
+          [grid]="salesChart.grid"
+          [stroke]="salesChart.stroke"
+          [fill]="salesChart.fill"
+          [tooltip]="salesChart.tooltip"
+          [colors]="salesChart.colors"
+          [responsive]="salesChart.responsive"
+          [plotOptions]="salesChart.plotOptions"
+        ></apx-chart>
       </mat-card-content>
     </mat-card>
   </div>
@@ -52,31 +62,47 @@
         <mat-card-title>Our Visitors</mat-card-title>
         <mat-card-subtitle>Different Devices Used to Visit</mat-card-subtitle>
         <div id="visitor-chart" class="m-t-24 d-flex flex-col">
-          <apx-chart [series]="ourvisitorChart.series" [chart]="ourvisitorChart.chart" [labels]="ourvisitorChart.labels"
-            [responsive]="ourvisitorChart.responsive" [tooltip]="ourvisitorChart.tooltip"
-            [legend]="ourvisitorChart.legend" [colors]="ourvisitorChart.colors"
-            [dataLabels]="ourvisitorChart.dataLabels" [plotOptions]="ourvisitorChart.plotOptions"
-            [stroke]="ourvisitorChart.stroke" [responsive]="ourvisitorChart.responsive">
+          <apx-chart
+            [series]="ourvisitorChart.series"
+            [chart]="ourvisitorChart.chart"
+            [labels]="ourvisitorChart.labels"
+            [responsive]="ourvisitorChart.responsive"
+            [tooltip]="ourvisitorChart.tooltip"
+            [legend]="ourvisitorChart.legend"
+            [colors]="ourvisitorChart.colors"
+            [dataLabels]="ourvisitorChart.dataLabels"
+            [plotOptions]="ourvisitorChart.plotOptions"
+            [stroke]="ourvisitorChart.stroke"
+            [responsive]="ourvisitorChart.responsive"
+          >
           </apx-chart>
         </div>
       </mat-card-content>
       <div class="b-t-1 p-x-30 p-y-24">
         <div class="d-flex align-items-center justify-content-center gap-30">
           <div class="hstack flex-row gap-12 align-items-center">
-            <i-tabler name="circle-filled" class="text-primary icon-12 d-flex"></i-tabler>
+            <i-tabler
+              name="circle-filled"
+              class="text-primary icon-12 d-flex"
+            ></i-tabler>
             <span class="f-s-14 text-primary">Applied</span>
           </div>
           <div class="hstack flex-row gap-12 align-items-center">
-            <i-tabler name="circle-filled" class="text-body icon-12 d-flex"></i-tabler>
+            <i-tabler
+              name="circle-filled"
+              class="text-body icon-12 d-flex"
+            ></i-tabler>
             <span class="f-s-14 text-body">Shortlisted</span>
           </div>
           <div class="hstack flex-row gap-12 align-items-center">
-            <i-tabler name="circle-filled" class="text-secondary icon-12 d-flex"></i-tabler>
+            <i-tabler
+              name="circle-filled"
+              class="text-secondary icon-12 d-flex"
+            ></i-tabler>
             <span class="f-s-14 text-secondary">Rejected</span>
           </div>
         </div>
       </div>
-      
     </mat-card>
   </div>
 </div>

@@ -8,21 +8,6 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const authService = inject(AuthService);
     const roleService = inject(RoleService);
     const router = inject(Router);
-
-    // const user = authService.currentUserValue;
-
-    // if (!user) {
-    //   router.navigate(['/auth/login']);
-    //   return false;
-    // }
-
-    // const currentRoute = route.url.map(segment => segment.path).join('/');
-    // if (roleService.canAccess(user.role, '/' + currentRoute)) {
-    //   return true;
-    // }
-
-    // router.navigate(['/job-list']);
-    // return false;
     const user = authService.currentUserValue;  // Get current user from auth service
 
     if (!user) {
