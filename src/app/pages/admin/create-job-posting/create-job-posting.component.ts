@@ -72,15 +72,15 @@ export class CreateJobPostingComponent {
     this.jobForm = new FormGroup(
       {
         id: new FormControl(''),
-        job_type: new FormControl('', Validators.required),
+        vessel_type: new FormControl('', Validators.required),
         rank: new FormControl('', Validators.required),
         skills_required: new FormControl(
           [],
-          [
-            Validators.maxLength(50),
-            this.SkillArrayValidator(1, 10),
-            this.skillsValidator(2, 50)
-          ]
+          // [
+          //   Validators.maxLength(50),
+          //   this.SkillArrayValidator(1, 10),
+          //   this.skillsValidator(2, 50)
+          // ]
         ),
         // title: new FormControl('', [
         //   Validators.required,

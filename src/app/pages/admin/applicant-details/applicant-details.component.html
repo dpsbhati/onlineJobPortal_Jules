@@ -19,7 +19,9 @@
               'bg-light-error  text-error ':
                 applicantDetails.status.toLowerCase() === 'rejected',
               'bg-light-success  text-success':
-                applicantDetails.status.toLowerCase() === 'shortlisted'
+                applicantDetails.status.toLowerCase() === 'shortlisted',
+                
+               
             }">
             {{ applicantDetails.status || "-" }}
           </span>
