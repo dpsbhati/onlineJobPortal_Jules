@@ -13,6 +13,8 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { ApplicationStatus } from './enums/applications.-status';
 import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 import { count } from 'console';
+import { NotificationGateway } from 'src/notifications/notifications.gateway';
+import { Users } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -24,10 +26,15 @@ export class ApplicationService {
     private readonly notificationsService: NotificationsService,
     @InjectRepository(JobPosting)
     private jobPostingRepository: Repository<JobPosting>,
+    @InjectRepository(Users)
+    private userRepository: Repository<Users>,
+    private readonly notificationGateway: NotificationGateway,
   ) {}
 
-  async applyForJob(createApplicationDto: CreateApplicationDto) {
+  async applyForJob(createApplicationDto: CreateApplicationDto, req: any) {
     try {
+      console.log('req user======>>>>>', req.user);
+
       const { job_id, user_id } = createApplicationDto;
 
       // Check if the user has already applied for this job
@@ -84,12 +91,37 @@ export class ApplicationService {
             savedApplication.status as keyof typeof ApplicationStatus
           ], // Ensure it's an enum value
         to: jobDetails.user.email,
-        subject: 'New Application',
-        content: `Your application for the job ${jobDetails.job.title} has been ${savedApplication.status}.`,
+        subject: 'New Job Application Received',
+        content: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.title}.`,
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
 
+      console.log('savedNotification', savedNotification);
+
+      const adminUsers = await this.userRepository.find({
+        where: { role: 'admin', isActive: true },
+        select: ['id'],
+      });
+
+      const adminUserIds = adminUsers.map((admin) => admin.id);
+
+      console.log('adminUserIds', adminUserIds);
+      
+
+      // Send notification to all admins
+      this.notificationGateway.emitNotificationToUsers(
+        adminUserIds,
+        'jobApply',
+        {
+          userId: jobDetails.user.id, // applicant's userId
+          title: 'New Job Application Received',
+          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.title}.`,
+          applicationId: savedApplication.id,
+          status: savedApplication.status,
+          createdAt: new Date(),
+        },
+      );
       return WriteResponse(
         200,
         savedApplication,

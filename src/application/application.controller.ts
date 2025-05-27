@@ -33,8 +33,8 @@ export class ApplicationController {
 
   @Post('apply')
   @ApiOperation({ summary: 'Apply for a job' })
-  apply(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationService.applyForJob(createApplicationDto);
+  apply(@Body() createApplicationDto: CreateApplicationDto, @Req() req: any) {
+    return this.applicationService.applyForJob(createApplicationDto,req);
   }
 
   @Get('get-all')
