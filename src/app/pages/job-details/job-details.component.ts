@@ -12,6 +12,8 @@ import { MaterialModule } from 'src/app/material.module'
 import { BrandingComponent } from "../../layouts/full/vertical/sidebar/branding.component";
 import { MatDialog } from '@angular/material/dialog';
 import { ApplyJobComponent } from '../admin/apply-job/apply-job.component';
+import { Subscription } from 'rxjs';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 @Component({
   selector: 'app-job-details',
@@ -42,6 +44,7 @@ export class JobDetailsComponent {
   submitted = false;
   jobId: any;
   user: any;
+  private wbesocketSubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +55,7 @@ export class JobDetailsComponent {
     private authService: AuthService,
     public dialog: MatDialog,
     private toastr: ToastrService,
-
+    private webSocketService: WebsocketService,
   ) {
     this.userRole = this.authService.getUserRole();
     this.userDetailsForm = new FormGroup({
@@ -65,8 +68,9 @@ export class JobDetailsComponent {
   }
 
   ngOnInit() {
-      this.jobId = this.route.snapshot.paramMap.get('id') as string;
-       this.user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.checkwebsocket();
+    this.jobId = this.route.snapshot.paramMap.get('id') as string;
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
     this.userDetailsForm.patchValue({
       job_id: this.jobId,
@@ -76,7 +80,6 @@ export class JobDetailsComponent {
     if (this.id) {
       this.loadJobDetails(this.id);
     }
-
   }
 
   formatSkills(skills: string): string[] {
@@ -251,7 +254,37 @@ export class JobDetailsComponent {
     }
   }
 
+  checkwebsocket() {
+    //Event
+    let userId: any = localStorage.getItem('user');
+    const params = { userId: JSON.parse(userId)?.id };
+    this.wbesocketSubscription = this.webSocketService
+      .listen('jobApply', params)
+      .subscribe({
+        next: (messages) => {
+          console.log(messages)
+          if (messages) {
+            //Add one to unread count in real time
+            // this.unreadCount = this.unreadCount + 1;
 
+            // messages.data.notification.isRead = false;
+            // this._notificationsService.notificationsData.unshift(
+            //   messages.data.notification
+            // );
+            // const updatedNotification =
+            //   this._notificationsService.notificationsData;
+            // this._notificationsService.updateNotificationsList(
+            //   updatedNotification
+            // );
+          }
+        },
+        error: (err) => {
+          console.log(err)
+          // this.wbesocketSubscription.unsubscribe();
+          // this.webSocketService.disconnect();
+        },
+      });
+  }
 
 }
 
