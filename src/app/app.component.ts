@@ -19,6 +19,38 @@ export class AppComponent {
 
   ngOnInit() {
     this.socketService.connect(environment.webSocketUrl)
+    // this.checkwebsocket();
   }
 
+  // checkwebsocket() {
+  //   //Event
+  //   let userId: any = localStorage.getItem('user');
+  //   const params = { userId: JSON.parse(userId)?.id };
+  //   this.webSocketSubscription = this.socketService
+  //     .listen('jobApply', params)
+  //     .subscribe({
+  //       next: (messages) => {
+  //         console.log(messages)
+  //         if (messages) {
+  //           //Add one to unread count in real time
+  //           // this.unreadCount = this.unreadCount + 1;
+
+  //           // messages.data.notification.isRead = false;
+  //           // this._notificationsService.notificationsData.unshift(
+  //           //   messages.data.notification
+  //           // );
+  //           // const updatedNotification =
+  //           //   this._notificationsService.notificationsData;
+  //           // this._notificationsService.updateNotificationsList(
+  //           //   updatedNotification
+  //           // );
+  //         }
+  //       },
+  //       error: (err) => {
+  //         console.log(err)
+  //         // this.wbesocketSubscription.unsubscribe();
+  //         // this.webSocketService.disconnect();
+  //       },
+  //     });
+  // }
 }

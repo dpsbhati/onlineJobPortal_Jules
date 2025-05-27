@@ -67,7 +67,6 @@ export class JobDetailsComponent {
   }
 
   ngOnInit() {
-    this.checkwebsocket();
     this.jobId = this.route.snapshot.paramMap.get('id') as string;
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -174,6 +173,7 @@ export class JobDetailsComponent {
       this.adminService.applyJobs(apiPayload).subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
+            this.checkwebsocket();
             this.loader.hide();
             this.toastr.success(response.message);
             this.router.navigate(['/Applied-Applications']);
