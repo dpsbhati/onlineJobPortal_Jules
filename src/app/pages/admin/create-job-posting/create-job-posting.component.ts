@@ -72,24 +72,28 @@ export class CreateJobPostingComponent {
     this.jobForm = new FormGroup(
       {
         id: new FormControl(''),
-        job_type: new FormControl('', Validators.required),
+        vessel_type: new FormControl('', Validators.required),
         rank: new FormControl('', Validators.required),
         skills_required: new FormControl(
           [],
-          [
-            Validators.required,
-            Validators.maxLength(50),
-            this.SkillArrayValidator(1, 10),
-            this.skillsValidator(2, 50)
-          ]
+          // [
+          //   Validators.maxLength(50),
+          //   this.SkillArrayValidator(1, 10),
+          //   this.skillsValidator(2, 50)
+          // ]
         ),
-        title: new FormControl('', [
-          Validators.required,
-          Validators.minLength(2),
-          this.minLengthWithoutSpaces(2),
-          Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'),
-          Validators.maxLength(50)
-        ]),
+        // title: new FormControl('', [
+        //   Validators.required,
+        //   Validators.minLength(2),
+        //   this.minLengthWithoutSpaces(2),
+        //   Validators.pattern('^[a-zA-Z0-9\\s,().-]+$'),
+        //   Validators.maxLength(50)
+        // ]),
+        number_of_vacancy: new FormControl('', [
+  Validators.required,
+  Validators.pattern(/^[0-9]+$/), // digits only
+  Validators.maxLength(4)         // optional: max 4 digits
+]),
         featured_image: new FormControl(null, Validators.required),
         date_published: new FormControl(this.todaysDate, Validators.required),
         deadline: new FormControl('', [Validators.required]),
@@ -99,15 +103,15 @@ export class CreateJobPostingComponent {
           this.minLengthWithoutSpaces(2),
           Validators.maxLength(250)
         ]),
-        full_description: new FormControl('', [
-          Validators.required,
-          Validators.min(2),
-          this.minLengthWithoutSpaces(2),
-          Validators.maxLength(1000)
-        ]),
-        assignment_duration: new FormControl('', [
-          Validators.required,
-        ]),
+        // full_description: new FormControl('', [
+        //   Validators.required,
+        //   Validators.min(2),
+        //   this.minLengthWithoutSpaces(2),
+        //   Validators.maxLength(1000)
+        // ]),
+        // assignment_duration: new FormControl('', [
+        //   Validators.required,
+        // ]),
         employer: new FormControl('', [
           Validators.required,
           Validators.min(2),
@@ -118,9 +122,9 @@ export class CreateJobPostingComponent {
           Validators.maxLength(50)
         ]),
         start_salary: new FormControl('', [
-          Validators.required,
           Validators.min(3),
-          Validators.maxLength(7)
+     Validators.maxLength(30),
+  Validators.pattern('^[a-zA-Z0-9\\s,\\-]+$')
         ]),
         end_salary: new FormControl(null, [
         ]),
@@ -131,7 +135,7 @@ export class CreateJobPostingComponent {
           Validators.maxLength(1500)
         ]),
         country_code: new FormControl('', Validators.required),
-        address: new FormControl('', [
+        address: new FormControl('Philippines, Navilands Marine Inc', [
           Validators.required,
           Validators.min(2),
           this.minLengthWithoutSpaces(2),
@@ -229,6 +233,8 @@ export class CreateJobPostingComponent {
   }
 
   onSubmit(): void {
+    console.log(this.jobForm.valid,'valid');
+    console.log(this.jobForm)
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
@@ -367,19 +373,31 @@ export class CreateJobPostingComponent {
     }
   }
 
+  // formatSalary(controlName: string): void {
+  //   const control = this.jobForm.get(controlName)
+  //   if (control) {
+  //     let value = control.value
+  //     if (value) {
+  //       value = value.replace(/[^0-9]/g, '')
+  //       const formattedValue = new Intl.NumberFormat('en-US').format(
+  //         Number(value)
+  //       )
+  //       control.setValue(formattedValue, { emitEvent: false })
+  //     }
+  //   }
+  // }
   formatSalary(controlName: string): void {
-    const control = this.jobForm.get(controlName)
-    if (control) {
-      let value = control.value
-      if (value) {
-        value = value.replace(/[^0-9]/g, '')
-        const formattedValue = new Intl.NumberFormat('en-US').format(
-          Number(value)
-        )
-        control.setValue(formattedValue, { emitEvent: false })
-      }
+  const control = this.jobForm.get(controlName);
+  if (control) {
+    let value = control.value;
+    if (value) {
+      // Allow only letters, digits, spaces, commas, and dashes
+      value = value.replace(/[^a-zA-Z0-9\s,-]/g, '');
+      control.setValue(value, { emitEvent: false });
     }
   }
+}
+ 
 
   sanitizeFormValues(): void {
     Object.keys(this.jobForm.controls).forEach(key => {
@@ -489,16 +507,18 @@ export class CreateJobPostingComponent {
 
         this.jobForm.patchValue({
           id: data.id || '',
-          job_type: data.job_type || '',
+          // job_type: data.job_type || '',
+          vessel_type: data.vessel_type || '',
           rank: data.rank || '',
           skills_required: this.skillsArray,
-          title: data.title || '',
+          // title: data.title || '',
+          number_of_vacancy: data.number_of_vacancy || '',
           featured_image: data.featured_image || null,
           date_published: formattedDatePublished || '',
           deadline: formattedDeadline || '',
           short_description: data.short_description || '',
-          full_description: data.full_description || '',
-          assignment_duration: data.assignment_duration || '',
+          // full_description: data.full_description || '',
+          // assignment_duration: data.assignment_duration || '',
           employer: data.employer || '',
           required_experience: data.required_experience || '',
           start_salary: formattedStartSalary || 0,

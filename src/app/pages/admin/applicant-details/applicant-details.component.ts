@@ -29,7 +29,7 @@ export class ApplicantDetailsComponent {
   applicantDetails: any = null;
   selectedStatus: string = '';
   adminComments: string = '';
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
   keySkills: string[] = [];
   certifications: any[] = [];
   isLoading: boolean = false;
@@ -102,7 +102,9 @@ export class ApplicantDetailsComponent {
     timeZone: 'UTC'  // Isse timezone shift avoid hota hai
   });
 }
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
 formatPreferences(prefs: any): string {
   if (!prefs) return '';
 

@@ -47,6 +47,11 @@ export class UserService {
   getAppliedJobs(payload: any): Observable<any> {
     return this.genericService.Post(`applications/pagination`, payload);
   }
+   updateApplicationStatus(id: string, status: string): Observable<any> {
+  const payload = { id, status };
+  return this.genericService.Post('applications/updateApplicationStatus', payload);
+}
+
 
   getAllAppliedJobs() {
     return this.genericService.Get('applications/get-all');

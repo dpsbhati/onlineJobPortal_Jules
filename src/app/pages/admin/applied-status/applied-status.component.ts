@@ -55,7 +55,9 @@ export class AppliedStatusComponent {
       this.loadJobDetails(this.id);
     }
   }
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
   isAdmin(): boolean {
     return this.userRole.toUpperCase() === UserRole.ADMIN;
   }

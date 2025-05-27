@@ -16,6 +16,8 @@ import { NotifyService } from 'src/app/core/services/notify.service'
 import { LoaderService } from 'src/app/core/services/loader.service'
 import { UserService } from 'src/app/core/services/user/user.service'
 import { FormsModule } from '@angular/forms'
+import { MatDialog } from '@angular/material/dialog'
+import { ToastrService } from 'ngx-toastr'
 @Component({
   standalone: true,
   imports: [
@@ -36,6 +38,8 @@ import { FormsModule } from '@angular/forms'
   styleUrl: './applied-applications.component.scss'
 })
 export class AppliedApplicationsComponent implements OnInit {
+    showCancelModal = false;
+  cancelAppId: string | null = null;
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -46,7 +50,7 @@ export class AppliedApplicationsComponent implements OnInit {
   allData: any;
   total: any;
   appliedData: any
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
   filters = {
     all: '',
     name: '',
@@ -65,7 +69,10 @@ export class AppliedApplicationsComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private dialog: MatDialog,
+      private notify: NotifyService,
     private router: Router,
+     private toastr: ToastrService,
     private helperService: HelperService,
     private loader: LoaderService,
   ) {
@@ -110,7 +117,9 @@ export class AppliedApplicationsComponent implements OnInit {
       },
     });
   }
-
+toLowerCaseSafe(value: string | null | undefined): string {
+  return value ? value.toLowerCase() : '';
+}
   onPageChange(event: any): void {
     this.pageConfig.curPage = event.pageIndex + 1;
     this.pageConfig.perPage = event.pageSize;
@@ -160,4 +169,40 @@ export class AppliedApplicationsComponent implements OnInit {
       }
     });
   }
+    openCancelModal(applicationId: string) {
+    this.cancelAppId = applicationId;
+    this.showCancelModal = true;
+  }
+
+  closeCancelModal() {
+    this.showCancelModal = false;
+    this.cancelAppId = null;
+  }
+
+
+
+confirmCancel() {
+  if (this.cancelAppId) {
+    this.loader.show();
+    this.userService.updateApplicationStatus(this.cancelAppId, 'Cancel').subscribe({
+      next: (res: any) => {
+        this.loader.hide();
+        if (res.statusCode === 200) {
+          this.toastr.success(res.message);
+          this.closeCancelModal();
+          this.onSearch(); // Refresh the list to reflect changes
+        } else {
+          // this.notify.error('Failed to cancel application');
+        }
+      },
+      error: (err) => {
+        this.loader.hide();
+        // this.notify.error('Error occurred while cancelling');
+        console.error('Cancel API error:', err);
+      }
+    });
+  }
+}
+
+
 }
