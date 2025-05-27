@@ -19,7 +19,10 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
-import { CreateApplicationDto } from './dto/create-application.dto';
+import {
+  CreateApplicationDto,
+  UpdateApplicationStatusDto,
+} from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -117,6 +120,15 @@ export class ApplicationController {
   })
   remove(@Body('id') id: string) {
     return this.applicationService.remove(id);
+  }
+
+  @Post('updateApplicationStatus')
+  updateApplicationStatus(
+    @Body() updateApplicationStatusDto: UpdateApplicationStatusDto,
+  ) {
+    return this.applicationService.updateApplicationStatus(
+      updateApplicationStatusDto,
+    );
   }
 
   @Post('pagination')

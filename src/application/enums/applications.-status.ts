@@ -1,5 +1,9 @@
 export enum ApplicationStatus {
-    PENDING = 'pending',
+  PROCESSED = 'Processed',
+  ENDORSED = 'Endorsed',
+  HIRED_APPROVED = 'Approved',
+  DEPLOYED = 'Deployed',
+    PENDING = 'Pending',
     UNDER_REVIEW = 'under_review',
     SHORTLISTED = 'shortlisted',
     INTERVIEW_SCHEDULED = 'interview_scheduled',
@@ -13,5 +17,6 @@ export enum ApplicationStatus {
     COMPLETED = 'completed',
     ON_HOLD = 'on_hold',
     REJECTED = 'rejected',
+    CANCEL = 'Cancel',
     WITHDRAWN = 'withdrawn'
   }

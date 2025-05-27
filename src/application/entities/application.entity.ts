@@ -22,7 +22,7 @@ export class applications {
 
   @Column({
     type: 'enum',
-    enum: ['Pending', 'Shortlisted', 'Rejected', 'Hired'],
+    enum: ['Pending','Shortlisted','Processed','Endorsed','Approved','Deployed','Rejected'],
     nullable: true,
   })
   status: string;

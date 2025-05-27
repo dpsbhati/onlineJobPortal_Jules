@@ -4,7 +4,10 @@ import { CoursesAndCertification } from 'src/courses_and_certification/entities/
 import { IPagination } from 'src/shared/paginationEum';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { Repository } from 'typeorm';
-import { CreateApplicationDto } from './dto/create-application.dto';
+import {
+  CreateApplicationDto,
+  UpdateApplicationStatusDto,
+} from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { applications } from './entities/application.entity';
 
@@ -511,6 +514,45 @@ export class ApplicationService {
     }
     return application;
   }
+
+  // Update Application Status
+async updateApplicationStatus(
+  updateApplicationStatusDto: UpdateApplicationStatusDto,
+) {
+  const { id, status } = updateApplicationStatusDto;
+
+  const application = await this.applicationRepository.findOne({
+    where: { id },
+  });
+
+  if (!application) {
+    return WriteResponse(404, {}, `Application with ID ${id} not found.`);
+  }
+
+  // Allow only PENDING to CANCELLED transition
+  if (
+    application.status === ApplicationStatus.PENDING
+  ) {
+    await this.applicationRepository.update({ id }, { status });
+
+    const updatedApplication = await this.applicationRepository.findOne({
+      where: { id },
+    });
+
+    return WriteResponse(
+      200,
+      updatedApplication,
+      `Application status updated successfully.`,
+    );
+  }
+
+  return WriteResponse(
+    400,
+    {},
+   `Only applications in 'Pending' status can be updated. Current status is '${application.status}'.`
+  );
+}
+
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {

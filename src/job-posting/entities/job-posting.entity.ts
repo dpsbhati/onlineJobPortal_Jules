@@ -71,11 +71,17 @@ export class JobPosting {
   @Column({ type: 'varchar', length: 50, nullable: true })
   required_experience: string;
 
-  @Column({ type: 'int', nullable: true })
-  start_salary: number;
+  @Column({ type: 'varchar', nullable: true })
+  start_salary: string;
 
   @Column({ type: 'int', nullable: true })
   end_salary: number;
+
+  @Column({ type: 'int' })
+  number_of_vacancy: number;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  vessel_type: string;
 
   @Column({ type: 'int', nullable: true })
   salary: number;
