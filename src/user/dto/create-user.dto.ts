@@ -103,13 +103,13 @@ export class CreateUserDto {
   })
   career_type: CareerType;
 
-  @ApiProperty({default: false})
+  @ApiProperty({ default: false })
   isJobAlerts: boolean;
 
-  @ApiProperty({default: false})
+  @ApiProperty({ default: false })
   isNewsLetters: boolean;
 
-  @ApiProperty({default: false})
+  @ApiProperty({ default: false })
   isPrivacyPolicy: boolean;
 }
 

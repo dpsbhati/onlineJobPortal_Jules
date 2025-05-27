@@ -4,10 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { IPagination } from 'src/shared/paginationEum';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
-import {
-  ChangePasswordDto,
-  forgetPasswordDto,
-} from 'src/user/dto/create-user.dto';
+import {ChangePasswordDto,forgetPasswordDto} from 'src/user/dto/create-user.dto';
 import { MailService } from 'src/utils/mail.service';
 import { Not, Repository } from 'typeorm';
 import { UserProfile } from '../user-profile/entities/user-profile.entity';
@@ -26,7 +23,6 @@ export class UserService {
   ) {}
 
   async validateUserById(userId: any) {
-    console.log(userId);
     return this.userRepository.findOne({
       where: { id: userId },
     });
@@ -78,44 +74,7 @@ export class UserService {
         }
       }
 
-      // const TEMP_EMAIL_DOMAINS = [
-      //   'tempmail.com',
-      //   '10minutemail.com',
-      //   'guerrillamail.com',
-      //   'mailinator.com',
-      //   'yopmail.com',
-      //   'burnermail.io',
-      //   'trashmail.com',
-      //   'throwawaymail.com',
-      //   'emailondeck.com',
-      //   'getnada.com',
-      //   'maildrop.cc',
-      //   'anonaddy.com',
-      //   'dispostable.com',
-      //   'fakemailgenerator.com',
-      //   'mohmal.com',
-      //   'mytemp.email',
-      //   'tempinbox.com',
-      //   'inboxkitten.com',
-      //   'spamgourmet.com',
-      //   'throwawaymail.com',
-      // ]; // Add more as needed
-
-      // function isTemporaryEmail(email: string): boolean {
-      //   const domain = email.split('@')[1];
-      //   return TEMP_EMAIL_DOMAINS.includes(domain);
-      // }
-
-      // if (!userDto.id && isTemporaryEmail(userDto.email)) {
-      //   return WriteResponse(
-      //     400,
-      //     {},
-      //     'Temporary email addresses are not allowed.',
-      //   );
-      // }
-
-      // Create a new object excluding role only when updating
-      const userData = userDto.id
+    const userData = userDto.id
         ? { ...userDto }
         : { role: userDto.role, ...userDto }; // Include role on create
       const savedUser = await this.userRepository.save({
@@ -325,10 +284,7 @@ export class UserService {
       if (!user) {
         return WriteResponse(404, false, 'User not exists with this email');
       }
-
-      const verificationToken = this.generateVerificationToken(user.id);
-
-      const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${verificationToken}`;
+      const resetLink = `${process.env.FRONTEND_URL}/authentication/reset-password?token=${this.generateVerificationToken(user.id)}`;
 
       await this.mailerService.sendEmail(
         forgetPasswordDto.email,
@@ -340,7 +296,7 @@ export class UserService {
         'forgetpassword',
       );
       user.isPasswordReset = false;
-      user.resetToken = verificationToken;
+      user.resetToken = this.generateVerificationToken(user.id);
 
       await this.userRepository.save(user);
       return WriteResponse(
@@ -359,9 +315,7 @@ export class UserService {
 
   async resetPassword(newPassword: string, token: string) {
     try {
-      const decoded = this.jwtService.verify(token);
-
-      const userId = decoded.id;
+      const userId = this.jwtService.verify(token).id;
 
       const user = await this.userRepository.findOne({
         where: { id: userId, is_deleted: false },
@@ -421,9 +375,7 @@ export class UserService {
 
   async verifyEmail(token: string) {
     try {
-      const decoded = this.jwtService.verify(token);
-      const userId = decoded.id;
-
+      const userId = this.jwtService.verify(token).id;
       const user = await this.userRepository.findOne({
         where: { id: userId, is_deleted: false },
       });
@@ -467,8 +419,7 @@ export class UserService {
       }
 
       // Generate verification token
-      const verificationToken = this.generateVerificationToken(user.id);
-      const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
+      const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${this.generateVerificationToken(user.id)}`;
 
       // Resend the email
       await this.mailerService.sendEmail(
@@ -520,8 +471,7 @@ export class UserService {
   }
 
   private async sendVerificationEmail(user: any) {
-    const verificationToken = this.generateVerificationToken(user.id);
-    const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${verificationToken}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/authentication/email-activation?token=${this.generateVerificationToken(user.id)}`;
     await this.mailerService.sendEmail(
       user.email,
       'Verify Your Email Address',

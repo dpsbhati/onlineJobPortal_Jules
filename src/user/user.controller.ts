@@ -27,9 +27,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post('register')
   @UseGuards(RolesGuard)
@@ -156,7 +154,6 @@ export class UserController {
     },
   })
   async forgetPassword(
-    // @Body('token') token: string,
     @Body() forgetPasswordDto: forgetPasswordDto,
   ) {
     return this.userService.forgetPassword(forgetPasswordDto);

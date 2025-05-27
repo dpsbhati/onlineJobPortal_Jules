@@ -55,20 +55,7 @@ export class CreateJobPostingDto {
   @IsUUID(undefined, { message: 'id must be a valid UUID.' })
   id?: string;
 
-  @ApiProperty({
-    description: 'The job type',
-    example: 'Full-time',
-    enum: ['Full-Time', 'Part-Time', 'Flexible'],
-  })
-  @IsNotEmpty({ message: 'job_type is required.' })
-  @IsString({ message: 'job_type must be a valid string.' })
-  @IsIn(['Full-Time', 'Part-Time', 'Flexible'], {
-    message:
-      'job_type must be one of the following: Full-Time, Part-Time, Flexible.',
-  })
-  @Validate(IsNotWhitespace)
-  @Transform(({ value }) => value?.trim())
-  @MaxLength(50, { message: 'Job type cannot exceed 50 characters.' })
+  
   job_type: string;
 
   @ApiProperty({
@@ -95,16 +82,9 @@ export class CreateJobPostingDto {
   })
   featured_image: string;
 
-  @ApiProperty({
-    description: 'The title of the job posting',
-    example: 'Software Engineer',
-  })
-  @IsNotEmpty({ message: 'title is required.' })
-  @IsString({ message: 'title must be a valid string.' })
-  @Validate(IsNotWhitespace)
-  @Transform(({ value }) => value?.trim())
-  @MaxLength(150, { message: 'Title cannot exceed 150 characters.' })
   title: string;
+
+  
 
   @ApiProperty({
     description: 'The date the job was published',
@@ -134,24 +114,14 @@ export class CreateJobPostingDto {
   @Transform(({ value }) => value?.trim())
   short_description: string;
 
-  @ApiProperty({
-    description: 'A detailed description of the job',
-    example: 'You will work on full-stack development projects...',
-  })
-  @IsNotEmpty({ message: 'full_description is required.' })
-  @IsString({ message: 'full_description must be a valid string.' })
-  @Validate(IsNotWhitespace)
-  @Transform(({ value }) => value?.trim())
+  
   full_description: string;
 
   @ApiProperty({
     description: 'The starting salary',
     example: 50000,
   })
-  @IsNotEmpty({ message: 'start_salary is required.' })
-  @IsNumber({}, { message: 'start_salary must be a valid number.' })
-  @Min(0, { message: 'Starting salary must be at least 0.' })
-  start_salary: number;
+  start_salary: string;
 
   applicant_number: number;
 
@@ -169,17 +139,7 @@ export class CreateJobPostingDto {
   @MaxLength(255, { message: 'Address cannot exceed 255 characters.' })
   address: string;
 
-  @ApiProperty({
-    description: 'The duration of the assignment',
-    example: '6 months',
-  })
-  @IsNotEmpty({ message: 'assignment_duration is required.' })
-  @IsString({ message: 'assignment_duration must be a valid string.' })
-  @Validate(IsNotWhitespace)
-  @Transform(({ value }) => value?.trim())
-  @MaxLength(50, {
-    message: 'Assignment duration cannot exceed 50 characters.',
-  })
+
   assignment_duration: string;
 
   @ApiProperty({

@@ -169,8 +169,7 @@ export class UserProfile {
   @ManyToOne(() => Users, (user) => user.userProfile)
   @JoinColumn({ name: 'user_id' }) // 'user_id' in UserProfile references 'id' in Users
   user: Users;
-  
+
   // @OneToMany(() => applications, (app) => app.user_details)
   // application: applications[];
-  
 }

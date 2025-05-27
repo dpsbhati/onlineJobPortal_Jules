@@ -48,3 +48,18 @@ export class CreateApplicationDto {
   })
   additional_info?: string;
 }
+export class UpdateApplicationStatusDto{
+  @ApiProperty({
+    description: 'The unique identifier of the application.',
+  })
+  @IsUUID(undefined, { message: 'application_id must be a valid UUID.' })
+  @IsNotEmpty({ message: 'application_id is required.' })
+  id?: string;
+
+  @ApiProperty({
+    description: 'The status of the application (accepted, rejected, or pending).',
+  })
+  @IsString({ message: 'status must be a valid string.' })
+  @IsNotEmpty({ message: 'status is required.' })
+  status?: string;
+}

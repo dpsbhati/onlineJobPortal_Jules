@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { FacebookService } from './facebook.service';
 import { CreateFacebookDto } from './dto/create-facebook.dto';
-import { UpdateFacebookDto } from './dto/update-facebook.dto';
+
 
 @Controller('facebook')
 export class FacebookController {
