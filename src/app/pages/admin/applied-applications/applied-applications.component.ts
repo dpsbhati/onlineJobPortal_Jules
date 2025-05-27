@@ -46,7 +46,7 @@ export class AppliedApplicationsComponent implements OnInit {
   allData: any;
   total: any;
   appliedData: any
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
   filters = {
     all: '',
     name: '',

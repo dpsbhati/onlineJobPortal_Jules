@@ -29,7 +29,7 @@ export class ApplicantDetailsComponent {
   applicantDetails: any = null;
   selectedStatus: string = '';
   adminComments: string = '';
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Hired'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
   keySkills: string[] = [];
   certifications: any[] = [];
   isLoading: boolean = false;
