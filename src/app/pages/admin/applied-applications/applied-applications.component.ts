@@ -192,6 +192,7 @@ confirmCancel() {
           this.closeCancelModal();
           this.onSearch(); // Refresh the list to reflect changes
         } else {
+          this.toastr.error(res.message);
           // this.notify.error('Failed to cancel application');
         }
       },
