@@ -498,12 +498,12 @@ formatSalary(controlName: string): void {
         }
         this.skillsArray = skillsArray;
 
-        const formattedStartSalary = data.start_salary
-          ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
-          : ''
-        const formattedEndSalary = data.end_salary
-          ? new Intl.NumberFormat('en-US').format(Number(data.end_salary))
-          : ''
+        // const formattedStartSalary = data.start_salary
+        //   ? new Intl.NumberFormat('en-US').format(Number(data.start_salary))
+        //   : ''
+        // const formattedEndSalary = data.end_salary
+        //   ? new Intl.NumberFormat('en-US').format(Number(data.end_salary))
+        //   : ''
 
         this.jobForm.patchValue({
           id: data.id || '',
@@ -521,8 +521,9 @@ formatSalary(controlName: string): void {
           // assignment_duration: data.assignment_duration || '',
           employer: data.employer || '',
           required_experience: data.required_experience || '',
-          start_salary: formattedStartSalary || 0,
-          end_salary: formattedEndSalary || 0,
+          // start_salary: formattedStartSalary || 0,
+          start_salary: data.start_salary || 0,
+          // end_salary: formattedEndSalary || 0,
           application_instruction: data.application_instruction,
           country_code: data.country_code || '',
           address: data.address || '',

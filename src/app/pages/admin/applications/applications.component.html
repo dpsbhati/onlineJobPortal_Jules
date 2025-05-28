@@ -125,14 +125,13 @@
             <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
         'bg-light-secondary text-secondary': element.status.toLowerCase() === 'hired',
         'bg-light-warning text-warning': element.status.toLowerCase() === 'pending',
-        'bg-light-error  text-error ': element.status.toLowerCase() === 'rejected',
+        'bg-light-error-cancel text-error-cancel':
+       element.status.toLowerCase() === 'rejected' || toLowerCaseSafe(element.status) === 'cancelled',
         'bg-light-shortlisted  text-success-shortlisted': element.status.toLowerCase() === 'shortlisted',
         'bg-light-success-1 text-success ': element.status?.toLowerCase() === 'approved',
   'bg-light-primary text-primary': element.status?.toLowerCase() === 'processed',
             'bg-light  bg-light-error': toLowerCaseSafe(element.status) === 'endorsed',
             'bg-light-success bg-light ': toLowerCaseSafe(element.status) === 'deployed',
-             'bg-light-error-cancel text-error-cancel ':
-                  toLowerCaseSafe(element.status) === 'cancelled'
       }"> {{ element.status||'-' }}
             </span>
           </td>

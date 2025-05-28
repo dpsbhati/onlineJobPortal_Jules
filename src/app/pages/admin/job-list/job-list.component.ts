@@ -83,10 +83,11 @@ export class JobListComponent implements OnInit {
     this.displayedColumns = this.isAdmin()
       ? [
           'position',
+          'rank',
           'title',
 
           'employer',
-          'salary',
+          
           'date_published',
           'deadline',
           'status',
@@ -95,9 +96,9 @@ export class JobListComponent implements OnInit {
         ]
       : [
           'position',
+          'rank',
           'title',
           'employer',
-          'salary',
           'date_published',
           'number_of_applicant',
           'deadline',
