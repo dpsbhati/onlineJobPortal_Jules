@@ -21,6 +21,7 @@ if (process.env.NODE_ENV === 'development') {
       transport: {
         host: process.env.MAIL_HOST, // Your SMTP server
         port: parseInt(process.env.MAIL_PORT), // SMTP port
+        secure:true,
         auth: {
           user: process.env.MAIL_USERNAME, // Your SMTP username
           pass: process.env.MAIL_PASSWORD, // Your SMTP password

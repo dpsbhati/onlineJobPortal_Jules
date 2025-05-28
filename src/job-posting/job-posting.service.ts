@@ -220,6 +220,30 @@ export class JobPostingService {
       const savedJobPosting =
         await this.jobPostingRepository.save(updatedJobPosting);
 
+      const applicantUsers = await this.userRepository
+        .createQueryBuilder('user')
+        .innerJoin('user.userProfile', 'profile')
+        .where('user.role = :role', { role: 'applicant' })
+        .andWhere('user.isActive = :active', { active: true })
+        .andWhere('user.is_deleted = :deleted', { deleted: false })
+        .andWhere('profile.rank = :rank', { rank: jobDto.rank })
+        .select(['user.id'])
+        .getMany();
+
+      const applicantIds = applicantUsers.map((user) => user.id);
+
+      // Now send notifications only to these users
+      this.notificationGateway.emitNotificationToUsers(
+        applicantIds,
+        'adminNotification',
+        {
+          title: 'New Job Posted',
+          message: `A new job for the position of ${jobDto.rank} has been posted.`,
+          createdAt: new Date(),
+          type: 'job_posting',
+        },
+      );
+
       return WriteResponse(
         200,
         savedJobPosting,
@@ -249,7 +273,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
-'vessel_type',
+        'vessel_type',
         'title',
         'short_description',
         'full_description',

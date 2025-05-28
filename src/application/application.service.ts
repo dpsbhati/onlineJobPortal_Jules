@@ -520,7 +520,7 @@ export class ApplicationService {
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
-      
+
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
         [application.data.user.id], // applicant's userId
@@ -585,6 +585,18 @@ export class ApplicationService {
       const updatedApplication = await this.applicationRepository.findOne({
         where: { id },
       });
+
+      const notificationData = {
+        application_id: application.id,
+        jobTitle: application.job.rank,
+        userName: application.user.email,
+        status: ApplicationStatus[application.status], // Ensure it's an enum value
+        to: application.user.email,
+        subject: 'Job Application Cancelled',
+        content:  `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`,
+      };
+      const savedNotification =
+        await this.notificationsService.create(notificationData);
 
       const adminUsers = await this.userRepository.find({
         where: { role: 'admin', isActive: true },
