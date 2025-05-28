@@ -87,7 +87,7 @@ export class ApplicationService {
       // Send notification (you can pass relevant information like job title, user details, status)
       const notificationData = {
         application_id: savedApplication.id,
-        jobTitle: jobDetails.job.title,
+        jobTitle: jobDetails.job.rank,
         userName: savedApplication.user.email,
         status:
           ApplicationStatus[
@@ -95,7 +95,7 @@ export class ApplicationService {
           ], // Ensure it's an enum value
         to: jobDetails.user.email,
         subject: 'New Job Application Received',
-        content: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.title}.`,
+        content: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`,
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
@@ -115,7 +115,7 @@ export class ApplicationService {
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
         adminUserIds,
-        'jobApply',
+        'adminNotification',
         {
           userId: jobDetails.user.id, // applicant's userId
           title: 'New Job Application Received',
