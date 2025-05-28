@@ -36,6 +36,7 @@
                    <mat-option value="Processed">Processed</mat-option>
                    <mat-option value="Endorsed">Endorsed</mat-option>
                       <mat-option value="Deployed">Deployed</mat-option>
+                       <mat-option value="Deployed">Cancel</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -121,7 +122,9 @@
         'bg-light-success-1 text-success ': element.status?.toLowerCase() === 'approved',
   'bg-light-primary text-primary': element.status?.toLowerCase() === 'processed',
             'bg-light  bg-light-error': toLowerCaseSafe(element.status) === 'endorsed',
-            'bg-light-success bg-light ': toLowerCaseSafe(element.status) === 'deployed'
+            'bg-light-success bg-light ': toLowerCaseSafe(element.status) === 'deployed',
+             'bg-light-error-cancel text-error-cancel ':
+                  toLowerCaseSafe(element.status) === 'cancel'
       }"> {{ element.status||'-' }}
             </span>
           </td>
