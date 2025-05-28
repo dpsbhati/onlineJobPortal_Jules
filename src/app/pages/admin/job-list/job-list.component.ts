@@ -84,7 +84,7 @@ export class JobListComponent implements OnInit {
       ? [
           'position',
           'title',
-         
+
           'employer',
           'salary',
           'date_published',
@@ -191,7 +191,7 @@ onSearch(): void {
   viewJobPostDetails(jobId: string): void {
     this.router.navigate(['/job-post-details', jobId]);
   }
-  
+
   viewapplicationDetails(jobId: string): void {
     this.router.navigate(['/applications', jobId]);
   }
@@ -238,7 +238,7 @@ onSearch(): void {
   }
 
   formatSalary(value: number): string {
-    return '$' + value.toLocaleString('en-IN');
+    return '$' + value?.toLocaleString('en-IN');
   }
 
   allrankslist() {
