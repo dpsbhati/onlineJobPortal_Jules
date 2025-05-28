@@ -59,7 +59,7 @@ export class JobListComponent implements OnInit {
   filters = {
     all: '',
     title: '',
-    job_type: '',
+    vessel_type: '',
     employer: '',
     rank: '',
     job_opening: '',
@@ -263,7 +263,7 @@ onSearch(): void {
 
   clearFilter(
     event: Event,
-    filterType: 'job_type' | 'rank' | 'job_opening'
+    filterType: 'vessel_type' | 'rank' | 'job_opening'
   ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
@@ -274,7 +274,7 @@ onSearch(): void {
     this.filters = {
       all: '',
       title: '',
-      job_type: '',
+      vessel_type: '',
       employer: '',
       rank: '',
       job_opening: '',
