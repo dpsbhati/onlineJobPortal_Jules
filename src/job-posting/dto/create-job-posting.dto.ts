@@ -240,9 +240,9 @@ export class CreateJobPostingDto {
   social_media_type?: any;
 }
 export class UpdateDeadlineDto {
-  @IsUUID()
+  @ApiProperty()
   job_id: string;
 
-  @IsDateString()
-  deadline: string; 
+  @ApiProperty()
+  deadline: Date; 
 }

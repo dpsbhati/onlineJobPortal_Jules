@@ -111,7 +111,6 @@ export class JobPostingController {
 
   @Post('update-deadline')
   async updateDeadline(@Body() updateDeadlineDto: UpdateDeadlineDto) {
-    const { job_id, deadline } = updateDeadlineDto;
-    return this.jobPostingService.updateDeadline(job_id, new Date(deadline));
+    return this.jobPostingService.updateDeadline(updateDeadlineDto);
   }
 }

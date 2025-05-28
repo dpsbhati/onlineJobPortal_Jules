@@ -1,5 +1,6 @@
 import { applications } from 'src/application/entities/application.entity';
 import { CoursesAndCertification } from 'src/courses_and_certification/entities/courses_and_certification.entity';
+import { Rank } from 'src/ranks/entities/rank.entity';
 import { Users } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -174,6 +175,10 @@ export class JobPosting {
   @ManyToOne(() => Users, (user) => user.jobPosting)
   @JoinColumn({ name: 'created_by' })
   user: Users;
+
+  @ManyToOne(() => Rank, (ranks) => ranks.jobPosting)
+  @JoinColumn({ name: 'rank' })
+  ranks: Rank;
 }
 export class Job {
   @Column()
