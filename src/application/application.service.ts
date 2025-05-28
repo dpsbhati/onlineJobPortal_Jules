@@ -123,6 +123,7 @@ export class ApplicationService {
           applicationId: savedApplication.id,
           status: savedApplication.status,
           createdAt: new Date(),
+          type: 'job_application',
         },
       );
       return WriteResponse(
