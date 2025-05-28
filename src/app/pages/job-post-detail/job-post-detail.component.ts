@@ -29,6 +29,7 @@ export class JobPostDetailComponent {
   id: any;
   userRole: string = '';
   formattedSkills: string[] = [];
+  
 
   constructor(
     private route: ActivatedRoute,
