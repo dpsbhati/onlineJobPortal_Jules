@@ -7,7 +7,6 @@ import { GenericService } from '../generic.service';
   providedIn: 'root',
 })
 export class AdminService {
-  private readonly BASE_URL = 'https://onlinejobportal.microlent.com/api/';
   constructor(
     private genericService: GenericService,
     private http: HttpClient
@@ -46,7 +45,7 @@ export class AdminService {
   }
 
   deleteJob(id: string): Observable<any> {
-    return this.http.post(`${this.BASE_URL}job-posting/delete/${id}`, {});
+    return this.genericService.Post(`job-posting/delete/${id}`, {});
   }
 
   jobPostingPagination(data: any): Observable<any> {
@@ -63,7 +62,7 @@ export class AdminService {
   }
 
   deleteApplicant(payload: { id: string }): Observable<any> {
-    return this.http.post(`${this.BASE_URL}applications/delete`, payload);
+    return this.genericService.Post(`applications/delete`, payload);
   }
 
   applyJobs(payload: any): Observable<any> {
@@ -71,9 +70,9 @@ export class AdminService {
   }
 
   deleteCertification(jobId: string): Observable<any> {
-    const url = `${this.BASE_URL}courses-and-certification/delete`;
+    const url = `courses-and-certification/delete`;
     const payload = { job_id: jobId };
-    return this.http.post(url, payload);
+    return this.genericService.Post(url, payload);
   }
 
   allApplicantDetails(applicantId: string): Observable<any> {

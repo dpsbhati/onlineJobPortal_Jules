@@ -1,5 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators, } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -92,6 +102,7 @@ export class EditProfileComponent implements OnInit {
   countryList = countries;
   currencyList = currency;
   languageList = languages;
+  uniqueRanks: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -100,7 +111,7 @@ export class EditProfileComponent implements OnInit {
     private imageCompressionService: ImageCompressionService,
     private router: Router,
     private loader: LoaderService,
-    private toaster: ToastrService,
+    private toaster: ToastrService
   ) {
     this.userRole = localStorage.getItem('role') || '';
   }
@@ -120,6 +131,7 @@ export class EditProfileComponent implements OnInit {
     this.second();
     this.Third();
     this.fourth();
+    this.allrankslist();
   }
 
   firstForm() {
@@ -141,10 +153,10 @@ export class EditProfileComponent implements OnInit {
         '',
         this.isApplicant()
           ? [
-            Validators.required,
-            Validators.pattern('^[0-9]{10}$'),
-            this.mobileNumberValidator,
-          ]
+              Validators.required,
+              Validators.pattern('^[0-9]{10}$'),
+              this.mobileNumberValidator,
+            ]
           : null
       ),
       nationalities: new FormControl(
@@ -152,6 +164,10 @@ export class EditProfileComponent implements OnInit {
         this.isApplicant() ? [Validators.required] : null
       ),
       country: new FormControl(
+        null,
+        this.isApplicant() ? [Validators.required] : null
+      ),
+      rank_id: new FormControl(
         null,
         this.isApplicant() ? [Validators.required] : null
       ),
@@ -230,6 +246,10 @@ export class EditProfileComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // if(this.form.invalid){
+    //    this.form.markAllAsTouched();
+    // return;
+    // }
     this.loader.show();
     const payload = {
       ...this.form.value,
@@ -546,7 +566,7 @@ export class EditProfileComponent implements OnInit {
         this.loader.hide();
         this.toaster.error(
           error.error?.message ||
-          'An error occurred while fetching user profile data'
+            'An error occurred while fetching user profile data'
         );
       },
     });
@@ -557,7 +577,7 @@ export class EditProfileComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['job-list']);
+    this.router.navigate(['Applied-Applications']);
   }
 
   restrictNumeric(event: KeyboardEvent): void {
@@ -841,6 +861,16 @@ export class EditProfileComponent implements OnInit {
     // Remove duplicates by converting to Set and back to array
     return Array.from(new Set(allNationalities));
   }
+
+ allrankslist() {
+  this.adminService.getallranks().subscribe((response: any) => {
+    if (response.statusCode === 200) {
+      // Poora object rakhna hai taaki id aur rank_name dono milein
+      this.uniqueRanks = response.data.filter((rank: any) => rank.is_deleted === 0);
+    }
+  });
+}
+
 
   adultValidator(control: any) {
     const val = control.value;

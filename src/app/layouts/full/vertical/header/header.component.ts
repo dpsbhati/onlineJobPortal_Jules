@@ -1,4 +1,4 @@
-import { Component, Output,  EventEmitter, Input, ViewEncapsulation, ViewChild} from '@angular/core'
+import { Component, Output, EventEmitter, Input, ViewEncapsulation, ViewChild } from '@angular/core'
 import { CoreService } from 'src/app/services/core.service'
 import { MatDialog } from '@angular/material/dialog'
 import { navItems } from '../sidebar/sidebar-data'
@@ -16,6 +16,9 @@ import { Router } from '@angular/router'
 import { AppNavItemComponent } from '../sidebar/nav-item/nav-item.component'
 import { SidebarService } from 'src/app/core/services/sidebar.service'
 import { UserService } from 'src/app/core/services/user/user.service'
+import { LoaderService } from 'src/app/core/services/loader.service'
+import { AdminService } from 'src/app/core/services/admin/admin.service'
+import { ToastrService } from 'ngx-toastr'
 
 interface notifications {
   id: number
@@ -79,11 +82,18 @@ export class HeaderComponent {
   userName: string = '';
   userEmail: string = '';
   isCollapse: boolean = false // Initially hidden
-
-  toggleCollpase () {
+  notificationlist: any;
+  total: any;
+  toggleCollpase() {
     this.isCollapse = !this.isCollapse // Toggle visibility
   }
-
+  pageConfig: any = {
+    curPage: 1,
+    perPage: 10,
+    sortBy: 'created_at',
+    direction: 'desc',
+    whereClause: [],
+  };
   showFiller = false
 
 
@@ -124,7 +134,7 @@ export class HeaderComponent {
 
   isCollapsed: boolean = false // Initially hidden
 
-  constructor (
+  constructor(
     private settings: CoreService,
     private vsidenav: CoreService,
     public dialog: MatDialog,
@@ -132,13 +142,16 @@ export class HeaderComponent {
     private authService: AuthService,
     private _router: Router,
     private sidebarService: SidebarService,
-     private userService: UserService,
+    private userService: UserService,
+    private loader: LoaderService,
+    private adminService: AdminService,
+    private toastr: ToastrService
   ) {
     translate.setDefaultLang('en')
     this.loadUserName()
   }
 
-  ngOnInit () {
+  ngOnInit() {
     this.sidebarService.setCollapsed(this.isCollapsed)
     const userString = localStorage.getItem('user');
 
@@ -151,9 +164,10 @@ export class HeaderComponent {
         console.error('Error parsing user from localStorage:', e);
       }
     }
-     this.loadUserData();
-
+    this.loadUserData();
+    this.onPagination();
   }
+
   loadUserData(): void {
     const userString = localStorage.getItem('user');
 
@@ -185,35 +199,56 @@ export class HeaderComponent {
     }
   }
 
+  onPagination(): void {
+    this.loader.show();
+    this.adminService.notificationPagination(this.pageConfig).subscribe({
+      next: (res: any) => {
+        if (res.statusCode === 200) {
+          this.notificationlist = res.data;
+          this.total = res.count || 0;
+          this.loader.hide();
+        } else {
+          this.notificationlist = [];
+          this.total = 0;
+          this.loader.hide();
+        }
+      },
+      error: (err: any) => {
+        this.loader.hide();
+        this.toastr.error(err?.error?.message);
+        this.notificationlist = [];
+        this.total = 0;
+      },
+    });
+  }
 
-
-  toggleCollapse () {
+  toggleCollapse() {
     this.isCollapsed = !this.isCollapsed
     this.sidebarService.setCollapsed(this.isCollapsed) // Share value
   }
 
-  openDialog () {
+  openDialog() {
     const dialogRef = this.dialog.open(AppSearchDialogComponent)
 
     dialogRef.afterClosed().subscribe(result => {
     })
   }
 
-  changeLanguage (lang: any): void {
+  changeLanguage(lang: any): void {
     this.translate.use(lang.code)
     this.selectedLanguage = lang
   }
 
-  setlightDark (theme: string) {
+  setlightDark(theme: string) {
     this.options.theme = theme
     this.emitOptions()
   }
 
-  private emitOptions () {
+  private emitOptions() {
     this.optionsChange.emit(this.options)
   }
 
-  private loadUserName () {
+  private loadUserName() {
     const currentUser = this.authService.currentUserValue
     if (currentUser && currentUser.userProfile) {
       const firstName = currentUser.userProfile.first_name
@@ -297,7 +332,7 @@ export class HeaderComponent {
     }
   ]
 
-  signOut (): void {
+  signOut(): void {
     // Clear all authentication data
     localStorage.clear()
 
