@@ -166,8 +166,6 @@ export class UserProfileService {
         }
       }
 
-      profile['rank_id']=profile.rank.id;
-
       return WriteResponse(
         200,
         profile,
