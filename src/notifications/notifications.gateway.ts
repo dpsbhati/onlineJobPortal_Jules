@@ -9,11 +9,17 @@ import {
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 
-@WebSocketGateway({cors: {
-    origin: ['http://localhost:4200','https://onlinejobportal.microlent.com'], // add your actual frontend origin(s) here
+@WebSocketGateway({
+  cors: {
+    origin: [
+      'http://localhost:4200',
+      'https://onlinejobportal.microlent.com',
+      'https://navilands.vns360.gr',
+    ], // add your actual frontend origin(s) here
     methods: ['GET', 'POST'],
     credentials: true, // allow credentials if your frontend sends them
-  }})
+  },
+})
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
