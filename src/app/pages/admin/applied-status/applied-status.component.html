@@ -122,7 +122,7 @@
             <strong class="m-r-6">Vessel Type:</strong> {{ jobDetails?.job?.vessel_type}}
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Salary Range:</strong>   {{ jobDetails?.job?.start_salary && jobDetails.job.start_salary.trim() !== ''  ? jobDetails.job.start_salary: '-' }}
+            <strong class="m-r-6">Salary Range:</strong>   ${{ jobDetails?.job?.start_salary && jobDetails.job.start_salary.trim() !== ''  ? jobDetails.job.start_salary: '-' }}
           </div>
           <div class="col-lg-12 m-b-16">
             <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.job?.deadline | date:'mediumDate' }}
