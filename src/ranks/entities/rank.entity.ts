@@ -1,3 +1,4 @@
+import { JobPosting } from 'src/job-posting/entities/job-posting.entity';
 import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
@@ -26,4 +27,7 @@ export class Rank {
 
   @OneToMany(() => UserProfile, (userProfile) => userProfile.rank) // Relation with applications
   userProfile: UserProfile[];
+
+  @OneToMany(() => JobPosting, (jobPosting) => jobPosting.ranks) // Relation with applications
+  jobPosting: JobPosting[];
 }

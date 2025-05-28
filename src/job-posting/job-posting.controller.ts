@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
-import { CreateJobPostingDto } from './dto/create-job-posting.dto';
+import { CreateJobPostingDto, UpdateDeadlineDto } from './dto/create-job-posting.dto';
 import { JobPostingService } from './job-posting.service';
 
 @ApiTags('Job-postings')
@@ -107,5 +107,10 @@ export class JobPostingController {
   async publishJob(@Param('id') jobId: string, @Req() req: Request) {
     const userId = req['user_id'];
     return this.jobPostingService.postScheduledJob(jobId, userId);
+  }
+
+  @Post('update-deadline')
+  async updateDeadline(@Body() updateDeadlineDto: UpdateDeadlineDto) {
+    return this.jobPostingService.updateDeadline(updateDeadlineDto);
   }
 }

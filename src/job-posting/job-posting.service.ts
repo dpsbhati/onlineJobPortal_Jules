@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import {
@@ -7,7 +7,7 @@ import {
   JobPostStatus,
   JobTypePost,
 } from './entities/job-posting.entity';
-import { CreateJobPostingDto } from './dto/create-job-posting.dto';
+import { CreateJobPostingDto, UpdateDeadlineDto } from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { LinkedInService } from 'src/linkedin/linkedin.service';
@@ -397,6 +397,7 @@ export class JobPostingService {
           'COALESCE(app_counts.application_number, 0)',
           'application_number',
         )
+ .leftJoinAndSelect('f.ranks', 'ranks')
         .where(lwhereClause)
         .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
         .skip(skip)
@@ -465,7 +466,7 @@ export class JobPostingService {
     try {
       const jobPosting = await this.jobPostingRepository.findOne({
         where: { [key]: value, is_deleted: false },
-        relations: ['user'], // Automatically load the related user entity
+        relations: ['user', 'ranks'], // Automatically load the related user entity
       });
 
       if (!jobPosting) {
@@ -570,6 +571,28 @@ export class JobPostingService {
       );
     } catch (error) {
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+  }
+
+  async updateDeadline(updateDeadlineDto: UpdateDeadlineDto) {
+    try {
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { id: updateDeadlineDto.job_id, is_deleted: false },
+      });
+
+      if (!jobPosting) {
+        return WriteResponse(404,false,"Job posting not found.")
+      }
+      await this.jobPostingRepository.update(updateDeadlineDto.job_id,{deadline:updateDeadlineDto.deadline})
+
+      return WriteResponse(
+        200,
+        true,
+        'Job deadline updated successfully.',
+      );
+    } catch (error) {
+      console.error(error);
+      return WriteResponse(500, false,"Something went wrong.");
     }
   }
 }

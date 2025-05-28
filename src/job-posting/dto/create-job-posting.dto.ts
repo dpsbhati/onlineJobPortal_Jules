@@ -17,6 +17,7 @@ import {
   ValidatorConstraintInterface,
   IsIn,
   IsArray,
+  IsDateString,
 } from 'class-validator';
 import { JobPostStatus, JobTypePost } from '../entities/job-posting.entity';
 
@@ -55,7 +56,6 @@ export class CreateJobPostingDto {
   @IsUUID(undefined, { message: 'id must be a valid UUID.' })
   id?: string;
 
-  
   job_type: string;
 
   @ApiProperty({
@@ -83,8 +83,6 @@ export class CreateJobPostingDto {
   featured_image: string;
 
   title: string;
-
-  
 
   @ApiProperty({
     description: 'The date the job was published',
@@ -114,7 +112,6 @@ export class CreateJobPostingDto {
   @Transform(({ value }) => value?.trim())
   short_description: string;
 
-  
   full_description: string;
 
   @ApiProperty({
@@ -138,7 +135,6 @@ export class CreateJobPostingDto {
   @Transform(({ value }) => value?.trim())
   @MaxLength(255, { message: 'Address cannot exceed 255 characters.' })
   address: string;
-
 
   assignment_duration: string;
 
@@ -242,4 +238,11 @@ export class CreateJobPostingDto {
   })
   @IsOptional()
   social_media_type?: any;
+}
+export class UpdateDeadlineDto {
+  @ApiProperty()
+  job_id: string;
+
+  @ApiProperty()
+  deadline: Date; 
 }
