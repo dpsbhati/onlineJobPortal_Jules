@@ -192,6 +192,7 @@ export class ApplicationsComponent {
           this.totalApplications = response.count || 0;
 
            this.dataSource.data = response.data.map((app: any, index: number) => {
+              console.log('Rank from API:', app.job?.rank); 
           const rawImagePath = app.user?.userProfile?.profile_image_path || '';
           const profileImageUrl = rawImagePath ? rawImagePath.replace(/\\/g, '/') : null;
 
@@ -207,7 +208,7 @@ export class ApplicationsComponent {
 }),
 
             application_id: app?.id,
-            experience: app?.work_experiences,
+           rank: app.job?.rank || '',
             jobPost: app.job?.title,
             applications: app?.count,
             status: app?.status,
@@ -427,9 +428,11 @@ toLowerCaseSafe(value: string | null | undefined): string {
         this.loader.hide();
 
         if (res.statusCode === 200 && res.data?.applications) {
+          
           this.totalApplications = res.data.count || 0;
 
          this.dataSource.data = res.data.applications.map((app: any, index: number) => {
+            console.log('Rank from API:', app.job?.rank); 
           // Safely get profile image path string
           const rawImagePath = app.user?.userProfile?.profile_image_path || '';
 
@@ -448,6 +451,7 @@ toLowerCaseSafe(value: string | null | undefined): string {
 
             application_id: app?.id,
             experience: app?.work_experiences || '',
+             rank: app.job?.rank || '',
             jobPost: app.job?.title || '',
             applications: app?.count || 0,
             status: app?.status || '',
