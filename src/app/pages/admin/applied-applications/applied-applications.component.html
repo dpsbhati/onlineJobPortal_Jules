@@ -95,8 +95,8 @@
                   element.status.toLowerCase() === 'hired',
                 'bg-light-warning text-warning':
                   element.status.toLowerCase() === 'pending',
-                'bg-light-error  text-error ':
-                  element.status.toLowerCase() === 'rejected',
+                'bg-light-error-cancel text-error-cancel':
+       element.status.toLowerCase() === 'rejected' || toLowerCaseSafe(element.status) === 'cancelled',
                 'bg-light-shortlisted  text-success-shortlisted':
                   element.status.toLowerCase() === 'shortlisted',
                 'bg-light-success-1 text-success ':
@@ -107,8 +107,6 @@
                   toLowerCaseSafe(element.status) === 'endorsed',
                 'bg-light-success bg-light ':
                   toLowerCaseSafe(element.status) === 'deployed',
-                'bg-light-error-cancel text-error-cancel ':
-                  toLowerCaseSafe(element.status) === 'cancelled'
               }"
             >
               {{ element.status || "-" }}

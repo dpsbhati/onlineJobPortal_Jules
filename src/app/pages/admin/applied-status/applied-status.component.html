@@ -23,14 +23,13 @@
          <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
         'bg-light-secondary text-secondary': jobDetails.status.toLowerCase() === 'hired',
         'bg-light-warning text-warning': jobDetails.status.toLowerCase() === 'pending',
-        'bg-light-error  text-error ': jobDetails.status.toLowerCase() === 'rejected',
+        'bg-light-error-cancel text-error-cancel':
+       jobDetails.status.toLowerCase() === 'rejected' || toLowerCaseSafe(jobDetails.status) === 'cancelled',
         'bg-light-shortlisted  text-success-shortlisted': jobDetails.status.toLowerCase() === 'shortlisted',
         'bg-light-success-1 text-success ': jobDetails.status?.toLowerCase() === 'approved',
   'bg-light-primary text-primary': jobDetails.status?.toLowerCase() === 'processed',
             'bg-light  bg-light-error': toLowerCaseSafe(jobDetails.status) === 'endorsed',
             'bg-light-success bg-light ': toLowerCaseSafe(jobDetails.status) === 'deployed',
-             'bg-light-error-cancel text-error-cancel ':
-                  toLowerCaseSafe(jobDetails.status) === 'cancelled'
       }"> {{ jobDetails.status||'-' }}
             </span>
       </div>
