@@ -125,9 +125,11 @@ export class ApplicationController {
   @Post('updateApplicationStatus')
   updateApplicationStatus(
     @Body() updateApplicationStatusDto: UpdateApplicationStatusDto,
+    @Req() req: any
   ) {
     return this.applicationService.updateApplicationStatus(
       updateApplicationStatusDto,
+      req
     );
   }
 

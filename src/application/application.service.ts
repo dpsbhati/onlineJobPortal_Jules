@@ -110,7 +110,6 @@ export class ApplicationService {
       const adminUserIds = adminUsers.map((admin) => admin.id);
 
       console.log('adminUserIds', adminUserIds);
-      
 
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
@@ -119,7 +118,7 @@ export class ApplicationService {
         {
           userId: jobDetails.user.id, // applicant's userId
           title: 'New Job Application Received',
-          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.title}.`,
+          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`,
           applicationId: savedApplication.id,
           status: savedApplication.status,
           createdAt: new Date(),
@@ -549,43 +548,66 @@ export class ApplicationService {
   }
 
   // Update Application Status
-async updateApplicationStatus(
-  updateApplicationStatusDto: UpdateApplicationStatusDto,
-) {
-  const { id, status } = updateApplicationStatusDto;
-
-  const application = await this.applicationRepository.findOne({
-    where: { id },
-  });
-
-  if (!application) {
-    return WriteResponse(404, {}, `Application with ID ${id} not found.`);
-  }
-
-  // Allow only PENDING to CANCELLED transition
-  if (
-    application.status === ApplicationStatus.PENDING
+  async updateApplicationStatus(
+    updateApplicationStatusDto: UpdateApplicationStatusDto,
+    req: any,
   ) {
-    await this.applicationRepository.update({ id }, { status });
+    const { id, status } = updateApplicationStatusDto;
 
-    const updatedApplication = await this.applicationRepository.findOne({
+    const application = await this.applicationRepository.findOne({
       where: { id },
+      relations: ['job', 'user'],
     });
 
+    if (!application) {
+      return WriteResponse(404, {}, `Application with ID ${id} not found.`);
+    }
+
+    // Allow only PENDING to CANCELLED transition
+    if (application.status === ApplicationStatus.PENDING) {
+      await this.applicationRepository.update({ id }, { status });
+
+      const updatedApplication = await this.applicationRepository.findOne({
+        where: { id },
+      });
+
+      const adminUsers = await this.userRepository.find({
+        where: { role: 'admin', isActive: true },
+        select: ['id'],
+      });
+
+      const adminUserIds = adminUsers.map((admin) => admin.id);
+
+      console.log('adminUserIds', adminUserIds);
+
+      // Send notification to all admins
+      this.notificationGateway.emitNotificationToUsers(
+        adminUserIds, // all relevant admin user IDs
+        'adminNotification',
+        {
+          userId: req.user.id, // applicant's userId who cancelled
+          title: 'Job Application Cancelled',
+          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`,
+          applicationId: application.id,
+          status: updateApplicationStatusDto.status,
+          createdAt: new Date(),
+          type: 'application_cancelled',
+        },
+      );
+
+      return WriteResponse(
+        200,
+        updatedApplication,
+        `Application status updated successfully.`,
+      );
+    }
+
     return WriteResponse(
-      200,
-      updatedApplication,
-      `Application status updated successfully.`,
+      400,
+      {},
+      `Only applications in 'Pending' status can be updated. Current status is '${application.status}'.`,
     );
   }
-
-  return WriteResponse(
-    400,
-    {},
-   `Only applications in 'Pending' status can be updated. Current status is '${application.status}'.`
-  );
-}
-
 
   async paginateApplications(req: any, pagination: IPagination) {
     try {
@@ -740,90 +762,100 @@ async updateApplicationStatus(
     }
   }
 
-async getStatusSummary(req: any, pagination: IPagination) {
-  const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
+  async getStatusSummary(req: any, pagination: IPagination) {
+    const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
 
-  const parameters: Record<string, any> = { is_deleted: false };
-  let lwhereClause = 'j.is_deleted = :is_deleted';
+    const parameters: Record<string, any> = { is_deleted: false };
+    let lwhereClause = 'j.is_deleted = :is_deleted';
 
-  // Extract start and end date filters
-  const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
-  const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
-  const startDate = startDateObj?.value;
-  const endDate = endDateObj?.value;
+    // Extract start and end date filters
+    const startDateObj = whereClause.find(
+      (p: any) => p.key === 'startDate' && p.value,
+    );
+    const endDateObj = whereClause.find(
+      (p: any) => p.key === 'endDate' && p.value,
+    );
+    const startDate = startDateObj?.value;
+    const endDate = endDateObj?.value;
 
-  if (startDate && endDate) {
-    lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
-    parameters.startDate = startDate;
-    parameters.endDate = endDate;
-  } else if (startDate) {
-    lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
-    parameters.startDate = startDate;
-  } else if (endDate) {
-    lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
-    parameters.endDate = endDate;
+    if (startDate && endDate) {
+      lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
+      parameters.startDate = startDate;
+      parameters.endDate = endDate;
+    } else if (startDate) {
+      lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
+      parameters.startDate = startDate;
+    } else if (endDate) {
+      lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
+      parameters.endDate = endDate;
+    }
+
+    // -------------------------------
+    // Application status counts (with applied_at filter)
+    const applicationQB = this.applicationRepository
+      .createQueryBuilder('a')
+      .select('a.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('a.status');
+
+    if (startDate && endDate) {
+      applicationQB.where(
+        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      applicationQB.where('DATE(a.applied_at) >= :startDate', { startDate });
+    } else if (endDate) {
+      applicationQB.where('DATE(a.applied_at) <= :endDate', { endDate });
+    }
+
+    const applicationCounts = await applicationQB.getRawMany();
+
+    const applicationStatus = applicationCounts.reduce((acc, curr) => {
+      acc[curr.status] = parseInt(curr.count, 10);
+      return acc;
+    }, {});
+
+    // Total applications (with same filters)
+    const applicationCountQB =
+      this.applicationRepository.createQueryBuilder('a');
+
+    if (startDate && endDate) {
+      applicationCountQB.where(
+        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      applicationCountQB.where('DATE(a.applied_at) >= :startDate', {
+        startDate,
+      });
+    } else if (endDate) {
+      applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
+    }
+
+    const totalApplications = await applicationCountQB.getCount();
+
+    // -------------------------------
+    // Job posting counts by job_opening
+    const jobCounts = await this.jobPostingRepository
+      .createQueryBuilder('j')
+      .select('j.job_opening', 'job_opening')
+      .addSelect('COUNT(*)', 'count')
+      .where(lwhereClause, parameters)
+      .groupBy('j.job_opening')
+      .getRawMany();
+
+    const jobPostingStatus = jobCounts.reduce((acc, curr) => {
+      acc[curr.job_opening] = parseInt(curr.count, 10);
+      return acc;
+    }, {});
+
+    return {
+      applicationStatus,
+      totalApplications,
+      jobPostingStatus,
+    };
   }
-
-  // -------------------------------
-  // Application status counts (with applied_at filter)
-  const applicationQB = this.applicationRepository
-    .createQueryBuilder('a')
-    .select('a.status', 'status')
-    .addSelect('COUNT(*)', 'count')
-    .groupBy('a.status');
-
-  if (startDate && endDate) {
-    applicationQB.where('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
-  } else if (startDate) {
-    applicationQB.where('DATE(a.applied_at) >= :startDate', { startDate });
-  } else if (endDate) {
-    applicationQB.where('DATE(a.applied_at) <= :endDate', { endDate });
-  }
-
-  const applicationCounts = await applicationQB.getRawMany();
-
-  const applicationStatus = applicationCounts.reduce((acc, curr) => {
-    acc[curr.status] = parseInt(curr.count, 10);
-    return acc;
-  }, {});
-
-  // Total applications (with same filters)
-  const applicationCountQB = this.applicationRepository.createQueryBuilder('a');
-
-  if (startDate && endDate) {
-    applicationCountQB.where('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
-  } else if (startDate) {
-    applicationCountQB.where('DATE(a.applied_at) >= :startDate', { startDate });
-  } else if (endDate) {
-    applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
-  }
-
-  const totalApplications = await applicationCountQB.getCount();
-
-  // -------------------------------
-  // Job posting counts by job_opening
-  const jobCounts = await this.jobPostingRepository
-    .createQueryBuilder('j')
-    .select('j.job_opening', 'job_opening')
-    .addSelect('COUNT(*)', 'count')
-    .where(lwhereClause, parameters)
-    .groupBy('j.job_opening')
-    .getRawMany();
-
-  const jobPostingStatus = jobCounts.reduce((acc, curr) => {
-    acc[curr.job_opening] = parseInt(curr.count, 10);
-    return acc;
-  }, {});
-
-  return {
-    applicationStatus,
-    totalApplications,
-    jobPostingStatus,
-  };
-}
-
-
-
 
   async pagination(req: any, pagination: IPagination) {
     try {

@@ -155,8 +155,8 @@ export class JobPostingService {
             'adminNotification',
             {
               jobId: expiredJob.id,
-              title: expiredJob.title,
-              message: `The job "${expiredJob.title}" has expired.`,
+              title: expiredJob.rank,
+              message: `The job of "${expiredJob.rank}" has expired.`,
               type: 'job_expired',
             },
           );
