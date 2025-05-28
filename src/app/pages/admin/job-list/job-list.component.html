@@ -88,6 +88,12 @@
           </td>
         </ng-container>
         <!-- Title Column -->
+
+            <ng-container matColumnDef="rank">
+          <!-- <th mat-header-cell *matHeaderCellDef>Job Title</th> -->
+             <th mat-header-cell *matHeaderCellDef>Rank</th>
+          <td mat-cell *matCellDef="let element">{{ element.rank }}</td>
+        </ng-container>
         <ng-container matColumnDef="title">
           <!-- <th mat-header-cell *matHeaderCellDef>Job Title</th> -->
              <th mat-header-cell *matHeaderCellDef>Vessel Type</th>
