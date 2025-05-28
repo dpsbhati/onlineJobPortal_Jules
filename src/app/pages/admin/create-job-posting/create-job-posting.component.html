@@ -19,13 +19,28 @@
 
         </div>
       </div>
-    
+      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Rank</mat-label>
+          <mat-select formControlName="rank">
+            <mat-option value="">Select Rank</mat-option>
+            <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
+              {{ rank }}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
+            Rank is required.
+          </mat-error>
+        </mat-form-field>
+
+      </div>
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
         <!-- Job Type -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Vessel Type</mat-label>
           <mat-select id="vessel_type" formControlName="vessel_type">
-            <mat-option value="">Select Job Type</mat-option>
+            <mat-option value="">Select Vessel Type</mat-option>
             <mat-option value="Type 1">Type 1</mat-option>
             <mat-option value="Type 3">Type 3</mat-option>
             <mat-option value="Bulk Carrier">Bulk Carrier</mat-option>
@@ -50,23 +65,7 @@
           
         </mat-form-field>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-        <!-- Job Type -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Rank</mat-label>
-          <mat-select formControlName="rank">
-            <mat-option value="">Select Rank</mat-option>
-            <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
-              {{ rank }}
-            </mat-option>
-          </mat-select>
-
-          <mat-error *ngIf="jobForm.get('rank')?.invalid && jobForm.get('rank')?.touched">
-            Rank is required.
-          </mat-error>
-        </mat-form-field>
-
-      </div>
+    
 
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
@@ -171,7 +170,7 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"><!-- Start Salary -->
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Salary</mat-label>
+          <mat-label>Salary Range</mat-label>
           <input matInput id="start_salary" formControlName="start_salary" type="text"
             (input)="formatSalary('start_salary')">
           <mat-error *ngIf="jobForm.get('start_salary')?.invalid && jobForm.get('start_salary')?.touched">
@@ -193,6 +192,9 @@
               {{ country.name }} ({{ country.code }})
             </mat-option>
           </mat-select>
+            <mat-error *ngIf="jobForm.get('country_code')?.invalid && jobForm.get('country_code')?.touched">
+            Country Code is required.
+          </mat-error>
         </mat-form-field>
       </div>
         <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> 

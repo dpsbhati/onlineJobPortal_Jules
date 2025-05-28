@@ -59,7 +59,7 @@ export class JobListComponent implements OnInit {
   filters = {
     all: '',
     title: '',
-    job_type: '',
+    vessel_type: '',
     employer: '',
     rank: '',
     job_opening: '',
@@ -84,7 +84,7 @@ export class JobListComponent implements OnInit {
       ? [
           'position',
           'title',
-         
+
           'employer',
           'salary',
           'date_published',
@@ -191,7 +191,7 @@ onSearch(): void {
   viewJobPostDetails(jobId: string): void {
     this.router.navigate(['/job-post-details', jobId]);
   }
-  
+
   viewapplicationDetails(jobId: string): void {
     this.router.navigate(['/applications', jobId]);
   }
@@ -238,7 +238,7 @@ onSearch(): void {
   }
 
   formatSalary(value: number): string {
-    return '$' + value.toLocaleString('en-IN');
+    return '$' + value?.toLocaleString('en-IN');
   }
 
   allrankslist() {
@@ -263,7 +263,7 @@ onSearch(): void {
 
   clearFilter(
     event: Event,
-    filterType: 'job_type' | 'rank' | 'job_opening'
+    filterType: 'vessel_type' | 'rank' | 'job_opening'
   ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
@@ -274,7 +274,7 @@ onSearch(): void {
     this.filters = {
       all: '',
       title: '',
-      job_type: '',
+      vessel_type: '',
       employer: '',
       rank: '',
       job_opening: '',

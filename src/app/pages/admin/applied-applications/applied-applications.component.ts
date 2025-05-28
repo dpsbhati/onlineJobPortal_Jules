@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatCardModule } from '@angular/material/card'
 import { MatFormFieldModule } from '@angular/material/form-field'
@@ -50,7 +50,7 @@ export class AppliedApplicationsComponent implements OnInit {
   allData: any;
   total: any;
   appliedData: any
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed','Cancelled'];
   filters = {
     all: '',
     name: '',
@@ -75,6 +75,7 @@ export class AppliedApplicationsComponent implements OnInit {
      private toastr: ToastrService,
     private helperService: HelperService,
     private loader: LoaderService,
+    private cdr: ChangeDetectorRef
   ) {
     this.userRole = this.authService.getUserRole();
   }
@@ -177,6 +178,7 @@ toLowerCaseSafe(value: string | null | undefined): string {
   closeCancelModal() {
     this.showCancelModal = false;
     this.cancelAppId = null;
+      this.cdr.detectChanges();
   }
 
 
@@ -184,7 +186,7 @@ toLowerCaseSafe(value: string | null | undefined): string {
 confirmCancel() {
   if (this.cancelAppId) {
     this.loader.show();
-    this.userService.updateApplicationStatus(this.cancelAppId, 'Cancel').subscribe({
+    this.userService.updateApplicationStatus(this.cancelAppId, 'Cancelled').subscribe({
       next: (res: any) => {
         this.loader.hide();
         if (res.statusCode === 200) {
@@ -192,13 +194,14 @@ confirmCancel() {
           this.closeCancelModal();
           this.onSearch(); // Refresh the list to reflect changes
         } else {
-          // this.notify.error('Failed to cancel application');
+          this.toastr.error(res.message);
+           this.closeCancelModal();
         }
       },
-      error: (err) => {
+    error: (err) => {
         this.loader.hide();
-        // this.notify.error('Error occurred while cancelling');
-        console.error('Cancel API error:', err);
+        this.closeCancelModal();  // Popup close on API error too
+        this.toastr.error('Error occurred while cancelling the application.');
       }
     });
   }

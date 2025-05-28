@@ -29,7 +29,7 @@ export class ApplicantDetailsComponent {
   applicantDetails: any = null;
   selectedStatus: string = '';
   adminComments: string = '';
-  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed'];
+  statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed','Cancelled'];
   keySkills: string[] = [];
   certifications: any[] = [];
   isLoading: boolean = false;
@@ -90,7 +90,7 @@ export class ApplicantDetailsComponent {
 
  formatUTCDateToReadable(utcDateStr: string): string {
   if (!utcDateStr) return '';
-  
+
   const utcDate = new Date(utcDateStr);
     if (isNaN(utcDate.getTime())) return '';
 
@@ -124,7 +124,7 @@ formatPreferences(prefs: any): string {
 
   loadApplicantDetails() {
     this.loader.show();
-   
+
     this.adminService.allApplicantDetails(this.userId).subscribe({
       next: (response: any) => {
         if (response.statusCode === 200) {

@@ -10,7 +10,7 @@
       <mat-card-title class="m-b-16"> Application Status </mat-card-title>
       <div class="d-flex align-items-center justify-content-between gap-6">
         <div class="d-flex align-items-center justify-content-between gap-6">
-          <label>Current Status:</label>     
+          <label>Current Status:</label>
           <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
               'bg-light-secondary text-secondary':
                 applicantDetails.status.toLowerCase() === 'hired',
@@ -22,8 +22,8 @@
                 applicantDetails.status.toLowerCase() === 'shortlisted',
                  'bg-light-success  text-info':
                 applicantDetails.status.toLowerCase() === 'shortlisted',
-                
-               
+
+
             }">
             {{ applicantDetails.status || "-" }}
           </span> -->
@@ -37,7 +37,9 @@
         'bg-light-success-1 text-success ': applicantDetails.status?.toLowerCase() === 'approved',
   'bg-light-primary text-primary': applicantDetails.status?.toLowerCase() === 'processed',
             'bg-light  bg-light-error': toLowerCaseSafe(applicantDetails.status) === 'endorsed',
-            'bg-light-success bg-light ': toLowerCaseSafe(applicantDetails.status) === 'deployed'
+            'bg-light-success bg-light ': toLowerCaseSafe(applicantDetails.status) === 'deployed',
+             'bg-light-error-cancel text-error-cancel ':
+                  toLowerCaseSafe(applicantDetails.status) === 'cancelled'
       }"> {{ applicantDetails.status||'-' }}
             </span>
         </div>
@@ -74,7 +76,7 @@
               <span>{{ applicantDetails.user.email || "-" }}</span>
             </div>
           </div>
-        
+
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Mobile:</label></div>
             <div class="col-lg-8">
@@ -162,7 +164,7 @@
           <mat-card-title class="m-b-16">
             Professional Information
           </mat-card-title>
-        
+
           <div class="row m-b-16">
             <div class="col-lg-4"><label>Work Experience:</label></div>
             <div class="col-lg-8">
@@ -257,7 +259,7 @@
             </div>
           </div>
 
-      
+
         </mat-card-content>
       </mat-card>
 
@@ -313,7 +315,7 @@
         </mat-card-content>
       </mat-card>
 
-  
+
       <!-- Additional Information -->
       <mat-card class="cardWithShadow">
         <mat-card-content>

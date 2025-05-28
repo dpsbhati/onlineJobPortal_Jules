@@ -122,7 +122,6 @@ export class CreateJobPostingComponent {
           Validators.maxLength(50)
         ]),
         start_salary: new FormControl('', [
-          Validators.min(3),
      Validators.maxLength(30),
   Validators.pattern('^[a-zA-Z0-9\\s,\\-]+$')
         ]),
@@ -134,7 +133,7 @@ export class CreateJobPostingComponent {
           this.minLengthWithoutSpaces(2),
           Validators.maxLength(1500)
         ]),
-        country_code: new FormControl('', Validators.required),
+        country_code: new FormControl('PH', Validators.required),
         address: new FormControl('Philippines, Navilands Marine Inc', [
           Validators.required,
           Validators.min(2),
@@ -239,9 +238,9 @@ export class CreateJobPostingComponent {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
       formValues.posted_date = formatDate(formValues?.posted_date, 'yyyy-MM-dd', 'en-US')
-      if (formValues.start_salary) {
-        formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
-      }
+      // if (formValues.start_salary) {
+      //   formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
+      // }
 
       if (!formValues.id) {
         delete formValues.id;
@@ -386,17 +385,18 @@ export class CreateJobPostingComponent {
   //     }
   //   }
   // }
-  formatSalary(controlName: string): void {
+formatSalary(controlName: string): void {
   const control = this.jobForm.get(controlName);
   if (control) {
     let value = control.value;
     if (value) {
-      // Allow only letters, digits, spaces, commas, and dashes
+      // Allow letters, digits, spaces, commas, dashes only
       value = value.replace(/[^a-zA-Z0-9\s,-]/g, '');
       control.setValue(value, { emitEvent: false });
     }
   }
 }
+
  
 
   sanitizeFormValues(): void {
