@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { WebsocketService } from './core/services/websocket.service';
 import { environment } from 'src/environment/environment';
 
@@ -12,45 +12,48 @@ import { environment } from 'src/environment/environment';
 export class AppComponent {
   title = 'MaterialPro Angular Admin Template';
   private webSocketSubscription: Subscription;
+  private routerSubscription?: Subscription;
+
 
   constructor(
     private socketService: WebsocketService,
+    private router: Router,
+
   ) { }
 
   ngOnInit() {
-    this.socketService.connect(environment.webSocketUrl)
-    // this.checkwebsocket();
+    this.socketService.connect(environment.webSocketUrl);
+
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.listenToNotifications();
+    });
   }
 
-  // checkwebsocket() {
-  //   //Event
-  //   let userId: any = localStorage.getItem('user');
-  //   const params = { userId: JSON.parse(userId)?.id };
-  //   this.webSocketSubscription = this.socketService
-  //     .listen('jobApply', params)
-  //     .subscribe({
-  //       next: (messages) => {
-  //         console.log(messages)
-  //         if (messages) {
-  //           //Add one to unread count in real time
-  //           // this.unreadCount = this.unreadCount + 1;
+  listenToNotifications() {
+    if (this.webSocketSubscription) {
+      this.webSocketSubscription.unsubscribe();
+    }
 
-  //           // messages.data.notification.isRead = false;
-  //           // this._notificationsService.notificationsData.unshift(
-  //           //   messages.data.notification
-  //           // );
-  //           // const updatedNotification =
-  //           //   this._notificationsService.notificationsData;
-  //           // this._notificationsService.updateNotificationsList(
-  //           //   updatedNotification
-  //           // );
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.log(err)
-  //         // this.wbesocketSubscription.unsubscribe();
-  //         // this.webSocketService.disconnect();
-  //       },
-  //     });
-  // }
+    const userJson = localStorage.getItem('user');
+    const userId = userJson ? JSON.parse(userJson)?.id : null;
+
+    if (userId) {
+      this.webSocketSubscription = this.socketService
+        .listen('adminNotification', { userId })
+        .subscribe({
+          next: (message) => {
+            console.log('Received notification:', message);
+          },
+          error: (err) => console.error('WebSocket error:', err),
+        });
+    }
+  }
+
+  ngOnDestroy() {
+    this.routerSubscription?.unsubscribe();
+    this.webSocketSubscription?.unsubscribe();
+  }
 }
+
