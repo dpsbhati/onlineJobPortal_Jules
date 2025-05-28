@@ -512,14 +512,29 @@ export class ApplicationService {
       // Send notification (you can pass relevant information like job title, user details, status)
       const notificationData = {
         application_id: updatedApplication.id, // Accessing the application ID from the 'data' field
-        jobTitle: application.data.job.title, // Accessing the job title correctly from 'job'
+        jobTitle: application.data.job.rank, // Accessing the job title correctly from 'job'
         status: updatedApplication.status as ApplicationStatus,
         to: application.data.user.email, // Email of the user to send the notification to
         subject: 'Application Status Update', // Notification subject
-        content: `Your application for the job ${application.data.job.title} has been ${updatedApplication.status}.`, // Notification content
+        content: `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`, // Notification content
       };
       const savedNotification =
         await this.notificationsService.create(notificationData);
+      
+      // Send notification to all admins
+      this.notificationGateway.emitNotificationToUsers(
+        [application.data.user.id], // applicant's userId
+        'adminNotification',
+        {
+          userId: application.data.user.id, // applicant's userId
+          title: 'Application Status Update',
+          message: `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`,
+          applicationId: updatedApplication.id,
+          status: updatedApplication.status as ApplicationStatus,
+          createdAt: new Date(),
+          type: 'application_status_update',
+        },
+      );
 
       return WriteResponse(
         200,

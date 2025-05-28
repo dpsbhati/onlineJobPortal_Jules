@@ -115,7 +115,7 @@ export class UserProfileService {
     try {
       const profile = await this.userProfileRepository.findOne({
         where: { user_id: userId, is_deleted: false },
-        relations: ['user'],
+        relations: ['user','rank'],
       });
 
       if (!profile) {
@@ -165,6 +165,8 @@ export class UserProfileService {
           userProfile[field] = null;
         }
       }
+
+      profile['rank_id']=profile.rank.id;
 
       return WriteResponse(
         200,

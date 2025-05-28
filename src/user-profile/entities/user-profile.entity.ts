@@ -1,5 +1,6 @@
 import { Optional } from '@nestjs/common';
 import { applications } from 'src/application/entities/application.entity';
+import { Rank } from 'src/ranks/entities/rank.entity';
 import { Users } from 'src/user/entities/user.entity';
 import {
   Entity,
@@ -30,8 +31,11 @@ export class UserProfile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({})
+  @Column()
   user_id: string;
+
+  @Column()
+  rank_id: string;
 
   @Column()
   dob: Date;
@@ -169,6 +173,10 @@ export class UserProfile {
   @ManyToOne(() => Users, (user) => user.userProfile)
   @JoinColumn({ name: 'user_id' }) // 'user_id' in UserProfile references 'id' in Users
   user: Users;
+  
+  @ManyToOne(() => Rank, (rank) => rank.userProfile)
+  @JoinColumn({ name: 'rank_id' }) // 'user_id' in UserProfile references 'id' in Users
+  rank: Rank;
 
   // @OneToMany(() => applications, (app) => app.user_details)
   // application: applications[];

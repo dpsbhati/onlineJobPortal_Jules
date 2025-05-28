@@ -61,6 +61,9 @@ class AdditionalContactInfo {
 
 export class CreateUserProfileDto {
   @ApiProperty()
+  rank_id: string;
+  
+  @ApiProperty()
   dial_code: string;
 
   @ApiProperty()

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { UserProfile } from 'src/user-profile/entities/user-profile.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity('ranks')
 export class Rank {
@@ -22,4 +23,7 @@ export class Rank {
 
   @Column({ type: 'tinyint', default: 0 })
   is_deleted: boolean;
+
+  @OneToMany(() => UserProfile, (userProfile) => userProfile.rank) // Relation with applications
+  userProfile: UserProfile[];
 }
