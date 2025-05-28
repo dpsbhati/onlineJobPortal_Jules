@@ -142,6 +142,18 @@ export class ApplicationController {
     return this.applicationService.paginateApplications(req, pagination);
   }
 
+  @Post('summary')
+   @ApiBody({
+    schema: {
+      type: 'object',
+      properties: IPaginationSwagger,
+    },
+  })
+async getSummary(@Req() req: any, @Body() pagination: IPagination) {
+  return this.applicationService.getStatusSummary(req, pagination);
+}
+
+
   @Post('paginations')
   @ApiOperation({ summary: 'Paginate Applications with filtered keys' })
   @ApiBody({
