@@ -39,7 +39,7 @@
             'bg-light  bg-light-error': toLowerCaseSafe(applicantDetails.status) === 'endorsed',
             'bg-light-success bg-light ': toLowerCaseSafe(applicantDetails.status) === 'deployed',
              'bg-light-error-cancel text-error-cancel ':
-                  toLowerCaseSafe(applicantDetails.status) === 'cancel'
+                  toLowerCaseSafe(applicantDetails.status) === 'cancelled'
       }"> {{ applicantDetails.status||'-' }}
             </span>
         </div>
