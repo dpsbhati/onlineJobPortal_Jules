@@ -150,8 +150,29 @@ body {
 
 .mdc-button {
   border-radius: 8px !important;
-  
+
 }
 .bg-primary{
   background-color: #0b7ea5 !important;
+}
+
+
+
+.bg-light-success-1 {
+    background-color: #2cd07e26 !important;
+}
+
+.bg-light-shortlisted{
+   background-color: #2cd07e26 !important;
+}
+
+.text-success-shortlisted{
+ color: #2cd07e !important
+}
+
+.bg-light-error-cancel {
+    background-color: var(--mat-sys-error-fixed-dim) !important;
+}
+.text-error-cancel {
+    color: var(--mat-sys-error) !important;
 }

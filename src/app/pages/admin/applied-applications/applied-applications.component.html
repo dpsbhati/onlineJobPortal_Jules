@@ -5,21 +5,32 @@
       <div class="col-xl-4 col-lg-4 col-md-12">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Search </mat-label>
-          <input matInput placeholder="Search " [(ngModel)]="filters.all" (keyup.enter)="onSearch()" />
+          <input
+            matInput
+            placeholder="Search "
+            [(ngModel)]="filters.all"
+            (keyup.enter)="onSearch()"
+          />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
       <div class="col-xl-8 col-lg-8 col-md-12">
         <div class="row align-items-center justify-content-end">
           <div class="col-xl-1 col-lg-1 col-md-12">
-            <h4 class="mb-20"> Filters </h4>
+            <h4 class="mb-20">Filters</h4>
           </div>
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Status</mat-label>
-              <mat-select [(ngModel)]="filters.status" (selectionChange)="onSearch()">
+              <mat-select
+                [(ngModel)]="filters.status"
+                (selectionChange)="onSearch()"
+              >
                 <mat-option value="">Select Status</mat-option>
-                <mat-option *ngFor="let status of statusOptions" [value]="status">
+                <mat-option
+                  *ngFor="let status of statusOptions"
+                  [value]="status"
+                >
                   {{ status || "-" }}
                 </mat-option>
               </mat-select>
@@ -27,7 +38,12 @@
           </div>
 
           <div class="col-xl-1 col-lg-2 col-md-3">
-            <button mat-button color="primary" class="mb-20" (click)="clearSearch()">
+            <button
+              mat-button
+              color="primary"
+              class="mb-20"
+              (click)="clearSearch()"
+            >
               Clear
             </button>
           </div>
@@ -41,25 +57,27 @@
     <div class="table-responsive">
       <table mat-table [dataSource]="appliedData" class="w-100">
         <ng-container matColumnDef="job_title">
-          <th mat-header-cell *matHeaderCellDef> Rank </th>
+          <th mat-header-cell *matHeaderCellDef>Rank</th>
           <td mat-cell *matCellDef="let element" class="f-s-14">
-            {{ element?.job?.rank || '-' }}
+            {{ element?.job?.rank || "-" }}
           </td>
         </ng-container>
         <ng-container matColumnDef="employment_type">
           <th mat-header-cell *matHeaderCellDef>Vessel Type</th>
           <td mat-cell *matCellDef="let element" class="f-s-14">
-            {{ element?.job?.vessel_type|| element?.assignment_duration || '-' }}
+            {{
+              element?.job?.vessel_type || element?.assignment_duration || "-"
+            }}
           </td>
         </ng-container>
         <ng-container matColumnDef="applied_at">
-          <th mat-header-cell *matHeaderCellDef> Applied Date </th>
+          <th mat-header-cell *matHeaderCellDef>Applied Date</th>
           <td mat-cell *matCellDef="let element" class="f-s-14">
-            {{ element?.applied_at | date: 'dd-MM-yyyy' }}
+            {{ element?.applied_at | date : "dd-MM-yyyy" }}
           </td>
         </ng-container>
         <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
           <td mat-cell *matCellDef="let element">
             <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
           'bg-light-secondary text-secondary': element.status?.toLowerCase() === 'hired',
@@ -70,44 +88,58 @@
               {{ element.status || '-' }}
             </span> -->
 
-
-             <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
-        'bg-light-secondary text-secondary': element.status.toLowerCase() === 'hired',
-        'bg-light-warning text-warning': element.status.toLowerCase() === 'pending',
-        'bg-light-error  text-error ': element.status.toLowerCase() === 'rejected',
-        'bg-light-shortlisted  text-success-shortlisted': element.status.toLowerCase() === 'shortlisted',
-        'bg-light-success-1 text-success ': element.status?.toLowerCase() === 'approved',
-  'bg-light-primary text-primary': element.status?.toLowerCase() === 'processed',
-            'bg-light  bg-light-error': toLowerCaseSafe(element.status) === 'endorsed',
-            'bg-light-success bg-light ': toLowerCaseSafe(element.status) === 'deployed'
-      }"> {{ element.status||'-' }}
+            <span
+              class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
+              [ngClass]="{
+                'bg-light-secondary text-secondary':
+                  element.status.toLowerCase() === 'hired',
+                'bg-light-warning text-warning':
+                  element.status.toLowerCase() === 'pending',
+                'bg-light-error  text-error ':
+                  element.status.toLowerCase() === 'rejected',
+                'bg-light-shortlisted  text-success-shortlisted':
+                  element.status.toLowerCase() === 'shortlisted',
+                'bg-light-success-1 text-success ':
+                  element.status?.toLowerCase() === 'approved',
+                'bg-light-primary text-primary':
+                  element.status?.toLowerCase() === 'processed',
+                'bg-light  bg-light-error':
+                  toLowerCaseSafe(element.status) === 'endorsed',
+                'bg-light-success bg-light ':
+                  toLowerCaseSafe(element.status) === 'deployed',
+                'bg-light-error-cancel text-error-cancel ':
+                  toLowerCaseSafe(element.status) === 'cancel'
+              }"
+            >
+              {{ element.status || "-" }}
             </span>
           </td>
         </ng-container>
-           <ng-container matColumnDef="action">
+        <ng-container matColumnDef="action">
           <th mat-header-cell *matHeaderCellDef>Action</th>
           <td mat-cell *matCellDef="let element">
             <button mat-icon-button [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button
-                mat-menu-item
-                (click)="viewappliedstatus(element.id)">
+              <button mat-menu-item (click)="viewappliedstatus(element.id)">
                 <mat-icon>visibility</mat-icon>
                 <span>View Application</span>
               </button>
-                <button mat-menu-item (click)="openCancelModal(element.id)">
-        <mat-icon>cancel</mat-icon>
-        <span>Cancel Application</span>
-      </button>
+              <button mat-menu-item (click)="openCancelModal(element.id)">
+                <mat-icon>cancel</mat-icon>
+                <span>Cancel Application</span>
+              </button>
             </mat-menu>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
+          <td
+            class="mat-cell text-center"
+            [attr.colspan]="displayedColumns.length"
+          >
             <div class="no-records-message">
               <span class="text-danger ms-2">No records found</span>
             </div>
@@ -115,9 +147,15 @@
         </tr>
       </table>
     </div>
-    <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
-      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
-      aria-label="Select page">
+    <mat-paginator
+      [length]="total"
+      [pageSize]="pageConfig.perPage"
+      [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]"
+      [showFirstLastButtons]="true"
+      (page)="onPageChange($event)"
+      aria-label="Select page"
+    >
     </mat-paginator>
   </mat-card-content>
 </mat-card>
@@ -132,23 +170,31 @@
   (click)="closeCancelModal()"
 >
   <div class="dialog-box" (click)="$event.stopPropagation()">
-    <div class="dialog-header d-flex align-items-center justify-content-between">
+    <div
+      class="dialog-header d-flex align-items-center justify-content-between"
+    >
       <h2 id="dialogTitle" class="m-0">Cancel Application</h2>
-      <button mat-icon-button aria-label="Close dialog" (click)="closeCancelModal()">
+      <button
+        mat-icon-button
+        aria-label="Close dialog"
+        (click)="closeCancelModal()"
+      >
         <mat-icon>close</mat-icon>
       </button>
     </div>
     <p>
-      Are you sure you want to cancel your application for this job? Click 'OK' to confirm or 'Cancel' to keep your application.
+      Are you sure you want to cancel your application for this job? Click 'OK'
+      to confirm or 'Cancel' to keep your application.
     </p>
     <div class="dialog-actions">
-      <button mat-flat-button class="red-cancel-btn" (click)="closeCancelModal()">Cancel</button>
+      <button
+        mat-flat-button
+        class="red-cancel-btn"
+        (click)="closeCancelModal()"
+      >
+        Cancel
+      </button>
       <button mat-flat-button color="warn" (click)="confirmCancel()">OK</button>
     </div>
   </div>
 </div>
-
-
-
-
-
