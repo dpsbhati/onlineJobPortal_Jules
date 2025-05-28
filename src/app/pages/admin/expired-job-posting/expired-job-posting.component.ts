@@ -61,7 +61,7 @@ export class ExpiredJobPostingComponent implements OnInit {
   filters = {
     all: '',
     title: '',
-    job_type: '',
+    vessel_type: '',
     employer: '',
     rank: '',
     jobpost_status: '',
@@ -240,7 +240,7 @@ export class ExpiredJobPostingComponent implements OnInit {
 
   clearFilter(
     event: Event,
-    filterType: 'job_type' | 'rank' | 'jobpost_status'
+    filterType: 'vessel_type' | 'rank' | 'jobpost_status'
   ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
@@ -250,7 +250,7 @@ export class ExpiredJobPostingComponent implements OnInit {
     this.filters = {
       all: '',
       title: '',
-      job_type: '',
+      vessel_type: '',
       employer: '',
       rank: '',
 
