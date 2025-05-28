@@ -28,7 +28,9 @@
         'bg-light-success-1 text-success ': jobDetails.status?.toLowerCase() === 'approved',
   'bg-light-primary text-primary': jobDetails.status?.toLowerCase() === 'processed',
             'bg-light  bg-light-error': toLowerCaseSafe(jobDetails.status) === 'endorsed',
-            'bg-light-success bg-light ': toLowerCaseSafe(jobDetails.status) === 'deployed'
+            'bg-light-success bg-light ': toLowerCaseSafe(jobDetails.status) === 'deployed',
+             'bg-light-error-cancel text-error-cancel ':
+                  toLowerCaseSafe(jobDetails.status) === 'cancel'
       }"> {{ jobDetails.status||'-' }}
             </span>
       </div>
