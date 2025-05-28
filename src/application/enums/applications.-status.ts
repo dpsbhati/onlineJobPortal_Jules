@@ -17,6 +17,6 @@ export enum ApplicationStatus {
     COMPLETED = 'completed',
     ON_HOLD = 'on_hold',
     REJECTED = 'rejected',
-    CANCEL = 'Cancel',
+    CANCEL = 'Cancelled',
     WITHDRAWN = 'withdrawn'
   }

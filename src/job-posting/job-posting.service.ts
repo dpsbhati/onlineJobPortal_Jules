@@ -249,7 +249,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
-
+'vessel_type',
         'title',
         'short_description',
         'full_description',
