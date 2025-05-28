@@ -15,6 +15,9 @@ import { FacebookService } from 'src/facebook/facebook.service';
 import { CronJob } from 'cron';
 import { IPagination } from 'src/shared/paginationEum';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { Users } from 'src/user/entities/user.entity';
+import { NotificationGateway } from 'src/notifications/notifications.gateway';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 export class JobPostingService {
@@ -25,6 +28,10 @@ export class JobPostingService {
     private jobPostingRepository: Repository<JobPosting>,
     private readonly linkedInService: LinkedInService,
     private readonly facebookService: FacebookService,
+    @InjectRepository(Users)
+    private userRepository: Repository<Users>,
+    private readonly notificationGateway: NotificationGateway,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   private jobs = new Map<number, { linkedIn: CronJob; facebook: CronJob }>();
@@ -124,10 +131,35 @@ export class JobPostingService {
       });
 
       if (jobsToClose.length > 0) {
+        const expiredJobs = [];
+
         for (const job of jobsToClose) {
           job.job_opening = JobOpeningStatus.CLOSE;
           job.isActive = false;
           await this.jobPostingRepository.save(job);
+          expiredJobs.push({
+            id: job.id,
+            title: job.rank,
+            deadline: job.deadline,
+          });
+        }
+        const adminUsers = await this.userRepository.find({
+          where: { role: 'admin', isActive: true },
+          select: ['id'],
+        });
+        const adminUserIds = adminUsers.map((admin) => admin.id);
+
+        for (const expiredJob of expiredJobs) {
+          this.notificationGateway.emitNotificationToUsers(
+            adminUserIds,
+            'adminNotification',
+            {
+              jobId: expiredJob.id,
+              title: expiredJob.title,
+              message: `The job "${expiredJob.title}" has expired.`,
+              type: 'job_expired',
+            },
+          );
         }
       }
     } catch (error) {
