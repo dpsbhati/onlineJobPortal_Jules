@@ -173,7 +173,6 @@ export class JobDetailsComponent {
       this.adminService.applyJobs(apiPayload).subscribe({
         next: (response: any) => {
           if (response.statusCode === 200) {
-            this.checkwebsocket();
             this.loader.hide();
             this.toastr.success(response.message);
             this.router.navigate(['/Applied-Applications']);
@@ -237,38 +236,5 @@ export class JobDetailsComponent {
       return true;
     }
   }
-
-  checkwebsocket() {
-    //Event
-    let userId: any = localStorage.getItem('user');
-    const params = { userId: JSON.parse(userId)?.id };
-    this.wbesocketSubscription = this.webSocketService
-      .listen('jobApply', params)
-      .subscribe({
-        next: (messages) => {
-          console.log(messages)
-          if (messages) {
-            //Add one to unread count in real time
-            // this.unreadCount = this.unreadCount + 1;
-
-            // messages.data.notification.isRead = false;
-            // this._notificationsService.notificationsData.unshift(
-            //   messages.data.notification
-            // );
-            // const updatedNotification =
-            //   this._notificationsService.notificationsData;
-            // this._notificationsService.updateNotificationsList(
-            //   updatedNotification
-            // );
-          }
-        },
-        error: (err) => {
-          console.log(err)
-          // this.wbesocketSubscription.unsubscribe();
-          // this.webSocketService.disconnect();
-        },
-      });
-  }
-
 }
 

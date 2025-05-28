@@ -1,5 +1,6 @@
 // socket.service.ts
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import * as io from 'socket.io-client';
 
@@ -10,16 +11,24 @@ export class WebsocketService {
   private socket: io.Socket;
   loginUserId: any;
 
-  constructor() {
+  constructor(
+    private toastr: ToastrService
+  ) {
     const userString = localStorage.getItem('user');
     this.loginUserId = userString ? JSON.parse(userString) : null;
+    console.log(this.loginUserId);
+    
   }
 
   connect(url: string): void {
     console.log(url)
     this.socket = io.io(url, {
+      transports:['websocket', 'polling'],
+      withCredentials:true,
       query: { userId: this.loginUserId?.id }
     });
+    console.log(this.socket);
+    
   }
 
   listen(eventName: string, params?: any): Observable<any> {
@@ -27,6 +36,7 @@ export class WebsocketService {
       this.socket.on(eventName, (data: any) =>{
         console.log(data)
         observer.next({ data, params })
+        this.toastr.info(data.message, data.title, {timeOut:10000})
       });
       return () => this.socket.off(eventName);
     });
