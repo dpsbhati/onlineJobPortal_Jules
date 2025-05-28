@@ -193,6 +193,9 @@
               {{ country.name }} ({{ country.code }})
             </mat-option>
           </mat-select>
+            <mat-error *ngIf="jobForm.get('country_code')?.invalid && jobForm.get('country_code')?.touched">
+            Country Code is required.
+          </mat-error>
         </mat-form-field>
       </div>
         <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> 

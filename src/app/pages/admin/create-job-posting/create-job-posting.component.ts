@@ -133,7 +133,7 @@ export class CreateJobPostingComponent {
           this.minLengthWithoutSpaces(2),
           Validators.maxLength(1500)
         ]),
-        country_code: new FormControl('', Validators.required),
+        country_code: new FormControl('PH', Validators.required),
         address: new FormControl('Philippines, Navilands Marine Inc', [
           Validators.required,
           Validators.min(2),
