@@ -175,3 +175,10 @@ export class JobPosting {
   @JoinColumn({ name: 'created_by' })
   user: Users;
 }
+export class Job {
+  @Column()
+  job_id: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  deadline: Date;
+}

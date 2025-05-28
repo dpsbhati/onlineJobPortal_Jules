@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
 import {
@@ -249,7 +249,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
-'vessel_type',
+        'vessel_type',
         'title',
         'short_description',
         'full_description',
@@ -545,6 +545,28 @@ export class JobPostingService {
         'Job Posting successfully published.',
       );
     } catch (error) {
+      return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
+    }
+  }
+
+  async updateDeadline(job_id: string, deadline: Date) {
+    try {
+      const jobPosting = await this.jobPostingRepository.findOne({
+        where: { id: job_id, is_deleted: false },
+      });
+
+      if (!jobPosting) {
+        throw new NotFoundException('Job not found');
+      }
+      await this.jobPostingRepository.update(job_id,{deadline:deadline})
+
+      return WriteResponse(
+        200,
+        true,
+        'Job deadline updated successfully.',
+      );
+    } catch (error) {
+      console.error('Error occurred while updating deadline:', error.message);
       return WriteResponse(500, {}, error.message || 'INTERNAL_SERVER_ERROR.');
     }
   }
