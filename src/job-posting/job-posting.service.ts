@@ -220,6 +220,8 @@ export class JobPostingService {
       const savedJobPosting =
         await this.jobPostingRepository.save(updatedJobPosting);
 
+      const rank=await this.findOne('id', savedJobPosting.id);
+
       const applicantUsers = await this.userRepository
         .createQueryBuilder('user')
         .innerJoin('user.userProfile', 'profile')
@@ -238,7 +240,7 @@ export class JobPostingService {
         'adminNotification',
         {
           title: 'New Job Posted',
-          message: `A new job for the position of ${jobDto.rank} has been posted.`,
+          message: `A new job for the position of ${rank.data.ranks.rank_name} has been posted.`,
           createdAt: new Date(),
           type: 'job_posting',
         },
