@@ -146,6 +146,7 @@
       </table>
     </div>
     <mat-paginator
+     *ngIf="total > 0"
       [length]="total"
       [pageSize]="pageConfig.perPage"
       [pageIndex]="pageConfig.curPage - 1"

@@ -55,6 +55,7 @@ export class NotificationsComponent implements OnInit {
     direction: 'desc',
     whereClause: [],
   };
+  currentUserId: any;
 
   constructor(
     private adminService: AdminService,
@@ -69,11 +70,52 @@ export class NotificationsComponent implements OnInit {
   }
 
   ngOnInit() {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        this.currentUserId = user.id;
+      } catch (error) {
+        this.currentUserId = null;
+      }
+    }
+
     this.onPagination();
   }
 
+  // onPagination(): void {
+  //   this.loader.show();
+  //   this.adminService.notificationPagination(this.pageConfig).subscribe({
+  //     next: (res: any) => {
+  //       if (res.statusCode === 200) {
+  //         this.notificationlist = res.data;
+  //         this.total = res.count || 0;
+  //         this.loader.hide();
+  //       } else {
+  //         this.notificationlist = [];
+  //         this.total = 0;
+  //         this.loader.hide();
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       this.loader.hide();
+  //       this.toastr.error(err?.error?.message);
+  //       this.notificationlist = [];
+  //       this.total = 0;
+  //     },
+  //   });
+  // }
   onPagination(): void {
     this.loader.show();
+
+    this.pageConfig.whereClause = [
+      {
+        key: 'user_id',
+        value: this.currentUserId,
+        operator: '=',
+      },
+    ];
+
     this.adminService.notificationPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
@@ -118,7 +160,7 @@ export class NotificationsComponent implements OnInit {
     this.onPagination();
   }
 
-   isAdmin(): boolean {
+  isAdmin(): boolean {
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
