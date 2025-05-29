@@ -245,3 +245,72 @@
 </mat-card>
 
 
+<!-- Deadline Update Modal -->
+<div
+  class="dialog-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="dialogTitle"
+  *ngIf="showDeadlineModal"
+  (click)="closeDeadlineModal()"
+>
+  <div class="dialog-box" (click)="$event.stopPropagation()">
+    <div
+      class="dialog-header d-flex align-items-center justify-content-between"
+    >
+      <h2 id="dialogTitle" class="m-0">Update Deadline</h2>
+      <button
+        mat-icon-button
+        aria-label="Close dialog"
+        (click)="closeDeadlineModal()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <p>
+      The deadline for this job has already passed. Please update the deadline to activate the job.
+    </p>
+    <div class="row">
+      <div class="col-lg-5">
+ <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Deadline</mat-label>
+      <input
+        matInput
+        [matDatepicker]="deadlinePicker"
+         [min]="minDate"
+        [(ngModel)]="newDeadline"
+      />
+      <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
+      <mat-datepicker #deadlinePicker></mat-datepicker>
+    </mat-form-field>
+      </div>
+    </div>
+   
+    <div class="dialog-actions d-flex justify-content-end gap-3 mt-3">
+      <button
+       mat-flat-button class="bg-error text-white"
+        (click)="closeDeadlineModal()"
+      >
+        Cancel
+      </button>
+      <!-- <button
+        mat-flat-button
+        color="primary"
+       
+      >
+        Update & Activate
+      </button> -->
+          <button
+        mat-flat-button
+        color="primary"
+        (click)="confirmDeadlineChange()"
+        [disabled]="!newDeadline"
+      >
+        Update & Activate
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

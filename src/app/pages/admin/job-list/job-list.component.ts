@@ -17,6 +17,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteComponent } from '../delete/delete.component';
+import { MatNativeDateModule } from '@angular/material/core';
 @Component({
   selector: 'app-job-list',
   standalone: true,
@@ -31,6 +32,7 @@ import { DeleteComponent } from '../delete/delete.component';
     MatInputModule,
     MatProgressSpinnerModule,
     NgIf,
+    MatNativeDateModule,
     ToastrModule,
   ],
   templateUrl: './job-list.component.html',
@@ -47,7 +49,7 @@ export class JobListComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   totalApplications = 0;
-
+minDate: Date = new Date();
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -69,6 +71,9 @@ export class JobListComponent implements OnInit {
   jobPostingList: any[] = [];
   isLoading: boolean = false;
   displayedColumns: string[] = [];
+  showDeadlineModal = false; // control modal visibility
+selectedJobToActivate: any = null; // store the job user tries to activate
+newDeadline: Date | null = null; // new deadline chosen by user
 
   constructor(
     private adminService: AdminService,
@@ -125,7 +130,12 @@ export class JobListComponent implements OnInit {
     this.adminService.jobPostingPagination(this.pageConfig).subscribe({
       next: (res: any) => {
         if (res.statusCode === 200) {
-          this.jobPostingList = res.data;
+          // this.jobPostingList = res.data;
+          this.jobPostingList = res.data.map((job: any) => ({
+          ...job,
+          rank: job.ranks?.rank_name || '-', // 👈 patch rank_name from nested `ranks` relation
+        }));
+
           this.total = res.count || 0;
           this.loader.hide();
         } else {
@@ -151,17 +161,51 @@ export class JobListComponent implements OnInit {
     this.onPagination();
   }
 
+// onStatusToggleChange(element: any, checked: boolean) {
+ 
+//   element.job_opening = checked ? 'Active' : 'DeActivated';
+//   element.isActive = checked;
+
+//   this.adminService.toggleJobStatus(element.id, checked).subscribe({
+//     next: (res) => {
+
+// this.toastr.success(res.message);
+
+
+//     },
+//     error: (err) => {
+ 
+//       element.isActive = !checked;
+//       element.job_opening = !checked ? 'Active' : 'DeActivated';
+//       this.toastr.error('Failed to update status');
+//     },
+//   });
+// }
 onStatusToggleChange(element: any, checked: boolean) {
-  // Optimistically update UI
+  if (checked) {
+    // User is trying to activate - check deadline
+    const today = new Date();
+    console.log(today,'Today');
+    const jobDeadline = new Date(element.deadline);
+console.log(jobDeadline,'jobDeadline',jobDeadline < today);
+    if (jobDeadline < today) {
+      // Deadline passed - show modal to update deadline first
+      this.selectedJobToActivate = element;
+      this.newDeadline = null; // reset date
+      this.showDeadlineModal = true;
+      // Revert toggle UI immediately until user confirms
+      element.isActive = false;
+      return;
+    }
+  }
+
+  // Proceed normally if deadline not crossed or deactivating
   element.job_opening = checked ? 'Active' : 'DeActivated';
   element.isActive = checked;
 
   this.adminService.toggleJobStatus(element.id, checked).subscribe({
     next: (res) => {
-
-this.toastr.success(res.message);
-
-
+      this.toastr.success(res.message);
     },
     error: (err) => {
       // Revert UI changes on failure
@@ -284,4 +328,61 @@ onSearch(): void {
     this.pageConfig.whereClause = [];
     this.onPagination(); // fetch the cleared list
   }
+  closeDeadlineModal() {
+  this.showDeadlineModal = false;
+  this.selectedJobToActivate = null;
+  this.newDeadline = null;
+}
+
+
+
+// confirmDeadlineChange() {
+//   if (!this.newDeadline || !this.selectedJobToActivate) return;
+
+ 
+//   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+//     next: () => {
+//       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+//         next: () => {
+//           this.toastr.success('Deadline updated and job activated');
+//           this.selectedJobToActivate.isActive = true;
+//           this.selectedJobToActivate.job_opening = 'Active';
+//           this.closeDeadlineModal();
+//         },
+//         error: () => this.toastr.error('Failed to activate job'),
+//       });
+//     },
+//     error: () => this.toastr.error('Failed to update deadline'),
+//   });
+// }
+confirmDeadlineChange() {
+  if (!this.newDeadline || !this.selectedJobToActivate) return;
+
+  // Show loader if any
+  this.loader.show();
+
+  this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+    next: () => {
+      this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+        next: () => {
+          this.toastr.success('Deadline updated and job activated');
+          this.selectedJobToActivate.isActive = true;
+          this.selectedJobToActivate.job_opening = 'Active';
+          this.closeDeadlineModal();
+          this.loader.hide();
+          this.onPagination();  // refresh list if needed
+        },
+        error: () => {
+          this.toastr.error('Failed to activate job');
+          this.loader.hide();
+        },
+      });
+    },
+    error: () => {
+      this.toastr.error('Failed to update deadline');
+      this.loader.hide();
+    },
+  });
+}
+
 }

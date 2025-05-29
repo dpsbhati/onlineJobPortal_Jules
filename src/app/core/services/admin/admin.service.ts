@@ -95,4 +95,17 @@ export class AdminService {
   // Using genericService.Get but with query params
   return this.genericService.Get(`job-posting/toggle-job-status?${params.toString()}`);
 }
+
+
+  // updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
+   
+  //   return this.genericService.Post(`/job-posting/update-deadline`, { deadline: newDeadline });
+  // }
+    updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
+    const payload = {
+      jobId: jobId,
+      deadline: newDeadline.toISOString(),
+    };
+    return this.genericService.Post(`job-posting/update-deadline`, payload);
+  }
 }

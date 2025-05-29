@@ -1,3 +1,56 @@
 .mdc-switch__track::before{
       background-color: #bbbbbb !important;
 }
+
+/* Overlay to dim the background and cover entire screen */
+.dialog-overlay {
+  position: fixed;        /* Fixed to viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;          /* Full width */
+  height: 100vh;         /* Full height */
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent dark background */
+  display: flex;
+  justify-content: center;  /* Center horizontally */
+  align-items: center;      /* Center vertically */
+  z-index: 1000;            /* High z-index to be on top */
+}
+
+/* The modal box itself */
+.dialog-box {
+  background: #f0f8ff;    /* Light background color */
+  border-radius: 6px;
+  padding: 20px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-width: 450px;
+  width: 90%;              /* Responsive width */
+  z-index: 1010;
+  position: relative;
+}
+
+/* Optional: Style for modal header, buttons, etc., adjust as needed */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dialog-actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Style for cancel button */
+.red-cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Button hover effect */
+button.mat-flat-button:hover {
+  opacity: 0.85;
+  transition: opacity 0.2s ease-in-out;
+}
