@@ -307,18 +307,18 @@
           <mat-label>Job Description</mat-label>
           <textarea matInput id="short_description" formControlName="short_description" rows="6"></textarea>
           <mat-error *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched">
-            <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Short description is required.</span>
+            <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Job description is required.</span>
             <span *ngIf="jobForm.get('short_description')?.errors?.['minlength']">
-              Short Description must be at least {{
+               Description must be at least {{
               jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.
             </span>
             <span *ngIf="jobForm.get('short_description')?.errors?.['maxlength']">
-              Short Description cannot exceed {{
+              Job Description cannot exceed {{
               jobForm.get('short_description')?.errors?.['maxlength'].requiredLength
               }} characters.
             </span>
             <span *ngIf="jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces']">
-              Short description must be at least {{
+              Job description must be at least {{
               jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
               excluding spaces.
             </span>
