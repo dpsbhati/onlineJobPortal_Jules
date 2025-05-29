@@ -5,4 +5,6 @@ export class CreateRankDto {
   id: string;
   @ApiProperty()
   rank_name: string;
+  @ApiProperty()
+  orderId: number;
 }
