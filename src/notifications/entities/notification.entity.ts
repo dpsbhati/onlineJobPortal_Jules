@@ -15,6 +15,12 @@ export class Notification {
   user_id: string;
 
   @Column()
+  application_id: string;
+
+  @Column()
+  job_id: string;
+
+  @Column()
   subject: string;
 
   @Column('text')

@@ -168,6 +168,8 @@ export class JobPostingService {
             adminUserIds.map((adminId) =>
               this.notificationsService.create({
                 user_id: adminId,
+                application_id:null,
+                job_id: expiredJob.id,
                 subject: 'Job Expired',
                 content: `The job of "${expiredJob.title}" has expired.`,
               }),
@@ -265,6 +267,8 @@ export class JobPostingService {
         applicantIds.map((adminId) =>
           this.notificationsService.create({
             user_id: adminId,
+            application_id:null,
+            job_id: savedJobPosting.id,
             subject: notificationSubject,
             content: notificationContent,
           }),

@@ -7,6 +7,12 @@ export class CreateNotificationDto {
   user_id: string;
 
   @ApiProperty()
+  application_id: string;
+
+  @ApiProperty()
+  job_id: string;
+
+  @ApiProperty()
   subject: string;
 
   @ApiProperty()

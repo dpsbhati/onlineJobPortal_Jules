@@ -116,6 +116,8 @@ export class ApplicationService {
         adminUserIds.map((adminId) =>
           this.notificationsService.create({
             user_id: adminId,
+            application_id: savedApplication.id,
+            job_id:null,
             subject: notificationSubject,
             content: notificationContent,
           }),
@@ -549,6 +551,8 @@ export class ApplicationService {
 
       await this.notificationsService.create({
         user_id: application.data.user.id,
+        application_id: updatedApplication.id,
+        job_id: null,
         subject: notificationSubject,
         content: notificationContent,
       });
@@ -630,6 +634,8 @@ export class ApplicationService {
         adminUserIds.map((adminId) =>
           this.notificationsService.create({
             user_id: adminId,
+            application_id: updatedApplication.id,
+            job_id: null,
             subject: notificationSubject,
             content: notificationContent,
           }),
