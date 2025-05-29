@@ -355,13 +355,46 @@ onSearch(): void {
 //     error: () => this.toastr.error('Failed to update deadline'),
 //   });
 // }
+// confirmDeadlineChange() {
+//   if (!this.newDeadline || !this.selectedJobToActivate) return;
+
+//   // Show loader if any
+//   this.loader.show();
+
+//   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+//     next: () => {
+//       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+//         next: () => {
+//           this.toastr.success('Deadline updated and job activated');
+//           this.selectedJobToActivate.isActive = true;
+//           this.selectedJobToActivate.job_opening = 'Active';
+//           this.closeDeadlineModal();
+//           this.loader.hide();
+//           this.onPagination();  // refresh list if needed
+//         },
+//         error: () => {
+//           this.toastr.error('Failed to activate job');
+//           this.loader.hide();
+//         },
+//       });
+//     },
+//     error: () => {
+//       this.toastr.error('Failed to update deadline');
+//       this.loader.hide();
+//     },
+//   });
+// }
 confirmDeadlineChange() {
   if (!this.newDeadline || !this.selectedJobToActivate) return;
 
-  // Show loader if any
   this.loader.show();
 
-  this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+  // Convert newDeadline (local Date) to ISO string WITHOUT timezone shift
+  // So, send only date part with time set to some fixed time, e.g., noon local to avoid timezone issues
+
+  const adjustedDeadline = this.fixDateForApi(this.newDeadline);
+
+  this.adminService.updateJobDeadline(this.selectedJobToActivate.id, adjustedDeadline).subscribe({
     next: () => {
       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
         next: () => {
@@ -370,7 +403,7 @@ confirmDeadlineChange() {
           this.selectedJobToActivate.job_opening = 'Active';
           this.closeDeadlineModal();
           this.loader.hide();
-          this.onPagination();  // refresh list if needed
+          this.onPagination();
         },
         error: () => {
           this.toastr.error('Failed to activate job');
@@ -383,6 +416,14 @@ confirmDeadlineChange() {
       this.loader.hide();
     },
   });
+}
+
+// Helper method to adjust date before sending to API
+fixDateForApi(date: Date): string {
+  // Set fixed time (e.g., noon) to avoid timezone shift to previous day
+  const fixedDate = new Date(date);
+  fixedDate.setHours(12, 0, 0, 0); // 12:00:00 local time
+  return fixedDate.toISOString(); // send ISO string with fixed time
 }
 
 }

@@ -100,11 +100,20 @@ export class AdminService {
    
   //   return this.genericService.Post(`/job-posting/update-deadline`, { deadline: newDeadline });
   // }
-    updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
-    const payload = {
-      jobId: jobId,
-      deadline: newDeadline.toISOString(),
-    };
-    return this.genericService.Post(`job-posting/update-deadline`, payload);
-  }
+  //   updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
+  //   const payload = {
+  //     jobId: jobId,
+  //     deadline: newDeadline.toISOString(),
+  //   };
+  //   return this.genericService.Post(`job-posting/update-deadline`, payload);
+  // }
+  updateJobDeadline(jobId: string, deadline: string) {
+  const payload = {
+    job_id: jobId,   // <-- use job_id here as expected by backend
+    deadline: deadline,
+  };
+
+  return this.http.post('https://navilands.vns360.gr/api/job-posting/update-deadline', payload);
+}
+
 }
