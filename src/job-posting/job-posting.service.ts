@@ -275,6 +275,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
+        
         'vessel_type',
         'title',
         'short_description',
@@ -325,6 +326,9 @@ export class JobPostingService {
       const skills_required = whereClause.find(
         (p: any) => p.key === 'skills_required' && p.value,
       );
+      const rank_name = whereClause.find(
+        (p: any) => p.key === 'rank_name' && p.value,
+      );
 
       if (skills_required && Array.isArray(skills_required.value)) {
         const skillsConditions = skills_required.value.map(
@@ -334,6 +338,11 @@ export class JobPostingService {
           lwhereClause += ` AND (${skillsConditions.join(' OR ')})`;
         }
       }
+
+ if (rank_name) {
+        lwhereClause += ` AND ranks.rank_name LIKE '%${rank_name.value}%'`;
+      }
+
 
       if (startDate && endDate) {
         lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
@@ -426,6 +435,7 @@ export class JobPostingService {
       // Count query separately
       const totalCount = await this.jobPostingRepository
         .createQueryBuilder('f')
+         .leftJoinAndSelect('f.ranks', 'ranks')
         .where(lwhereClause)
         .getCount();
 
