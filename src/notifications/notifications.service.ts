@@ -136,8 +136,9 @@ export class NotificationsService {
       );
 
       if (user_id) {
-        whereClause += ` AND app.user_id LIKE :user_id`;
-        parameters.user_id = `%${user_id.value}%`;
+        queryBuilder.andWhere('app.user_id = :user_id', {
+          user_id: user_id.value,
+        });
       }
 
       // Pagination setup
