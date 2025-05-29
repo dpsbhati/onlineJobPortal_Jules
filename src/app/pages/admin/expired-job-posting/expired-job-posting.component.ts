@@ -125,18 +125,19 @@ export class ExpiredJobPostingComponent implements OnInit {
     this.loader.show();
 
     // 1. Get dynamic filters from form
-    const dynamicFilters = this.helperService.getAllFilters(this.filters);
-//     const dynamicFilters = this.helperService.getAllFilters(this.filters).map((filter: any) => {
-//   if (filter.key === 'rank') {
-//     return {
-//       key: 'ranks.rank_name', // this should match your DB field or alias in backend
-//       value: filter.value,
-//       operator: 'like',
-//     };
-//   }
-//   return filter;
-// });
+    let dynamicFilters = this.helperService.getAllFilters(this.filters);
 
+  // 2. Replace rank filter's key with 'rank_name' and operator '='
+  dynamicFilters = dynamicFilters.map((filter: any) => {
+    if (filter.key === 'rank' && filter.value) {
+      return {
+        key: 'rank_name',    // <-- backend expects 'rank_name' here
+        value: filter.value,
+        operator: '=',       // exact match operator
+      };
+    }
+    return filter;
+  });
 
     // 2. Add static filter for expired jobs
     const expiredFilter = {
