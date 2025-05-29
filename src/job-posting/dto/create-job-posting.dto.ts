@@ -88,13 +88,13 @@ export class CreateJobPostingDto {
 
   title: string;
 
-  @ApiProperty({
-    description: 'The date the job was published',
-    example: '2024-12-17T00:00:00.000Z',
-  })
-  @IsNotEmpty({ message: 'date_published is required.' })
-  @IsDate({ message: 'date_published must be a valid date.' })
-  @Type(() => Date)
+  // @ApiProperty({
+  //   description: 'The date the job was published',
+  //   example: '2024-12-17T00:00:00.000Z',
+  // })
+  // @IsNotEmpty({ message: 'date_published is required.' })
+  // @IsDate({ message: 'date_published must be a valid date.' })
+  // @Type(() => Date)
   date_published: Date;
 
   @ApiProperty({

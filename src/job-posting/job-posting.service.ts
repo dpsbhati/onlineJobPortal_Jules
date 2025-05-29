@@ -203,7 +203,7 @@ export class JobPostingService {
 
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
-        const datePublished = new Date(jobDto.date_published);
+        const datePublished = new Date();
         const deadline = new Date(jobDto.deadline);
 
         if (now >= datePublished && now <= deadline) {
