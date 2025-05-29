@@ -58,7 +58,7 @@ export class CreateJobPostingComponent {
     'image/webp'
   ]
   imagePreview: string | ArrayBuffer | null = null
-  uniqueRanks: string[]
+ uniqueRanks: { id: string; rank_name: string }[] = [];
   constructor(
     private adminService: AdminService,
     private route: ActivatedRoute,
@@ -66,7 +66,7 @@ export class CreateJobPostingComponent {
     private imageCompressionService: ImageCompressionService,
     private loader: LoaderService,
     private toaster: ToastrService
-  ) 
+  )
 
   {
     this.jobForm = new FormGroup(
@@ -397,7 +397,7 @@ formatSalary(controlName: string): void {
   }
 }
 
- 
+
 
   sanitizeFormValues(): void {
     Object.keys(this.jobForm.controls).forEach(key => {
@@ -611,14 +611,23 @@ formatSalary(controlName: string): void {
     this.imagePreview = null
   }
 
+  // allrankslist() {
+  //   this.adminService.getallranks().subscribe((res: any) => {
+  //     if (res.statusCode === 200) {
+  //       const allRanks = res.data.map((r: any) => r.rank_name).filter(Boolean);
+  //       this.uniqueRanks = [...new Set(allRanks)] as string[];
+  //     }
+  //   });
+  // }
   allrankslist() {
-    this.adminService.getallranks().subscribe((res: any) => {
-      if (res.statusCode === 200) {
-        const allRanks = res.data.map((r: any) => r.rank_name).filter(Boolean);
-        this.uniqueRanks = [...new Set(allRanks)] as string[];
-      }
-    });
-  }
+  this.adminService.getallranks().subscribe((res: any) => {
+    if (res.statusCode === 200) {
+      // Directly assign array of objects (id + rank_name)
+      this.uniqueRanks = res.data;
+    }
+  });
+}
+
 
   navigate() {
     this.router.navigate(['/job-list'])
