@@ -170,7 +170,7 @@
     </div>
 
     <!-- @for(notification of notifications; track notification.title) { -->
-    <ng-container *ngIf="notificationlist.length > 0; else noNotifications">
+    <ng-container *ngIf="notificationlist?.length > 0; else noNotifications">
       <button mat-menu-item class="p-16" *ngFor="let notification of notificationlist.slice(0, 3)">
         <div class="d-flex align-items-center">
           <!-- <span class="flex-shrink-0 text-{{ notification.color }} bg-light-{{
@@ -204,7 +204,7 @@
       </div>
     </ng-template>
 
-    <div class="p-y-12 p-x-32" *ngIf="notificationlist.length > 0;">
+    <div class="p-y-12 p-x-32" *ngIf="notificationlist?.length > 0;">
       <a href="notifications" mat-flat-button color="primary" class="w-100 rounded-pill">
         <div class="d-flex align-items-center gap-8">
           Check all Notifications

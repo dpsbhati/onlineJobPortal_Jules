@@ -35,7 +35,7 @@
 
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <ng-container *ngIf="notificationlist.length > 0; else noData">
+    <ng-container *ngIf="notificationlist?.length > 0; else noData">
 
       <div *ngFor="
         let notification of notificationlist;
@@ -73,7 +73,7 @@
       </div>
     </ng-template>
     <!-- Pagination -->
-    <mat-paginator *ngIf="notificationlist.length > 0" [pageSizeOptions]="[5, 10, 20]" [length]="total"
+    <mat-paginator *ngIf="notificationlist?.length > 0" [pageSizeOptions]="[5, 10, 20]" [length]="total"
       (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
