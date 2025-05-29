@@ -131,6 +131,7 @@ export class JobPostingService {
           job_opening: JobOpeningStatus.OPEN,
           deadline: LessThanOrEqual(currentDateTime),
         },
+        relations: ['ranks'],
       });
 
       if (jobsToClose.length > 0) {
@@ -142,7 +143,7 @@ export class JobPostingService {
           await this.jobPostingRepository.save(job);
           expiredJobs.push({
             id: job.id,
-            title: job.rank,
+            title: job.ranks.rank_name,
             deadline: job.deadline,
           });
         }
