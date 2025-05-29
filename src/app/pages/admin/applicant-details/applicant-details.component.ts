@@ -43,6 +43,7 @@ export class ApplicantDetailsComponent {
   ) { }
 
   ngOnInit(): void {
+     this.adminComments = '';
     this.route.params.subscribe(params => {
       this.userId = params['id'];
       this.jobId = localStorage.getItem('currentJobId') || '';
@@ -130,7 +131,7 @@ formatPreferences(prefs: any): string {
         if (response.statusCode === 200) {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
-          this.adminComments = this.applicantDetails.comments;
+          // this.adminComments = this.applicantDetails.comments;
 
           this.languageSpokenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_spoken_info);
           this.languageWrittenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_written_info);
@@ -216,12 +217,13 @@ formatPreferences(prefs: any): string {
         next: (response: any) => {
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
+                this.adminComments = '';
 
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
               this.router.navigate(['/applicants-details', jobId]);
             } else {
-              this.router.navigate(['/applications']);
+              // this.router.navigate(['/applications']);
             }
           } else {
             this.toastr.warning(response.message || 'Failed to update status');
@@ -235,6 +237,43 @@ formatPreferences(prefs: any): string {
         }
       });
   }
+  onStatusChange(newStatus: string) {
+  if (!newStatus) {
+    return; // Ignore empty selections
+  }
+
+  this.selectedStatus = newStatus;
+  this.saveStatusChange();
+}
+  saveStatusChange() {
+  if (!this.userId || !this.selectedStatus) {
+    this.notifyService.showError('Please select a status');
+    return;
+  }
+
+  this.isLoading = true;
+
+  const updateData = {
+    status: this.selectedStatus,
+  };
+
+  this.adminService.changeapplicationStatus(this.userId, updateData).subscribe({
+    next: (response: any) => {
+      if (response.statusCode === 200) {
+        this.toastr.success(response.message);
+        // Optionally navigate or update UI here
+      } else {
+        this.toastr.warning(response.message || 'Failed to update status');
+      }
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error('Error updating status:', error);
+      this.toastr.error(error?.error?.message || 'Error updating status');
+      this.isLoading = false;
+    },
+  });
+}
   extractFileName(cvPath: string): string {
     const urlSegments = cvPath.split("\\"); // Split by the backslash
     return urlSegments[urlSegments.length - 1]; // Get the last segment (filename)

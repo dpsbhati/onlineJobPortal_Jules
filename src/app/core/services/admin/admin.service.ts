@@ -85,6 +85,9 @@ export class AdminService {
   updateApplicationStatus(id: string, payload: any): Observable<any> {
     return this.genericService.Post(`applications/update/${id}`, payload);
   }
+   changeapplicationStatus(id: string, payload: any): Observable<any> {
+    return this.genericService.Post(`applications/changeApplicationStatus/${id}`, payload);
+  }
 
   toggleJobStatus(id: string, isActive: boolean): Observable<any> {
   const params = new URLSearchParams();
@@ -97,7 +100,7 @@ export class AdminService {
 
 
   // updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
-   
+
   //   return this.genericService.Post(`/job-posting/update-deadline`, { deadline: newDeadline });
   // }
   //   updateJobDeadline(jobId: string, newDeadline: Date): Observable<any> {
