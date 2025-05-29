@@ -558,7 +558,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepository.findOne({
       where: { id },
-      relations: ['job', 'user'],
+      relations: ['job', 'user','job.ranks'],
     });
 
     if (!application) {
@@ -583,7 +583,7 @@ export class ApplicationService {
       console.log('adminUserIds', adminUserIds);
 
       const notificationSubject = 'Job Application Cancelled';
-      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`;
+      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.ranks.rank_name}.`;
 
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
