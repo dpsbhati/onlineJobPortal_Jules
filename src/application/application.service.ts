@@ -178,6 +178,7 @@ export class ApplicationService {
       const application = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .leftJoinAndSelect('job.courses_and_certification', 'courses')
         .leftJoinAndSelect('user.userProfile', 'userProfile')
