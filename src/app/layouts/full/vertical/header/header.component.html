@@ -107,9 +107,9 @@
   <!-- --------------------------------------------------------------- -->
   <!-- Collpase bar -->
   <!-- --------------------------------------------------------------- -->
-  <button mat-icon-button (click)="toggleCollpase()" class="d-flex d-lg-none justify-content-center">
+  <!-- <button mat-icon-button (click)="toggleCollpase()" class="d-flex d-lg-none justify-content-center">
     <i-tabler name="dots" class="icon-20 d-flex"></i-tabler>
-  </button>
+  </button> -->
   @if(isCollapse){
   <div class="header-collpase p-y-10 p-x-15">
     <div class="d-flex justify-content-center gap-10">
@@ -156,7 +156,7 @@
   <!-- --------------------------------------------------------------- -->
   <!-- Notification Dropdown -->
   <!-- --------------------------------------------------------------- -->
-  <button class="position-relative align-items-center justify-content-center d-none d-lg-flex" mat-icon-button
+  <button class="position-relative align-items-center justify-content-center" mat-icon-button
     [matMenuTriggerFor]="notificationmenu" aria-label="Notifications">
     <i-tabler name="bell" class="icon-22 d-flex"></i-tabler>
     <div class="notify">
@@ -263,7 +263,7 @@
   <!-- profile Dropdown -->
   <!-- --------------------------------------------------------------- -->
   <div style="cursor: pointer" extended [matMenuTriggerFor]="profilemenu" aria-label="Notifications"
-    class="position-relative align-items-center justify-content-center profile-btn-dd d-none d-lg-flex">
+    class="position-relative align-items-center justify-content-center profile-btn-dd">
     <span class="d-flex align-items-center justify-content-center profile-dd m-l-2 m-t-2">
       <span style="font-size: 12px" class="profile-greeting text-white">{{
         "Hi, " + userName
