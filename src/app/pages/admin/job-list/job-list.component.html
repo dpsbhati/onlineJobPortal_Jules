@@ -6,7 +6,7 @@
       <div class="col-xl-4 col-lg-4 col-md-12">
         <mat-form-field appearance="outline">
           <mat-label>Search</mat-label>
-          <input matInput [(ngModel)]="filters.all" (keyup.enter)="onSearch()"placeholder="Search..." />
+          <input matInput [(ngModel)]="filters.all" (keyup.enter)="onSearch()" placeholder="Search..." />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
@@ -28,7 +28,7 @@
               </button>
             </mat-form-field>
           </div> -->
-               <div class="col-xl-3 col-lg-3 col-md-3">
+          <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Vessel Type</mat-label>
               <mat-select [(ngModel)]="filters.vessel_type" (selectionChange)="onSearch()">
@@ -38,18 +38,20 @@
             <mat-option value="Bulk Carrier">Bulk Carrier</mat-option>
              <mat-option value="Container">Container</mat-option>
               </mat-select>
-              <button *ngIf="filters.vessel_type" matSuffix  mat-icon-button aria-label="Clear" (click)="clearFilter($event, 'vessel_type')">
+              <button *ngIf="filters.vessel_type" matSuffix mat-icon-button aria-label="Clear"
+                (click)="clearFilter($event, 'vessel_type')">
                 <mat-icon>clear</mat-icon>
               </button>
             </mat-form-field>
-          </div> 
+          </div>
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Rank</mat-label>
               <mat-select [(ngModel)]="filters.rank_name" (selectionChange)="onSearch()">
                 <mat-option *ngFor="let rank of uniqueRanks" [value]="rank"> {{ rank }} </mat-option>
               </mat-select>
-              <button *ngIf="filters.rank_name"  matSuffix mat-icon-button  aria-label="Clear" (click)="clearFilter($event, 'rank_name')">
+              <button *ngIf="filters.rank_name" matSuffix mat-icon-button aria-label="Clear"
+                (click)="clearFilter($event, 'rank_name')">
                 <mat-icon>clear</mat-icon>
               </button>
             </mat-form-field>
@@ -57,9 +59,7 @@
           <div class="col-xl-3 col-lg-3 col-md-3">
             <mat-form-field class="w-100" appearance="outline">
               <mat-label>Status</mat-label>
-              <mat-select
-                [(ngModel)]="filters.job_opening"
-                (selectionChange)="onSearch()">
+              <mat-select [(ngModel)]="filters.job_opening" (selectionChange)="onSearch()">
                 <!-- <mat-option value="Hold">Hold</mat-option> -->
                 <mat-option value="Active">Active</mat-option>
                 <mat-option value="Close">Close</mat-option>
@@ -67,7 +67,7 @@
             </mat-form-field>
           </div>
           <div class="col-xl-1 col-lg-2 col-md-3">
-            <button mat-button color="primary" class="mb-20" (click)="clearSearch()" > Clear </button>
+            <button mat-button color="primary" class="mb-20" (click)="clearSearch()"> Clear </button>
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
   <mat-card-content>
     <div class="table-responsive">
       <!-- Table -->
-      <table mat-table  [dataSource]="jobPostingList"  matSort  class="mat-elevation-z8">
+      <table mat-table [dataSource]="jobPostingList" matSort class="mat-elevation-z8">
         <!-- Position Column -->
         <ng-container matColumnDef="position">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -89,14 +89,14 @@
         </ng-container>
         <!-- Title Column -->
 
-            <ng-container matColumnDef="rank">
+        <ng-container matColumnDef="rank">
           <!-- <th mat-header-cell *matHeaderCellDef>Job Title</th> -->
-             <th mat-header-cell *matHeaderCellDef>Rank</th>
+          <th mat-header-cell *matHeaderCellDef>Rank</th>
           <td mat-cell *matCellDef="let element">{{ element.rank }}</td>
         </ng-container>
         <ng-container matColumnDef="title">
           <!-- <th mat-header-cell *matHeaderCellDef>Job Title</th> -->
-             <th mat-header-cell *matHeaderCellDef>Vessel Type</th>
+          <th mat-header-cell *matHeaderCellDef>Vessel Type</th>
           <td mat-cell *matCellDef="let element">{{ element.vessel_type }}</td>
         </ng-container>
 
@@ -141,45 +141,36 @@
           <th mat-header-cell *matHeaderCellDef>Application Count</th>
 
           <td mat-cell *matCellDef="let element" class="application-count-cell text-center">
-    <ng-container *ngIf="element.application_number > 0; else zeroCount">
-      <a
-        (click)="viewapplicationDetails(element.id)"
-        class="text-primary application-count-link"
-        (click)="$event.stopPropagation()"
-        style="cursor: pointer; text-decoration: none;">
-        {{ element.application_number }}
-      </a>
-    </ng-container>
-    <ng-template #zeroCount><span>{{ element.application_number }}</span></ng-template>
-  </td>
+            <ng-container *ngIf="element.application_number > 0; else zeroCount">
+              <a (click)="viewapplicationDetails(element.id)" class="text-primary application-count-link"
+                (click)="$event.stopPropagation()" style="cursor: pointer; text-decoration: none;">
+                {{ element.application_number }}
+              </a>
+            </ng-container>
+            <ng-template #zeroCount><span>{{ element.application_number }}</span></ng-template>
+          </td>
         </ng-container>
-  <!-- Status Column -->
+        <!-- Status Column -->
         <ng-container matColumnDef="status" *ngIf="isAdmin()">
           <th class="text-center" mat-header-cell *matHeaderCellDef>Status</th>
           <td mat-cell *matCellDef="let element">
 
-            <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex gap-16 align-items-center">
 
-            <span
-  class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12"
-  [ngClass]="{
+              <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
     'bg-light-secondary text-secondary': element.isActive,
     'bg-light-error text-error': !element.isActive
-  }"
->
-  {{ element.isActive ? 'Active' : 'Inactive' }}
-</span>
+  }">
+                {{ element.isActive ? 'Active' : 'Inactive' }}
+              </span>
 
 
-            <mat-slide-toggle
-  [(ngModel)]="element.isActive"
-  (change)="onStatusToggleChange(element, $event.checked)"
-  color="primary"
-  aria-label="Toggle status"
-></mat-slide-toggle>
-</div> </td>
+              <mat-slide-toggle   class="small-toggle" [(ngModel)]="element.isActive" (change)="onStatusToggleChange(element, $event.checked)"
+                color="primary" aria-label="Toggle status"></mat-slide-toggle>
+            </div>
+          </td>
         </ng-container>
-  <!-- Actions Column -->
+        <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Action</th>
           <td mat-cell *matCellDef="let element">
@@ -192,23 +183,15 @@
                 <mat-icon>visibility</mat-icon>
                 <span>View Details</span>
               </button>
-              <button
-                mat-menu-item
-                (click)="viewapplicationDetails(element.id)">
+              <button mat-menu-item (click)="viewapplicationDetails(element.id)">
                 <mat-icon>visibility</mat-icon>
                 <span>View Application</span>
               </button>
-              <button
-                mat-menu-item
-                (click)="editJob(element.id)"
-                *ngIf="isAdmin()">
+              <button mat-menu-item (click)="editJob(element.id)" *ngIf="isAdmin()">
                 <mat-icon>edit</mat-icon>
                 Edit
               </button>
-              <button
-                mat-menu-item
-                (click)="deleteJob(element.id)"
-                *ngIf="isAdmin()">
+              <button mat-menu-item (click)="deleteJob(element.id)" *ngIf="isAdmin()">
                 <mat-icon>delete</mat-icon>
                 Delete
               </button>
@@ -219,10 +202,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         <tr class="mat-row" *matNoDataRow>
-          <td
-            class="mat-cell text-center"
-            [attr.colspan]="displayedColumns.length"
-          >
+          <td class="mat-cell text-center" [attr.colspan]="displayedColumns.length">
             <div class="no-records-message">
               <span class="text-danger ms-2">No records found</span>
             </div>
@@ -231,39 +211,21 @@
       </table>
     </div>
     <!-- Pagination -->
-    <mat-paginator
-      [length]="total"
-      [pageSize]="pageConfig.perPage"
-      [pageIndex]="pageConfig.curPage - 1"
-      [pageSizeOptions]="[5, 10, 20, 50, 100]"
-      [showFirstLastButtons]="true"
-      (page)="onPageChange($event)"
-      aria-label="Select page"
-    >
+    <mat-paginator [length]="total" [pageSize]="pageConfig.perPage" [pageIndex]="pageConfig.curPage - 1"
+      [pageSizeOptions]="[5, 10, 20, 50, 100]" [showFirstLastButtons]="true" (page)="onPageChange($event)"
+      aria-label="Select page">
     </mat-paginator>
   </mat-card-content>
 </mat-card>
 
 
 <!-- Deadline Update Modal -->
-<div
-  class="dialog-overlay"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="dialogTitle"
-  *ngIf="showDeadlineModal"
-  (click)="closeDeadlineModal()"
->
+<div class="dialog-overlay" role="dialog" aria-modal="true" aria-labelledby="dialogTitle" *ngIf="showDeadlineModal"
+  (click)="closeDeadlineModal()">
   <div class="dialog-box" (click)="$event.stopPropagation()">
-    <div
-      class="dialog-header d-flex align-items-center justify-content-between"
-    >
+    <div class="dialog-header d-flex align-items-center justify-content-between">
       <h2 id="dialogTitle" class="m-0">Update Deadline</h2>
-      <button
-        mat-icon-button
-        aria-label="Close dialog"
-        (click)="closeDeadlineModal()"
-      >
+      <button mat-icon-button aria-label="Close dialog" (click)="closeDeadlineModal()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -272,25 +234,17 @@
     </p>
     <div class="row">
       <div class="col-lg-5">
- <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Deadline</mat-label>
-      <input
-        matInput
-        [matDatepicker]="deadlinePicker"
-         [min]="minDate"
-        [(ngModel)]="newDeadline"
-      />
-      <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
-      <mat-datepicker #deadlinePicker></mat-datepicker>
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Deadline</mat-label>
+          <input matInput [matDatepicker]="deadlinePicker" [min]="minDate" [(ngModel)]="newDeadline" />
+          <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
+          <mat-datepicker #deadlinePicker></mat-datepicker>
+        </mat-form-field>
       </div>
     </div>
-   
+
     <div class="dialog-actions d-flex justify-content-end gap-3 mt-3">
-      <button
-       mat-flat-button class="bg-error text-white"
-        (click)="closeDeadlineModal()"
-      >
+      <button mat-flat-button class="bg-error text-white" (click)="closeDeadlineModal()">
         Cancel
       </button>
       <!-- <button
@@ -300,12 +254,7 @@
       >
         Update & Activate
       </button> -->
-          <button
-        mat-flat-button
-        color="primary"
-        (click)="confirmDeadlineChange()"
-        [disabled]="!newDeadline"
-      >
+      <button mat-flat-button color="primary" (click)="confirmDeadlineChange()" [disabled]="!newDeadline">
         Update & Activate
       </button>
     </div>
