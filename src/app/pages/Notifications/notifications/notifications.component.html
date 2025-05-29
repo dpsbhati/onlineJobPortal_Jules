@@ -1,16 +1,11 @@
-<mat-card class="cardWithShadow">
+<!-- <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="row justify-content-between">
       <div class="col-lg-4">
         <mat-form-field appearance="outline">
           <mat-label>Search</mat-label>
-          <input
-            matInput
-            placeholder="Search..."
-            [(ngModel)]="searchText"
-            (keyup.enter)="onSearch()"
-            (input)="onSearch()"
-          />
+          <input matInput placeholder="Search..." [(ngModel)]="searchText" (keyup.enter)="onSearch()"
+            (input)="onSearch()" />
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
@@ -36,50 +31,49 @@
       </div>
     </div>
   </mat-card-content>
-</mat-card>
+</mat-card> -->
 
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <div
-      *ngFor="
+    <ng-container *ngIf="notificationlist.length > 0; else noData">
+
+      <div *ngFor="
         let notification of notificationlist;
         trackBy: trackByNotification
-      "
-    >
-      <div class="p-y-16 p-x-30 w-100 b-b-1 cursor-pointer">
-        <div class="d-flex align-items-center w-100 gap-16">
-          <span
-            class="flex-shrink-0 text-{{
+      ">
+        <div class="p-y-16 p-x-30 w-100 b-b-1 cursor-pointer">
+          <div class="d-flex align-items-center w-100 gap-16">
+            <span class="flex-shrink-0 text-{{
               notification.color
-            }} bg-light-primary rounded-circle icon-40 d-flex align-items-center justify-content-center"
-          >
-            {{ notification.subject.charAt(0) }}
-          </span>
-          <div class="w-100">
-            <div
-              class="d-flex align-items-center justify-content-between w-100"
-            >
-              <h5 class="f-s-14 f-w-500 m-0 lh-sm">
-                {{ notification.subject }}
-              </h5>
-              <span class="d-block f-s-12 lh-sm">{{
-                notification.created_at | date : "short"
-              }}</span>
+            }} bg-light-primary rounded-circle icon-40 d-flex align-items-center justify-content-center">
+              {{ notification.subject.charAt(0) }}
+            </span>
+            <div class="w-100">
+              <div class="d-flex align-items-center justify-content-between w-100">
+                <h5 class="f-s-14 f-w-500 m-0 lh-sm">
+                  {{ notification.subject }}
+                </h5>
+                <span class="d-block f-s-12 lh-sm">{{
+                  notification.created_at | date : "short"
+                  }}</span>
+              </div>
+              <span class="d-block text-truncate f-s-12 w-75 lh-sm">{{
+                notification.content
+                }}</span>
             </div>
-            <span class="d-block text-truncate f-s-12 w-75 lh-sm">{{
-              notification.content
-            }}</span>
           </div>
         </div>
-      </div>
-    </div>
 
+
+      </div>
+    </ng-container>
+    <ng-template #noData>
+      <div class="text-center p-20 no-data-cell">
+        No Records Found
+      </div>
+    </ng-template>
     <!-- Pagination -->
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 20]"
-      [length]="total"
-      (page)="onPageChange($event)"
-      showFirstLastButtons
-    ></mat-paginator>
+    <mat-paginator *ngIf="notificationlist.length > 0" [pageSizeOptions]="[5, 10, 20]" [length]="total"
+      (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
