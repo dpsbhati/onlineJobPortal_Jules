@@ -7,7 +7,10 @@ import {
   JobPostStatus,
   JobTypePost,
 } from './entities/job-posting.entity';
-import { CreateJobPostingDto, UpdateDeadlineDto } from './dto/create-job-posting.dto';
+import {
+  CreateJobPostingDto,
+  UpdateDeadlineDto,
+} from './dto/create-job-posting.dto';
 import { UpdateJobPostingDto } from './dto/update-job-posting.dto';
 import { paginateResponse, WriteResponse } from 'src/shared/response';
 import { LinkedInService } from 'src/linkedin/linkedin.service';
@@ -154,11 +157,19 @@ export class JobPostingService {
             adminUserIds,
             'adminNotification',
             {
-              jobId: expiredJob.id,
-              title: expiredJob.rank,
-              message: `The job of "${expiredJob.rank}" has expired.`,
+              title: 'Job Expired',
+              message: `The job of "${expiredJob.title}" has expired.`,
               type: 'job_expired',
             },
+          );
+          await Promise.all(
+            adminUserIds.map((adminId) =>
+              this.notificationsService.create({
+                user_id: adminId,
+                subject: 'Job Expired',
+                content: `The job of "${expiredJob.title}" has expired.`,
+              }),
+            ),
           );
         }
       }
@@ -220,7 +231,7 @@ export class JobPostingService {
       const savedJobPosting =
         await this.jobPostingRepository.save(updatedJobPosting);
 
-      const rank=await this.findOne('id', savedJobPosting.id);
+      const rank = await this.findOne('id', savedJobPosting.id);
 
       const applicantUsers = await this.userRepository
         .createQueryBuilder('user')
@@ -234,16 +245,28 @@ export class JobPostingService {
 
       const applicantIds = applicantUsers.map((user) => user.id);
 
+      const notificationSubject = 'New Job Posted';
+      const notificationContent = `A new job for the position of ${rank.data.ranks.rank_name} has been posted.`;
+
       // Now send notifications only to these users
       this.notificationGateway.emitNotificationToUsers(
         applicantIds,
         'adminNotification',
         {
-          title: 'New Job Posted',
-          message: `A new job for the position of ${rank.data.ranks.rank_name} has been posted.`,
-          createdAt: new Date(),
+          title: notificationSubject,
+          message: notificationContent,
           type: 'job_posting',
         },
+      );
+
+      await Promise.all(
+        applicantIds.map((adminId) =>
+          this.notificationsService.create({
+            user_id: adminId,
+            subject: notificationSubject,
+            content: notificationContent,
+          }),
+        ),
       );
 
       return WriteResponse(
@@ -399,7 +422,7 @@ export class JobPostingService {
           'COALESCE(app_counts.application_number, 0)',
           'application_number',
         )
- .leftJoinAndSelect('f.ranks', 'ranks')
+        .leftJoinAndSelect('f.ranks', 'ranks')
         .where(lwhereClause)
         .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
         .skip(skip)
@@ -583,18 +606,16 @@ export class JobPostingService {
       });
 
       if (!jobPosting) {
-        return WriteResponse(404,false,"Job posting not found.")
+        return WriteResponse(404, false, 'Job posting not found.');
       }
-      await this.jobPostingRepository.update(updateDeadlineDto.job_id,{deadline:updateDeadlineDto.deadline})
+      await this.jobPostingRepository.update(updateDeadlineDto.job_id, {
+        deadline: updateDeadlineDto.deadline,
+      });
 
-      return WriteResponse(
-        200,
-        true,
-        'Job deadline updated successfully.',
-      );
+      return WriteResponse(200, true, 'Job deadline updated successfully.');
     } catch (error) {
       console.error(error);
-      return WriteResponse(500, false,"Something went wrong.");
+      return WriteResponse(500, false, 'Something went wrong.');
     }
   }
 }

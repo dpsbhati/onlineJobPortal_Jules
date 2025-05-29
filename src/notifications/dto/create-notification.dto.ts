@@ -1,25 +1,14 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
 import { ApplicationStatus } from 'src/application/enums/applications.-status';
 
-
 export class CreateNotificationDto {
-  @IsString()
-  @IsNotEmpty()
-  to: string;
+  @ApiProperty()
+  user_id: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   subject: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty()
   content: string;
-
-  @IsEnum(ApplicationStatus)
-  @IsNotEmpty()
-  status: ApplicationStatus;
-
-  @IsString()
-  @IsNotEmpty()
-  jobTitle: string;
 }

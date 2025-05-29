@@ -96,18 +96,13 @@ export class NotificationsService {
   // get paginated notifications
   async paginateNotifications(req: any, pagination: IPagination) {
     try {
-      const { curPage = 1, perPage = 10, whereClause } = pagination;
+      let { curPage = 1, perPage = 10, whereClause } = pagination;
 
       // Basic where condition for non-deleted records
-      const parameters: Record<string, any> = { is_deleted: false };
+      let parameters: Record<string, any> = { is_deleted: false };
 
       // Fields to be searched
-      const fieldsToSearch = [
-        'subject',
-        'content',
-        'status',
-        'jobTitle'
-      ];
+      const fieldsToSearch = ['subject', 'content'];
 
       let queryBuilder = this.notificationRepository
         .createQueryBuilder('app')
@@ -134,6 +129,15 @@ export class NotificationsService {
             all_search: `%${allValues}%`,
           });
         }
+      }
+
+      const user_id = whereClause.find(
+        (p: any) => p.key === 'user_id' && p.value,
+      );
+
+      if (user_id) {
+        whereClause += ` AND app.user_id LIKE :user_id`;
+        parameters.user_id = `%${user_id.value}%`;
       }
 
       // Pagination setup

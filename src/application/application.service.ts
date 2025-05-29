@@ -84,23 +84,6 @@ export class ApplicationService {
         // Send confirmation email
         await this.sendConfirmationEmail(jobDetails);
       }
-      // Send notification (you can pass relevant information like job title, user details, status)
-      const notificationData = {
-        application_id: savedApplication.id,
-        jobTitle: jobDetails.job.rank,
-        userName: savedApplication.user.email,
-        status:
-          ApplicationStatus[
-            savedApplication.status as keyof typeof ApplicationStatus
-          ], // Ensure it's an enum value
-        to: jobDetails.user.email,
-        subject: 'New Job Application Received',
-        content: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`,
-      };
-      const savedNotification =
-        await this.notificationsService.create(notificationData);
-
-      console.log('savedNotification', savedNotification);
 
       const adminUsers = await this.userRepository.find({
         where: { role: 'admin', isActive: true },
@@ -111,19 +94,28 @@ export class ApplicationService {
 
       console.log('adminUserIds', adminUserIds);
 
+      const notificationSubject = 'New Job Application Received';
+      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`;
+
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
         adminUserIds,
         'adminNotification',
         {
-          userId: jobDetails.user.id, // applicant's userId
-          title: 'New Job Application Received',
-          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`,
-          applicationId: savedApplication.id,
-          status: savedApplication.status,
-          createdAt: new Date(),
+          title: notificationSubject,
+          message: notificationContent,
           type: 'job_application',
         },
+      );
+      // Save notifications in DB for all admins
+      await Promise.all(
+        adminUserIds.map((adminId) =>
+          this.notificationsService.create({
+            user_id: adminId,
+            subject: notificationSubject,
+            content: notificationContent,
+          }),
+        ),
       );
       return WriteResponse(
         200,
@@ -511,32 +503,25 @@ export class ApplicationService {
       const updatedApplication =
         await this.applicationRepository.save(updateApplicationDto);
 
-      // Send notification (you can pass relevant information like job title, user details, status)
-      const notificationData = {
-        application_id: updatedApplication.id, // Accessing the application ID from the 'data' field
-        jobTitle: application.data.job.rank, // Accessing the job title correctly from 'job'
-        status: updatedApplication.status as ApplicationStatus,
-        to: application.data.user.email, // Email of the user to send the notification to
-        subject: 'Application Status Update', // Notification subject
-        content: `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`, // Notification content
-      };
-      const savedNotification =
-        await this.notificationsService.create(notificationData);
+      const notificationSubject = 'Application Status Update';
+      const notificationContent = `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`;
 
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
-        [application.data.user.id], // applicant's userId
+        [application.data.user.id],
         'adminNotification',
         {
-          userId: application.data.user.id, // applicant's userId
-          title: 'Application Status Update',
-          message: `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`,
-          applicationId: updatedApplication.id,
-          status: updatedApplication.status as ApplicationStatus,
-          createdAt: new Date(),
+          title: notificationSubject,
+          message: notificationContent,
           type: 'application_status_update',
         },
       );
+
+      await this.notificationsService.create({
+        user_id: application.data.user.id,
+        subject: notificationSubject,
+        content: notificationContent,
+      });
 
       return WriteResponse(
         200,
@@ -588,18 +573,6 @@ export class ApplicationService {
         where: { id },
       });
 
-      const notificationData = {
-        application_id: application.id,
-        jobTitle: application.job.rank,
-        userName: application.user.email,
-        status: ApplicationStatus[application.status], // Ensure it's an enum value
-        to: application.user.email,
-        subject: 'Job Application Cancelled',
-        content:  `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`,
-      };
-      const savedNotification =
-        await this.notificationsService.create(notificationData);
-
       const adminUsers = await this.userRepository.find({
         where: { role: 'admin', isActive: true },
         select: ['id'],
@@ -609,19 +582,28 @@ export class ApplicationService {
 
       console.log('adminUserIds', adminUserIds);
 
+      const notificationSubject = 'Job Application Cancelled';
+      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`;
+
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
-        adminUserIds, // all relevant admin user IDs
+        adminUserIds,
         'adminNotification',
         {
-          userId: req.user.id, // applicant's userId who cancelled
-          title: 'Job Application Cancelled',
-          message: `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has cancelled their application for the job of ${application.job.rank}.`,
-          applicationId: application.id,
-          status: updateApplicationStatusDto.status,
-          createdAt: new Date(),
+          title: notificationSubject,
+          message: notificationContent,
           type: 'application_cancelled',
         },
+      );
+      // Save notifications in DB for all admins
+      await Promise.all(
+        adminUserIds.map((adminId) =>
+          this.notificationsService.create({
+            user_id: adminId,
+            subject: notificationSubject,
+            content: notificationContent,
+          }),
+        ),
       );
 
       return WriteResponse(
