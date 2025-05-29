@@ -1,5 +1,4 @@
 <mat-card>
-
   <mat-card>
     <mat-card-header>
       <mat-card-title class="d-flex align-items-center gap-6">
@@ -17,28 +16,50 @@
             <div class="row">
               <!-- Profile Image -->
               <div class="col-lg-4">
-                <button mat-stroked-button type="button" class="w-100" (click)="fileInput.click()">
-                  <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="w-100"
+                  (click)="fileInput.click()"
+                >
+                  <mat-icon
+                    >cloud_upload<span class="text-danger">*</span></mat-icon
+                  >
                   Profile Image
                 </button>
-                <input #fileInput type="file" style="display: none"
-                  (change)="onFileSelected($event, 'profile_image_path')" />
+                <input
+                  #fileInput
+                  type="file"
+                  style="display: none"
+                  (change)="onFileSelected($event, 'profile_image_path')"
+                />
                 <div class="img-preview img-close m-t-6" *ngIf="imagePreview">
-                  <img [src]="imagePreview" alt="Preview" style="width: 100%; height: 200px; object-fit: contain;" />
+                  <img
+                    [src]="imagePreview"
+                    alt="Preview"
+                    style="width: 100%; height: 200px; object-fit: contain"
+                  />
                 </div>
               </div>
-
 
               <!-- First Name -->
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>First Name</mat-label>
-                  <input matInput placeholder="Enter first name" formControlName="first_name"
-                    (keypress)="restrictNumeric($event)" />
-                  <mat-error *ngIf="form.get('first_name')?.errors?.['required']">
+                  <input
+                    matInput
+                    placeholder="Enter first name"
+                    formControlName="first_name"
+                    (keypress)="restrictNumeric($event)"
+                  />
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['required']"
+                  >
                     First name is required
                   </mat-error>
-                  <mat-error *ngIf="form.get('first_name')?.errors?.['pattern']">
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['pattern']"
+                  >
                     First name can only contain letters and spaces
                   </mat-error>
                 </mat-form-field>
@@ -48,8 +69,14 @@
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Last Name</mat-label>
-                  <input matInput formControlName="last_name" (keypress)="restrictNumeric($event)" />
-                  <mat-error *ngIf="form.get('last_name')?.errors?.['required']">
+                  <input
+                    matInput
+                    formControlName="last_name"
+                    (keypress)="restrictNumeric($event)"
+                  />
+                  <mat-error
+                    *ngIf="form.get('last_name')?.errors?.['required']"
+                  >
                     Last name is required
                   </mat-error>
                   <mat-error *ngIf="form.get('last_name')?.errors?.['pattern']">
@@ -71,10 +98,16 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Dial Code</mat-label>
                   <mat-select formControlName="dial_code">
-                    <mat-option *ngFor="let country of countryList" [value]="country.dial_code">
+                    <mat-option
+                      *ngFor="let country of countryList"
+                      [value]="country.dial_code"
+                    >
                       {{ country.name }} ({{ country.dial_code }})
-                    </mat-option> </mat-select>
-                  <mat-error *ngIf="form.get('dial_code')?.errors?.['required']">
+                    </mat-option>
+                  </mat-select>
+                  <mat-error
+                    *ngIf="form.get('dial_code')?.errors?.['required']"
+                  >
                     Dail code is required
                   </mat-error>
                 </mat-form-field>
@@ -95,8 +128,17 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Date of Birth</mat-label>
-                  <input matInput readonly [matDatepicker]="dobPicker" formControlName="dob" (dateChange)="adultValidator(form.get('dob'))"/>
-                  <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                  <input
+                    matInput
+                    readonly
+                    [matDatepicker]="dobPicker"
+                    formControlName="dob"
+                    (dateChange)="adultValidator(form.get('dob'))"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dobPicker"
+                  ></mat-datepicker-toggle>
                   <mat-datepicker #dobPicker></mat-datepicker>
                   <mat-error *ngIf="form.get('dob')?.errors?.['required']">
                     Date of birth is required
@@ -105,8 +147,8 @@
                     You must be at least 18 years old.
                   </mat-error>
                   <mat-error *ngIf="form.get('dob')?.errors?.['invalidDOB']">
-                  Invalid Date of Birth format. Please enter in YYYY-MM-DD.
-                </mat-error>
+                    Invalid Date of Birth format. Please enter in YYYY-MM-DD.
+                  </mat-error>
                 </mat-form-field>
               </div>
 
@@ -115,11 +157,16 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Nationalities</mat-label>
                   <mat-select multiple formControlName="nationalities">
-                    <mat-option *ngFor="let country of filteredCountryList()" [value]="country">
+                    <mat-option
+                      *ngFor="let country of filteredCountryList()"
+                      [value]="country"
+                    >
                       {{ country }}
                     </mat-option>
                   </mat-select>
-                  <mat-error *ngIf="form.get('nationalities')?.errors?.['required']">
+                  <mat-error
+                    *ngIf="form.get('nationalities')?.errors?.['required']"
+                  >
                     Nationality is required
                   </mat-error>
                 </mat-form-field>
@@ -130,9 +177,13 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Country of Residence</mat-label>
                   <mat-select formControlName="country">
-                    <mat-option *ngFor="let country of countryList" [value]="country.name">
+                    <mat-option
+                      *ngFor="let country of countryList"
+                      [value]="country.name"
+                    >
                       {{ country.name }}
-                    </mat-option> </mat-select>
+                    </mat-option>
+                  </mat-select>
                   <mat-error *ngIf="form.get('country')?.errors?.['required']">
                     Country is required
                   </mat-error>
@@ -143,30 +194,67 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Location</mat-label>
-                  <input matInput placeholder="Start typing an address..." formControlName="location" />
+                  <input
+                    matInput
+                    placeholder="Start typing an address..."
+                    formControlName="location"
+                  />
                   <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error>
                 </mat-form-field>
               </div>
 
+              <!-- Country of Residence -->
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Rank</mat-label>
+                  <mat-select formControlName="rank_id">
+                    <mat-option
+                      *ngFor="let rank of uniqueRanks"
+                      [value]="rank.id"
+                    >
+                      {{ rank.rank_name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.get('rank_id')?.hasError('required')">
+                    Rank is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
               <!-- Additional Contact Info (Repeater UI) -->
-              <div class="col-lg-12 mt-4" formArrayName="additional_contact_info" *ngIf="isApplicant()">
-                <h4 class="mat-headline-6 m-t-24 m-b-20">Additional Contact Information</h4>
-                <div class="row align-items-center" *ngFor="let item of additionalContacts();let i =index"
-                  [formGroupName]="i">
+              <div
+                class="col-lg-12 mt-4"
+                formArrayName="additional_contact_info"
+                *ngIf="isApplicant()"
+              >
+                <h4 class="mat-headline-6 m-t-24 m-b-20">
+                  Additional Contact Information
+                </h4>
+                <div
+                  class="row align-items-center"
+                  *ngFor="let item of additionalContacts(); let i = index"
+                  [formGroupName]="i"
+                >
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Contact Type</mat-label>
                       <mat-select formControlName="contact_type">
                         <mat-option value="Email">Email</mat-option>
-                        <mat-option value="LinkedIn">LinkedIn (Profile Link)</mat-option>
+                        <mat-option value="LinkedIn"
+                          >LinkedIn (Profile Link)</mat-option
+                        >
                         <mat-option value="Messenger">Messenger</mat-option>
-                        <mat-option value="Telephone Number">Telephone Number</mat-option>
+                        <mat-option value="Telephone Number"
+                          >Telephone Number</mat-option
+                        >
                         <mat-option value="Viber">Viber</mat-option>
                         <mat-option value="WhatsApp">WhatsApp</mat-option>
                       </mat-select>
-                      <mat-error *ngIf="item.get('contact_type')?.errors?.['required']">
+                      <mat-error
+                        *ngIf="item.get('contact_type')?.errors?.['required']"
+                      >
                         Conatct Type is required
                       </mat-error>
                     </mat-form-field>
@@ -174,18 +262,35 @@
                   <div class="col-lg-6">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Value</mat-label>
-                      <input matInput placeholder="Enter value here" formControlName="value" />
-                      <mat-error *ngIf="item.get('value')?.errors?.['required']">
+                      <input
+                        matInput
+                        placeholder="Enter value here"
+                        formControlName="value"
+                      />
+                      <mat-error
+                        *ngIf="item.get('value')?.errors?.['required']"
+                      >
                         Value is required
                       </mat-error>
                     </mat-form-field>
                   </div>
                   <div class="col-lg-2">
-                    <button mat-icon-button color="primary" (click)="addContact()" type="button">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="addContact()"
+                      type="button"
+                    >
                       <mat-icon>add</mat-icon>
                     </button>
-                    <button mat-icon-button color="primary" class="m-b-20" type="button" (click)="removeContact(i)"
-                      *ngIf="additionalContacts().length != 1">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      class="m-b-20"
+                      type="button"
+                      (click)="removeContact(i)"
+                      *ngIf="additionalContacts().length != 1"
+                    >
                       <mat-icon>remove</mat-icon>
                     </button>
                   </div>
@@ -193,33 +298,74 @@
               </div>
             </div>
             <div class="text-right">
-              <button mat-flat-button matStepperNext [disabled]="form.invalid" *ngIf="isApplicant()"
-                type="button">Next</button>
-              <button mat-flat-button matStepperNext [disabled]="form.invalid" (click)="onSubmit()"
-                *ngIf="!isApplicant()">Save</button>
+              <button
+                mat-flat-button
+                matStepperNext
+                [disabled]="form.invalid"
+                *ngIf="isApplicant()"
+                type="button"
+              >
+                Next
+              </button>
+              <button
+                mat-flat-button
+                matStepperNext
+                [disabled]="form.invalid"
+                (click)="onSubmit()"
+                *ngIf="!isApplicant()"
+              >
+                Save
+              </button>
             </div>
           </form>
         </mat-step>
-        <mat-step [stepControl]="secondForm" *ngIf="isApplicant()" [class.disabled]="true">
+        <mat-step
+          [stepControl]="secondForm"
+          *ngIf="isApplicant()"
+          [class.disabled]="true"
+        >
           <form class="m-t-24" [formGroup]="secondForm">
             <ng-template matStepLabel>Career</ng-template>
             <div class="row">
-
               <!-- WORK EXPERIENCE -->
               <div class="col-12 mt-4">
                 <h4 class="mat-headline-6 m-t-24 m-b-20">Work Experience</h4>
               </div>
               <ng-container formArrayName="work_experience_info">
-                <div *ngFor="let item of getworkExp(); let i = index" [formGroupName]="i" class="row">
+                <div
+                  *ngFor="let item of getworkExp(); let i = index"
+                  [formGroupName]="i"
+                  class="row"
+                >
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>From</mat-label>
-                      <input matInput readonly [matDatepicker]="weFrom" formControlName="work_experience_from"
-                        (dateChange)="onToDateChange(item.get('work_experience_from'),item.get('work_experience_to'))" />
-                      <mat-datepicker-toggle matSuffix [for]="weFrom"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        readonly
+                        [matDatepicker]="weFrom"
+                        formControlName="work_experience_from"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('work_experience_from'),
+                            item.get('work_experience_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="weFrom"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #weFrom></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('work_experience_from')?.hasError('required') && (item.get('work_experience_from')?.touched || item.get('work_experience_from')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('work_experience_from')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_from')?.touched ||
+                            item.get('work_experience_from')?.dirty)
+                        "
+                      >
                         From Date is required
                       </mat-error>
                     </mat-form-field>
@@ -228,16 +374,43 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>To</mat-label>
-                      <input matInput readonly [matDatepicker]="weTo" formControlName="work_experience_to"
-                        (dateChange)="onToDateChange(item.get('work_experience_from'),item.get('work_experience_to'))" />
-                      <mat-datepicker-toggle matSuffix [for]="weTo"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        readonly
+                        [matDatepicker]="weTo"
+                        formControlName="work_experience_to"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('work_experience_from'),
+                            item.get('work_experience_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="weTo"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #weTo></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('work_experience_to')?.hasError('required') && (item.get('work_experience_to')?.touched || item.get('work_experience_to')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('work_experience_to')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_to')?.touched ||
+                            item.get('work_experience_to')?.dirty)
+                        "
+                      >
                         To Date is required
                       </mat-error>
                       <mat-error
-                        *ngIf="item.get('work_experience_to')?.hasError('invalidDateRange') && (item.get('work_experience_to')?.touched || item.get('work_experience_to')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('work_experience_to')
+                            ?.hasError('invalidDateRange') &&
+                          (item.get('work_experience_to')?.touched ||
+                            item.get('work_experience_to')?.dirty)
+                        "
+                      >
                         To Date cannot be before From Date.
                       </mat-error>
                     </mat-form-field>
@@ -248,7 +421,14 @@
                       <mat-label>Title</mat-label>
                       <input matInput formControlName="work_experience_title" />
                       <mat-error
-                        *ngIf="item.get('work_experience_title')?.hasError('required') && (item.get('work_experience_title')?.touched || item.get('work_experience_title')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('work_experience_title')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_title')?.touched ||
+                            item.get('work_experience_title')?.dirty)
+                        "
+                      >
                         Title is required
                       </mat-error>
                     </mat-form-field>
@@ -257,31 +437,52 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Employer</mat-label>
-                      <input matInput formControlName="work_experience_employer" />
+                      <input
+                        matInput
+                        formControlName="work_experience_employer"
+                      />
                       <mat-error
-                        *ngIf="item.get('work_experience_employer')?.hasError('required') && (item.get('work_experience_employer')?.touched || item.get('work_experience_employer')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('work_experience_employer')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_employer')?.touched ||
+                            item.get('work_experience_employer')?.dirty)
+                        "
+                      >
                         Employer is required
                       </mat-error>
                     </mat-form-field>
                   </div>
 
                   <div class="col-lg-2 text-end">
-                    <button mat-icon-button color="primary" (click)="addWorkExp()" type="button">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="addWorkExp()"
+                      type="button"
+                    >
                       <mat-icon>add</mat-icon>
                     </button>
-                    <button mat-icon-button color="primary" class="m-b-20" *ngIf="getworkExp().length != 1"
-                      type="button" (click)="removeWorkExp(i)">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      class="m-b-20"
+                      *ngIf="getworkExp().length != 1"
+                      type="button"
+                      (click)="removeWorkExp(i)"
+                    >
                       <mat-icon>remove</mat-icon>
                     </button>
                   </div>
-
                 </div>
               </ng-container>
 
               <!-- HIGHEST EDUCATION LEVEL -->
               <div class="col-12 mt-4">
-                <h4 class="mat-headline-6 m-t-24 m-b-20">Highest Education Level</h4>
-
+                <h4 class="mat-headline-6 m-t-24 m-b-20">
+                  Highest Education Level
+                </h4>
               </div>
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
@@ -289,12 +490,21 @@
                   <mat-select formControlName="highest_education_level">
                     <mat-option value="High School">High School</mat-option>
                     <mat-option value="Graduate">Graduate</mat-option>
-                    <mat-option value="Post Graduate/Master">Post Graduate/Master</mat-option>
+                    <mat-option value="Post Graduate/Master"
+                      >Post Graduate/Master</mat-option
+                    >
                     <mat-option value="PhD">PhD</mat-option>
                     <mat-option value="Other">Other</mat-option>
                   </mat-select>
                   <mat-error
-                    *ngIf="secondForm.get('highest_education_level')?.hasError('required') && (secondForm.get('highest_education_level')?.touched || secondForm.get('highest_education_level')?.dirty)">
+                    *ngIf="
+                      secondForm
+                        .get('highest_education_level')
+                        ?.hasError('required') &&
+                      (secondForm.get('highest_education_level')?.touched ||
+                        secondForm.get('highest_education_level')?.dirty)
+                    "
+                  >
                     Highest Education Level is required
                   </mat-error>
                 </mat-form-field>
@@ -306,16 +516,38 @@
               </div>
 
               <ng-container formArrayName="education_info">
-                <div *ngFor="let item of getEducation(); let i = index" [formGroupName]="i" class="row">
+                <div
+                  *ngFor="let item of getEducation(); let i = index"
+                  [formGroupName]="i"
+                  class="row"
+                >
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>From</mat-label>
-                      <input matInput formControlName="education_from" readonly [matDatepicker]="eduFrom"
-                        (dateChange)="onToDateChange(item.get('education_from'),item.get('education_to'))" />
-                      <mat-datepicker-toggle matSuffix [for]="eduFrom"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="education_from"
+                        readonly
+                        [matDatepicker]="eduFrom"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('education_from'),
+                            item.get('education_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="eduFrom"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #eduFrom></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('education_from')?.hasError('required') && (item.get('education_from')?.touched || item.get('education_from')?.dirty)">
+                        *ngIf="
+                          item.get('education_from')?.hasError('required') &&
+                          (item.get('education_from')?.touched ||
+                            item.get('education_from')?.dirty)
+                        "
+                      >
                         From Date is required
                       </mat-error>
                     </mat-form-field>
@@ -323,16 +555,41 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>To</mat-label>
-                      <input matInput formControlName="education_to" readonly [matDatepicker]="eduTo"
-                        (dateChange)="onToDateChange(item.get('education_from'),item.get('education_to'))" />
-                      <mat-datepicker-toggle matSuffix [for]="eduTo"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="education_to"
+                        readonly
+                        [matDatepicker]="eduTo"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('education_from'),
+                            item.get('education_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="eduTo"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #eduTo></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('education_to')?.hasError('required') && (item.get('education_to')?.touched || item.get('education_to')?.dirty)">
+                        *ngIf="
+                          item.get('education_to')?.hasError('required') &&
+                          (item.get('education_to')?.touched ||
+                            item.get('education_to')?.dirty)
+                        "
+                      >
                         To Date is required
                       </mat-error>
-                         <mat-error
-                        *ngIf="item.get('education_to')?.hasError('invalidDateRange') && (item.get('education_to')?.touched || item.get('education_to')?.dirty)">
+                      <mat-error
+                        *ngIf="
+                          item
+                            .get('education_to')
+                            ?.hasError('invalidDateRange') &&
+                          (item.get('education_to')?.touched ||
+                            item.get('education_to')?.dirty)
+                        "
+                      >
                         To Date cannot be before From Date.
                       </mat-error>
                     </mat-form-field>
@@ -341,9 +598,18 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Title</mat-label>
-                      <input matInput placeholder="Degree or Program" formControlName="education_title" />
+                      <input
+                        matInput
+                        placeholder="Degree or Program"
+                        formControlName="education_title"
+                      />
                       <mat-error
-                        *ngIf="item.get('education_title')?.hasError('required') && (item.get('education_title')?.touched || item.get('education_title')?.dirty)">
+                        *ngIf="
+                          item.get('education_title')?.hasError('required') &&
+                          (item.get('education_title')?.touched ||
+                            item.get('education_title')?.dirty)
+                        "
+                      >
                         Title is required
                       </mat-error>
                     </mat-form-field>
@@ -352,24 +618,45 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Institute</mat-label>
-                      <input matInput placeholder="University or College" formControlName="education_institute" />
+                      <input
+                        matInput
+                        placeholder="University or College"
+                        formControlName="education_institute"
+                      />
                       <mat-error
-                        *ngIf="item.get('education_institute')?.hasError('required') && (item.get('education_institute')?.touched || item.get('education_institute')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('education_institute')
+                            ?.hasError('required') &&
+                          (item.get('education_institute')?.touched ||
+                            item.get('education_institute')?.dirty)
+                        "
+                      >
                         Institute is required
                       </mat-error>
                     </mat-form-field>
                   </div>
 
                   <div class="col-lg-2 text-end">
-                    <button mat-icon-button color="primary" (click)="addEducation()" type="button">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="addEducation()"
+                      type="button"
+                    >
                       <mat-icon>add</mat-icon>
                     </button>
-                    <button mat-icon-button color="primary" class="m-b-20" *ngIf="getEducation().length != 1"
-                      type="button" (click)="removeEducation(i)">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      class="m-b-20"
+                      *ngIf="getEducation().length != 1"
+                      type="button"
+                      (click)="removeEducation(i)"
+                    >
                       <mat-icon>remove</mat-icon>
                     </button>
                   </div>
-
                 </div>
               </ng-container>
 
@@ -379,15 +666,38 @@
               </div>
 
               <ng-container formArrayName="course_info">
-                <div *ngFor="let item of getCourse(); let i = index" [formGroupName]="i" class="row">
+                <div
+                  *ngFor="let item of getCourse(); let i = index"
+                  [formGroupName]="i"
+                  class="row"
+                >
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>From</mat-label>
-                      <input matInput formControlName="course_from" readonly [matDatepicker]="courseFrom" (dateChange)="onToDateChange(item.get('course_from'),item.get('course_to'))"/>
-                      <mat-datepicker-toggle matSuffix [for]="courseFrom"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="course_from"
+                        readonly
+                        [matDatepicker]="courseFrom"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('course_from'),
+                            item.get('course_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="courseFrom"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #courseFrom></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('course_from')?.hasError('required') && (item.get('course_from')?.touched || item.get('course_from')?.dirty)">
+                        *ngIf="
+                          item.get('course_from')?.hasError('required') &&
+                          (item.get('course_from')?.touched ||
+                            item.get('course_from')?.dirty)
+                        "
+                      >
                         From Date is required
                       </mat-error>
                     </mat-form-field>
@@ -396,15 +706,39 @@
                   <div class="col-lg-4">
                     <mat-form-field class="w-100" appearance="outline">
                       <mat-label>To</mat-label>
-                      <input matInput formControlName="course_to" readonly [matDatepicker]="courseTo" (dateChange)="onToDateChange(item.get('course_from'),item.get('course_to'))"/>
-                      <mat-datepicker-toggle matSuffix [for]="courseTo"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="course_to"
+                        readonly
+                        [matDatepicker]="courseTo"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('course_from'),
+                            item.get('course_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="courseTo"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #courseTo></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('course_to')?.hasError('required') && (item.get('course_to')?.touched || item.get('course_to')?.dirty)">
+                        *ngIf="
+                          item.get('course_to')?.hasError('required') &&
+                          (item.get('course_to')?.touched ||
+                            item.get('course_to')?.dirty)
+                        "
+                      >
                         To Date is required
                       </mat-error>
-                         <mat-error
-                        *ngIf="item.get('course_to')?.hasError('invalidDateRange') && (item.get('course_to')?.touched || item.get('course_to')?.dirty)">
+                      <mat-error
+                        *ngIf="
+                          item.get('course_to')?.hasError('invalidDateRange') &&
+                          (item.get('course_to')?.touched ||
+                            item.get('course_to')?.dirty)
+                        "
+                      >
                         To Date cannot be before From Date.
                       </mat-error>
                     </mat-form-field>
@@ -413,9 +747,18 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Course Title</mat-label>
-                      <input matInput placeholder="Course Name" formControlName="course_title" />
+                      <input
+                        matInput
+                        placeholder="Course Name"
+                        formControlName="course_title"
+                      />
                       <mat-error
-                        *ngIf="item.get('course_title')?.hasError('required') && (item.get('course_title')?.touched || item.get('course_title')?.dirty)">
+                        *ngIf="
+                          item.get('course_title')?.hasError('required') &&
+                          (item.get('course_title')?.touched ||
+                            item.get('course_title')?.dirty)
+                        "
+                      >
                         Course Title is required
                       </mat-error>
                     </mat-form-field>
@@ -424,20 +767,40 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Course Provider</mat-label>
-                      <input matInput placeholder="Provider/Institution" formControlName="course_provider" />
+                      <input
+                        matInput
+                        placeholder="Provider/Institution"
+                        formControlName="course_provider"
+                      />
                       <mat-error
-                        *ngIf="item.get('course_provider')?.hasError('required') && (item.get('course_provider')?.touched || item.get('course_provider')?.dirty)">
+                        *ngIf="
+                          item.get('course_provider')?.hasError('required') &&
+                          (item.get('course_provider')?.touched ||
+                            item.get('course_provider')?.dirty)
+                        "
+                      >
                         Course Provider is required
                       </mat-error>
                     </mat-form-field>
                   </div>
 
                   <div class="col-lg-2 text-end">
-                    <button mat-icon-button color="primary" (click)="addCourse()" type="button">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="addCourse()"
+                      type="button"
+                    >
                       <mat-icon>add</mat-icon>
                     </button>
-                    <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCourse().length != 1" type="button"
-                      (click)="removeCourse(i)">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      class="m-b-20"
+                      *ngIf="getCourse().length != 1"
+                      type="button"
+                      (click)="removeCourse(i)"
+                    >
                       <mat-icon>remove</mat-icon>
                     </button>
                   </div>
@@ -449,15 +812,40 @@
                 <h4 class="mat-headline-6 m-t-24 m-b-20">Certifications</h4>
               </div>
               <ng-container formArrayName="certification_info">
-                <div *ngFor="let item of getCetificate(); let i = index" [formGroupName]="i" class="row">
+                <div
+                  *ngFor="let item of getCetificate(); let i = index"
+                  [formGroupName]="i"
+                  class="row"
+                >
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>From</mat-label>
-                      <input matInput formControlName="certification_from" readonly [matDatepicker]="courseFrom" (dateChange)="onToDateChange(item.get('certification_from'),item.get('certification_to'))"/>
-                      <mat-datepicker-toggle matSuffix [for]="courseFrom"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="certification_from"
+                        readonly
+                        [matDatepicker]="courseFrom"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('certification_from'),
+                            item.get('certification_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="courseFrom"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #courseFrom></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('certification_from')?.hasError('required') && (item.get('certification_from')?.touched || item.get('certification_to')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('certification_from')
+                            ?.hasError('required') &&
+                          (item.get('certification_from')?.touched ||
+                            item.get('certification_to')?.dirty)
+                        "
+                      >
                         From Date is required
                       </mat-error>
                     </mat-form-field>
@@ -466,15 +854,41 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>To</mat-label>
-                      <input matInput formControlName="certification_to" readonly [matDatepicker]="courseTo" (dateChange)="onToDateChange(item.get('certification_from'),item.get('certification_to'))"/>
-                      <mat-datepicker-toggle matSuffix [for]="courseTo"></mat-datepicker-toggle>
+                      <input
+                        matInput
+                        formControlName="certification_to"
+                        readonly
+                        [matDatepicker]="courseTo"
+                        (dateChange)="
+                          onToDateChange(
+                            item.get('certification_from'),
+                            item.get('certification_to')
+                          )
+                        "
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="courseTo"
+                      ></mat-datepicker-toggle>
                       <mat-datepicker #courseTo></mat-datepicker>
                       <mat-error
-                        *ngIf="item.get('certification_to')?.hasError('required') && (item.get('certification_to')?.touched || item.get('certification_to')?.dirty)">
+                        *ngIf="
+                          item.get('certification_to')?.hasError('required') &&
+                          (item.get('certification_to')?.touched ||
+                            item.get('certification_to')?.dirty)
+                        "
+                      >
                         To Date is required
                       </mat-error>
-                         <mat-error
-                        *ngIf="item.get('certification_to')?.hasError('invalidDateRange') && (item.get('certification_to')?.touched || item.get('certification_to')?.dirty)">
+                      <mat-error
+                        *ngIf="
+                          item
+                            .get('certification_to')
+                            ?.hasError('invalidDateRange') &&
+                          (item.get('certification_to')?.touched ||
+                            item.get('certification_to')?.dirty)
+                        "
+                      >
                         To Date cannot be before From Date.
                       </mat-error>
                     </mat-form-field>
@@ -483,9 +897,20 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Certification Title</mat-label>
-                      <input matInput placeholder="Course Name" formControlName="certification_title" />
+                      <input
+                        matInput
+                        placeholder="Course Name"
+                        formControlName="certification_title"
+                      />
                       <mat-error
-                        *ngIf="item.get('certification_title')?.hasError('required') && (item.get('certification_title')?.touched || item.get('certification_title')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('certification_title')
+                            ?.hasError('required') &&
+                          (item.get('certification_title')?.touched ||
+                            item.get('certification_title')?.dirty)
+                        "
+                      >
                         Certification Title is required
                       </mat-error>
                     </mat-form-field>
@@ -494,24 +919,45 @@
                   <div class="col-lg-4">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Certification Issuer</mat-label>
-                      <input matInput placeholder="Provider/Institution" formControlName="certification_issuer" />
+                      <input
+                        matInput
+                        placeholder="Provider/Institution"
+                        formControlName="certification_issuer"
+                      />
                       <mat-error
-                        *ngIf="item.get('certification_issuer')?.hasError('required') && (item.get('certification_issuer')?.touched || item.get('certification_issuer')?.dirty)">
+                        *ngIf="
+                          item
+                            .get('certification_issuer')
+                            ?.hasError('required') &&
+                          (item.get('certification_issuer')?.touched ||
+                            item.get('certification_issuer')?.dirty)
+                        "
+                      >
                         Certification Issuer is required
                       </mat-error>
                     </mat-form-field>
                   </div>
 
                   <div class="col-lg-2 text-end">
-                    <button mat-icon-button color="primary" (click)="addCertificate()" type="button">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="addCertificate()"
+                      type="button"
+                    >
                       <mat-icon>add</mat-icon>
                     </button>
-                    <button mat-icon-button color="primary" class="m-b-20" *ngIf="getCetificate().length !== 1"
-                      type="button" (click)="removeCertificate(i)">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      class="m-b-20"
+                      *ngIf="getCetificate().length !== 1"
+                      type="button"
+                      (click)="removeCertificate(i)"
+                    >
                       <mat-icon>remove</mat-icon>
                     </button>
                   </div>
-
                 </div>
               </ng-container>
 
@@ -520,12 +966,24 @@
                 <h4 class="mat-headline-6 m-t-24 m-b-20">Upload CV (Resume)</h4>
               </div>
               <div class="col-lg-6 m-b-10">
-                <button mat-stroked-button type="button" (click)="fileInputs.click()">
-                  <mat-icon>cloud_upload<span class="text-danger">*</span></mat-icon>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="fileInputs.click()"
+                >
+                  <mat-icon
+                    >cloud_upload<span class="text-danger">*</span></mat-icon
+                  >
                   Select your CV (PDF Only)
                 </button>
-                <input type="file" id="fileInput" (change)="onFileChange($event, 'cv_path')" accept=".pdf" hidden
-                  #fileInputs />
+                <input
+                  type="file"
+                  id="fileInput"
+                  (change)="onFileChange($event, 'cv_path')"
+                  accept=".pdf"
+                  hidden
+                  #fileInputs
+                />
                 <div *ngIf="fileError" class="error">{{ fileError }}</div>
               </div>
               <div class="col-lg-12 m-b-20" *ngIf="uploadedFileName">
@@ -539,10 +997,20 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-between">
-              <button mat-flat-button class="bg-error text-white" matStepperPrevious>
+              <button
+                mat-flat-button
+                class="bg-error text-white"
+                matStepperPrevious
+              >
                 Back
               </button>
-              <button mat-flat-button matStepperNext [disabled]="secondForm.invalid">Next</button>
+              <button
+                mat-flat-button
+                matStepperNext
+                [disabled]="secondForm.invalid"
+              >
+                Next
+              </button>
             </div>
           </form>
         </mat-step>
@@ -553,16 +1021,40 @@
             <!-- Other Experience Section -->
             <div formArrayName="other_experience_info">
               <h4 class="mat-headline-6 m-t-24 m-b-20">Other Experience</h4>
-              <div class="row" *ngFor="let item of getOtherExp(); let i = index" [formGroupName]="i">
+              <div
+                class="row"
+                *ngFor="let item of getOtherExp(); let i = index"
+                [formGroupName]="i"
+              >
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>From</mat-label>
-                    <input matInput readonly [matDatepicker]="otherFromPicker"
-                      formControlName="other_experience_from" (dateChange)="onToDateChange(item.get('other_experience_from'),item.get('other_experience_to'))"/>
-                    <mat-datepicker-toggle matSuffix [for]="otherFromPicker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      readonly
+                      [matDatepicker]="otherFromPicker"
+                      formControlName="other_experience_from"
+                      (dateChange)="
+                        onToDateChange(
+                          item.get('other_experience_from'),
+                          item.get('other_experience_to')
+                        )
+                      "
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="otherFromPicker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #otherFromPicker></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('other_experience_from')?.hasError('required') && (item.get('other_experience_from')?.touched || item.get('other_experience_to')?.dirty)">
+                      *ngIf="
+                        item
+                          .get('other_experience_from')
+                          ?.hasError('required') &&
+                        (item.get('other_experience_from')?.touched ||
+                          item.get('other_experience_to')?.dirty)
+                      "
+                    >
                       From Date is required
                     </mat-error>
                   </mat-form-field>
@@ -571,37 +1063,85 @@
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>To (leave blank if current)</mat-label>
-                    <input matInput readonly [matDatepicker]="otherToPicker" formControlName="other_experience_to" (dateChange)="onToDateChange(item.get('other_experience_from'),item.get('other_experience_to'))"/>
-                    <mat-datepicker-toggle matSuffix [for]="otherToPicker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      readonly
+                      [matDatepicker]="otherToPicker"
+                      formControlName="other_experience_to"
+                      (dateChange)="
+                        onToDateChange(
+                          item.get('other_experience_from'),
+                          item.get('other_experience_to')
+                        )
+                      "
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="otherToPicker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #otherToPicker></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('other_experience_to')?.hasError('required') && (item.get('other_experience_to')?.touched || item.get('other_experience_to')?.dirty)">
+                      *ngIf="
+                        item.get('other_experience_to')?.hasError('required') &&
+                        (item.get('other_experience_to')?.touched ||
+                          item.get('other_experience_to')?.dirty)
+                      "
+                    >
                       To Date is required
                     </mat-error>
-                       <mat-error
-                        *ngIf="item.get('other_experience_to')?.hasError('invalidDateRange') && (item.get('other_experience_to')?.touched || item.get('other_experience_to')?.dirty)">
-                        To Date cannot be before From Date.
-                      </mat-error>
+                    <mat-error
+                      *ngIf="
+                        item
+                          .get('other_experience_to')
+                          ?.hasError('invalidDateRange') &&
+                        (item.get('other_experience_to')?.touched ||
+                          item.get('other_experience_to')?.dirty)
+                      "
+                    >
+                      To Date cannot be before From Date.
+                    </mat-error>
                   </mat-form-field>
                 </div>
 
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Description</mat-label>
-                    <textarea matInput rows="3" formControlName="other_experience_description"></textarea>
+                    <textarea
+                      matInput
+                      rows="3"
+                      formControlName="other_experience_description"
+                    ></textarea>
                     <mat-error
-                      *ngIf="item.get('other_experience_description')?.hasError('required') && (item.get('other_experience_description')?.touched || item.get('other_experience_description')?.dirty)">
+                      *ngIf="
+                        item
+                          .get('other_experience_description')
+                          ?.hasError('required') &&
+                        (item.get('other_experience_description')?.touched ||
+                          item.get('other_experience_description')?.dirty)
+                      "
+                    >
                       Description is required
                     </mat-error>
                   </mat-form-field>
                 </div>
 
                 <div class="col-lg-2 text-end">
-                  <button mat-icon-button color="primary" (click)="addOtherExp()" type="button">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addOtherExp()"
+                    type="button"
+                  >
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getOtherExp().length != 1" type="button"
-                    (click)="removeOtherExp(i)">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="m-b-20"
+                    *ngIf="getOtherExp().length != 1"
+                    type="button"
+                    (click)="removeOtherExp(i)"
+                  >
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
@@ -611,15 +1151,38 @@
             <!-- Projects Section -->
             <h4 class="mat-headline-6 m-t-24 m-b-20">Projects</h4>
             <div formArrayName="project_info">
-              <div class="row" *ngFor="let item of getProjects(); let i = index" [formGroupName]="i">
+              <div
+                class="row"
+                *ngFor="let item of getProjects(); let i = index"
+                [formGroupName]="i"
+              >
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>From</mat-label>
-                    <input matInput readonly [matDatepicker]="projFromPicker" formControlName="project_from" (dateChange)="onToDateChange(item.get('project_from'),item.get('project_to'))"/>
-                    <mat-datepicker-toggle matSuffix [for]="projFromPicker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      readonly
+                      [matDatepicker]="projFromPicker"
+                      formControlName="project_from"
+                      (dateChange)="
+                        onToDateChange(
+                          item.get('project_from'),
+                          item.get('project_to')
+                        )
+                      "
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="projFromPicker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #projFromPicker></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('project_from')?.hasError('required') && (item.get('project_from')?.touched || item.get('project_from')?.dirty)">
+                      *ngIf="
+                        item.get('project_from')?.hasError('required') &&
+                        (item.get('project_from')?.touched ||
+                          item.get('project_from')?.dirty)
+                      "
+                    >
                       From Date is required
                     </mat-error>
                   </mat-form-field>
@@ -628,17 +1191,41 @@
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>To (leave blank if current)</mat-label>
-                    <input matInput readonly [matDatepicker]="projToPicker" formControlName="project_to" (dateChange)="onToDateChange(item.get('project_from'),item.get('project_to'))"/>
-                    <mat-datepicker-toggle matSuffix [for]="projToPicker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      readonly
+                      [matDatepicker]="projToPicker"
+                      formControlName="project_to"
+                      (dateChange)="
+                        onToDateChange(
+                          item.get('project_from'),
+                          item.get('project_to')
+                        )
+                      "
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="projToPicker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #projToPicker></mat-datepicker>
                     <mat-error
-                      *ngIf="item.get('project_to')?.hasError('required') && (item.get('project_to')?.touched || item.get('project_to')?.dirty)">
+                      *ngIf="
+                        item.get('project_to')?.hasError('required') &&
+                        (item.get('project_to')?.touched ||
+                          item.get('project_to')?.dirty)
+                      "
+                    >
                       To Date is required
                     </mat-error>
-                       <mat-error
-                        *ngIf="item.get('project_to')?.hasError('invalidDateRange') && (item.get('project_to')?.touched || item.get('project_to')?.dirty)">
-                        To Date cannot be before From Date.
-                      </mat-error>
+                    <mat-error
+                      *ngIf="
+                        item.get('project_to')?.hasError('invalidDateRange') &&
+                        (item.get('project_to')?.touched ||
+                          item.get('project_to')?.dirty)
+                      "
+                    >
+                      To Date cannot be before From Date.
+                    </mat-error>
                   </mat-form-field>
                 </div>
 
@@ -647,7 +1234,12 @@
                     <mat-label>Project Name</mat-label>
                     <input matInput formControlName="project_name" />
                     <mat-error
-                      *ngIf="item.get('project_name')?.hasError('required') && (item.get('project_name')?.touched || item.get('project_name')?.dirty)">
+                      *ngIf="
+                        item.get('project_name')?.hasError('required') &&
+                        (item.get('project_name')?.touched ||
+                          item.get('project_name')?.dirty)
+                      "
+                    >
                       Project Name is required
                     </mat-error>
                   </mat-form-field>
@@ -658,45 +1250,90 @@
                     <mat-label>Project Role</mat-label>
                     <input matInput formControlName="project_role" />
                     <mat-error
-                      *ngIf="item.get('project_role')?.hasError('required') && (item.get('project_role')?.touched || item.get('project_role')?.dirty)">
+                      *ngIf="
+                        item.get('project_role')?.hasError('required') &&
+                        (item.get('project_role')?.touched ||
+                          item.get('project_role')?.dirty)
+                      "
+                    >
                       Project Role is required
                     </mat-error>
                   </mat-form-field>
                 </div>
 
                 <div class="col-lg-2 text-end">
-                  <button mat-icon-button color="primary" (click)="addProjects()" type="button">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addProjects()"
+                    type="button"
+                  >
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getProjects().length != 1" type="button"
-                    (click)="removeProjects(i)">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="m-b-20"
+                    *ngIf="getProjects().length != 1"
+                    type="button"
+                    (click)="removeProjects(i)"
+                  >
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between">
-              <button mat-flat-button class="bg-error text-white" matStepperPrevious>
+              <button
+                mat-flat-button
+                class="bg-error text-white"
+                matStepperPrevious
+              >
                 Back
               </button>
-              <button mat-flat-button matStepperNext [disabled]="thirdForm.invalid">Next</button>
+              <button
+                mat-flat-button
+                matStepperNext
+                [disabled]="thirdForm.invalid"
+              >
+                Next
+              </button>
             </div>
           </form>
         </mat-step>
-        <mat-step [stepControl]="fourthForm" label="Additional Information" *ngIf="isApplicant()">
+        <mat-step
+          [stepControl]="fourthForm"
+          label="Additional Information"
+          *ngIf="isApplicant()"
+        >
           <form [formGroup]="fourthForm">
             <!-- Language Skills - Spoken -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">Language Skills - Spoken</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              Language Skills - Spoken
+            </h4>
             <div formArrayName="language_spoken_info">
-              <div *ngFor="let langGroup of getlanguageSpoken(); let i = index" [formGroupName]="i" class="row">
+              <div
+                *ngFor="let langGroup of getlanguageSpoken(); let i = index"
+                [formGroupName]="i"
+                class="row"
+              >
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Language</mat-label>
                     <mat-select formControlName="language">
-                      <mat-option *ngFor="let lang of languageList" [value]="lang.name">{{ lang.name }}</mat-option>
+                      <mat-option
+                        *ngFor="let lang of languageList"
+                        [value]="lang.name"
+                        >{{ lang.name }}</mat-option
+                      >
                     </mat-select>
                     <mat-error
-                      *ngIf="langGroup.get('language')?.hasError('required') && (langGroup.get('language')?.touched || langGroup.get('language')?.dirty)">
+                      *ngIf="
+                        langGroup.get('language')?.hasError('required') &&
+                        (langGroup.get('language')?.touched ||
+                          langGroup.get('language')?.dirty)
+                      "
+                    >
                       Language is required
                     </mat-error>
                   </mat-form-field>
@@ -705,20 +1342,40 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Proficiency</mat-label>
                     <mat-select formControlName="proficiency">
-                      <mat-option *ngFor="let prof of proficiencyOptions" [value]="prof">{{ prof }}</mat-option>
+                      <mat-option
+                        *ngFor="let prof of proficiencyOptions"
+                        [value]="prof"
+                        >{{ prof }}</mat-option
+                      >
                     </mat-select>
                     <mat-error
-                      *ngIf="langGroup.get('proficiency')?.hasError('required') && (langGroup.get('proficiency')?.touched || langGroup.get('proficiency')?.dirty)">
+                      *ngIf="
+                        langGroup.get('proficiency')?.hasError('required') &&
+                        (langGroup.get('proficiency')?.touched ||
+                          langGroup.get('proficiency')?.dirty)
+                      "
+                    >
                       Proficiency is required
                     </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-lg-2 text-end">
-                  <button mat-icon-button color="primary" (click)="addLangSpoken()" type="button">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addLangSpoken()"
+                    type="button"
+                  >
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getlanguageSpoken().length != 1"
-                    type="button" (click)="removeLangSpoken(i)">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="m-b-20"
+                    *ngIf="getlanguageSpoken().length != 1"
+                    type="button"
+                    (click)="removeLangSpoken(i)"
+                  >
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
@@ -726,17 +1383,32 @@
             </div>
 
             <!-- Language Skills - Written -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">Language Skills - Written</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              Language Skills - Written
+            </h4>
             <div formArrayName="language_written_info">
-              <div *ngFor="let langGroup of getlanguageWritten(); let i = index" [formGroupName]="i" class="row">
+              <div
+                *ngFor="let langGroup of getlanguageWritten(); let i = index"
+                [formGroupName]="i"
+                class="row"
+              >
                 <div class="col-lg-4">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Language</mat-label>
                     <mat-select formControlName="language">
-                      <mat-option *ngFor="let lang of languageList" [value]="lang.name">{{ lang.name }}</mat-option>
+                      <mat-option
+                        *ngFor="let lang of languageList"
+                        [value]="lang.name"
+                        >{{ lang.name }}</mat-option
+                      >
                     </mat-select>
                     <mat-error
-                      *ngIf="langGroup.get('language')?.hasError('required') && (langGroup.get('language')?.touched || langGroup.get('language')?.dirty)">
+                      *ngIf="
+                        langGroup.get('language')?.hasError('required') &&
+                        (langGroup.get('language')?.touched ||
+                          langGroup.get('language')?.dirty)
+                      "
+                    >
                       Language is required
                     </mat-error>
                   </mat-form-field>
@@ -745,20 +1417,40 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Proficiency</mat-label>
                     <mat-select formControlName="proficiency">
-                      <mat-option *ngFor="let prof of proficiencyOptions" [value]="prof">{{ prof }}</mat-option>
+                      <mat-option
+                        *ngFor="let prof of proficiencyOptions"
+                        [value]="prof"
+                        >{{ prof }}</mat-option
+                      >
                     </mat-select>
                     <mat-error
-                      *ngIf="langGroup.get('proficiency')?.hasError('required') && (langGroup.get('proficiency')?.touched || langGroup.get('proficiency')?.dirty)">
+                      *ngIf="
+                        langGroup.get('proficiency')?.hasError('required') &&
+                        (langGroup.get('proficiency')?.touched ||
+                          langGroup.get('proficiency')?.dirty)
+                      "
+                    >
                       Proficiency is required
                     </mat-error>
                   </mat-form-field>
                 </div>
                 <div class="col-lg-2 text-end">
-                  <button mat-icon-button color="primary" (click)="addLangWritten()" type="button">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addLangWritten()"
+                    type="button"
+                  >
                     <mat-icon>add</mat-icon>
                   </button>
-                  <button mat-icon-button color="primary" class="m-b-20" *ngIf="getlanguageWritten().length != 1"
-                    type="button" (click)="removeLangWritten(i)">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    class="m-b-20"
+                    *ngIf="getlanguageWritten().length != 1"
+                    type="button"
+                    (click)="removeLangWritten(i)"
+                  >
                     <mat-icon>remove</mat-icon>
                   </button>
                 </div>
@@ -766,14 +1458,31 @@
             </div>
 
             <!-- Notice Period and Availability -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">Notice Period and Availability</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              Notice Period and Availability
+            </h4>
             <div formGroupName="notice_period_info" class="row">
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Notice Period (months)</mat-label>
-                  <input matInput type="number" formControlName="notice_period_months" min="0" />
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="notice_period_months"
+                    min="0"
+                  />
                   <mat-error
-                    *ngIf="fourthForm.get('notice_period_info.notice_period_months')?.hasError('required') && (fourthForm.get('notice_period_info.notice_period_months')?.touched || fourthForm.get('notice_period_info.notice_period_months')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('notice_period_info.notice_period_months')
+                        ?.hasError('required') &&
+                      (fourthForm.get('notice_period_info.notice_period_months')
+                        ?.touched ||
+                        fourthForm.get(
+                          'notice_period_info.notice_period_months'
+                        )?.dirty)
+                    "
+                  >
                     Notice Period is required
                   </mat-error>
                 </mat-form-field>
@@ -781,11 +1490,28 @@
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Date available to commence work</mat-label>
-                  <input matInput readonly [matDatepicker]="availDatePicker" formControlName="commence_work_date" />
-                  <mat-datepicker-toggle matSuffix [for]="availDatePicker"></mat-datepicker-toggle>
+                  <input
+                    matInput
+                    readonly
+                    [matDatepicker]="availDatePicker"
+                    formControlName="commence_work_date"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="availDatePicker"
+                  ></mat-datepicker-toggle>
                   <mat-datepicker #availDatePicker></mat-datepicker>
                   <mat-error
-                    *ngIf="fourthForm.get('notice_period_info.commence_work_date')?.hasError('required') && (fourthForm.get('notice_period_info.commence_work_date')?.touched || fourthForm.get('notice_period_info.commence_work_date')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('notice_period_info.commence_work_date')
+                        ?.hasError('required') &&
+                      (fourthForm.get('notice_period_info.commence_work_date')
+                        ?.touched ||
+                        fourthForm.get('notice_period_info.commence_work_date')
+                          ?.dirty)
+                    "
+                  >
                     Commencement Date is required
                   </mat-error>
                 </mat-form-field>
@@ -793,14 +1519,23 @@
             </div>
 
             <!-- Current Salary (Annual) -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">Current Salary (Annual)</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              Current Salary (Annual)
+            </h4>
             <div formGroupName="current_salary_info" class="row">
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Amount</mat-label>
                   <input matInput type="text" formControlName="amount" />
                   <mat-error
-                    *ngIf="fourthForm.get('current_salary_info.amount')?.hasError('required') && (fourthForm.get('current_salary_info.amount')?.touched || fourthForm.get('current_salary_info.amount')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('current_salary_info.amount')
+                        ?.hasError('required') &&
+                      (fourthForm.get('current_salary_info.amount')?.touched ||
+                        fourthForm.get('current_salary_info.amount')?.dirty)
+                    "
+                  >
                     Amount is required
                   </mat-error>
                 </mat-form-field>
@@ -809,11 +1544,22 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Currency</mat-label>
                   <mat-select formControlName="currency">
-                    <mat-option *ngFor="let curr of currencyList" [value]="curr.code">{{ curr.currency }} ({{ curr.code
-                      }})</mat-option>
+                    <mat-option
+                      *ngFor="let curr of currencyList"
+                      [value]="curr.code"
+                      >{{ curr.currency }} ({{ curr.code }})</mat-option
+                    >
                   </mat-select>
                   <mat-error
-                    *ngIf="fourthForm.get('current_salary_info.currency')?.hasError('required') && (fourthForm.get('current_salary_info.currency')?.touched || fourthForm.get('current_salary_info.currency')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('current_salary_info.currency')
+                        ?.hasError('required') &&
+                      (fourthForm.get('current_salary_info.currency')
+                        ?.touched ||
+                        fourthForm.get('current_salary_info.currency')?.dirty)
+                    "
+                  >
                     Currency is required
                   </mat-error>
                 </mat-form-field>
@@ -821,14 +1567,23 @@
             </div>
 
             <!-- Expected Salary (Annual) -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">Expected Salary (Annual)</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              Expected Salary (Annual)
+            </h4>
             <div formGroupName="expected_salary_info" class="row">
               <div class="col-lg-4">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Amount</mat-label>
                   <input matInput type="text" formControlName="amount" />
                   <mat-error
-                    *ngIf="fourthForm.get('expected_salary_info.amount')?.hasError('required') && (fourthForm.get('expected_salary_info.amount')?.touched || fourthForm.get('expected_salary_info.amount')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('expected_salary_info.amount')
+                        ?.hasError('required') &&
+                      (fourthForm.get('expected_salary_info.amount')?.touched ||
+                        fourthForm.get('expected_salary_info.amount')?.dirty)
+                    "
+                  >
                     Amount is required
                   </mat-error>
                 </mat-form-field>
@@ -837,11 +1592,22 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Currency</mat-label>
                   <mat-select formControlName="currency">
-                    <mat-option *ngFor="let curr of currencyList" [value]="curr.code">{{ curr.currency }} ({{ curr.code
-                      }})</mat-option>
+                    <mat-option
+                      *ngFor="let curr of currencyList"
+                      [value]="curr.code"
+                      >{{ curr.currency }} ({{ curr.code }})</mat-option
+                    >
                   </mat-select>
                   <mat-error
-                    *ngIf="fourthForm.get('expected_salary_info.currency')?.hasError('required') && (fourthForm.get('expected_salary_info.currency')?.touched || fourthForm.get('expected_salary_info.currency')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('expected_salary_info.currency')
+                        ?.hasError('required') &&
+                      (fourthForm.get('expected_salary_info.currency')
+                        ?.touched ||
+                        fourthForm.get('expected_salary_info.currency')?.dirty)
+                    "
+                  >
                     Currency is required
                   </mat-error>
                 </mat-form-field>
@@ -855,10 +1621,21 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Department(s)</mat-label>
                   <mat-select formControlName="department" multiple>
-                    <mat-option *ngFor="let dept of departmentsList" [value]="dept">{{ dept }}</mat-option>
+                    <mat-option
+                      *ngFor="let dept of departmentsList"
+                      [value]="dept"
+                      >{{ dept }}</mat-option
+                    >
                   </mat-select>
                   <mat-error
-                    *ngIf="fourthForm.get('preferences_info.department')?.hasError('required') && (fourthForm.get('preferences_info.department')?.touched || fourthForm.get('preferences_info.department')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('preferences_info.department')
+                        ?.hasError('required') &&
+                      (fourthForm.get('preferences_info.department')?.touched ||
+                        fourthForm.get('preferences_info.department')?.dirty)
+                    "
+                  >
                     Department selection is required
                   </mat-error>
                 </mat-form-field>
@@ -867,12 +1644,22 @@
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Location(s)</mat-label>
                   <mat-select formControlName="location" multiple>
-                    <mat-option *ngFor="let country of countryList" [value]="country.name">
+                    <mat-option
+                      *ngFor="let country of countryList"
+                      [value]="country.name"
+                    >
                       {{ country.name }}
                     </mat-option>
                   </mat-select>
                   <mat-error
-                    *ngIf="fourthForm.get('preferences_info.location')?.hasError('required') && (fourthForm.get('preferences_info.location')?.touched || fourthForm.get('preferences_info.location')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('preferences_info.location')
+                        ?.hasError('required') &&
+                      (fourthForm.get('preferences_info.location')?.touched ||
+                        fourthForm.get('preferences_info.location')?.dirty)
+                    "
+                  >
                     Location selection is required
                   </mat-error>
                 </mat-form-field>
@@ -885,9 +1672,22 @@
               <div class="col-lg-8">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Any Additional Information</mat-label>
-                  <textarea matInput rows="4" formControlName="additional_info"></textarea>
+                  <textarea
+                    matInput
+                    rows="4"
+                    formControlName="additional_info"
+                  ></textarea>
                   <mat-error
-                    *ngIf="fourthForm.get('additional_info.additional_info')?.hasError('required') && (fourthForm.get('additional_info.additional_info')?.touched || fourthForm.get('additional_info.additional_info')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('additional_info.additional_info')
+                        ?.hasError('required') &&
+                      (fourthForm.get('additional_info.additional_info')
+                        ?.touched ||
+                        fourthForm.get('additional_info.additional_info')
+                          ?.dirty)
+                    "
+                  >
                     Additional information is required
                   </mat-error>
                 </mat-form-field>
@@ -895,16 +1695,31 @@
             </div>
 
             <!-- Vacancy Awareness -->
-            <h4 class="mat-headline-6 m-t-24 m-b-20">How did you come to know about this vacancy?</h4>
+            <h4 class="mat-headline-6 m-t-24 m-b-20">
+              How did you come to know about this vacancy?
+            </h4>
             <div formGroupName="vacancy_source_info" class="row">
               <div class="col-lg-8">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Source</mat-label>
                   <mat-select formControlName="vacancy_source">
-                    <mat-option *ngFor="let source of vacancySources" [value]="source">{{ source }}</mat-option>
+                    <mat-option
+                      *ngFor="let source of vacancySources"
+                      [value]="source"
+                      >{{ source }}</mat-option
+                    >
                   </mat-select>
                   <mat-error
-                    *ngIf="fourthForm.get('vacancy_source_info.vacancy_source')?.hasError('required') && (fourthForm.get('vacancy_source_info.vacancy_source')?.touched || fourthForm.get('vacancy_source_info.vacancy_source')?.dirty)">
+                    *ngIf="
+                      fourthForm
+                        .get('vacancy_source_info.vacancy_source')
+                        ?.hasError('required') &&
+                      (fourthForm.get('vacancy_source_info.vacancy_source')
+                        ?.touched ||
+                        fourthForm.get('vacancy_source_info.vacancy_source')
+                          ?.dirty)
+                    "
+                  >
                     Vacancy source is required
                   </mat-error>
                 </mat-form-field>
@@ -912,12 +1727,30 @@
             </div>
 
             <div class="d-flex justify-content-between m-t-16">
-              <button mat-flat-button class="bg-error text-white" matStepperPrevious>Back</button>
-              <button mat-flat-button color="primary" (click)="onSubmit()"
-                [disabled]="fourthForm.invalid">Finish</button>
+              <button
+                mat-flat-button
+                class="bg-error text-white"
+                matStepperPrevious
+              >
+                Back
+              </button>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="onSubmit()"
+                [disabled]="
+                  form.invalid ||
+                  secondForm.invalid ||
+                  thirdForm.invalid ||
+                  fourthForm.invalid
+                "
+              >
+                Finish
+              </button>
             </div>
           </form>
         </mat-step>
       </mat-stepper>
     </mat-card-content>
   </mat-card>
+</mat-card>
