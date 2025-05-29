@@ -505,7 +505,7 @@ export class ApplicationService {
         await this.applicationRepository.save(updateApplicationDto);
 
       const notificationSubject = 'Application Status Update';
-      const notificationContent = `Your application for the job of ${application.data.job.rank} has been ${updatedApplication.status}.`;
+      const notificationContent = `Your application for the job of ${application.data.job.ranks.rank_name} has been ${updatedApplication.status}.`;
 
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
