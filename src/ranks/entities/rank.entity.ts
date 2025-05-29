@@ -10,6 +10,9 @@ export class Rank {
   @Column({ type: 'varchar', length: 100 })
   rank_name: string;
 
+  @Column({ type: 'int' })
+  orderId: number;
+
   @Column({ type: 'datetime', nullable: true })
   created_at: Date;
 

@@ -19,7 +19,7 @@ export class RanksService {
       // Filter only valid records (id is 0 or not present)
       const validNewRanks = createRankDtos
         .filter((dto) => !dto.id || dto.id === undefined)
-        .map((dto) => ({ rank_name: dto.rank_name }));
+        .map((dto) => ({ rank_name: dto.rank_name, orderId: dto.orderId }));
 
       if (validNewRanks.length === 0) {
         return WriteResponse(400, [], 'No valid records to insert');
