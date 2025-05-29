@@ -64,7 +64,7 @@
         <div class="row w-100 justify-content-between align-items-center">
           <div class="col-lg-12">
             <h2 class="m-b-0">{{ jobDetails?.job?.rank }}</h2>
-            <p class="m-t-6 m-b-0">{{ jobDetails?.job?.employer }}</p>
+            <!-- <p class="m-t-6 m-b-0">{{ jobDetails?.job?.employer }}</p> -->
             <p class="m-t-4 m-b-0 d-flex gap-2 align-items-center">
               <i-tabler name="map-pin" class="icon-18 caption-icon"></i-tabler>
               {{ jobDetails?.job?.address }}
@@ -94,15 +94,20 @@
               <div class="col-lg-8"> {{ jobDetails?.job?.application_instruction }}</div>
             </div>
             <div class="row m-b-20">
-              <div class="col-lg-3"><strong>Required Skills</strong></div>
-              <div class="col-lg-8">
-                <div class="d-flex flex-wrap gap-6">
-                  <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
-                    {{ skill }}
-                  </button>
-                </div>
-              </div>
-            </div>
+  <div class="col-lg-3"><strong>Required Skills</strong></div>
+  <div class="col-lg-8">
+    <div class="d-flex flex-wrap gap-6">
+      <ng-container *ngIf="formattedSkills!.length > 0; else noSkills">
+        <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
+          {{ skill }}
+        </button>
+      </ng-container>
+      <ng-template #noSkills>
+        -
+      </ng-template>
+    </div>
+  </div>
+</div>
           </div>
         </div>
       </mat-card-content>
@@ -122,7 +127,7 @@
             <strong class="m-r-6">Vessel Type:</strong> {{ jobDetails?.job?.vessel_type}}
           </div>
           <div class="col-lg-12 m-b-16">
-            <strong class="m-r-6">Salary Range:</strong>   {{ jobDetails?.job?.start_salary && jobDetails.job.start_salary.trim() !== ''  ? jobDetails.job.start_salary: '-' }}
+            <strong class="m-r-6">Salary Range:</strong>   ${{ jobDetails?.job?.start_salary && jobDetails.job.start_salary.trim() !== ''  ? jobDetails.job.start_salary: '-' }}
           </div>
           <div class="col-lg-12 m-b-16">
             <strong class="m-r-6">Deadline:</strong> {{ jobDetails?.job?.deadline | date:'mediumDate' }}

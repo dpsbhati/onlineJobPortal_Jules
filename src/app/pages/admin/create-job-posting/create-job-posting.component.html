@@ -24,8 +24,8 @@
           <mat-label>Rank</mat-label>
           <mat-select formControlName="rank">
             <mat-option value="">Select Rank</mat-option>
-            <mat-option *ngFor="let rank of uniqueRanks" [value]="rank">
-              {{ rank }}
+            <mat-option *ngFor="let rank of uniqueRanks"[value]="rank.id">
+                {{ rank.rank_name }}
             </mat-option>
           </mat-select>
 
@@ -55,17 +55,17 @@
         <!-- Job Title -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label> Number of vacancy</mat-label>
-           <input matInput id="number_of_vacancy" formControlName="number_of_vacancy" type="text" maxlength="4"> 
+           <input matInput id="number_of_vacancy" formControlName="number_of_vacancy" type="text" maxlength="4">
           <mat-error *ngIf="jobForm.get('number_of_vacancy')?.invalid && jobForm.get('number_of_vacancy')?.touched">
             <span *ngIf="jobForm.get('number_of_vacancy')?.errors?.['required']"> Number of Vacancy is required..</span>
             <span *ngIf="jobForm.get('number_of_vacancy')?.errors?.['pattern']"> Only digits are allowed.</span>
             <span *ngIf="jobForm.get('number_of_vacancy')?.errors?.['maxlength']">  Maximum allowed digits is 4.</span>
-          
+
           </mat-error>
-          
+
         </mat-form-field>
       </div>
-    
+
 
       <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
@@ -197,7 +197,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-        <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16"> 
+        <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Assignment Duration</mat-label>
           <input matInput id="assignment_duration" formControlName="assignment_duration" type="text">
@@ -276,7 +276,7 @@
       </div>
 
       <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16">
-    
+
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Full Description</mat-label>
           <textarea matInput id="full_description" formControlName="full_description" rows="6"></textarea>
