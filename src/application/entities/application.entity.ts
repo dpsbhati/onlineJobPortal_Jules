@@ -30,7 +30,7 @@ export class applications {
   @Column({ type: 'text', nullable: true })
   description: string;
   
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column()
   comments: string;
   
   @Column({ type: 'varchar', length: 255, nullable: true })

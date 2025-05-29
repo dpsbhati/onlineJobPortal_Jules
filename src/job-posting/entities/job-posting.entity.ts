@@ -27,6 +27,7 @@ export enum JobOpeningStatus {
   HOLD = 'Hold',
   OPEN = 'Active',
   CLOSE = 'Close',
+  ARCHIVED = 'Archived',
 }
 @Entity('job_postings')
 export class JobPosting {

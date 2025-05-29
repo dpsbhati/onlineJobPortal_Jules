@@ -8,6 +8,7 @@ import {
   JobTypePost,
 } from './entities/job-posting.entity';
 import {
+  Changejobstatus,
   CreateJobPostingDto,
   UpdateDeadlineDto,
 } from './dto/create-job-posting.dto';
@@ -299,7 +300,7 @@ export class JobPostingService {
       const fieldsToSearch = [
         'job_type',
         'rank',
-        
+
         'vessel_type',
         'title',
         'short_description',
@@ -363,10 +364,9 @@ export class JobPostingService {
         }
       }
 
- if (rank_name) {
+      if (rank_name) {
         lwhereClause += ` AND ranks.rank_name LIKE '%${rank_name.value}%'`;
       }
-
 
       if (startDate && endDate) {
         lwhereClause += ` AND DATE(f.date_published) BETWEEN '${startDate}' AND '${endDate}'`;
@@ -459,7 +459,7 @@ export class JobPostingService {
       // Count query separately
       const totalCount = await this.jobPostingRepository
         .createQueryBuilder('f')
-         .leftJoinAndSelect('f.ranks', 'ranks')
+        .leftJoinAndSelect('f.ranks', 'ranks')
         .where(lwhereClause)
         .getCount();
 
@@ -629,6 +629,25 @@ export class JobPostingService {
     } catch (error) {
       console.error(error);
       return WriteResponse(500, false, 'Something went wrong.');
+    }
+  }
+  async Changestatus(changejobstatus: Changejobstatus) {
+    try {
+      const jobdetail = await this.jobPostingRepository.findOne({
+        where: { id: changejobstatus.job_id },
+      });
+
+      if (!jobdetail) {
+        return WriteResponse(404, false, 'Job not found');
+      }
+
+      jobdetail.job_opening = changejobstatus.job_opening;
+      const updatedjob_opening = await this.jobPostingRepository.save(jobdetail);
+
+      return WriteResponse(200, updatedjob_opening,'Job status updated successfully');
+    } catch (error) {
+      console.error(error);
+      return WriteResponse(500, false, 'Something went wrong');
     }
   }
 }
