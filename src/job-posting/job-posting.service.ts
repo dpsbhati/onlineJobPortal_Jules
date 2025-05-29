@@ -621,6 +621,8 @@ export class JobPostingService {
       }
       await this.jobPostingRepository.update(updateDeadlineDto.job_id, {
         deadline: updateDeadlineDto.deadline,
+        job_opening: updateDeadlineDto.job_opening,
+        isActive: updateDeadlineDto.isActive,
       });
 
       return WriteResponse(200, true, 'Job deadline updated successfully.');
