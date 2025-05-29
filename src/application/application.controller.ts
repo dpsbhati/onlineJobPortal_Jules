@@ -144,7 +144,7 @@ export class ApplicationController {
     return this.applicationService.paginateApplications(req, pagination);
   }
 
-  @Post('summary')
+  @Post('overview')
    @ApiBody({
     schema: {
       type: 'object',
