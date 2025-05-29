@@ -208,7 +208,7 @@ export class ApplicationsComponent {
 }),
 
             application_id: app?.id,
-           rank: app.job?.ranks?.rank_name || '-', 
+           rank: app.job?.ranks?.rank_name || '-',
             jobPost: app.job?.title,
             applications: app?.count,
             status: app?.status,
@@ -451,7 +451,7 @@ toLowerCaseSafe(value: string | null | undefined): string {
 
             application_id: app?.id,
             experience: app?.work_experiences || '',
-             rank: app.job?.rank || '',
+           rank: app.job?.ranks?.rank_name || '-',
             jobPost: app.job?.title || '',
             applications: app?.count || 0,
             status: app?.status || '',
