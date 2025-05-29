@@ -221,7 +221,7 @@ export class ApplicationService {
           userProfile[field] = null;
         }
       }
-
+      application.comments=JSON.parse(application.comments)
       const response = {
         ...application,
         comments: application.comments || 'No comments available',
