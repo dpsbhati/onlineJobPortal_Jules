@@ -8,7 +8,10 @@ import {
   CreateApplicationDto,
   UpdateApplicationStatusDto,
 } from './dto/create-application.dto';
-import { UpdateApplicationDto } from './dto/update-application.dto';
+import {
+  ChangeApplicationDto,
+  UpdateApplicationDto,
+} from './dto/update-application.dto';
 import { applications } from './entities/application.entity';
 
 import * as nodemailer from 'nodemailer';
@@ -465,12 +468,7 @@ export class ApplicationService {
       const isAdmin = user?.role === 'admin';
 
       if (!isAdmin) {
-        const restrictedFields = [
-          'status',
-          'comments',
-          'description',
-          'certification_path',
-        ];
+        const restrictedFields = ['comments'];
         const hasRestrictedFields = restrictedFields.some((field) =>
           Object.keys(updateApplicationDto).includes(field),
         );
@@ -484,25 +482,56 @@ export class ApplicationService {
         }
       }
 
-      if (
-        updateApplicationDto.certification_path &&
-        !/\.(pdf|jpg|jpeg|png|doc|docx)$/i.test(
-          updateApplicationDto.certification_path,
-        )
-      ) {
-        return WriteResponse(
-          400,
-          {},
-          'certification_path must be a valid file format (.pdf, .jpg, .jpeg, .png, .doc, .docx).',
+      await this.applicationRepository.update(updateApplicationDto.id, {
+        comments: JSON.stringify(updateApplicationDto.comments),
+      });
+
+      return WriteResponse(
+        200,
+        updateApplicationDto,
+        'Application updated successfully.',
+      );
+    } catch (error) {
+      console.error('Error updating application:', error);
+      return WriteResponse(
+        500,
+        {},
+        'An unexpected error occurred while updating the application.',
+      );
+    }
+  }
+
+  async changeApplicationStatus(
+    id: string,
+    changeApplicationDto: ChangeApplicationDto,
+    user: any,
+  ) {
+    try {
+      const application: any = await this.findOne(id);
+      if (!application) {
+        return WriteResponse(404, {}, `Application with ID ${id} not found.`);
+      }
+      const isAdmin = user?.role === 'admin';
+
+      if (!isAdmin) {
+        const restrictedFields = ['status'];
+        const hasRestrictedFields = restrictedFields.some((field) =>
+          Object.keys(changeApplicationDto).includes(field),
         );
+
+        if (hasRestrictedFields) {
+          return WriteResponse(
+            403,
+            {},
+            'You do not have permission to update these fields.',
+          );
+        }
       }
 
-      // Object.assign(application, updateApplicationDto);
-
-      updateApplicationDto.id = id;
+      changeApplicationDto.id = id;
 
       const updatedApplication =
-        await this.applicationRepository.save(updateApplicationDto);
+        await this.applicationRepository.save(changeApplicationDto);
 
       const notificationSubject = 'Application Status Update';
       const notificationContent = `Your application for the job of ${application.data.job.ranks.rank_name} has been ${updatedApplication.status}.`;
@@ -559,7 +588,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepository.findOne({
       where: { id },
-      relations: ['job', 'user','job.ranks'],
+      relations: ['job', 'user', 'job.ranks'],
     });
 
     if (!application) {
@@ -775,124 +804,148 @@ export class ApplicationService {
     }
   }
 
+  async getStatusSummary(req: any, pagination: IPagination) {
+    const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
 
-async getStatusSummary(req: any, pagination: IPagination) {
-  const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
+    const parameters: Record<string, any> = {
+      is_deleted: false,
+      isActive: true,
+    };
+    let lwhereClause = 'j.is_deleted = :is_deleted AND j.isActive = :isActive';
 
-  const parameters: Record<string, any> = { is_deleted: false, isActive: true };
-  let lwhereClause = 'j.is_deleted = :is_deleted AND j.isActive = :isActive';
+    // Extract start and end date filters
+    const startDateObj = whereClause.find(
+      (p: any) => p.key === 'startDate' && p.value,
+    );
+    const endDateObj = whereClause.find(
+      (p: any) => p.key === 'endDate' && p.value,
+    );
+    const startDate = startDateObj?.value;
+    const endDate = endDateObj?.value;
 
-  // Extract start and end date filters
-  const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
-  const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
-  const startDate = startDateObj?.value;
-  const endDate = endDateObj?.value;
+    if (startDate && endDate) {
+      lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
+      parameters.startDate = startDate;
+      parameters.endDate = endDate;
+    } else if (startDate) {
+      lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
+      parameters.startDate = startDate;
+    } else if (endDate) {
+      lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
+      parameters.endDate = endDate;
+    }
 
-  if (startDate && endDate) {
-    lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
-    parameters.startDate = startDate;
-    parameters.endDate = endDate;
-  } else if (startDate) {
-    lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
-    parameters.startDate = startDate;
-  } else if (endDate) {
-    lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
-    parameters.endDate = endDate;
-  }
+    // -----------------------------------
+    // Application statuses to count and map keys
+    const applicationStatusMap: Record<string, string> = {
+      Pending: 'Applications_in_Review_Pending',
+      Shortlisted: 'Offers_Received_Shortlisted',
+      Processed: 'Applications_Processed',
+      Endorsed: 'Applications_Endorsed',
+      Approved: 'Applications_Approved',
+      Deployed: 'Applications_Deployed',
+      Rejected: 'Applications_Rejected',
+      Cancelled: 'Applications_Cancelled',
+    };
 
-  // -----------------------------------
-  // Application statuses to count and map keys
-  const applicationStatusMap: Record<string, string> = {
-    Pending: 'Applications_in_Review_Pending',
-    Shortlisted: 'Offers_Received_Shortlisted',
-    Processed: 'Applications_Processed',
-    Endorsed: 'Applications_Endorsed',
-    Approved: 'Applications_Approved',
-    Deployed: 'Applications_Deployed',
-    Rejected: 'Applications_Rejected',
-    Cancelled: 'Applications_Cancelled',
-  };
+    const statusesToCount = Object.keys(applicationStatusMap);
 
-  const statusesToCount = Object.keys(applicationStatusMap);
+    const applicationQB = this.applicationRepository
+      .createQueryBuilder('a')
+      .select('a.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .where('a.status IN (:...statuses)', { statuses: statusesToCount })
+      .groupBy('a.status');
 
-  const applicationQB = this.applicationRepository
-    .createQueryBuilder('a')
-    .select('a.status', 'status')
-    .addSelect('COUNT(*)', 'count')
-    .where('a.status IN (:...statuses)', { statuses: statusesToCount })
-    .groupBy('a.status');
+    if (startDate && endDate) {
+      applicationQB.andWhere(
+        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      applicationQB.andWhere('DATE(a.applied_at) >= :startDate', { startDate });
+    } else if (endDate) {
+      applicationQB.andWhere('DATE(a.applied_at) <= :endDate', { endDate });
+    }
 
-  if (startDate && endDate) {
-    applicationQB.andWhere('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
-  } else if (startDate) {
-    applicationQB.andWhere('DATE(a.applied_at) >= :startDate', { startDate });
-  } else if (endDate) {
-    applicationQB.andWhere('DATE(a.applied_at) <= :endDate', { endDate });
-  }
+    const applicationCounts = await applicationQB.getRawMany();
 
-  const applicationCounts = await applicationQB.getRawMany();
+    const applicationStatusRaw = applicationCounts.reduce(
+      (acc, curr) => {
+        const key = applicationStatusMap[curr.status] || curr.status;
+        acc[key] = parseInt(curr.count, 10);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
-  const applicationStatusRaw = applicationCounts.reduce((acc, curr) => {
-    const key = applicationStatusMap[curr.status] || curr.status;
-    acc[key] = parseInt(curr.count, 10);
-    return acc;
-  }, {} as Record<string, number>);
+    // Total applications count with same filters
+    const applicationCountQB =
+      this.applicationRepository.createQueryBuilder('a');
 
-  // Total applications count with same filters
-  const applicationCountQB = this.applicationRepository.createQueryBuilder('a');
+    if (startDate && endDate) {
+      applicationCountQB.where(
+        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      applicationCountQB.where('DATE(a.applied_at) >= :startDate', {
+        startDate,
+      });
+    } else if (endDate) {
+      applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
+    }
 
-  if (startDate && endDate) {
-    applicationCountQB.where('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
-  } else if (startDate) {
-    applicationCountQB.where('DATE(a.applied_at) >= :startDate', { startDate });
-  } else if (endDate) {
-    applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
-  }
+    const totalApplications = await applicationCountQB.getCount();
 
-  const totalApplications = await applicationCountQB.getCount();
+    // -----------------------------------
+    // Job posting counts by job_opening
+    const jobCounts = await this.jobPostingRepository
+      .createQueryBuilder('j')
+      .select('j.job_opening', 'job_opening')
+      .addSelect('COUNT(*)', 'count')
+      .where(lwhereClause, parameters)
+      .groupBy('j.job_opening')
+      .getRawMany();
 
-  // -----------------------------------
-  // Job posting counts by job_opening
-  const jobCounts = await this.jobPostingRepository
-    .createQueryBuilder('j')
-    .select('j.job_opening', 'job_opening')
-    .addSelect('COUNT(*)', 'count')
-    .where(lwhereClause, parameters)
-    .groupBy('j.job_opening')
-    .getRawMany();
+    const jobPostingStatusMap: Record<string, string> = {
+      Active: 'Total_Open_Jobs',
+      Close: 'Jobs_Close',
+    };
 
-  const jobPostingStatusMap: Record<string, string> = {
-    Active: 'Total_Open_Jobs',
-    Close: 'Jobs_Close',
-  };
+    const jobPostingStatusRaw = jobCounts.reduce(
+      (acc, curr) => {
+        const key = jobPostingStatusMap[curr.job_opening] || curr.job_opening;
+        acc[key] = (acc[key] || 0) + parseInt(curr.count, 10);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
-  const jobPostingStatusRaw = jobCounts.reduce((acc, curr) => {
-    const key = jobPostingStatusMap[curr.job_opening] || curr.job_opening;
-    acc[key] = (acc[key] || 0) + parseInt(curr.count, 10);
-    return acc;
-  }, {} as Record<string, number>);
+    // Calculate total jobs (open + close)
+    const totalJobs =
+      (jobPostingStatusRaw['Total_Open_Jobs'] || 0) +
+      (jobPostingStatusRaw['Jobs_Close'] || 0);
 
-  // Calculate total jobs (open + close)
-  const totalJobs = (jobPostingStatusRaw['Total_Open_Jobs'] || 0) + (jobPostingStatusRaw['Jobs_Close'] || 0);
+    // Build Job_Application_Overview array
+    const jobApplicationOverview = [
+      {
+        Jobs_Applied: totalApplications,
+        Offers_Received_Shortlisted:
+          applicationStatusRaw['Offers_Received_Shortlisted'] || 0,
+        Applications_Rejected:
+          applicationStatusRaw['Applications_Rejected'] || 0,
+      },
+    ];
 
-  // Build Job_Application_Overview array
-  const jobApplicationOverview = [
-    {
+    return WriteResponse(200, {
+      ...applicationStatusRaw,
       Jobs_Applied: totalApplications,
-      Offers_Received_Shortlisted: applicationStatusRaw['Offers_Received_Shortlisted'] || 0,
-      Applications_Rejected: applicationStatusRaw['Applications_Rejected'] || 0,
-    },
-  ];
-
-  return WriteResponse(200, {
-    ...applicationStatusRaw,
-    Jobs_Applied: totalApplications,
-    ...jobPostingStatusRaw,
-    Total_Jobs: totalJobs,
-    Job_Application_Overview: jobApplicationOverview,
-  })  ;
-}
-
+      ...jobPostingStatusRaw,
+      Total_Jobs: totalJobs,
+      Job_Application_Overview: jobApplicationOverview,
+    });
+  }
 
   async pagination(req: any, pagination: IPagination) {
     try {

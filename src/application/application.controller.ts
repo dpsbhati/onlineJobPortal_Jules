@@ -23,7 +23,7 @@ import {
   CreateApplicationDto,
   UpdateApplicationStatusDto,
 } from './dto/create-application.dto';
-import { UpdateApplicationDto } from './dto/update-application.dto';
+import { ChangeApplicationDto, UpdateApplicationDto } from './dto/update-application.dto';
 import { IPagination, IPaginationSwagger } from 'src/shared/paginationEum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
@@ -106,6 +106,21 @@ export class ApplicationController {
     @Req() req: any,
   ) {
     return this.applicationService.update(id, updateApplicationDto, req.user);
+  }
+
+  @Post('changeApplicationStatus/:id')
+  @ApiOperation({ summary: 'Change the status of a specific application by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The ID of the application to update',
+    example: 'uuid',
+  })
+  changeApplicationStatus(
+    @Param('id') id: string,
+    @Body() changeApplicationDto: ChangeApplicationDto,
+    @Req() req: any,
+  ) {
+    return this.applicationService.changeApplicationStatus(id, changeApplicationDto, req.user);
   }
 
   @Post('delete')
