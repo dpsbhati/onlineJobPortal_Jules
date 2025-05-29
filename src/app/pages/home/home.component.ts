@@ -141,7 +141,7 @@ export class HomeComponent {
     );
     if (rankValue && rankValue.trim() !== '') {
       this.pageConfig.whereClause.push({
-        key: 'rank',
+        key: 'rank_name',
         operator: '=',
         value: rankValue.trim(),
       });
