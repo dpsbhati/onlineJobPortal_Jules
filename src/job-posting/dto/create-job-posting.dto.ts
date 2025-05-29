@@ -19,7 +19,11 @@ import {
   IsArray,
   IsDateString,
 } from 'class-validator';
-import { JobOpeningStatus, JobPostStatus, JobTypePost } from '../entities/job-posting.entity';
+import {
+  JobOpeningStatus,
+  JobPostStatus,
+  JobTypePost,
+} from '../entities/job-posting.entity';
 
 @ValidatorConstraint({ name: 'IsNotWhitespace', async: false })
 @Injectable()
@@ -244,8 +248,16 @@ export class UpdateDeadlineDto {
   job_id: string;
 
   @ApiProperty()
-  deadline: Date; 
+  deadline: Date;
 
   isActive: true;
   job_opening: JobOpeningStatus.OPEN;
+}
+
+export class Changejobstatus {
+  @ApiProperty()
+  job_id: string;
+
+  @ApiProperty()
+  job_opening: JobOpeningStatus;
 }
