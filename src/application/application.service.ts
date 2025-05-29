@@ -775,100 +775,124 @@ export class ApplicationService {
     }
   }
 
-  async getStatusSummary(req: any, pagination: IPagination) {
-    const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
 
-    const parameters: Record<string, any> = { is_deleted: false };
-    let lwhereClause = 'j.is_deleted = :is_deleted';
+async getStatusSummary(req: any, pagination: IPagination) {
+  const { curPage = 1, perPage = 10, whereClause = [] } = pagination;
 
-    // Extract start and end date filters
-    const startDateObj = whereClause.find(
-      (p: any) => p.key === 'startDate' && p.value,
-    );
-    const endDateObj = whereClause.find(
-      (p: any) => p.key === 'endDate' && p.value,
-    );
-    const startDate = startDateObj?.value;
-    const endDate = endDateObj?.value;
+  const parameters: Record<string, any> = { is_deleted: false, isActive: true };
+  let lwhereClause = 'j.is_deleted = :is_deleted AND j.isActive = :isActive';
 
-    if (startDate && endDate) {
-      lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
-      parameters.startDate = startDate;
-      parameters.endDate = endDate;
-    } else if (startDate) {
-      lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
-      parameters.startDate = startDate;
-    } else if (endDate) {
-      lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
-      parameters.endDate = endDate;
-    }
+  // Extract start and end date filters
+  const startDateObj = whereClause.find((p: any) => p.key === 'startDate' && p.value);
+  const endDateObj = whereClause.find((p: any) => p.key === 'endDate' && p.value);
+  const startDate = startDateObj?.value;
+  const endDate = endDateObj?.value;
 
-    // -------------------------------
-    // Application status counts (with applied_at filter)
-    const applicationQB = this.applicationRepository
-      .createQueryBuilder('a')
-      .select('a.status', 'status')
-      .addSelect('COUNT(*)', 'count')
-      .groupBy('a.status');
-
-    if (startDate && endDate) {
-      applicationQB.where(
-        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
-        { startDate, endDate },
-      );
-    } else if (startDate) {
-      applicationQB.where('DATE(a.applied_at) >= :startDate', { startDate });
-    } else if (endDate) {
-      applicationQB.where('DATE(a.applied_at) <= :endDate', { endDate });
-    }
-
-    const applicationCounts = await applicationQB.getRawMany();
-
-    const applicationStatus = applicationCounts.reduce((acc, curr) => {
-      acc[curr.status] = parseInt(curr.count, 10);
-      return acc;
-    }, {});
-
-    // Total applications (with same filters)
-    const applicationCountQB =
-      this.applicationRepository.createQueryBuilder('a');
-
-    if (startDate && endDate) {
-      applicationCountQB.where(
-        'DATE(a.applied_at) BETWEEN :startDate AND :endDate',
-        { startDate, endDate },
-      );
-    } else if (startDate) {
-      applicationCountQB.where('DATE(a.applied_at) >= :startDate', {
-        startDate,
-      });
-    } else if (endDate) {
-      applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
-    }
-
-    const totalApplications = await applicationCountQB.getCount();
-
-    // -------------------------------
-    // Job posting counts by job_opening
-    const jobCounts = await this.jobPostingRepository
-      .createQueryBuilder('j')
-      .select('j.job_opening', 'job_opening')
-      .addSelect('COUNT(*)', 'count')
-      .where(lwhereClause, parameters)
-      .groupBy('j.job_opening')
-      .getRawMany();
-
-    const jobPostingStatus = jobCounts.reduce((acc, curr) => {
-      acc[curr.job_opening] = parseInt(curr.count, 10);
-      return acc;
-    }, {});
-
-    return {
-      applicationStatus,
-      totalApplications,
-      jobPostingStatus,
-    };
+  if (startDate && endDate) {
+    lwhereClause += ` AND DATE(j.date_published) BETWEEN :startDate AND :endDate`;
+    parameters.startDate = startDate;
+    parameters.endDate = endDate;
+  } else if (startDate) {
+    lwhereClause += ` AND DATE(j.date_published) >= :startDate`;
+    parameters.startDate = startDate;
+  } else if (endDate) {
+    lwhereClause += ` AND DATE(j.date_published) <= :endDate`;
+    parameters.endDate = endDate;
   }
+
+  // -----------------------------------
+  // Application statuses to count and map keys
+  const applicationStatusMap: Record<string, string> = {
+    Pending: 'Applications_in_Review_Pending',
+    Shortlisted: 'Offers_Received_Shortlisted',
+    Processed: 'Applications_Processed',
+    Endorsed: 'Applications_Endorsed',
+    Approved: 'Applications_Approved',
+    Deployed: 'Applications_Deployed',
+    Rejected: 'Applications_Rejected',
+    Cancelled: 'Applications_Cancelled',
+  };
+
+  const statusesToCount = Object.keys(applicationStatusMap);
+
+  const applicationQB = this.applicationRepository
+    .createQueryBuilder('a')
+    .select('a.status', 'status')
+    .addSelect('COUNT(*)', 'count')
+    .where('a.status IN (:...statuses)', { statuses: statusesToCount })
+    .groupBy('a.status');
+
+  if (startDate && endDate) {
+    applicationQB.andWhere('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
+  } else if (startDate) {
+    applicationQB.andWhere('DATE(a.applied_at) >= :startDate', { startDate });
+  } else if (endDate) {
+    applicationQB.andWhere('DATE(a.applied_at) <= :endDate', { endDate });
+  }
+
+  const applicationCounts = await applicationQB.getRawMany();
+
+  const applicationStatusRaw = applicationCounts.reduce((acc, curr) => {
+    const key = applicationStatusMap[curr.status] || curr.status;
+    acc[key] = parseInt(curr.count, 10);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Total applications count with same filters
+  const applicationCountQB = this.applicationRepository.createQueryBuilder('a');
+
+  if (startDate && endDate) {
+    applicationCountQB.where('DATE(a.applied_at) BETWEEN :startDate AND :endDate', { startDate, endDate });
+  } else if (startDate) {
+    applicationCountQB.where('DATE(a.applied_at) >= :startDate', { startDate });
+  } else if (endDate) {
+    applicationCountQB.where('DATE(a.applied_at) <= :endDate', { endDate });
+  }
+
+  const totalApplications = await applicationCountQB.getCount();
+
+  // -----------------------------------
+  // Job posting counts by job_opening
+  const jobCounts = await this.jobPostingRepository
+    .createQueryBuilder('j')
+    .select('j.job_opening', 'job_opening')
+    .addSelect('COUNT(*)', 'count')
+    .where(lwhereClause, parameters)
+    .groupBy('j.job_opening')
+    .getRawMany();
+
+  const jobPostingStatusMap: Record<string, string> = {
+    Active: 'Total_Open_Jobs',
+    Close: 'Jobs_Close',
+  };
+
+  const jobPostingStatusRaw = jobCounts.reduce((acc, curr) => {
+    const key = jobPostingStatusMap[curr.job_opening] || curr.job_opening;
+    acc[key] = (acc[key] || 0) + parseInt(curr.count, 10);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Calculate total jobs (open + close)
+  const totalJobs = (jobPostingStatusRaw['Total_Open_Jobs'] || 0) + (jobPostingStatusRaw['Jobs_Close'] || 0);
+
+  // Build Job_Application_Overview array
+  const jobApplicationOverview = [
+    {
+      Jobs_Applied: totalApplications,
+      Offers_Received_Shortlisted: applicationStatusRaw['Offers_Received_Shortlisted'] || 0,
+      Applications_Rejected: applicationStatusRaw['Applications_Rejected'] || 0,
+    },
+  ];
+
+  return WriteResponse(200, {
+    ...applicationStatusRaw,
+    Jobs_Applied: totalApplications,
+    ...jobPostingStatusRaw,
+    Total_Jobs: totalJobs,
+    Job_Application_Overview: jobApplicationOverview,
+  })  ;
+}
+
 
   async pagination(req: any, pagination: IPagination) {
     try {
