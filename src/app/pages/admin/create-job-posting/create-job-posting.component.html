@@ -41,8 +41,8 @@
           <mat-label>Vessel Type</mat-label>
           <mat-select id="vessel_type" formControlName="vessel_type">
             <mat-option value="">Select Vessel Type</mat-option>
-            <mat-option value="Type 1">Type 1</mat-option>
-            <mat-option value="Type 3">Type 3</mat-option>
+            <!-- <mat-option value="Type 1">Type 1</mat-option>
+            <mat-option value="Type 3">Type 3</mat-option> -->
             <mat-option value="Bulk Carrier">Bulk Carrier</mat-option>
              <mat-option value="Container">Container</mat-option>
           </mat-select>
@@ -67,9 +67,9 @@
       </div>
 
 
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+      <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
-        <!-- Date Published -->
+      
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Date Published</mat-label>
           <input matInput [matDatepicker]="publishedPicker" id="date_published" formControlName="date_published"
@@ -81,25 +81,8 @@
           </mat-error>
         </mat-form-field>
 
-      </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
-
-        <!-- Deadline -->
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Deadline</mat-label>
-          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline" (dateChange)="onToDateChange(jobForm.get('date_published'),jobForm.get('deadline'))">
-          <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
-          <mat-datepicker #deadlinePicker></mat-datepicker>
-          <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
-            <span *ngIf="jobForm.get('deadline')?.errors?.['required']">Deadline is required.</span>
-            <span *ngIf="jobForm.get('deadline')?.errors?.['deadlineInvalid']">Deadline cannot be before today's date
-              or
-              the date published.</span>
-          </mat-error>
-        </mat-form-field>
-
-      </div>
-
+      </div> -->
+    
 
        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
         <mat-form-field appearance="outline" class="w-100">
@@ -114,6 +97,8 @@
           </mat-error>
         </mat-form-field>
       </div>
+
+
  <div class="col-xl-4 col-lg-4 col-md-6 m-b-16" *ngIf="jobForm.get('job_type_post')?.value === 'Schedulelater'">
         <!-- Post At -->
 
@@ -122,8 +107,13 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Choose a date</mat-label>
               <input matInput [matDatepicker]="picker" formControlName="posted_date" />
+              
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="jobForm.get('posted_date')?.hasError('postedDateInvalid')">
+        Date cannot be before today.
+      </mat-error>
+
             </mat-form-field>
 
             <div class="w-100 ">
@@ -138,6 +128,27 @@
           </div>
         </div>
       </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
+
+        <!-- Deadline -->
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Deadline</mat-label>
+          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline">
+          <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
+          <mat-datepicker #deadlinePicker></mat-datepicker>
+          <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
+            <span *ngIf="jobForm.get('deadline')?.errors?.['required']">Deadline is required.</span>
+            <!-- <span *ngIf="jobForm.get('deadline')?.errors?.['deadlineInvalid']">Deadline cannot be before today's date
+              or
+              the date published.</span> -->
+              <span *ngIf="jobForm.get('deadline')?.hasError('deadlineInvalid')">
+  Deadline cannot be before today's date.
+              </span>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
       <div class="col-12 m-b-30">
         <div class="p-16 bg-light-primary rounded">
           <h5 class="f-s-14 text-primary d-flex align-items-center f-w-500">
@@ -394,6 +405,9 @@
           <mat-error *ngIf="jobForm.get('featured_image')?.invalid && jobForm.get('featured_image')?.touched">
             Featured image is required.
           </mat-error>
+           <mat-error *ngIf="jobForm.get('featured_image')?.hasError('invalidFileExtension')">
+    Invalid image file. Only .jpg, .jpeg, .png, and .gif are allowed.
+  </mat-error>
         </div>
       </div>
 

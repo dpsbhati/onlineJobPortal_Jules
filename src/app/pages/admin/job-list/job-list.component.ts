@@ -42,6 +42,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class JobListComponent implements OnInit {
   jobList: any[] = [];
   uniqueRanks: string[] = [];
+
   id: number = 0;
   userRole: string = '';
   errorMessage: string = '';
@@ -74,7 +75,9 @@ export class JobListComponent implements OnInit {
   showDeadlineModal = false; // control modal visibility
   selectedJobToActivate: any = null; // store the job user tries to activate
   newDeadline: Date | null = null; // new deadline chosen by user
-
+showDeleteWarningModal = false;
+jobToDeleteId: string | null = null;
+jobToDeleteApplicationCount = 0;
   constructor(
     private adminService: AdminService,
     private router: Router,
@@ -248,35 +251,100 @@ export class JobListComponent implements OnInit {
     this.router.navigate(['/create-job-posting', id]);
   }
 
-  deleteJob(jobId: string) {
-    const dialogRef = this.dialog.open(DeleteComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loader.show();
-        this.adminService.deleteJob(jobId).subscribe({
-          next: (response: any) => {
-            this.toastr.success(response.message);
-            this.loader.hide();
-            // Refresh job data after deletion
-            this.onPagination();
-            // If the current page becomes empty after deletion, navigate to the previous page
-            if (
-              this.jobPostingList.length === 1 &&
-              this.pageConfig.curPage > 1
-            ) {
-              this.pageConfig.curPage -= 1;
-              this.onPagination();
-            }
-          },
-          error: (error: any) => {
-            this.loader.hide();
-            this.toastr.error(error?.message || 'Failed to delete job.');
-          },
-        });
-      }
-    });
-  }
+  // deleteJob(jobId: string) {
+  //   const dialogRef = this.dialog.open(DeleteComponent);
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     if (result) {
+  //       this.loader.show();
+  //       this.adminService.deleteJob(jobId).subscribe({
+  //         next: (response: any) => {
+  //           this.toastr.success(response.message);
+  //           this.loader.hide();
+       
+  //           this.onPagination();
+       
+  //           if (
+  //             this.jobPostingList.length === 1 &&
+  //             this.pageConfig.curPage > 1
+  //           ) {
+  //             this.pageConfig.curPage -= 1;
+  //             this.onPagination();
+  //           }
+  //         },
+  //         error: (error: any) => {
+  //           this.loader.hide();
+  //           this.toastr.error(error?.message || 'Failed to delete job.');
+  //         },
+  //       });
+  //     }
+  //   });
+  // }
+deleteJob(jobId: string) {
+  // Find the job object from your list (or pass whole object to method)
+  const job = this.jobPostingList.find(j => j.id === jobId);
+  if (!job) return;
 
+  if (job.application_number > 0) {
+    // Show warning modal
+    this.jobToDeleteId = jobId;
+    this.jobToDeleteApplicationCount = job.application_number;
+    this.showDeleteWarningModal = true;
+  } else {
+    // Proceed with normal deletion (existing flow)
+    this.confirmDeleteJob(jobId);
+  }
+}
+confirmDeleteJob(jobId: string) {
+  const dialogRef = this.dialog.open(DeleteComponent);
+  dialogRef.afterClosed().subscribe((result) => {
+    if (result) {
+      this.loader.show();
+      this.adminService.deleteJob(jobId).subscribe({
+        next: (response: any) => {
+          this.toastr.success(response.message);
+          this.loader.hide();
+          this.onPagination();
+
+          if (
+            this.jobPostingList.length === 1 &&
+            this.pageConfig.curPage > 1
+          ) {
+            this.pageConfig.curPage -= 1;
+            this.onPagination();
+          }
+        },
+        error: (error: any) => {
+          this.loader.hide();
+          this.toastr.error(error?.message || 'Failed to delete job.');
+        },
+      });
+    }
+  });
+}
+
+
+closeDeleteWarningModal() {
+  this.showDeleteWarningModal = false;
+  this.jobToDeleteId = null;
+  this.jobToDeleteApplicationCount = 0;
+}
+
+confirmArchiveJob() {
+  if (!this.jobToDeleteId) return;
+  this.loader.show();
+  // this.adminService.archiveJob(this.jobToDeleteId).subscribe({
+  //   next: (res: any) => {
+  //     this.toastr.success('Job moved to archive successfully');
+  //     this.loader.hide();
+  //     this.closeDeleteWarningModal();
+  //     this.onPagination();
+  //   },
+  //   error: (err) => {
+  //     this.toastr.error(err?.error?.message || 'Failed to archive job');
+  //     this.loader.hide();
+  //   },
+  // });
+}
   navigateToCreateJob() {
     this.router.navigate(['/create-job-posting']);
   }
