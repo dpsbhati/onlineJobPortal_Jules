@@ -178,6 +178,7 @@ export class ApplicationService {
       const application = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .leftJoinAndSelect('job.courses_and_certification', 'courses')
         .leftJoinAndSelect('user.userProfile', 'userProfile')
@@ -303,6 +304,7 @@ export class ApplicationService {
       const sanitizedApplications = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .leftJoinAndSelect('user.userProfile', 'userProfile')
         .where(lwhereClause, parameters)
@@ -762,6 +764,7 @@ export class ApplicationService {
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .leftJoinAndSelect('user.userProfile', 'userProfile')
         .where(lwhereClause, parameters)
@@ -930,6 +933,7 @@ export class ApplicationService {
       const [list, totalCount] = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .leftJoinAndSelect('user.userProfile', 'userProfile')
         .where(lwhereClause, parameters)
