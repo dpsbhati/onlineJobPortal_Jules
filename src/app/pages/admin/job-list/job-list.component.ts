@@ -49,7 +49,7 @@ export class JobListComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   totalApplications = 0;
-minDate: Date = new Date();
+  minDate: Date = new Date();
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -63,7 +63,7 @@ minDate: Date = new Date();
     title: '',
     vessel_type: '',
     employer: '',
-    rank: '',
+    rank_name: '',
     job_opening: '',
   };
 
@@ -72,8 +72,8 @@ minDate: Date = new Date();
   isLoading: boolean = false;
   displayedColumns: string[] = [];
   showDeadlineModal = false; // control modal visibility
-selectedJobToActivate: any = null; // store the job user tries to activate
-newDeadline: Date | null = null; // new deadline chosen by user
+  selectedJobToActivate: any = null; // store the job user tries to activate
+  newDeadline: Date | null = null; // new deadline chosen by user
 
   constructor(
     private adminService: AdminService,
@@ -92,7 +92,7 @@ newDeadline: Date | null = null; // new deadline chosen by user
           'title',
 
           'employer',
-          
+
           'date_published',
           'deadline',
           'status',
@@ -111,7 +111,7 @@ newDeadline: Date | null = null; // new deadline chosen by user
         ];
   }
 
- ngOnInit(): void {
+  ngOnInit(): void {
     this.isLoading = true;
     this.allJobList();
     this.allrankslist(); // 🔧 Add this line
@@ -132,9 +132,9 @@ newDeadline: Date | null = null; // new deadline chosen by user
         if (res.statusCode === 200) {
           // this.jobPostingList = res.data;
           this.jobPostingList = res.data.map((job: any) => ({
-          ...job,
-          rank: job.ranks?.rank_name || '-', // 👈 patch rank_name from nested `ranks` relation
-        }));
+            ...job,
+            rank: job.ranks?.rank_name || '-', // 👈 patch rank_name from nested `ranks` relation
+          }));
 
           this.total = res.count || 0;
           this.loader.hide();
@@ -161,71 +161,70 @@ newDeadline: Date | null = null; // new deadline chosen by user
     this.onPagination();
   }
 
-// onStatusToggleChange(element: any, checked: boolean) {
- 
-//   element.job_opening = checked ? 'Active' : 'DeActivated';
-//   element.isActive = checked;
+  // onStatusToggleChange(element: any, checked: boolean) {
 
-//   this.adminService.toggleJobStatus(element.id, checked).subscribe({
-//     next: (res) => {
+  //   element.job_opening = checked ? 'Active' : 'DeActivated';
+  //   element.isActive = checked;
 
-// this.toastr.success(res.message);
+  //   this.adminService.toggleJobStatus(element.id, checked).subscribe({
+  //     next: (res) => {
 
+  // this.toastr.success(res.message);
 
-//     },
-//     error: (err) => {
- 
-//       element.isActive = !checked;
-//       element.job_opening = !checked ? 'Active' : 'DeActivated';
-//       this.toastr.error('Failed to update status');
-//     },
-//   });
-// }
-onStatusToggleChange(element: any, checked: boolean) {
-  if (checked) {
-    // User is trying to activate - check deadline
-    const today = new Date();
-    console.log(today,'Today');
-    const jobDeadline = new Date(element.deadline);
-console.log(jobDeadline,'jobDeadline',jobDeadline < today);
-    if (jobDeadline < today) {
-      // Deadline passed - show modal to update deadline first
-      this.selectedJobToActivate = element;
-      this.newDeadline = null; // reset date
-      this.showDeadlineModal = true;
-      // Revert toggle UI immediately until user confirms
-      element.isActive = false;
-      return;
+  //     },
+  //     error: (err) => {
+
+  //       element.isActive = !checked;
+  //       element.job_opening = !checked ? 'Active' : 'DeActivated';
+  //       this.toastr.error('Failed to update status');
+  //     },
+  //   });
+  // }
+  onStatusToggleChange(element: any, checked: boolean) {
+    console.log(checked);
+    if (checked) {
+      // User is trying to activate - check deadline
+      const today = new Date();
+      console.log(today, 'Today');
+      const jobDeadline = new Date(element.deadline);
+      console.log(jobDeadline, 'jobDeadline', jobDeadline < today);
+      if (jobDeadline < today) {
+        // Deadline passed - show modal to update deadline first
+        this.selectedJobToActivate = element;
+        this.newDeadline = null; // reset date
+        this.showDeadlineModal = true;
+        // Revert toggle UI immediately until user confirms
+        element.isActive = false;
+        return;
+      }
     }
+    // Proceed normally if deadline not crossed or deactivating
+    element.job_opening = checked ? 'Active' : 'DeActivated';
+    element.isActive = checked;
+
+    this.adminService.toggleJobStatus(element.id, checked).subscribe({
+      next: (res) => {
+        this.toastr.success(res.message);
+        this.onPagination();
+      },
+      error: (err) => {
+        // Revert UI changes on failure
+        element.isActive = !checked;
+        element.job_opening = !checked ? 'Active' : 'DeActivated';
+        this.toastr.error('Failed to update status');
+      },
+    });
   }
 
-  // Proceed normally if deadline not crossed or deactivating
-  element.job_opening = checked ? 'Active' : 'DeActivated';
-  element.isActive = checked;
+  onSearch(): void {
+    // Trim leading and trailing spaces from search text
+    if (this.filters.all) {
+      this.filters.all = this.filters.all.trim();
+    }
 
-  this.adminService.toggleJobStatus(element.id, checked).subscribe({
-    next: (res) => {
-      this.toastr.success(res.message);
-    },
-    error: (err) => {
-      // Revert UI changes on failure
-      element.isActive = !checked;
-      element.job_opening = !checked ? 'Active' : 'DeActivated';
-      this.toastr.error('Failed to update status');
-    },
-  });
-}
-
-
-onSearch(): void {
-  // Trim leading and trailing spaces from search text
-  if (this.filters.all) {
-    this.filters.all = this.filters.all.trim();
+    this.pageConfig.curPage = 1;
+    this.onPagination();
   }
-
-  this.pageConfig.curPage = 1;
-  this.onPagination();
-}
 
   onInputChange(event: any): void {
     if (!this.filters.all) {
@@ -308,7 +307,7 @@ onSearch(): void {
 
   clearFilter(
     event: Event,
-    filterType: 'vessel_type' | 'rank' | 'job_opening'
+    filterType: 'vessel_type' | 'rank_name' | 'job_opening'
   ): void {
     event.stopPropagation();
     this.filters[filterType] = '';
@@ -321,7 +320,7 @@ onSearch(): void {
       title: '',
       vessel_type: '',
       employer: '',
-      rank: '',
+      rank_name: '',
       job_opening: '',
     };
     this.pageConfig.curPage = 1; // reset pagination too
@@ -329,101 +328,102 @@ onSearch(): void {
     this.onPagination(); // fetch the cleared list
   }
   closeDeadlineModal() {
-  this.showDeadlineModal = false;
-  this.selectedJobToActivate = null;
-  this.newDeadline = null;
-}
+    this.showDeadlineModal = false;
+    this.selectedJobToActivate = null;
+    this.newDeadline = null;
+    this.onPagination();
+  }
 
+  // confirmDeadlineChange() {
+  //   if (!this.newDeadline || !this.selectedJobToActivate) return;
 
+  //   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+  //     next: () => {
+  //       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+  //         next: () => {
+  //           this.toastr.success('Deadline updated and job activated');
+  //           this.selectedJobToActivate.isActive = true;
+  //           this.selectedJobToActivate.job_opening = 'Active';
+  //           this.closeDeadlineModal();
+  //         },
+  //         error: () => this.toastr.error('Failed to activate job'),
+  //       });
+  //     },
+  //     error: () => this.toastr.error('Failed to update deadline'),
+  //   });
+  // }
+  // confirmDeadlineChange() {
+  //   if (!this.newDeadline || !this.selectedJobToActivate) return;
 
-// confirmDeadlineChange() {
-//   if (!this.newDeadline || !this.selectedJobToActivate) return;
+  //   // Show loader if any
+  //   this.loader.show();
 
- 
-//   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
-//     next: () => {
-//       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
-//         next: () => {
-//           this.toastr.success('Deadline updated and job activated');
-//           this.selectedJobToActivate.isActive = true;
-//           this.selectedJobToActivate.job_opening = 'Active';
-//           this.closeDeadlineModal();
-//         },
-//         error: () => this.toastr.error('Failed to activate job'),
-//       });
-//     },
-//     error: () => this.toastr.error('Failed to update deadline'),
-//   });
-// }
-// confirmDeadlineChange() {
-//   if (!this.newDeadline || !this.selectedJobToActivate) return;
+  //   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
+  //     next: () => {
+  //       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+  //         next: () => {
+  //           this.toastr.success('Deadline updated and job activated');
+  //           this.selectedJobToActivate.isActive = true;
+  //           this.selectedJobToActivate.job_opening = 'Active';
+  //           this.closeDeadlineModal();
+  //           this.loader.hide();
+  //           this.onPagination();  // refresh list if needed
+  //         },
+  //         error: () => {
+  //           this.toastr.error('Failed to activate job');
+  //           this.loader.hide();
+  //         },
+  //       });
+  //     },
+  //     error: () => {
+  //       this.toastr.error('Failed to update deadline');
+  //       this.loader.hide();
+  //     },
+  //   });
+  // }
+  confirmDeadlineChange() {
+    if (!this.newDeadline || !this.selectedJobToActivate) return;
 
-//   // Show loader if any
-//   this.loader.show();
+    this.loader.show();
 
-//   this.adminService.updateJobDeadline(this.selectedJobToActivate.id, this.newDeadline).subscribe({
-//     next: () => {
-//       this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
-//         next: () => {
-//           this.toastr.success('Deadline updated and job activated');
-//           this.selectedJobToActivate.isActive = true;
-//           this.selectedJobToActivate.job_opening = 'Active';
-//           this.closeDeadlineModal();
-//           this.loader.hide();
-//           this.onPagination();  // refresh list if needed
-//         },
-//         error: () => {
-//           this.toastr.error('Failed to activate job');
-//           this.loader.hide();
-//         },
-//       });
-//     },
-//     error: () => {
-//       this.toastr.error('Failed to update deadline');
-//       this.loader.hide();
-//     },
-//   });
-// }
-confirmDeadlineChange() {
-  if (!this.newDeadline || !this.selectedJobToActivate) return;
+    // Convert newDeadline (local Date) to ISO string WITHOUT timezone shift
+    // So, send only date part with time set to some fixed time, e.g., noon local to avoid timezone issues
 
-  this.loader.show();
+    const adjustedDeadline = this.fixDateForApi(this.newDeadline);
 
-  // Convert newDeadline (local Date) to ISO string WITHOUT timezone shift
-  // So, send only date part with time set to some fixed time, e.g., noon local to avoid timezone issues
-
-  const adjustedDeadline = this.fixDateForApi(this.newDeadline);
-
-  this.adminService.updateJobDeadline(this.selectedJobToActivate.id, adjustedDeadline).subscribe({
-    next: () => {
-      this.adminService.toggleJobStatus(this.selectedJobToActivate.id, true).subscribe({
+    this.adminService
+      .updateJobDeadline(this.selectedJobToActivate.id, adjustedDeadline)
+      .subscribe({
         next: () => {
-          this.toastr.success('Deadline updated and job activated');
-          this.selectedJobToActivate.isActive = true;
-          this.selectedJobToActivate.job_opening = 'Active';
-          this.closeDeadlineModal();
-          this.loader.hide();
-          this.onPagination();
+          this.adminService
+            .toggleJobStatus(this.selectedJobToActivate.id, true)
+            .subscribe({
+              next: () => {
+                this.toastr.success('Deadline updated and job activated');
+                this.selectedJobToActivate.isActive = true;
+                this.selectedJobToActivate.job_opening = 'Active';
+                this.closeDeadlineModal();
+                this.loader.hide();
+                this.onPagination();
+              },
+              error: () => {
+                this.toastr.error('Failed to activate job');
+                this.loader.hide();
+              },
+            });
         },
         error: () => {
-          this.toastr.error('Failed to activate job');
+          this.toastr.error('Failed to update deadline');
           this.loader.hide();
         },
       });
-    },
-    error: () => {
-      this.toastr.error('Failed to update deadline');
-      this.loader.hide();
-    },
-  });
-}
+  }
 
-// Helper method to adjust date before sending to API
-fixDateForApi(date: Date): string {
-  // Set fixed time (e.g., noon) to avoid timezone shift to previous day
-  const fixedDate = new Date(date);
-  fixedDate.setHours(12, 0, 0, 0); // 12:00:00 local time
-  return fixedDate.toISOString(); // send ISO string with fixed time
-}
-
+  // Helper method to adjust date before sending to API
+  fixDateForApi(date: Date): string {
+    // Set fixed time (e.g., noon) to avoid timezone shift to previous day
+    const fixedDate = new Date(date);
+    fixedDate.setHours(12, 0, 0, 0); // 12:00:00 local time
+    return fixedDate.toISOString(); // send ISO string with fixed time
+  }
 }
