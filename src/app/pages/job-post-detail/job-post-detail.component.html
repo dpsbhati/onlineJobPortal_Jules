@@ -151,7 +151,7 @@
               <strong class="m-r-6">Vessel Type:</strong> {{ jobDetails?.vessel_type }}
             </div>
           <div class="col-lg-12 m-b-16">
-  <strong class="m-r-6">Salary:</strong> ${{ jobDetails?.start_salary || '-' }}
+  <strong class="m-r-6">Salary:</strong> {{ jobDetails?.start_salary ? ('$' + jobDetails.start_salary) : '-' }}
 </div>
 
             <div class="col-lg-12 m-b-16">
