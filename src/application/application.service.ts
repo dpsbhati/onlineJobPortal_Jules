@@ -76,6 +76,7 @@ export class ApplicationService {
       const jobDetails = await this.applicationRepository
         .createQueryBuilder('app')
         .leftJoinAndSelect('app.job', 'job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
         .leftJoinAndSelect('app.user', 'user')
         .where('app.id = :id', { id: savedApplication.id })
         .getOne();
@@ -95,7 +96,7 @@ export class ApplicationService {
       console.log('adminUserIds', adminUserIds);
 
       const notificationSubject = 'New Job Application Received';
-      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.rank}.`;
+      const notificationContent = `${req.user.userProfile.first_name} ${req.user.userProfile.last_name} has applied for the job of ${jobDetails.job.ranks.rank_name}.`;
 
       // Send notification to all admins
       this.notificationGateway.emitNotificationToUsers(
