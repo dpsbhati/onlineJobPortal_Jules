@@ -205,7 +205,7 @@ export class JobListComponent implements OnInit {
     this.adminService.toggleJobStatus(element.id, checked).subscribe({
       next: (res) => {
         this.toastr.success(res.message);
-        this.onPagination();
+        // this.onPagination();
       },
       error: (err) => {
         // Revert UI changes on failure

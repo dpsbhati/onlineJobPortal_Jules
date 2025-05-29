@@ -134,20 +134,38 @@ export class HomeComponent {
     }
   }
 
-  onRankChange(rankValue: string): void {
-    this.pageConfig.curPage = 1;
-    this.pageConfig.whereClause = this.pageConfig.whereClause.filter(
-      (filter: any) => filter.key !== 'rank'
-    );
-    if (rankValue && rankValue.trim() !== '') {
-      this.pageConfig.whereClause.push({
-        key: 'rank_name',
-        operator: '=',
-        value: rankValue.trim(),
-      });
-    }
-    this.onPagination();
+  // onRankChange(rankValue: string): void {
+  //   this.pageConfig.curPage = 1;
+  //   this.pageConfig.whereClause = this.pageConfig.whereClause.filter(
+  //     (filter: any) => filter.key !== 'rank'
+  //   );
+  //   if (rankValue && rankValue.trim() !== '') {
+  //     this.pageConfig.whereClause.push({
+  //       key: 'rank_name',
+  //       operator: '=',
+  //       value: rankValue.trim(),
+  //     });
+  //   }
+  //   this.onPagination();
+  // }
+onRankChange(rankValue: string): void {
+  this.pageConfig.curPage = 1;
+
+  // Remove previous rank_name filter, not 'rank'
+  this.pageConfig.whereClause = this.pageConfig.whereClause.filter(
+    (filter: any) => filter.key !== 'rank_name'
+  );
+
+  if (rankValue && rankValue.trim() !== '') {
+    this.pageConfig.whereClause.push({
+      key: 'rank_name',
+      operator: '=',
+      value: rankValue.trim(),
+    });
   }
+
+  this.onPagination();
+}
 
   onLocationChange(event: MatSelectChange): void {
     const locationCode = event.value;
@@ -173,13 +191,13 @@ export class HomeComponent {
     this.pageConfig.whereClause = [];
 
     // Add each filter only if it has a value
-    if (trimmedRank) {
-      this.pageConfig.whereClause.push({
-        key: 'rank',
-        operator: '=',
-        value: trimmedRank,
-      });
-    }
+   if (trimmedRank) {
+  this.pageConfig.whereClause.push({
+    key: 'rank_name',
+    operator: '=',
+    value: trimmedRank,
+  });
+}
     if (trimmedLocation) {
       this.pageConfig.whereClause.push({
         key: 'country_code',
