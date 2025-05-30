@@ -77,6 +77,8 @@ export class JobPostingService {
 
         for (const job of jobsToPost) {
           job.jobpost_status = JobPostStatus.POSTED;
+          job.job_opening = JobOpeningStatus.OPEN;
+          job.isActive = true;
           job.updated_at = new Date();
           await this.jobPostingRepository.save(job);
         }
@@ -99,7 +101,7 @@ export class JobPostingService {
         where: {
           is_deleted: false,
           job_opening: JobOpeningStatus.HOLD,
-          date_published: LessThanOrEqual(currentDateTime),
+          posted_at: LessThanOrEqual(currentDateTime),
         },
       });
 
@@ -191,7 +193,11 @@ export class JobPostingService {
       if (jobDto.job_type_post === JobTypePost.POST_NOW) {
         jobDto.jobpost_status = JobPostStatus.POSTED;
       }
-
+if(jobDto.job_type_post === JobTypePost.SCHEDULE_LATER){
+  jobDto.jobpost_status = JobPostStatus.DRAFT;
+  jobDto.job_opening = JobOpeningStatus.HOLD;
+  jobDto.isActive = false;
+}
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({

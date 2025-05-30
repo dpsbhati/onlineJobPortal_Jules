@@ -60,6 +60,9 @@ export class CreateJobPostingDto {
   @IsUUID(undefined, { message: 'id must be a valid UUID.' })
   id?: string;
 
+job_opening: JobOpeningStatus;
+isActive: boolean;
+
   job_type: string;
 
   @ApiProperty({
