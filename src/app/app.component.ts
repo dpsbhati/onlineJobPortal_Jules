@@ -10,6 +10,8 @@ import { environment } from 'src/environment/environment';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
+  hasNewNotification = false;
+
   title = 'MaterialPro Angular Admin Template';
   private webSocketSubscription: Subscription;
   private routerSubscription?: Subscription;
@@ -44,7 +46,8 @@ export class AppComponent {
         .listen('adminNotification', { userId })
         .subscribe({
           next: (message) => {
-            console.log('Received notification:', message);
+             this.hasNewNotification = true;
+            // console.log('Received notification:', message);
           },
           error: (err) => console.error('WebSocket error:', err),
         });

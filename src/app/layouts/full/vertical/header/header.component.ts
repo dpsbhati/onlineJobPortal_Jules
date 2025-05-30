@@ -82,6 +82,7 @@ interface quicklinks {
   encapsulation: ViewEncapsulation.None,
 })
 export class HeaderComponent {
+  hasNewNotification = false;
   @Input() showToggle = true;
   @Input() toggleChecked = false;
   @Output() toggleMobileNav = new EventEmitter<void>();
@@ -94,10 +95,11 @@ export class HeaderComponent {
   notificationlist: any;
   total: any;
   currentUserId: any;
+
   toggleCollpase() {
     this.isCollapse = !this.isCollapse; // Toggle visibility
   }
-   private notificationSub?: Subscription;
+  private notificationSub?: Subscription;
   private totalSub?: Subscription;
   pageConfig: any = {
     curPage: 1,
@@ -188,8 +190,10 @@ export class HeaderComponent {
     }
     this.loadUserData();
     // this.onPagination();
-      this.notificationSub = this.websocketService.notificationList$.subscribe(list => {
+    this.notificationSub = this.websocketService.notificationList$.subscribe(list => {
+      // this.hasNewNotification = true;
       this.notificationlist = list;
+        // this.hasNewNotification = this.notificationlist && this.notificationlist.length > 0 && this.notificationlist.some((n: any) => !n.is_read);
     });
 
     this.totalSub = this.websocketService.total$.subscribe(count => {
@@ -200,47 +204,56 @@ export class HeaderComponent {
     this.websocketService.onPagination();
   }
 
-    ngOnDestroy() {
+  hasUnreadNotifications(): boolean {
+  return this.notificationlist.some((n:any) => !n.is_read);
+}
+
+  ngOnDestroy() {
     this.notificationSub?.unsubscribe();
     this.totalSub?.unsubscribe();
   }
 
- navigateToNotification(type: string | undefined, application_id?: string, job_id?: string) {
-  if (!type) return;
+  navigateToNotification(type: string | undefined, application_id?: string, job_id?: string) {
+    if (!type) return;
 
-  switch (type) {
-    case 'job_application':
-    case 'application_cancelled':
-      // Yeh teenon ke liye application_id jayegi
-      if (application_id) {
-        this._router.navigate(['/applicant-details', application_id]);
-      } 
-      break;
-
-    case 'application_status_update':
-      if(application_id){
-        this._router.navigate(['Applied-Status',application_id])
-      }
-      break;
-
-    case 'job_expired':
-    case 'job_posting':
-      // Yeh dono ke liye job_id jayegi
-      if (job_id) {
-        // Note: aapke route me spelling dikkat na ho, 'job-expired' vs 'job_expired'
-        if(type === 'job_expired'){
-          this._router.navigate(['/job-post-details', job_id]);
-        } else {
-          this._router.navigate(['/authentication/Job-Details', job_id]);
+    switch (type) {
+      case 'job_application':
+      case 'application_cancelled':
+        // Yeh teenon ke liye application_id jayegi
+        if (application_id) {
+          this._router.navigate(['/applicant-details', application_id]);
         }
-      }
-      break;
+        break;
 
-    default:
-      console.warn('No route mapped for notification type:', type);
+      case 'application_status_update':
+        if (application_id) {
+          this._router.navigate(['Applied-Status', application_id])
+        }
+        break;
+
+      case 'job_expired':
+      case 'job_posting':
+        // Yeh dono ke liye job_id jayegi
+        if (job_id) {
+          // Note: aapke route me spelling dikkat na ho, 'job-expired' vs 'job_expired'
+          if (type === 'job_expired') {
+            this._router.navigate(['/job-post-details', job_id]);
+          } else {
+            this._router.navigate(['/authentication/Job-Details', job_id]);
+          }
+        }
+        break;
+
+      default:
+        console.warn('No route mapped for notification type:', type);
+    }
   }
-}
 
+  onNotificationsMenuOpen() {
+    this.hasNewNotification = true;
+    // Optional: mark all notifications as read here by calling your API
+    // this.markAllAsRead();
+  }
 
   loadUserData(): void {
     const userString = localStorage.getItem('user');
@@ -290,18 +303,39 @@ export class HeaderComponent {
         if (res.statusCode === 200) {
           this.notificationlist = res.data;
           this.total = res.count || 0;
+             // Check if any notification is unread
+        this.hasNewNotification = this.notificationlist.some(
+          (n: any) => !n.is_read
+        );
           this.loader.hide();
         } else {
+          this.hasNewNotification = false;
           this.notificationlist = [];
           this.total = 0;
           this.loader.hide();
         }
       },
       error: (err: any) => {
+        this.hasNewNotification = false;
         this.loader.hide();
         this.toastr.error(err?.error?.message);
         this.notificationlist = [];
         this.total = 0;
+      },
+    });
+  }
+
+  markAllAsRead(): void {
+    this.adminService.markAllAsReadNew().subscribe({
+      next: (res: any) => {
+        if (res.statusCode == 200) {
+          this.toastr.success(res.message);
+          this.hasNewNotification = false;
+          this.onPagination();
+        }
+      },
+      error: (err: any) => {
+        console.log(err);
       },
     });
   }
@@ -314,7 +348,7 @@ export class HeaderComponent {
   openDialog() {
     const dialogRef = this.dialog.open(AppSearchDialogComponent);
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   changeLanguage(lang: any): void {

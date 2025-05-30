@@ -121,4 +121,8 @@ export class AdminService {
 changeJobStatusToArchived(payload: { job_id: string; job_opening: string }) {
   return this.genericService.Post('job-posting/changestatus-to-archived', payload);
 }
+
+markAllAsReadNew(){
+  return this.genericService.Get<any>('notifications/mark-notifications-as-read')
+}
 }

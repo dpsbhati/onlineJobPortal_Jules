@@ -164,10 +164,17 @@ export class CreateJobPostingComponent {
       this.jobForm.get('social_media_type')?.enable()
       this.jobForm.get('job_type_post')?.enable()
     }
-    this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
-      const postedAtControl = this.jobForm.get('posted_at')
-      this.onJobTypePostChange(value);
-    })
+    // this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
+    //   const postedAtControl = this.jobForm.get('posted_at')
+    //   this.onJobTypePostChange(value);
+    // })
+
+     this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
+    this.onJobTypePostChange(value);
+  });
+
+  // Call once on init to set correct validators and values based on existing value (or empty)
+  this.onJobTypePostChange(this.jobForm.get('job_type_post')?.value || '');
     // const today = new Date().toISOString().split('T')[0]
     // this.jobForm.get('date_published')?.setValue(today)
     // this.jobForm
@@ -241,24 +248,21 @@ export class CreateJobPostingComponent {
   //   postedDateControl?.updateValueAndValidity();
   // }
 
-  onJobTypePostChange(value: string): void {
+onJobTypePostChange(value: string): void {
   const postedAtControl = this.jobForm.get('posted_at');
   const postedDateControl = this.jobForm.get('posted_date');
-  const currentDate = new Date();
-
-  const formattedTime = currentDate.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US');
 
   if (value === 'Schedulelater') {
+    // Enable validators and clear current value so user selects fresh date/time
     postedAtControl?.setValidators([Validators.required]);
     postedDateControl?.setValidators([Validators.required, this.postedDateValidator()]);
-  } else {
-    postedAtControl?.setValue(formattedTime);
-    postedDateControl?.setValue(formattedDate);
+
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
+  } else if (value === 'Postnow') {
+    // Clear values and disable validators when Post now is selected
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
 
     postedAtControl?.clearValidators();
     postedDateControl?.clearValidators();
@@ -268,6 +272,43 @@ export class CreateJobPostingComponent {
   postedDateControl?.updateValueAndValidity();
 }
 
+formatDateToUTCMidnight(dateInput: string | Date): string {
+  const date = new Date(dateInput);
+
+  // Set the hours to midnight UTC by constructing new Date with UTC components
+  const utcMidnight = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+  return utcMidnight.toISOString(); // returns full ISO string e.g. 2025-01-01T00:00:00.000Z
+}
+
+
+
+formatDateWithCurrentUTCTime(dateInput: string | Date): string {
+  const date = new Date(dateInput);
+
+  // Get UTC midnight for selected date
+  const utcMidnight = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+  // Current UTC time parts
+  const now = new Date();
+  const utcHours = now.getUTCHours();
+  const utcMinutes = now.getUTCMinutes();
+  const utcSeconds = now.getUTCSeconds();
+  const utcMilliseconds = now.getUTCMilliseconds();
+
+  // Calculate milliseconds to add for current UTC time
+  const utcTimeMs = 
+    utcHours * 3600 * 1000 + 
+    utcMinutes * 60 * 1000 + 
+    utcSeconds * 1000 + 
+    utcMilliseconds;
+
+  // Add current UTC time to the selected date at UTC midnight
+  const combinedDate = new Date(utcMidnight.getTime() + utcTimeMs);
+
+  // Return ISO string with date + current UTC time
+  return combinedDate.toISOString();
+}
 
   onSubmit(): void {
     console.log(this.jobForm.valid,'valid');
@@ -275,14 +316,24 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-       if (formValues.deadline) {
-      formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
+    //    if (formValues.deadline) {
+    //   formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
+    // }
+
+    // if (formValues.posted_date) {
+    //   formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+    // }
+ if (formValues.deadline) {
+      formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
     }
 
-    if (formValues.posted_date) {
+
+    // if (formValues.posted_date) {
+    //   formValues.posted_date = this.formatDateToUTCMidnight(formValues.posted_date);
+    // }
+     if (formValues.posted_date) {
       formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
     }
-
       if (!formValues.id) {
         delete formValues.id;
       }
