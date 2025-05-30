@@ -484,7 +484,7 @@ export class ApplicationService {
         }
       }
 
-      await this.applicationRepository.update(updateApplicationDto.id, {
+      await this.applicationRepository.update(id, {
         comments: JSON.stringify(updateApplicationDto.comments),
       });
 
