@@ -116,7 +116,9 @@ export class AdminService {
     deadline: deadline,
   };
 
-  return this.http.post('https://navilands.vns360.gr/api/job-posting/update-deadline', payload);
+  return this.genericService.Post('job-posting/update-deadline', payload);
 }
-
+changeJobStatusToArchived(payload: { job_id: string; job_opening: string }) {
+  return this.genericService.Post('job-posting/changestatus-to-archived', payload);
+}
 }

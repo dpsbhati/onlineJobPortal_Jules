@@ -22,6 +22,7 @@ import { AppliedStatusComponent } from './admin/applied-status/applied-status.co
 import { ExpiredJobPostingComponent } from './admin/expired-job-posting/expired-job-posting.component'
 import { AllApplicantsComponent } from '../all-applicants/all-applicants.component'
 import { ChangePasswordComponent } from './authentication/change-password/change-password.component'
+import { ArchivedJobsComponent } from './admin/archived-jobs/archived-jobs.component'
 
 export const PagesRoutes: Routes = [
   {
@@ -214,5 +215,14 @@ export const PagesRoutes: Routes = [
         canActivate: [AuthGuard]
       }
     ]
-  }
+  },
+
+  {
+        path: 'archived-jobs',
+        component: ArchivedJobsComponent,
+        canActivate: [roleGuard(['admin'])]
+      },
+
+
+      
 ]

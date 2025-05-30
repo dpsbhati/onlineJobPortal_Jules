@@ -95,7 +95,7 @@ export class CreateJobPostingComponent {
   Validators.maxLength(4)         // optional: max 4 digits
 ]),
         featured_image: new FormControl(null, Validators.required),
-        date_published: new FormControl(this.todaysDate, Validators.required),
+        // date_published: new FormControl(this.todaysDate, Validators.required),
         deadline: new FormControl('', [Validators.required]),
         short_description: new FormControl('', [
           Validators.required,
@@ -168,13 +168,24 @@ export class CreateJobPostingComponent {
       const postedAtControl = this.jobForm.get('posted_at')
       this.onJobTypePostChange(value);
     })
-    const today = new Date().toISOString().split('T')[0]
-    this.jobForm.get('date_published')?.setValue(today)
-    this.jobForm
-      .get('deadline')
-      ?.setValidators([
-        Validators.required,
-      ])
+    // const today = new Date().toISOString().split('T')[0]
+    // this.jobForm.get('date_published')?.setValue(today)
+    // this.jobForm
+    //   .get('deadline')
+    //   ?.setValidators([
+    //     Validators.required,
+    //   ])
+
+    this.jobForm.get('deadline')?.setValidators([
+  Validators.required,
+  this.deadlineValidator()
+]);
+
+// this.jobForm.get('posted_date')?.setValidators([
+//   Validators.required,
+//   this.postedDateValidator()
+// ]);
+
 
   }
   addSkill(): void {
@@ -199,37 +210,64 @@ export class CreateJobPostingComponent {
   }
 
   // Method to handle dynamic changes to validation based on job type
+  // onJobTypePostChange(value: string): void {
+  //   const postedAtControl = this.jobForm.get('posted_at');
+  //   const postedDateControl = this.jobForm.get('posted_date');
+  //   const currentDate = new Date();
+
+  //   const formattedTime = currentDate.toLocaleTimeString([], {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     hour12: false,
+  //   }); 
+  //   const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US') // Format: dd/MM/yyyy (e.g., 09/05/2025)
+
+  //   if (value === 'Schedulelater') {
+      
+  //     postedAtControl?.setValidators([Validators.required]);
+  //     postedDateControl?.setValidators([Validators.required]);
+  //   } else {
+
+  //     postedAtControl?.setValue(formattedTime);
+  //     postedDateControl?.setValue(formattedDate);
+
+
+  //     postedAtControl?.clearValidators();
+  //     postedDateControl?.clearValidators();
+  //   }
+
+ 
+  //   postedAtControl?.updateValueAndValidity();
+  //   postedDateControl?.updateValueAndValidity();
+  // }
+
   onJobTypePostChange(value: string): void {
-    const postedAtControl = this.jobForm.get('posted_at');
-    const postedDateControl = this.jobForm.get('posted_date');
-    const currentDate = new Date();
+  const postedAtControl = this.jobForm.get('posted_at');
+  const postedDateControl = this.jobForm.get('posted_date');
+  const currentDate = new Date();
 
-    const formattedTime = currentDate.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    }); // Format: HH:mm (e.g., 17:10)
+  const formattedTime = currentDate.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US');
 
-    const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US') // Format: dd/MM/yyyy (e.g., 09/05/2025)
+  if (value === 'Schedulelater') {
+    postedAtControl?.setValidators([Validators.required]);
+    postedDateControl?.setValidators([Validators.required, this.postedDateValidator()]);
+  } else {
+    postedAtControl?.setValue(formattedTime);
+    postedDateControl?.setValue(formattedDate);
 
-    if (value === 'Schedulelater') {
-      // Make posted_at and posted_date required if 'Schedulelater' is selected
-      postedAtControl?.setValidators([Validators.required]);
-      postedDateControl?.setValidators([Validators.required]);
-    } else {
-      // Set current time and date when 'Postnow' is selected
-      postedAtControl?.setValue(formattedTime);
-      postedDateControl?.setValue(formattedDate);
-
-      // Clear validators if 'Postnow' is selected
-      postedAtControl?.clearValidators();
-      postedDateControl?.clearValidators();
-    }
-
-    // Update the form controls to apply the validation changes
-    postedAtControl?.updateValueAndValidity();
-    postedDateControl?.updateValueAndValidity();
+    postedAtControl?.clearValidators();
+    postedDateControl?.clearValidators();
   }
+
+  postedAtControl?.updateValueAndValidity();
+  postedDateControl?.updateValueAndValidity();
+}
+
 
   onSubmit(): void {
     console.log(this.jobForm.valid,'valid');
@@ -407,17 +445,60 @@ formatSalary(controlName: string): void {
       }
     })
   }
-  deadlineValidator(date_published: Date): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const selectedDeadline = new Date(control.value)
-      const today = new Date()
+  // deadlineValidator(date_published: Date): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const selectedDeadline = new Date(control.value)
+  //     const today = new Date()
 
-      if (selectedDeadline < today || selectedDeadline < date_published) {
-        return { deadlineInvalid: true }
-      }
-      return null
+  //     if (selectedDeadline < today || selectedDeadline < date_published) {
+  //       return { deadlineInvalid: true }
+  //     }
+  //     return null
+  //   }
+  // }
+//   deadlineValidator(): ValidatorFn {
+//   return (control: AbstractControl): ValidationErrors | null => {
+//     const selectedDeadline = new Date(control.value);
+//     const today = new Date();
+
+//     if (selectedDeadline < today) {
+//       return { deadlineInvalid: true };
+//     }
+//     return null;
+//   }
+// }
+deadlineValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null; // agar value empty ho toh koi error nahi
+    
+    const selectedDeadline = new Date(control.value);
+    const today = new Date();
+    // Time reset karna to compare only dates (ignoring time)
+    today.setHours(0,0,0,0);
+    selectedDeadline.setHours(0,0,0,0);
+
+    if (selectedDeadline < today) {
+      return { deadlineInvalid: true };
     }
+    return null;
   }
+}
+postedDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    selectedDate.setHours(0,0,0,0);
+
+    if (selectedDate < today) {
+      return { postedDateInvalid: true };
+    }
+    return null;
+  }
+}
+
   salaryComparisonValidator(control: AbstractControl): ValidationErrors | null {
     const startSalaryControl = control.get('start_salary')
     const endSalaryControl = control.get('end_salary')
@@ -455,11 +536,11 @@ formatSalary(controlName: string): void {
         const data = response.data
         this.loader.hide();
 
-        const formattedDatePublished = formatDate(
-          data.date_published,
-          'yyyy-MM-dd',
-          'en-US'
-        )
+        // const formattedDatePublished = formatDate(
+        //   data.date_published,
+        //   'yyyy-MM-dd',
+        //   'en-US'
+        // )
         const formattedDeadline = formatDate(
           data.deadline,
           'yyyy-MM-dd',
@@ -514,7 +595,7 @@ formatSalary(controlName: string): void {
           // title: data.title || '',
           number_of_vacancy: data.number_of_vacancy || '',
           featured_image: data.featured_image || null,
-          date_published: formattedDatePublished || '',
+          // date_published: formattedDatePublished || '',
           deadline: formattedDeadline || '',
           short_description: data.short_description || '',
           // full_description: data.full_description || '',
@@ -545,64 +626,128 @@ formatSalary(controlName: string): void {
   }
 
 
-  onFileSelected(event: Event, controlName: string): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  // onFileSelected(event: Event, controlName: string): void {
+  //   const file = (event.target as HTMLInputElement).files?.[0];
 
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        this.toaster.warning('Please select an image file.');
-        // Optionally, clear the selected file
-        (event.target as HTMLInputElement).value = ''; // Reset input file
-        return;
-      }
+  //   if (file) {
+  //     if (!file.type.startsWith('image/')) {
+  //       this.toaster.warning('Please select an image file.');
+     
+  //       (event.target as HTMLInputElement).value = ''; // Reset input file
+  //       return;
+  //     }
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result; // Set the preview for the selected image
-      };
-      reader.readAsDataURL(file);
+  //     // Create preview
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       this.imagePreview = reader.result; 
+  //     };
+  //     reader.readAsDataURL(file);
 
-      // Your existing compression and upload logic
-      if (this.allowedImageFormats.includes(file.type)) {
-        this.imageCompressionService
-          .compressImage(file)
-          .then((compressedImageUrl: string) => {
-            fetch(compressedImageUrl)
-              .then(res => res.blob())
-              .then(compressedFileBlob => {
-                const compressedFile = new File(
-                  [compressedFileBlob],
-                  file.name,
-                  { type: file.type }
-                );
+  //     // Your existing compression and upload logic
+  //     if (this.allowedImageFormats.includes(file.type)) {
+  //       this.imageCompressionService
+  //         .compressImage(file)
+  //         .then((compressedImageUrl: string) => {
+  //           fetch(compressedImageUrl)
+  //             .then(res => res.blob())
+  //             .then(compressedFileBlob => {
+  //               const compressedFile = new File(
+  //                 [compressedFileBlob],
+  //                 file.name,
+  //                 { type: file.type }
+  //               );
 
-                // Upload image
-                const folderName = 'job-postings';
-                const user = JSON.parse(localStorage.getItem('user') || '{}');
-                const userId = user.id;
-                this.adminService
-                  .uploadFile({ folderName, file: compressedFile, userId })
-                  .subscribe(
-                    (response: any) => {
-                      if (response.statusCode === 200) {
-                        this.jobForm.patchValue({
-                          [controlName]: response.data.path
-                        });
-                      } else {
-                        console.error(response.message);
-                      }
-                    },
-                    (error: any) => {
-                      console.error('Error uploading file:', error);
-                    }
-                  );
-              });
-          });
-      }
+  //               // Upload image
+  //               const folderName = 'job-postings';
+  //               const user = JSON.parse(localStorage.getItem('user') || '{}');
+  //               const userId = user.id;
+  //               this.adminService
+  //                 .uploadFile({ folderName, file: compressedFile, userId })
+  //                 .subscribe(
+  //                   (response: any) => {
+  //                     if (response.statusCode === 200) {
+  //                       this.jobForm.patchValue({
+  //                         [controlName]: response.data.path
+  //                       });
+  //                     } else {
+  //                       console.error(response.message);
+  //                     }
+  //                   },
+  //                   (error: any) => {
+  //                     console.error('Error uploading file:', error);
+  //                   }
+  //                 );
+  //             });
+  //         });
+  //     }
+  //   }
+  // }
+
+onFileSelected(event: Event, controlName: string): void {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  const control = this.jobForm.get(controlName);
+
+  if (file) {
+    const allowedExtensions = ['jpg', 'jpeg', 'png']; // Removed 'gif'
+    const maxSizeMB = 5;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      this.toaster.error('Invalid file extension. Only .jpg, .jpeg, and .png are allowed.');
+      (event.target as HTMLInputElement).value = ''; // Reset file input
+      control?.setErrors({ invalidFileExtension: true });
+      this.imagePreview = null;
+      return;
     }
-  }
 
+    if (file.size > maxSizeBytes) {
+      this.toaster.error(`File size exceeds the maximum allowed size of ${maxSizeMB} MB.`);
+      (event.target as HTMLInputElement).value = ''; // Reset file input
+      control?.setErrors({ fileSizeExceeded: true });
+      this.imagePreview = null;
+      return;
+    }
+
+    control?.setErrors(null); // Clear error if valid
+
+    // Create image preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+    };
+    reader.readAsDataURL(file);
+
+    // Continue with compression & upload logic as before...
+    this.imageCompressionService
+      .compressImage(file)
+      .then((compressedImageUrl: string) => {
+        fetch(compressedImageUrl)
+          .then(res => res.blob())
+          .then(compressedFileBlob => {
+            const compressedFile = new File([compressedFileBlob], file.name, { type: file.type });
+            const folderName = 'job-postings';
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userId = user.id;
+            this.adminService.uploadFile({ folderName, file: compressedFile, userId }).subscribe(
+              (response: any) => {
+                if (response.statusCode === 200) {
+                  this.jobForm.patchValue({ [controlName]: response.data.path });
+                } else {
+                  this.toaster.error('Error uploading image.');
+                  console.error(response.message);
+                }
+              },
+              (error: any) => {
+                this.toaster.error('Error uploading image.');
+                console.error('Error uploading file:', error);
+              }
+            );
+          });
+      });
+  }
+}
 
   clearImage() {
     this.jobForm.patchValue({
