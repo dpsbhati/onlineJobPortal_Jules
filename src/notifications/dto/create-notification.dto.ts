@@ -17,4 +17,7 @@ export class CreateNotificationDto {
 
   @ApiProperty()
   content: string;
+
+  @ApiProperty()
+  type: string;
 }

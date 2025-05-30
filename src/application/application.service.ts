@@ -118,6 +118,7 @@ export class ApplicationService {
             user_id: adminId,
             application_id: savedApplication.id,
             job_id:null,
+            type: 'job_application',
             subject: notificationSubject,
             content: notificationContent,
           }),
@@ -553,6 +554,7 @@ export class ApplicationService {
         user_id: application.data.user.id,
         application_id: updatedApplication.id,
         job_id: null,
+        type: 'application_status_update',
         subject: notificationSubject,
         content: notificationContent,
       });
@@ -636,6 +638,7 @@ export class ApplicationService {
             user_id: adminId,
             application_id: updatedApplication.id,
             job_id: null,
+            type: 'application_cancelled',
             subject: notificationSubject,
             content: notificationContent,
           }),

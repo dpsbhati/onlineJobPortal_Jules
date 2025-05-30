@@ -26,6 +26,9 @@ export class Notification {
   @Column('text')
   content: string;
 
+  @Column()
+  type: string;
+
   @CreateDateColumn()
   created_at: Date;
 
