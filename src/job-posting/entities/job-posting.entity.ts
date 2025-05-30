@@ -46,7 +46,7 @@ export class JobPosting {
   @Column({ type: 'varchar', length: 150 })
   title: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column()
   featured_image: string;
 
   @Column({ type: 'datetime', nullable: true })

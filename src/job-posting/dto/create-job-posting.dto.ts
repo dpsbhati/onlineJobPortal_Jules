@@ -77,13 +77,7 @@ export class CreateJobPostingDto {
     description: 'The featured image URL',
     example: 'https://example.com/image.jpg',
   })
-  @IsNotEmpty({ message: 'featured_image is required.' })
-  @IsString({ message: 'featured_image must be a valid string.' })
-  @Validate(IsImageFormat)
   @Transform(({ value }) => value?.trim())
-  @MaxLength(255, {
-    message: 'Featured image URL cannot exceed 255 characters.',
-  })
   featured_image: string;
 
   title: string;
@@ -155,10 +149,10 @@ export class CreateJobPostingDto {
   })
   employer: string;
 
-  @ApiProperty({
-    description: 'The skills required for the job',
-    example: 'Java, Python, SQL',
-  })
+  // @ApiProperty({
+  //   description: 'The skills required for the job',
+  //   example: 'Java, Python, SQL',
+  // })
   skills_required: string;
 
   @ApiProperty({
