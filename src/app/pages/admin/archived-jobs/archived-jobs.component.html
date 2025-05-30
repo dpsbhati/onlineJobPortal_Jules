@@ -147,16 +147,16 @@
 
             <div class="d-flex gap-16 align-items-center">
 
-              <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
+              <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12" [ngClass]="{
     'bg-light-secondary text-secondary': element.isActive,
     'bg-light-error text-error': !element.isActive
-  }">
-                {{ element.isActive ? 'Active' : 'Inactive' }}
-              </span>
+  }"> -->
+                {{ element.job_opening }}
+              <!-- </span> -->
 
 
-              <mat-slide-toggle   class="small-toggle" [(ngModel)]="element.isActive" (change)="onStatusToggleChange(element, $event.checked)"
-                color="primary" aria-label="Toggle status"></mat-slide-toggle>
+              <!-- <mat-slide-toggle   class="small-toggle" [(ngModel)]="element.isActive" (change)="onStatusToggleChange(element, $event.checked)"
+                color="primary" aria-label="Toggle status"></mat-slide-toggle> -->
             </div>
           </td>
         </ng-container>
