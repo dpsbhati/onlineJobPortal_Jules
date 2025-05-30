@@ -164,10 +164,17 @@ export class CreateJobPostingComponent {
       this.jobForm.get('social_media_type')?.enable()
       this.jobForm.get('job_type_post')?.enable()
     }
-    this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
-      const postedAtControl = this.jobForm.get('posted_at')
-      this.onJobTypePostChange(value);
-    })
+    // this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
+    //   const postedAtControl = this.jobForm.get('posted_at')
+    //   this.onJobTypePostChange(value);
+    // })
+
+     this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
+    this.onJobTypePostChange(value);
+  });
+
+  // Call once on init to set correct validators and values based on existing value (or empty)
+  this.onJobTypePostChange(this.jobForm.get('job_type_post')?.value || '');
     // const today = new Date().toISOString().split('T')[0]
     // this.jobForm.get('date_published')?.setValue(today)
     // this.jobForm
@@ -241,24 +248,21 @@ export class CreateJobPostingComponent {
   //   postedDateControl?.updateValueAndValidity();
   // }
 
-  onJobTypePostChange(value: string): void {
+onJobTypePostChange(value: string): void {
   const postedAtControl = this.jobForm.get('posted_at');
   const postedDateControl = this.jobForm.get('posted_date');
-  const currentDate = new Date();
-
-  const formattedTime = currentDate.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US');
 
   if (value === 'Schedulelater') {
+    // Enable validators and clear current value so user selects fresh date/time
     postedAtControl?.setValidators([Validators.required]);
     postedDateControl?.setValidators([Validators.required, this.postedDateValidator()]);
-  } else {
-    postedAtControl?.setValue(formattedTime);
-    postedDateControl?.setValue(formattedDate);
+
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
+  } else if (value === 'Postnow') {
+    // Clear values and disable validators when Post now is selected
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
 
     postedAtControl?.clearValidators();
     postedDateControl?.clearValidators();
@@ -267,6 +271,7 @@ export class CreateJobPostingComponent {
   postedAtControl?.updateValueAndValidity();
   postedDateControl?.updateValueAndValidity();
 }
+
 formatDateToUTCMidnight(dateInput: string | Date): string {
   const date = new Date(dateInput);
 
