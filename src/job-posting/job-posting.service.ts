@@ -202,7 +202,7 @@ export class JobPostingService {
       // Preserve existing job_opening status if the job is being updated
       let job_opening = jobPosting
         ? jobPosting.job_opening
-        : JobOpeningStatus.HOLD;
+        : JobOpeningStatus.OPEN;
 
       if (!jobPosting && jobDto.date_published && jobDto.deadline) {
         const now = new Date();
