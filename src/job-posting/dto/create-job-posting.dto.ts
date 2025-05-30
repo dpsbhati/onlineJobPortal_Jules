@@ -260,4 +260,8 @@ export class Changejobstatus {
 
   @ApiProperty()
   job_opening: JobOpeningStatus;
+
+  isActive: boolean;
+
+  deadline: Date;
 }
