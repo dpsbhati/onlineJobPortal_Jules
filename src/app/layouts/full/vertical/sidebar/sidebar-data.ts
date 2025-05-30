@@ -100,12 +100,12 @@ export const navItems: NavItem[] = [
       // }
     ]
   },
-    // {
-    //     displayName: 'Archived Job',
-    //     iconName: 'point',
-    //     route: 'archived-jobs',
-    //     visibleForRoles: ['admin']
-    //   },
+    {
+        displayName: 'Archived Job',
+        iconName: 'point',
+        route: 'archived-jobs',
+        visibleForRoles: ['admin']
+      },
 
   // {
   //   navCap: 'Settings'
