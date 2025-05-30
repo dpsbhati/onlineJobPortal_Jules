@@ -333,21 +333,37 @@ closeDeleteWarningModal() {
 
 confirmArchiveJob() {
   if (!this.jobToDeleteId) return;
+
   this.loader.show();
 
-  // this.adminService.archiveJob(this.jobToDeleteId).subscribe({
-  //   next: (res: any) => {
-  //     this.toastr.success('Job moved to archive successfully');
-  //     this.loader.hide();
-  //     this.closeDeleteWarningModal();
-  //     this.onPagination();
-  //   },
-  //   error: (err) => {
-  //     this.toastr.error(err?.error?.message || 'Failed to archive job');
-  //     this.loader.hide();
-  //   },
-  // });
+  const payload = {
+    job_id: this.jobToDeleteId,
+    job_opening: 'Archived',
+  };
+
+  this.adminService.changeJobStatusToArchived(payload).subscribe({
+    next: (res: any) => {
+      this.toastr.success('Job moved to archive successfully');
+      this.loader.hide();
+      this.closeDeleteWarningModal();
+      this.onPagination();
+
+      // Optional: Adjust page if last item deleted
+      if (
+        this.jobPostingList.length === 1 &&
+        this.pageConfig.curPage > 1
+      ) {
+        this.pageConfig.curPage -= 1;
+        this.onPagination();
+      }
+    },
+    error: (err) => {
+      this.toastr.error(err?.error?.message || 'Failed to archive job');
+      this.loader.hide();
+    },
+  });
 }
+
   navigateToCreateJob() {
     this.router.navigate(['/create-job-posting']);
   }

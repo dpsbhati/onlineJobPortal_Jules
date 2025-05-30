@@ -222,4 +222,7 @@ export const PagesRoutes: Routes = [
         component: ArchivedJobsComponent,
         canActivate: [roleGuard(['admin'])]
       },
+
+
+      
 ]

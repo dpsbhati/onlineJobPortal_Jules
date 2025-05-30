@@ -689,13 +689,23 @@ onFileSelected(event: Event, controlName: string): void {
   const control = this.jobForm.get(controlName);
 
   if (file) {
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+    const allowedExtensions = ['jpg', 'jpeg', 'png']; // Removed 'gif'
+    const maxSizeMB = 5;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (!allowedExtensions.includes(fileExtension)) {
-      this.toaster.error('Invalid file extension. Only .jpg, .jpeg, .png, and .gif are allowed.');
+      this.toaster.error('Invalid file extension. Only .jpg, .jpeg, and .png are allowed.');
       (event.target as HTMLInputElement).value = ''; // Reset file input
       control?.setErrors({ invalidFileExtension: true });
+      this.imagePreview = null;
+      return;
+    }
+
+    if (file.size > maxSizeBytes) {
+      this.toaster.error(`File size exceeds the maximum allowed size of ${maxSizeMB} MB.`);
+      (event.target as HTMLInputElement).value = ''; // Reset file input
+      control?.setErrors({ fileSizeExceeded: true });
       this.imagePreview = null;
       return;
     }
