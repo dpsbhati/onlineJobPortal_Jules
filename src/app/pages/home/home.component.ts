@@ -251,11 +251,15 @@ onRankChange(rankValue: string): void {
   }
 
   clearFilters(): void {
-    this.selectedRank = '';
-    this.selectedLocation = '';
-    this.keyword = '';
-    this.pageConfig.whereClause = [];
-    this.pageConfig.curPage = 1;
-    this.onPagination();
-  }
+  this.selectedRank = '';
+  this.selectedLocation = '';
+  this.keyword = '';
+  this.pageConfig.whereClause = [];    // Clear all filters
+
+  this.ensureIsActiveFilter();          // Add isActive filter back
+
+  this.pageConfig.curPage = 1;
+  this.onPagination();
+}
+
 }
