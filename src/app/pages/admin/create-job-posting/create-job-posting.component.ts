@@ -267,7 +267,43 @@ export class CreateJobPostingComponent {
   postedAtControl?.updateValueAndValidity();
   postedDateControl?.updateValueAndValidity();
 }
+formatDateToUTCMidnight(dateInput: string | Date): string {
+  const date = new Date(dateInput);
 
+  // Set the hours to midnight UTC by constructing new Date with UTC components
+  const utcMidnight = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+  return utcMidnight.toISOString(); // returns full ISO string e.g. 2025-01-01T00:00:00.000Z
+}
+
+
+
+formatDateWithCurrentUTCTime(dateInput: string | Date): string {
+  const date = new Date(dateInput);
+
+  // Get UTC midnight for selected date
+  const utcMidnight = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+  // Current UTC time parts
+  const now = new Date();
+  const utcHours = now.getUTCHours();
+  const utcMinutes = now.getUTCMinutes();
+  const utcSeconds = now.getUTCSeconds();
+  const utcMilliseconds = now.getUTCMilliseconds();
+
+  // Calculate milliseconds to add for current UTC time
+  const utcTimeMs = 
+    utcHours * 3600 * 1000 + 
+    utcMinutes * 60 * 1000 + 
+    utcSeconds * 1000 + 
+    utcMilliseconds;
+
+  // Add current UTC time to the selected date at UTC midnight
+  const combinedDate = new Date(utcMidnight.getTime() + utcTimeMs);
+
+  // Return ISO string with date + current UTC time
+  return combinedDate.toISOString();
+}
 
   onSubmit(): void {
     console.log(this.jobForm.valid,'valid');
@@ -275,14 +311,24 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-       if (formValues.deadline) {
-      formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
+    //    if (formValues.deadline) {
+    //   formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
+    // }
+
+    // if (formValues.posted_date) {
+    //   formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+    // }
+ if (formValues.deadline) {
+      formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
     }
 
-    if (formValues.posted_date) {
+
+    // if (formValues.posted_date) {
+    //   formValues.posted_date = this.formatDateToUTCMidnight(formValues.posted_date);
+    // }
+     if (formValues.posted_date) {
       formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
     }
-
       if (!formValues.id) {
         delete formValues.id;
       }
@@ -708,6 +754,7 @@ onFileSelected(event: Event, controlName: string): void {
     const allowedExtensions = ['jpg', 'jpeg', 'png']; // Removed 'gif'
     const maxSizeMB = 5;
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    console.log(maxSizeBytes, file.size);
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (!allowedExtensions.includes(fileExtension)) {
@@ -718,7 +765,7 @@ onFileSelected(event: Event, controlName: string): void {
       return;
     }
 
-    if (file.size > maxSizeBytes) {
+    if (file.size >= maxSizeBytes) {
       this.toaster.error(`File size exceeds the maximum allowed size of ${maxSizeMB} MB.`);
       (event.target as HTMLInputElement).value = ''; // Reset file input
       control?.setErrors({ fileSizeExceeded: true });
@@ -727,7 +774,7 @@ onFileSelected(event: Event, controlName: string): void {
     }
 
     control?.setErrors(null); // Clear error if valid
-
+console.log('before compressed',file)
     // Create image preview
     const reader = new FileReader();
     reader.onload = () => {
@@ -743,6 +790,7 @@ onFileSelected(event: Event, controlName: string): void {
           .then(res => res.blob())
           .then(compressedFileBlob => {
             const compressedFile = new File([compressedFileBlob], file.name, { type: file.type });
+            console.log('after compressed',compressedFile)
             const folderName = 'job-postings';
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = user.id;

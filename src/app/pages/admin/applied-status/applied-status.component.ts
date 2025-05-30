@@ -29,6 +29,7 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class AppliedStatusComponent {
   jobDetails: any;
+  allComments: string[] = [];
   loading: boolean = true;
   error: string = '';
   id: any;
@@ -86,6 +87,11 @@ toLowerCaseSafe(value: string | null | undefined): string {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
+           if (Array.isArray(this.jobDetails.comments)) {
+          this.allComments = [...this.jobDetails.comments];
+        } else {
+          this.allComments = [];
+        }
           this.user = this.jobDetails.user;
           this.userProfile = this.jobDetails.user?.userProfile;
           if (this.jobDetails?.job?.skills_required) {
