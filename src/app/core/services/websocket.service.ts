@@ -42,25 +42,21 @@ export class WebsocketService {
         this.currentUserId = null;
       }
     }
-    console.log(this.loginUserId);
 
   }
 
   connect(url: string): void {
-    console.log(url)
     this.socket = io.io(url, {
       transports: ['websocket', 'polling'],
       withCredentials: true,
       query: { userId: this.loginUserId?.id }
     });
-    console.log(this.socket);
 
   }
 
   listen(eventName: string, params?: any): Observable<any> {
     return new Observable(observer => {
       this.socket.on(eventName, (data: any) => {
-        console.log(data)
         observer.next({ data, params })
         this.toastr.info(data.message, data.title, { timeOut: 10000 });
          observer.next({ data, params });
