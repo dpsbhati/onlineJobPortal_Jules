@@ -90,7 +90,7 @@ export class ApplicationService {
       }
 
       const adminUsers = await this.userRepository.find({
-        where: { role: 'admin', isActive: true },
+        where: { role: 'admin', isActive: true,is_deleted: false },
         select: ['id'],
       });
 
@@ -610,7 +610,7 @@ export class ApplicationService {
       });
 
       const adminUsers = await this.userRepository.find({
-        where: { role: 'admin', isActive: true },
+        where: { role: 'admin', isActive: true,is_deleted:false },
         select: ['id'],
       });
 
