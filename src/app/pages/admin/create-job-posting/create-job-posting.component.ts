@@ -708,6 +708,7 @@ onFileSelected(event: Event, controlName: string): void {
     const allowedExtensions = ['jpg', 'jpeg', 'png']; // Removed 'gif'
     const maxSizeMB = 5;
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    console.log(maxSizeBytes, file.size);
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (!allowedExtensions.includes(fileExtension)) {
@@ -718,7 +719,7 @@ onFileSelected(event: Event, controlName: string): void {
       return;
     }
 
-    if (file.size > maxSizeBytes) {
+    if (file.size >= maxSizeBytes) {
       this.toaster.error(`File size exceeds the maximum allowed size of ${maxSizeMB} MB.`);
       (event.target as HTMLInputElement).value = ''; // Reset file input
       control?.setErrors({ fileSizeExceeded: true });
@@ -727,7 +728,7 @@ onFileSelected(event: Event, controlName: string): void {
     }
 
     control?.setErrors(null); // Clear error if valid
-
+console.log('before compressed',file)
     // Create image preview
     const reader = new FileReader();
     reader.onload = () => {
@@ -743,6 +744,7 @@ onFileSelected(event: Event, controlName: string): void {
           .then(res => res.blob())
           .then(compressedFileBlob => {
             const compressedFile = new File([compressedFileBlob], file.name, { type: file.type });
+            console.log('after compressed',compressedFile)
             const folderName = 'job-postings';
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = user.id;
