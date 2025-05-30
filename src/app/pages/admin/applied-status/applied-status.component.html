@@ -113,14 +113,28 @@
       </mat-card-content>
     </mat-card>
     <mat-card>
-      <mat-card-content>
-        <h4 class="m-b-10">Admin Comment</h4>{{ jobDetails?.comments}}
-      </mat-card-content>
+     <mat-card *ngIf="allComments.length > 0; else noComments">
+  <mat-card-content>
+    <mat-card-title class="m-b-10"> Comments </mat-card-title>
+    <div *ngFor="let comment of allComments; let i = index" class="comment-item">
+      <p>{{ comment }}</p>
+      <hr *ngIf="i < allComments.length - 1" />
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #noComments>
+  <mat-card>
+    <mat-card-content>
+      <p><em>No comments available.</em></p>
+    </mat-card-content>
+  </mat-card>
+</ng-template>
     </mat-card>
   </div>
   <div class="col-lg-4">
     <mat-card>
-      <img mat-card-image [src]="jobDetails?.job?.featured_image" alt="Job Image" height="250" width="390">
+      <img mat-card-image [src]="jobDetails?.job?.featured_image" alt="Job Image" height="250" class="w-100">
       <mat-card-content>
         <div class="row">
           <div class="col-lg-12 m-b-16">
