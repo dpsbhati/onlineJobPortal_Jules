@@ -100,6 +100,12 @@ export const navItems: NavItem[] = [
       // }
     ]
   },
+    // {
+    //     displayName: 'Archived Job',
+    //     iconName: 'point',
+    //     route: 'archived-jobs',
+    //     visibleForRoles: ['admin']
+    //   },
 
   // {
   //   navCap: 'Settings'
@@ -114,6 +120,8 @@ export const navItems: NavItem[] = [
     // chip: true,
     // chipClass: 'b-1 border-secondary text-secondary',
   },
+
+
   // {
   //   displayName: 'User',
   //   iconName: 'user',

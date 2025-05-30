@@ -1,46 +1,44 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core';
-import { AdminService } from '../../../core/services/admin/admin.service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
-import { Router } from '@angular/router';
-import { HelperService } from '../../../core/helpers/helper.service';
-import { AuthService } from '../../../core/services/authentication/auth.service';
-import { UserRole } from '../../../core/enums/roles.enum';
-import { MaterialModule } from '../../../material.module';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { TablerIconsModule } from 'angular-tabler-icons';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSortModule } from '@angular/material/sort';
+import { Router } from '@angular/router';
+import { TablerIconsModule } from 'angular-tabler-icons';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { HelperService } from 'src/app/core/helpers/helper.service';
+import { AdminService } from 'src/app/core/services/admin/admin.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { ToastrService, ToastrModule } from 'ngx-toastr';
-import { MatDialog } from '@angular/material/dialog';
+import { MaterialModule } from 'src/app/material.module';
+import { UserRole } from '../../../core/enums/roles.enum';
 import { DeleteComponent } from '../delete/delete.component';
-import { MatNativeDateModule } from '@angular/material/core';
 @Component({
-  selector: 'app-job-list',
-  standalone: true,
+  selector: 'app-archived-jobs',
   imports: [
-    CommonModule,
-    MaterialModule,
-    TablerIconsModule,
-    FormsModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    NgIf,
-    MatNativeDateModule,
-    ToastrModule,
+     CommonModule,
+        MaterialModule,
+        TablerIconsModule,
+        FormsModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        NgIf,
+        MatNativeDateModule,
+        ToastrModule,
   ],
-  templateUrl: './job-list.component.html',
-  styleUrls: ['./job-list.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+  templateUrl: './archived-jobs.component.html',
+  styleUrl: './archived-jobs.component.scss'
 })
-export class JobListComponent implements OnInit {
-  jobList: any[] = [];
+export class ArchivedJobsComponent {
+ jobList: any[] = [];
   uniqueRanks: string[] = [];
 
   id: number = 0;
@@ -101,7 +99,7 @@ deleteJobMessage = '';
           'deadline',
           'status',
           'number_of_applicant',
-          'actions',
+          // 'actions',
         ]
       : [
           'position',
@@ -111,7 +109,7 @@ deleteJobMessage = '';
           // 'date_published',
           'number_of_applicant',
           'deadline',
-          'actions',
+          // 'actions',
         ];
   }
 
@@ -498,3 +496,5 @@ confirmArchiveJob() {
     return fixedDate.toISOString(); // send ISO string with fixed time
   }
 }
+
+
