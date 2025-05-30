@@ -28,7 +28,8 @@ export class ApplicantDetailsComponent {
   userId: string = '';
   applicantDetails: any = null;
   selectedStatus: string = '';
-  adminComments: string = '';
+   adminComments: string = ''; // input box model for new comment
+  allComments: string[] = [];
   statusOptions: string[] = ['Pending', 'Shortlisted', 'Rejected', 'Approved','Processed','Endorsed','Deployed','Cancelled'];
   keySkills: string[] = [];
   certifications: any[] = [];
@@ -199,18 +200,17 @@ formatPreferences(prefs: any): string {
     });
   }
   updateStatus(): void {
-
-    if (!this.userId || !this.selectedStatus) {
-      this.notifyService.showError('Please select a status');
-      return;
-    }
-
+      if (!this.adminComments || this.adminComments.trim() === '') {
+    this.toastr.error('Please enter a comment before submitting.');
+    return;
+  }
     this.isLoading = true;
+     this.allComments.push(this.adminComments.trim());
+
     const updateData = {
-      status: this.selectedStatus,
-      comments: this.adminComments,
-      description: this.applicantDetails.description
+      comments: this.allComments
     };
+
 
     this.adminService.updateApplicationStatus(this.userId, updateData)
       .subscribe({
@@ -261,6 +261,7 @@ formatPreferences(prefs: any): string {
     next: (response: any) => {
       if (response.statusCode === 200) {
         this.toastr.success(response.message);
+        this.loadApplicantDetails();
         // Optionally navigate or update UI here
       } else {
         this.toastr.warning(response.message || 'Failed to update status');
