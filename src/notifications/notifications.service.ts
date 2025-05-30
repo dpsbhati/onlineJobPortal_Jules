@@ -166,10 +166,20 @@ export class NotificationsService {
 
   async markMultipleAsRead(userId: any) {
     try {
-      const notificationIds=await this.notificationRepository.find({
+      // Fetch only the ids (array of objects)
+      const notificationObjects = await this.notificationRepository.find({
         where: { is_read: false, is_deleted: false, user_id: userId },
-        select: ['id']
-      })
+        select: ['id'],
+      });
+
+      // Extract the ids into an array of strings
+      const notificationIds = notificationObjects.map((n) => n.id);
+
+      if (notificationIds.length === 0) {
+        // No notifications to update
+        return WriteResponse(200, true, 'No unread notifications found.');
+      }
+
       await this.notificationRepository
         .createQueryBuilder()
         .update(Notification)
@@ -177,7 +187,12 @@ export class NotificationsService {
         .where('id IN (:...ids)', { ids: notificationIds })
         .andWhere('user_id = :userId', { userId })
         .execute();
-      return WriteResponse(200, true, 'Notifications marked as read successfully.');
+
+      return WriteResponse(
+        200,
+        true,
+        'Notifications marked as read successfully.',
+      );
     } catch (error) {
       console.log(error);
       return WriteResponse(500, {}, 'Something went wrong.');
