@@ -66,17 +66,16 @@ export const navItems: NavItem[] = [
     route: '/menu-level',
    visibleForRoles: ['admin'],
     children: [
+       {
+        displayName: 'Add New Job',
+        iconName: 'point',
+        route: 'create-job-posting',
+        visibleForRoles: ['admin']
+      },
       {
         displayName: 'View Jobs',
         iconName: 'point',
         route: 'job-list',
-        visibleForRoles: ['admin']
-      },
-
-      {
-        displayName: 'Add New Job',
-        iconName: 'point',
-        route: 'create-job-posting',
         visibleForRoles: ['admin']
       },
 
@@ -92,6 +91,12 @@ export const navItems: NavItem[] = [
         route: 'expired-job-posting',
         visibleForRoles: ['admin']
       },
+       {
+        displayName: 'Archived Jobs',
+        iconName: 'point',
+        route: 'archived-jobs',
+        visibleForRoles: ['admin']
+      },
       // {
       //   displayName: 'All Applicants',
       //   iconName: 'point',
@@ -100,12 +105,7 @@ export const navItems: NavItem[] = [
       // }
     ]
   },
-    {
-        displayName: 'Archived Jobs',
-        iconName: 'point',
-        route: 'archived-jobs',
-        visibleForRoles: ['admin']
-      },
+
 
   // {
   //   navCap: 'Settings'
