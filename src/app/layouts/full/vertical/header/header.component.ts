@@ -26,6 +26,8 @@ import { UserService } from 'src/app/core/services/user/user.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 interface notifications {
   id: number;
@@ -95,6 +97,8 @@ export class HeaderComponent {
   toggleCollpase() {
     this.isCollapse = !this.isCollapse; // Toggle visibility
   }
+   private notificationSub?: Subscription;
+  private totalSub?: Subscription;
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -152,7 +156,8 @@ export class HeaderComponent {
     private userService: UserService,
     private loader: LoaderService,
     private adminService: AdminService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private websocketService: WebsocketService,
   ) {
     translate.setDefaultLang('en');
     this.loadUserName();
@@ -182,8 +187,60 @@ export class HeaderComponent {
       }
     }
     this.loadUserData();
-    this.onPagination();
+    // this.onPagination();
+      this.notificationSub = this.websocketService.notificationList$.subscribe(list => {
+      this.notificationlist = list;
+    });
+
+    this.totalSub = this.websocketService.total$.subscribe(count => {
+      this.total = count;
+    });
+
+    // Initial load of notifications
+    this.websocketService.onPagination();
   }
+
+    ngOnDestroy() {
+    this.notificationSub?.unsubscribe();
+    this.totalSub?.unsubscribe();
+  }
+
+ navigateToNotification(type: string | undefined, application_id?: string, job_id?: string) {
+  if (!type) return;
+
+  switch (type) {
+    case 'job_application':
+    case 'application_cancelled':
+      // Yeh teenon ke liye application_id jayegi
+      if (application_id) {
+        this._router.navigate(['/applicant-details', application_id]);
+      } 
+      break;
+
+    case 'application_status_update':
+      if(application_id){
+        this._router.navigate(['Applied-Status',application_id])
+      }
+      break;
+
+    case 'job_expired':
+    case 'job_posting':
+      // Yeh dono ke liye job_id jayegi
+      if (job_id) {
+        // Note: aapke route me spelling dikkat na ho, 'job-expired' vs 'job_expired'
+        if(type === 'job_expired'){
+          this._router.navigate(['/job-post-details', job_id]);
+        } else {
+          this._router.navigate(['/authentication/Job-Details', job_id]);
+        }
+      }
+      break;
+
+    default:
+      console.warn('No route mapped for notification type:', type);
+  }
+}
+
 
   loadUserData(): void {
     const userString = localStorage.getItem('user');

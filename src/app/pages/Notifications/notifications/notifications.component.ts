@@ -15,6 +15,7 @@ import { UserRole } from 'src/app/core/enums/roles.enum';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-notifications',
   standalone: true,
@@ -61,7 +62,8 @@ export class NotificationsComponent implements OnInit {
     private adminService: AdminService,
     private authService: AuthService,
     private loader: LoaderService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private _router : Router
   ) {
     this.userRole = this.authService.getUserRole();
     this.displayedColumns = this.isAdmin()
@@ -82,6 +84,42 @@ export class NotificationsComponent implements OnInit {
 
     this.onPagination();
   }
+
+   navigateToNotification(type: string | undefined, application_id?: string, job_id?: string) {
+  if (!type) return;
+
+  switch (type) {
+    case 'job_application':
+    case 'application_cancelled':
+      // Yeh teenon ke liye application_id jayegi
+      if (application_id) {
+        this._router.navigate(['/applicant-details', application_id]);
+      } 
+      break;
+
+    case 'application_status_update':
+      if(application_id){
+        this._router.navigate(['Applied-Status',application_id])
+      }
+      break;
+
+    case 'job_expired':
+    case 'job_posting':
+      // Yeh dono ke liye job_id jayegi
+      if (job_id) {
+        // Note: aapke route me spelling dikkat na ho, 'job-expired' vs 'job_expired'
+        if(type === 'job_expired'){
+          this._router.navigate(['/job-post-details', job_id]);
+        } else {
+          this._router.navigate(['/authentication/Job-Details', job_id]);
+        }
+      }
+      break;
+
+    default:
+      console.warn('No route mapped for notification type:', type);
+  }
+}
 
   // onPagination(): void {
   //   this.loader.show();
