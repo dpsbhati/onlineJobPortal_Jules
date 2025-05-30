@@ -219,11 +219,11 @@ export class CreateJobPostingComponent {
   //     hour: '2-digit',
   //     minute: '2-digit',
   //     hour12: false,
-  //   }); 
+  //   });
   //   const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US') // Format: dd/MM/yyyy (e.g., 09/05/2025)
 
   //   if (value === 'Schedulelater') {
-      
+
   //     postedAtControl?.setValidators([Validators.required]);
   //     postedDateControl?.setValidators([Validators.required]);
   //   } else {
@@ -236,7 +236,7 @@ export class CreateJobPostingComponent {
   //     postedDateControl?.clearValidators();
   //   }
 
- 
+
   //   postedAtControl?.updateValueAndValidity();
   //   postedDateControl?.updateValueAndValidity();
   // }
@@ -275,10 +275,13 @@ export class CreateJobPostingComponent {
     if (this.jobForm.valid) {
       this.sanitizeFormValues();
       const formValues = this.jobForm.value;
-      formValues.posted_date = formatDate(formValues?.posted_date, 'yyyy-MM-dd', 'en-US')
-      // if (formValues.start_salary) {
-      //   formValues.start_salary = parseInt(formValues?.start_salary.replace(/,/g, ''), 10);
-      // }
+       if (formValues.deadline) {
+      formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
+    }
+
+    if (formValues.posted_date) {
+      formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+    }
 
       if (!formValues.id) {
         delete formValues.id;
@@ -309,6 +312,19 @@ export class CreateJobPostingComponent {
       this.loader.hide();
     }
   }
+  formatDateWithoutTimezoneShift(dateInput: string | Date): string {
+  const date = new Date(dateInput);
+
+  // Timezone offset in minutes
+  const tzOffset = date.getTimezoneOffset() * 60000; // ms
+
+  // Local midnight converted to UTC midnight by removing offset
+  const localMidnight = new Date(date.getTime() - tzOffset);
+
+  // Format date as yyyy-MM-dd
+  return formatDate(localMidnight, 'yyyy-MM-dd', 'en-US');
+}
+
 
   removeSkill(index: number): void {
     this.skillsArray.splice(index, 1)
@@ -470,7 +486,7 @@ formatSalary(controlName: string): void {
 deadlineValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null; // agar value empty ho toh koi error nahi
-    
+
     const selectedDeadline = new Date(control.value);
     const today = new Date();
     // Time reset karna to compare only dates (ignoring time)
@@ -632,7 +648,7 @@ postedDateValidator(): ValidatorFn {
   //   if (file) {
   //     if (!file.type.startsWith('image/')) {
   //       this.toaster.warning('Please select an image file.');
-     
+
   //       (event.target as HTMLInputElement).value = ''; // Reset input file
   //       return;
   //     }
@@ -640,7 +656,7 @@ postedDateValidator(): ValidatorFn {
   //     // Create preview
   //     const reader = new FileReader();
   //     reader.onload = () => {
-  //       this.imagePreview = reader.result; 
+  //       this.imagePreview = reader.result;
   //     };
   //     reader.readAsDataURL(file);
 
