@@ -67,7 +67,7 @@ export const navItems: NavItem[] = [
    visibleForRoles: ['admin'],
     children: [
       {
-        displayName: 'All Job Postings',
+        displayName: 'View Jobs',
         iconName: 'point',
         route: 'job-list',
         visibleForRoles: ['admin']
@@ -87,7 +87,7 @@ export const navItems: NavItem[] = [
       //   visibleForRoles: ['admin']
       // },
       {
-        displayName: 'All Expired Job',
+        displayName: 'Expired Jobs',
         iconName: 'point',
         route: 'expired-job-posting',
         visibleForRoles: ['admin']
@@ -101,7 +101,7 @@ export const navItems: NavItem[] = [
     ]
   },
     {
-        displayName: 'Archived Job',
+        displayName: 'Archived Jobs',
         iconName: 'point',
         route: 'archived-jobs',
         visibleForRoles: ['admin']
