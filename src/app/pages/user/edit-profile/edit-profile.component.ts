@@ -430,19 +430,19 @@ export class EditProfileComponent implements OnInit {
               certificateArray.push(
                 this.fb.group({
                   certification_from: [
-                    item.course_from || null,
+                    item.certification_from || null,
                     Validators.required,
                   ],
                   certification_to: [
-                    item.course_to || null,
+                    item.certification_to || null,
                     Validators.required,
                   ],
                   certification_title: [
-                    item.course_title || null,
+                    item.certification_title || null,
                     Validators.required,
                   ],
                   certification_issuer: [
-                    item.course_provider || null,
+                    item.certification_issuer || null,
                     Validators.required,
                   ],
                 })
