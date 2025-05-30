@@ -149,7 +149,7 @@ export class JobPostingService {
           });
         }
         const adminUsers = await this.userRepository.find({
-          where: { role: 'admin', isActive: true },
+          where: { role: 'admin', isActive: true,is_deleted:false },
           select: ['id'],
         });
         const adminUserIds = adminUsers.map((admin) => admin.id);

@@ -163,4 +163,23 @@ export class NotificationsService {
       return WriteResponse(500, {}, 'Something went wrong.');
     }
   }
+
+  async markMultipleAsRead(userId: any) {
+    try {
+      const notificationIds=await this.notificationRepository.find({
+        where: { is_read: false, is_deleted: false, user_id: userId },
+        select: ['id']
+      })
+      await this.notificationRepository
+        .createQueryBuilder()
+        .update(Notification)
+        .set({ is_read: true })
+        .where('id IN (:...ids)', { ids: notificationIds })
+        .andWhere('user_id = :userId', { userId })
+        .execute();
+    } catch (error) {
+      console.log(error);
+      return WriteResponse(500, {}, 'Something went wrong.');
+    }
+  }
 }

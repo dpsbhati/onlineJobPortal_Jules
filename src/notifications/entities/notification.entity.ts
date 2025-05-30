@@ -38,6 +38,9 @@ export class Notification {
   @Column({ type: 'boolean', default: false })
   is_deleted: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  is_read: boolean;
+
   @Column()
   created_by: string;
 
