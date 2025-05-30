@@ -133,6 +133,7 @@ formatPreferences(prefs: any): string {
           this.applicantDetails = response.data;
           this.selectedStatus = this.applicantDetails.status;
           // this.adminComments = this.applicantDetails.comments;
+            this.allComments = Array.isArray(this.applicantDetails.comments) ? [...this.applicantDetails.comments] : [];
 
           this.languageSpokenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_spoken_info);
           this.languageWrittenFormatted = this.formatLanguages(this.applicantDetails.user?.userProfile?.language_written_info);
@@ -218,6 +219,7 @@ formatPreferences(prefs: any): string {
           if (response.statusCode === 200) {
             this.toastr.success(response.message);
                 this.adminComments = '';
+                this.loadApplicantDetails();
 
             const jobId = localStorage.getItem('currentJobId');
             if (jobId) {
