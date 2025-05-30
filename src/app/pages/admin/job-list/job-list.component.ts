@@ -126,38 +126,80 @@ deleteJobMessage = '';
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
-  onPagination(): void {
-    this.loader.show();
-    this.pageConfig.whereClause = this.helperService.getAllFilters(
-      this.filters
-    );
-    this.adminService.jobPostingPagination(this.pageConfig).subscribe({
-      next: (res: any) => {
-        if (res.statusCode === 200) {
-          // this.jobPostingList = res.data;
-          this.jobPostingList = res.data.map((job: any) => ({
-            ...job,
-            rank: job.ranks?.rank_name || '-', // 👈 patch rank_name from nested `ranks` relation
-          }));
+  // onPagination(): void {
+  //   this.loader.show();
+  //   this.pageConfig.whereClause = this.helperService.getAllFilters(
+  //     this.filters
+  //   );
+  //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
+  //     next: (res: any) => {
+  //       if (res.statusCode === 200) {
+  //         this.jobPostingList = res.data.map((job: any) => ({
+  //           ...job,
+  //           rank: job.ranks?.rank_name || '-', 
+  //         }));
 
-          this.total = res.count || 0;
-          this.loader.hide();
-        } else {
-          this.jobPostingList = [];
-          this.total = 0;
-          this.loader.hide();
-        }
-        this.isLoading = false;
-      },
-      error: (err: any) => {
-        this.isLoading = false;
+  //         this.total = res.count || 0;
+  //         this.loader.hide();
+  //       } else {
+  //         this.jobPostingList = [];
+  //         this.total = 0;
+  //         this.loader.hide();
+  //       }
+  //       this.isLoading = false;
+  //     },
+  //     error: (err: any) => {
+  //       this.isLoading = false;
+  //       this.loader.hide();
+  //       this.toastr.error(err?.error?.message);
+  //       this.jobPostingList = [];
+  //       this.total = 0;
+  //     },
+  //   });
+  // }
+
+  onPagination(): void {
+  this.loader.show();
+
+  // Get dynamic filters from helperService
+  const dynamicFilters = this.helperService.getAllFilters(this.filters);
+
+  // Always include the fixed filter for job_opening = 'Active'
+  const fixedFilter = {
+    key: 'job_opening',
+    value: 'Active',
+    operator: '=',
+  };
+
+  // Merge fixed filter with dynamic filters (if any)
+  this.pageConfig.whereClause = [...dynamicFilters, fixedFilter];
+
+  this.adminService.jobPostingPagination(this.pageConfig).subscribe({
+    next: (res: any) => {
+      if (res.statusCode === 200) {
+        this.jobPostingList = res.data.map((job: any) => ({
+          ...job,
+          rank: job.ranks?.rank_name || '-',
+        }));
+        this.total = res.count || 0;
         this.loader.hide();
-        this.toastr.error(err?.error?.message);
+      } else {
         this.jobPostingList = [];
         this.total = 0;
-      },
-    });
-  }
+        this.loader.hide();
+      }
+      this.isLoading = false;
+    },
+    error: (err: any) => {
+      this.isLoading = false;
+      this.loader.hide();
+      this.toastr.error(err?.error?.message);
+      this.jobPostingList = [];
+      this.total = 0;
+    },
+  });
+}
+
 
   onPageChange(event: any): void {
     this.pageConfig.curPage = event.pageIndex + 1;
