@@ -15,6 +15,7 @@ export class ImageCompressionService {
     };
     try {
       const compressedFile = await imageCompression(file, options);
+      console.log(compressedFile,'compressedImage');
       return imageCompression.getDataUrlFromFile(compressedFile);
     } catch (error) {
       console.error('Image compression error:', error);
