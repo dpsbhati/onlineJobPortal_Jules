@@ -177,6 +177,7 @@ export class NotificationsService {
         .where('id IN (:...ids)', { ids: notificationIds })
         .andWhere('user_id = :userId', { userId })
         .execute();
+      return WriteResponse(200, true, 'Notifications marked as read successfully.');
     } catch (error) {
       console.log(error);
       return WriteResponse(500, {}, 'Something went wrong.');
