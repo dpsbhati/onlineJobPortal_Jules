@@ -636,22 +636,40 @@ export class JobPostingService {
     }
   }
   async Changestatus(changejobstatus: Changejobstatus) {
-    try {
-      const jobdetail = await this.jobPostingRepository.findOne({
-        where: { id: changejobstatus.job_id },
-      });
+  try {
+    const jobdetail = await this.jobPostingRepository.findOne({
+      where: { id: changejobstatus.job_id, is_deleted: false },
+    });
 
-      if (!jobdetail) {
-        return WriteResponse(404, false, 'Job not found');
-      }
-
-      jobdetail.job_opening = changejobstatus.job_opening;
-      const updatedjob_opening = await this.jobPostingRepository.save(jobdetail);
-
-      return WriteResponse(200, updatedjob_opening,'Job status updated successfully');
-    } catch (error) {
-      console.error(error);
-      return WriteResponse(500, false, 'Something went wrong');
+    if (!jobdetail) {
+      return WriteResponse(404, false, 'Job not found');
     }
+
+    // Case 1: Archive the job
+    if (changejobstatus.job_opening === JobOpeningStatus.ARCHIVED) {
+      jobdetail.job_opening = JobOpeningStatus.ARCHIVED;
+      jobdetail.isActive = false;
+
+    } else if (changejobstatus.job_opening === JobOpeningStatus.OPEN) {
+      // Case 2: Re-open the job and set status based on deadline
+      const now = new Date();
+
+      if (jobdetail.deadline < now) {
+        jobdetail.job_opening = JobOpeningStatus.CLOSE;
+        jobdetail.isActive = false;
+      } else {
+        jobdetail.job_opening = JobOpeningStatus.OPEN;
+        jobdetail.isActive = true;
+      }
+    }
+
+    const updatedJob = await this.jobPostingRepository.save(jobdetail);
+    return WriteResponse(200, updatedJob, 'Job status updated successfully');
+
+  } catch (error) {
+    console.error(error);
+    return WriteResponse(500, false, 'Something went wrong');
   }
+}
+
 }
