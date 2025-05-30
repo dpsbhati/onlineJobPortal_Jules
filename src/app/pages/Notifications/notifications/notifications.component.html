@@ -40,7 +40,8 @@
       <div *ngFor="
         let notification of notificationlist;
         trackBy: trackByNotification
-      ">
+      "
+       (click)="navigateToNotification(notification.type, notification.application_id, notification.job_id)">
         <div class="p-y-16 p-x-30 w-100 b-b-1 cursor-pointer">
           <div class="d-flex align-items-center w-100 gap-16">
             <!-- <span class="flex-shrink-0 text-{{
