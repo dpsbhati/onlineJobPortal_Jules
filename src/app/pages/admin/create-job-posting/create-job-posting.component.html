@@ -69,7 +69,7 @@
 
       <!-- <div class="col-xl-4 col-lg-4 col-md-6 m-b-16  m-b-16">
 
-      
+
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Date Published</mat-label>
           <input matInput [matDatepicker]="publishedPicker" id="date_published" formControlName="date_published"
@@ -82,7 +82,7 @@
         </mat-form-field>
 
       </div> -->
-    
+
 
        <div class="col-xl-4 col-lg-4 col-md-6 m-b-16"> <!-- Type of post -->
         <mat-form-field appearance="outline" class="w-100">
@@ -107,7 +107,7 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Choose a date</mat-label>
               <input matInput [matDatepicker]="picker" formControlName="posted_date" (dateChange)="onChange($event)"/>
-              
+
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
               <mat-error *ngIf="jobForm.get('posted_date')?.hasError('postedDateInvalid')">
@@ -408,7 +408,7 @@
            <mat-error *ngIf="jobForm.get('featured_image')?.hasError('invalidFileExtension')">
     Invalid image file. Only .jpg, .jpeg, .png are allowed.
   </mat-error>
-  
+
         </div>
       </div>
 
