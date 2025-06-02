@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatFabButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { ToastrModule } from 'ngx-toastr';
 import { UserRole } from 'src/app/core/enums/roles.enum';
@@ -11,6 +11,8 @@ import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { NotifyService } from 'src/app/core/services/notify.service';
+import { WebsocketService } from 'src/app/core/services/websocket.service';
+import { HeaderComponent } from 'src/app/layouts/full/vertical/header/header.component';
 import { MaterialModule } from 'src/app/material.module';
 @Component({
   selector: 'app-applied-status',
@@ -45,7 +47,8 @@ export class AppliedStatusComponent {
     private router: Router,
     private notifyService: NotifyService,
     private loader: LoaderService,
-    private authService: AuthService
+    private authService: AuthService,
+    private WebsocketService: WebsocketService
   ) {
     this.userRole = this.authService.getUserRole();
   }
@@ -55,10 +58,16 @@ export class AppliedStatusComponent {
     if (this.id) {
       this.loadJobDetails(this.id);
     }
+
+    this.WebsocketService.notificationReceived$.subscribe(received => {
+      if (received) {
+        this.loadJobDetails(this.id);
+      }
+    });
   }
-toLowerCaseSafe(value: string | null | undefined): string {
-  return value ? value.toLowerCase() : '';
-}
+  toLowerCaseSafe(value: string | null | undefined): string {
+    return value ? value.toLowerCase() : '';
+  }
   isAdmin(): boolean {
     return this.userRole.toUpperCase() === UserRole.ADMIN;
   }
@@ -87,11 +96,11 @@ toLowerCaseSafe(value: string | null | undefined): string {
       next: (response: any) => {
         if (response.statusCode === 200 && response.data) {
           this.jobDetails = response.data;
-           if (Array.isArray(this.jobDetails.comments)) {
-          this.allComments = [...this.jobDetails.comments];
-        } else {
-          this.allComments = [];
-        }
+          if (Array.isArray(this.jobDetails.comments)) {
+            this.allComments = [...this.jobDetails.comments];
+          } else {
+            this.allComments = [];
+          }
           this.user = this.jobDetails.user;
           this.userProfile = this.jobDetails.user?.userProfile;
           if (this.jobDetails?.job?.skills_required) {

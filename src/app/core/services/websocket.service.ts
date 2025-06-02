@@ -23,10 +23,12 @@ export class WebsocketService {
   loginUserId: any;
   private notificationListSubject = new BehaviorSubject<any[]>([]);
   public notificationList$ = this.notificationListSubject.asObservable();
+  public notificationReceivedSubject = new BehaviorSubject<boolean>(false);
 
   private totalSubject = new BehaviorSubject<number>(0);
   public total$ = this.totalSubject.asObservable();
-  
+  notificationReceived$ = this.notificationReceivedSubject.asObservable();
+
   constructor(
     private toastr: ToastrService,
     private adminService: AdminService,
@@ -59,14 +61,15 @@ export class WebsocketService {
       this.socket.on(eventName, (data: any) => {
         observer.next({ data, params })
         this.toastr.info(data.message, data.title, { timeOut: 10000 });
-         observer.next({ data, params });
+        observer.next({ data, params });
         this.onPagination();
+
       });
       return () => this.socket.off(eventName);
     });
   }
 
-   onPagination(): void {
+  onPagination(): void {
     if (!this.currentUserId) {
       this.notificationListSubject.next([]);
       this.totalSubject.next(0);
