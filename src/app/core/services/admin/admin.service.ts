@@ -125,4 +125,9 @@ changeJobStatusToArchived(payload: { job_id: string; job_opening: string }) {
 markAllAsReadNew(){
   return this.genericService.Get<any>('notifications/mark-notifications-as-read')
 }
+
+
+  jobOverview(data: any): Observable<any> {
+    return this.genericService.Post<any>(`applications/overview`, data);
+  }
 }
