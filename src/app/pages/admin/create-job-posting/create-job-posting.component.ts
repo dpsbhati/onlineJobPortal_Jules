@@ -269,8 +269,12 @@ onJobTypePostChange(value: string): void {
     postedAtControl?.setValidators([Validators.required]);
     postedDateControl?.setValidators([Validators.required, this.postedDateValidator()]);
 
-    postedAtControl?.setValue(null);
-    postedDateControl?.setValue(null);
+     if (!this.isEditMode) {
+      postedAtControl?.setValue(null);
+      postedDateControl?.setValue(null);
+    }
+    // postedAtControl?.setValue(null);
+    // postedDateControl?.setValue(null);
   } else if (value === 'Postnow') {
     // Clear values and remove validators when Post now is selected
     postedAtControl?.setValue(null);
@@ -310,10 +314,10 @@ formatDateWithCurrentUTCTime(dateInput: string | Date): string {
   const utcMilliseconds = now.getUTCMilliseconds();
 
   // Calculate milliseconds to add for current UTC time
-  const utcTimeMs = 
-    utcHours * 3600 * 1000 + 
-    utcMinutes * 60 * 1000 + 
-    utcSeconds * 1000 + 
+  const utcTimeMs =
+    utcHours * 3600 * 1000 +
+    utcMinutes * 60 * 1000 +
+    utcSeconds * 1000 +
     utcMilliseconds;
 
   // Add current UTC time to the selected date at UTC midnight
@@ -329,13 +333,13 @@ formatDateWithCurrentUTCTime(dateInput: string | Date): string {
 //     if (this.jobForm.valid) {
 //       this.sanitizeFormValues();
 //       const formValues = this.jobForm.value;
-   
+
 //  if (formValues.deadline) {
 //       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
 //     }
 
 
-   
+
 //      if (formValues.posted_date) {
 //       formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
 //     }
@@ -363,7 +367,7 @@ formatDateWithCurrentUTCTime(dateInput: string | Date): string {
 //       });
 
 //     } else {
-      
+
 //       this.jobForm.markAllAsTouched();
 //       this.loader.hide();
 //     }
@@ -379,7 +383,7 @@ onSubmit(): void {
       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
     }
 
-  
+
     // Only keep posted_at and posted_date if job_type_post is "Schedulelater"
     if (formValues.job_type_post !== 'Schedulelater') {
       formValues.posted_at = null;
@@ -668,11 +672,29 @@ postedDateValidator(): ValidatorFn {
           'en-US'
         )
 
-        const formattedpostedAtDate = formatDate(
-          data.posted_date,
-          'yyyy-MM-dd',
-          'en-US'
-        )
+        // const formattedpostedAtDate = formatDate(
+        //   data.posted_date,
+        //   'yyyy-MM-dd',
+        //   'en-US'
+        // )
+      //     let formattedPostedDate: Date | null = null;
+      // if (data.posted_date) {
+      //   formattedPostedDate = new Date(data.posted_date);
+      // }
+
+      // ✅ Format time string (HH:mm)
+      // let postedAt: string = '';
+      // if (data.posted_at && typeof data.posted_at === 'string') {
+      //   const timeParts = data.posted_at.split(':');
+      //   if (timeParts.length >= 2) {
+      //     const hour = timeParts[0].padStart(2, '0');
+      //     const minute = timeParts[1].padStart(2, '0');
+      //     postedAt = `${hour}:${minute}`;
+      //   }
+      // }
+
+      console.log('👉 Will patch:');
+      console.log('posted_date (Date obj):', data.posted_date);
 
         let socialMediaTypes: string[] = [];
         if (data.social_media_type) {
@@ -730,8 +752,9 @@ postedDateValidator(): ValidatorFn {
           country_code: data.country_code || '',
           address: data.address || '',
           social_media_type: socialMediaTypes,
-          posted_at: data.posted_at,
-          posted_date: formattedpostedAtDate,
+          posted_date: data.posted_date ? new Date(data.posted_date) : null,
+
+        posted_at: data.posted_at || '',
           jobpost_status: data.jobpost_status || 'Draft',
           job_type_post: data.job_type_post
 
