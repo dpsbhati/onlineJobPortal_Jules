@@ -93,7 +93,7 @@ export class AppliedApplicationsComponent implements OnInit {
       if (filter.key === 'all') {
         return {
           ...filter,
-          key: 'all_job_post'
+          key: 'all'
         };
       }
       return filter;
