@@ -26,7 +26,7 @@ import { UserService } from 'src/app/core/services/user/user.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { AdminService } from 'src/app/core/services/admin/admin.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { WebsocketService } from 'src/app/core/services/websocket.service';
 
 interface notifications {
@@ -101,6 +101,7 @@ export class HeaderComponent {
   }
   private notificationSub?: Subscription;
   private totalSub?: Subscription;
+
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -193,7 +194,7 @@ export class HeaderComponent {
     this.notificationSub = this.websocketService.notificationList$.subscribe(list => {
       // this.hasNewNotification = true;
       this.notificationlist = list;
-        // this.hasNewNotification = this.notificationlist && this.notificationlist.length > 0 && this.notificationlist.some((n: any) => !n.is_read);
+      // this.hasNewNotification = this.notificationlist && this.notificationlist.length > 0 && this.notificationlist.some((n: any) => !n.is_read);
     });
 
     this.totalSub = this.websocketService.total$.subscribe(count => {
@@ -205,8 +206,8 @@ export class HeaderComponent {
   }
 
   hasUnreadNotifications(): boolean {
-  return this.notificationlist.some((n:any) => !n.is_read);
-}
+    return this.notificationlist.some((n: any) => !n.is_read);
+  }
 
   ngOnDestroy() {
     this.notificationSub?.unsubscribe();
@@ -226,6 +227,9 @@ export class HeaderComponent {
 
       case 'application_status_update':
         if (application_id) {
+          if (this._router.url.includes("Applied-Status")  && type === "application_status_update") {
+            this.websocketService.notificationReceivedSubject.next(true);
+          }
           this._router.navigate(['Applied-Status', application_id])
         }
         break;
@@ -299,10 +303,10 @@ export class HeaderComponent {
         if (res.statusCode === 200) {
           this.notificationlist = res.data;
           this.total = res.count || 0;
-             // Check if any notification is unread
-        this.hasNewNotification = this.notificationlist.some(
-          (n: any) => !n.is_read
-        );
+          // Check if any notification is unread
+          this.hasNewNotification = this.notificationlist.some(
+            (n: any) => !n.is_read
+          );
           this.loader.hide();
         } else {
           this.hasNewNotification = false;
