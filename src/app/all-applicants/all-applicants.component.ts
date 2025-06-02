@@ -158,17 +158,17 @@ export class AllApplicantsComponent implements OnInit {
     this.onPagination(); // Refresh data
   }
 
-  fetchJobs(): void {
-    this.adminService.getJobPostings().subscribe({
-      next: (response: any) => {
-        if (response.statusCode === 200) {
-          this.jobs = response.data; // Assign the job data to the jobs array
-        } else {
-          this.errorMessage = response.message || 'Failed to retrieve jobs';
-        }
-      },
-    });
-  }
+  // fetchJobs(): void {
+  //   this.adminService.getJobPostings().subscribe({
+  //     next: (response: any) => {
+  //       if (response.statusCode === 200) {
+  //         this.jobs = response.data; // Assign the job data to the jobs array
+  //       } else {
+  //         this.errorMessage = response.message || 'Failed to retrieve jobs';
+  //       }
+  //     },
+  //   });
+  // }
 
   getFeaturedImage(imagePath: string): string {
     return imagePath

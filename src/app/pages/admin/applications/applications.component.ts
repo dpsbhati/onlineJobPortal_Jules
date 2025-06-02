@@ -105,7 +105,6 @@ export class ApplicationsComponent {
   ) { }
 
   ngOnInit(): void {
-    this.fetchJobPosts()
     this.allrankslist()
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -137,19 +136,19 @@ export class ApplicationsComponent {
     dialogRef.afterClosed().subscribe(result => {
     })
   }
-  fetchJobPosts() {
+  // fetchJobPosts() {
 
-    this.adminService
-      .getJobPostings()
-      .subscribe((response: any) => {
-        if (response.statusCode === 200) {
-          this.jobPosts = response.data;
-        }
-        else {
-          this.jobPosts = [];
-        }
-      });
-  }
+  //   this.adminService
+  //     .getJobPostings()
+  //     .subscribe((response: any) => {
+  //       if (response.statusCode === 200) {
+  //         this.jobPosts = response.data;
+  //       }
+  //       else {
+  //         this.jobPosts = [];
+  //       }
+  //     });
+  // }
 
   goBack() {
     this.router.navigate(['/job-list']);

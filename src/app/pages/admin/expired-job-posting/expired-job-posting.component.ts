@@ -179,7 +179,6 @@ export class ExpiredJobPostingComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.allJobList();
     this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
@@ -244,16 +243,16 @@ export class ExpiredJobPostingComponent implements OnInit {
     return '$' + value.toLocaleString('en-IN');
   }
 
-  allJobList() {
-    this.adminService.getJobPostings().subscribe((response: any) => {
-      if (response.statusCode === 200) {
-        this.jobList = response.data.map((job: any) => ({
-          id: job.id,
-          rank: job.rank,
-        }));
-      }
-    });
-  }
+  // allJobList() {
+  //   this.adminService.getJobPostings().subscribe((response: any) => {
+  //     if (response.statusCode === 200) {
+  //       this.jobList = response.data.map((job: any) => ({
+  //         id: job.id,
+  //         rank: job.rank,
+  //       }));
+  //     }
+  //   });
+  // }
 
   clearFilter(
     event: Event,
