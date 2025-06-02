@@ -219,7 +219,6 @@ export class HeaderComponent {
     switch (type) {
       case 'job_application':
       case 'application_cancelled':
-        // Yeh teenon ke liye application_id jayegi
         if (application_id) {
           this._router.navigate(['/applicant-details', application_id]);
         }
@@ -233,9 +232,7 @@ export class HeaderComponent {
 
       case 'job_expired':
       case 'job_posting':
-        // Yeh dono ke liye job_id jayegi
         if (job_id) {
-          // Note: aapke route me spelling dikkat na ho, 'job-expired' vs 'job_expired'
           if (type === 'job_expired') {
             this._router.navigate(['/job-post-details', job_id]);
           } else {
@@ -251,7 +248,6 @@ export class HeaderComponent {
 
   onNotificationsMenuOpen() {
     this.hasNewNotification = true;
-    // Optional: mark all notifications as read here by calling your API
     // this.markAllAsRead();
   }
 
