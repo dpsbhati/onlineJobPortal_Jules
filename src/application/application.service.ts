@@ -90,7 +90,7 @@ export class ApplicationService {
       }
 
       const adminUsers = await this.userRepository.find({
-        where: { role: 'admin', isActive: true,is_deleted: false },
+        where: { role: 'admin', isActive: true, is_deleted: false },
         select: ['id'],
       });
 
@@ -117,7 +117,7 @@ export class ApplicationService {
           this.notificationsService.create({
             user_id: adminId,
             application_id: savedApplication.id,
-            job_id:null,
+            job_id: null,
             type: 'job_application',
             subject: notificationSubject,
             content: notificationContent,
@@ -224,7 +224,7 @@ export class ApplicationService {
           userProfile[field] = null;
         }
       }
-      application.comments=JSON.parse(application.comments)
+      application.comments = JSON.parse(application.comments);
       const response = {
         ...application,
         comments: application.comments || 'No comments available',
@@ -610,7 +610,7 @@ export class ApplicationService {
       });
 
       const adminUsers = await this.userRepository.find({
-        where: { role: 'admin', isActive: true,is_deleted:false },
+        where: { role: 'admin', isActive: true, is_deleted: false },
         select: ['id'],
       });
 
@@ -947,12 +947,90 @@ export class ApplicationService {
       },
     ];
 
+    // const response = await this.getLast7DaysAppliedVsShortlistedDayWise();
+
+    // console.log('response', response);
+
     return WriteResponse(200, {
       ...applicationStatusRaw,
       Jobs_Applied: totalApplications,
       ...jobPostingStatusRaw,
       Total_Jobs: totalJobs,
       Job_Application_Overview: jobApplicationOverview,
+      Offers_Received_Shortlisted:
+        applicationStatusRaw['Offers_Received_Shortlisted'] || 0,
+      Applications_Rejected: applicationStatusRaw['Applications_Rejected'] || 0,
+    });
+  }
+
+  async getLast7DaysAppliedVsShortlistedDayWise() {
+    const today = new Date();
+    const endDate = today.toISOString().split('T')[0];
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    const startDate = sevenDaysAgo.toISOString().split('T')[0];
+
+    const statusesToCount = ['Pending', 'Shortlisted'];
+
+    // Query grouped by date and status
+    const applicationQB = this.applicationRepository
+      .createQueryBuilder('a')
+      .select('DATE(a.applied_at)', 'date')
+      .addSelect('a.status', 'status')
+      .addSelect('COUNT(*)', 'count')
+      .where('a.status IN (:...statuses)', { statuses: statusesToCount })
+      .andWhere('DATE(a.applied_at) BETWEEN :startDate AND :endDate', {
+        startDate,
+        endDate,
+      })
+      .groupBy('date')
+      .addGroupBy('a.status')
+      .orderBy('date', 'ASC');
+
+    const applicationCounts = await applicationQB.getRawMany();
+
+    // Create map from date string to counts
+    const countsMap: Record<string, { Applied: number; Shortlisted: number }> =
+      {};
+
+    // Initialize with zero counts for last 7 days
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sevenDaysAgo);
+      d.setDate(sevenDaysAgo.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      countsMap[dateStr] = { Applied: 0, Shortlisted: 0 };
+    }
+
+    // Fill counts from DB result
+    for (const row of applicationCounts) {
+      const date = row.date; // YYYY-MM-DD
+      if (!countsMap[date]) {
+        // just safety, ideally should always exist
+        countsMap[date] = { Applied: 0, Shortlisted: 0 };
+      }
+      if (row.status === 'Pending') {
+        countsMap[date].Applied = parseInt(row.count, 10);
+      } else if (row.status === 'Shortlisted') {
+        countsMap[date].Shortlisted = parseInt(row.count, 10);
+      }
+    }
+
+    // Convert map to array for easier consumption
+    const dayWiseResult = Object.entries(countsMap).map(([date, counts]) => {
+      const dayName = new Date(date).toLocaleDateString('en-US', {
+        weekday: 'short',
+      });
+      return {
+        date,
+        day: dayName,
+        ...counts,
+      };
+    });
+
+    return WriteResponse(200, {
+      startDate,
+      endDate,
+      data: dayWiseResult,
     });
   }
 
