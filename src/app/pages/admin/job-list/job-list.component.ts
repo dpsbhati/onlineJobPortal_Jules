@@ -158,21 +158,67 @@ deleteJobMessage = '';
   //   });
   // }
 
-  onPagination(): void {
+//   onPagination(): void {
+//   this.loader.show();
+
+
+//   const dynamicFilters = this.helperService.getAllFilters(this.filters);
+
+
+//   const fixedFilter = {
+//     key: 'job_opening',
+//     value: 'Active',
+//     operator: '=',
+//   };
+
+
+//   this.pageConfig.whereClause = [...dynamicFilters, fixedFilter];
+
+//   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
+//     next: (res: any) => {
+//       if (res.statusCode === 200) {
+//         this.jobPostingList = res.data.map((job: any) => ({
+//           ...job,
+//           rank: job.ranks?.rank_name || '-',
+//         }));
+//         this.total = res.count || 0;
+//         this.loader.hide();
+//       } else {
+//         this.jobPostingList = [];
+//         this.total = 0;
+//         this.loader.hide();
+//       }
+//       this.isLoading = false;
+//     },
+//     error: (err: any) => {
+//       this.isLoading = false;
+//       this.loader.hide();
+//       this.toastr.error(err?.error?.message);
+//       this.jobPostingList = [];
+//       this.total = 0;
+//     },
+//   });
+// }
+onPagination(): void {
   this.loader.show();
 
-  // Get dynamic filters from helperService
   const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
-  // Always include the fixed filter for job_opening = 'Active'
-  const fixedFilter = {
+  // ✅ Add 2 separate job_opening filters
+  const activeFilter = {
     key: 'job_opening',
     value: 'Active',
-    operator: '=',
+    operator: '='
   };
 
-  // Merge fixed filter with dynamic filters (if any)
-  this.pageConfig.whereClause = [...dynamicFilters, fixedFilter];
+  const holdFilter = {
+    key: 'job_opening',
+    value: 'Hold',
+    operator: '='
+  };
+
+  // Combine all filters
+  this.pageConfig.whereClause = [...dynamicFilters, activeFilter, holdFilter];
 
   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
     next: (res: any) => {
@@ -182,23 +228,23 @@ deleteJobMessage = '';
           rank: job.ranks?.rank_name || '-',
         }));
         this.total = res.count || 0;
-        this.loader.hide();
       } else {
         this.jobPostingList = [];
         this.total = 0;
-        this.loader.hide();
       }
+      this.loader.hide();
       this.isLoading = false;
     },
     error: (err: any) => {
-      this.isLoading = false;
       this.loader.hide();
+      this.isLoading = false;
       this.toastr.error(err?.error?.message);
       this.jobPostingList = [];
       this.total = 0;
     },
   });
 }
+
 
 
   onPageChange(event: any): void {
