@@ -1046,7 +1046,7 @@
                       [for]="otherFromPicker"
                     ></mat-datepicker-toggle>
                     <mat-datepicker #otherFromPicker></mat-datepicker>
-                    <mat-error
+                    <!-- <mat-error
                       *ngIf="
                         item
                           .get('other_experience_from')
@@ -1056,7 +1056,7 @@
                       "
                     >
                       From Date is required
-                    </mat-error>
+                    </mat-error> -->
                   </mat-form-field>
                 </div>
 
@@ -1080,7 +1080,7 @@
                       [for]="otherToPicker"
                     ></mat-datepicker-toggle>
                     <mat-datepicker #otherToPicker></mat-datepicker>
-                    <mat-error
+                    <!-- <mat-error
                       *ngIf="
                         item.get('other_experience_to')?.hasError('required') &&
                         (item.get('other_experience_to')?.touched ||
@@ -1088,7 +1088,7 @@
                       "
                     >
                       To Date is required
-                    </mat-error>
+                    </mat-error> -->
                     <mat-error
                       *ngIf="
                         item
@@ -1111,7 +1111,7 @@
                       rows="3"
                       formControlName="other_experience_description"
                     ></textarea>
-                    <mat-error
+                    <!-- <mat-error
                       *ngIf="
                         item
                           .get('other_experience_description')
@@ -1121,7 +1121,7 @@
                       "
                     >
                       Description is required
-                    </mat-error>
+                    </mat-error> -->
                   </mat-form-field>
                 </div>
 
@@ -1208,7 +1208,7 @@
                       [for]="projToPicker"
                     ></mat-datepicker-toggle>
                     <mat-datepicker #projToPicker></mat-datepicker>
-                    <mat-error
+                    <!-- <mat-error
                       *ngIf="
                         item.get('project_to')?.hasError('required') &&
                         (item.get('project_to')?.touched ||
@@ -1216,7 +1216,7 @@
                       "
                     >
                       To Date is required
-                    </mat-error>
+                    </mat-error> -->
                     <mat-error
                       *ngIf="
                         item.get('project_to')?.hasError('invalidDateRange') &&

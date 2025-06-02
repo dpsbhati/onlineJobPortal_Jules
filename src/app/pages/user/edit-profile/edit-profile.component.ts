@@ -469,12 +469,10 @@ export class EditProfileComponent implements OnInit {
                 this.fb.group({
                   other_experience_from: [
                     item.other_experience_from || null,
-                    Validators.required,
                   ],
                   other_experience_to: [item.other_experience_to || null],
                   other_experience_description: [
                     item.other_experience_description || null,
-                    Validators.required,
                   ],
                 })
               );
@@ -638,10 +636,9 @@ export class EditProfileComponent implements OnInit {
   addOtherExp() {
     (this.thirdForm.get('other_experience_info') as FormArray).push(
       this.fb.group({
-        other_experience_from: new FormControl(null, [Validators.required]),
+        other_experience_from: new FormControl(null),
         other_experience_to: new FormControl(null),
         other_experience_description: new FormControl(null, [
-          Validators.required,
         ]),
       })
     );
