@@ -98,8 +98,8 @@ isActive: boolean;
     description: 'The deadline for the job application',
     example: '2025-01-01T00:00:00.000Z',
   })
-  // @IsNotEmpty({ message: 'deadline is required.' })
-  // @IsDate({ message: 'deadline must be a valid date.' })
+  @IsNotEmpty({ message: 'deadline is required.' })
+  @IsDate({ message: 'deadline must be a valid date.' })
   @Type(() => Date)
   deadline: Date;
 

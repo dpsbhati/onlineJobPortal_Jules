@@ -46,8 +46,9 @@ export class JobPostingService {
       const now = new Date();
 
       console.log('now date----->>>', now);
-      
 
+
+      
       // Get hours and minutes
       let current24Hours = now.getHours();
       let current24Minutes = now.getMinutes();
@@ -228,10 +229,15 @@ export class JobPostingService {
         jobDto.isActive = false;
       }
 if (jobDto.deadline) {
-  const dateOnly = new Date(jobDto.deadline);
-  dateOnly.setHours(0, 0, 0, 0); // Set time to 00:00:00
-  jobDto.deadline = dateOnly; // ✅ This is correct
+  const deadlineDate = new Date(jobDto.deadline);
+
+  // Set time to 23:59:59.999 UTC
+  deadlineDate.setUTCHours(23, 59, 59, 999);
+
+  // Assign back as Date object
+  jobDto.deadline = deadlineDate;
 }
+
 
       // Determine job type based on posted_date and posted_at
       const isScheduled = !!(jobDto.posted_date && jobDto.posted_at);
