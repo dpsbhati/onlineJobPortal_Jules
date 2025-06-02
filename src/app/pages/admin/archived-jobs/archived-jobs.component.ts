@@ -115,7 +115,6 @@ deleteJobMessage = '';
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.allJobList();
     this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
@@ -303,9 +302,9 @@ onPagination(): void {
   //         next: (response: any) => {
   //           this.toastr.success(response.message);
   //           this.loader.hide();
-       
+
   //           this.onPagination();
-       
+
   //           if (
   //             this.jobPostingList.length === 1 &&
   //             this.pageConfig.curPage > 1
@@ -407,16 +406,16 @@ confirmArchiveJob() {
     });
   }
 
-  allJobList() {
-    this.adminService.getJobPostings().subscribe((response: any) => {
-      if (response.statusCode === 200) {
-        this.jobList = response.data.map((job: any) => ({
-          id: job.id,
-          rank: job.rank,
-        }));
-      }
-    });
-  }
+  // allJobList() {
+  //   this.adminService.getJobPostings().subscribe((response: any) => {
+  //     if (response.statusCode === 200) {
+  //       this.jobList = response.data.map((job: any) => ({
+  //         id: job.id,
+  //         rank: job.rank,
+  //       }));
+  //     }
+  //   });
+  // }
 
   clearFilter(
     event: Event,

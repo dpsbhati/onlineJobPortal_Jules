@@ -117,7 +117,6 @@ deleteJobMessage = '';
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.allJobList();
     this.allrankslist(); // 🔧 Add this line
     this.onPagination();
   }
@@ -136,7 +135,7 @@ deleteJobMessage = '';
   //       if (res.statusCode === 200) {
   //         this.jobPostingList = res.data.map((job: any) => ({
   //           ...job,
-  //           rank: job.ranks?.rank_name || '-', 
+  //           rank: job.ranks?.rank_name || '-',
   //         }));
 
   //         this.total = res.count || 0;
@@ -275,32 +274,32 @@ onPagination(): void {
   // onStatusToggleChange(element: any, checked: boolean) {
   //   console.log(checked);
   //   if (checked) {
-    
+
   //     const today = new Date();
   //     console.log(today, 'Today');
   //     const jobDeadline = new Date(element.deadline);
   //     console.log(jobDeadline, 'jobDeadline', jobDeadline < today);
   //     if (jobDeadline < today) {
-   
+
   //       this.selectedJobToActivate = element;
   //       this.newDeadline = null; // reset date
   //       this.showDeadlineModal = true;
-     
+
   //       element.isActive = false;
   //       return;
   //     }
   //   }
-   
+
   //   element.job_opening = checked ? 'Active' : 'DeActivated';
   //   element.isActive = checked;
 
   //   this.adminService.toggleJobStatus(element.id, checked).subscribe({
   //     next: (res) => {
   //       this.toastr.success(res.message);
-      
+
   //     },
   //     error: (err) => {
-     
+
   //       element.isActive = !checked;
   //       element.job_opening = !checked ? 'Active' : 'DeActivated';
   //       this.toastr.error('Failed to update status');
@@ -315,12 +314,12 @@ onStatusToggleChange(element: any, checked: boolean): void {
     const jobDeadline = new Date(element.deadline);
 
     if (jobDeadline < today) {
-    
+
       this.selectedJobToActivate = element;
       this.newDeadline = null;
       this.showDeadlineModal = true;
 
-     
+
       element.isActive = false;
       return;
     }
@@ -336,16 +335,16 @@ onStatusToggleChange(element: any, checked: boolean): void {
       if (res?.statusCode === 200) {
         this.toastr.success(res.message || 'Job status updated successfully');
       } else {
-       
+
         this.toastr.error(res.message || 'Failed to update job status');
-        
+
         // 🔁 Revert UI
         element.isActive = !checked;
         element.job_opening = !checked ? 'Active' : 'DeActivated';
       }
     },
     error: (err: any) => {
-  
+
       this.toastr.error(err?.error?.message || 'Server error while updating status');
 
       // 🔁 Revert UI
@@ -396,9 +395,9 @@ onStatusToggleChange(element: any, checked: boolean): void {
   //         next: (response: any) => {
   //           this.toastr.success(response.message);
   //           this.loader.hide();
-       
+
   //           this.onPagination();
-       
+
   //           if (
   //             this.jobPostingList.length === 1 &&
   //             this.pageConfig.curPage > 1
@@ -516,16 +515,16 @@ confirmArchiveJob() {
     });
   }
 
-  allJobList() {
-    this.adminService.getJobPostings().subscribe((response: any) => {
-      if (response.statusCode === 200) {
-        this.jobList = response.data.map((job: any) => ({
-          id: job.id,
-          rank: job.rank,
-        }));
-      }
-    });
-  }
+  // allJobList() {
+  //   this.adminService.getJobPostings().subscribe((response: any) => {
+  //     if (response.statusCode === 200) {
+  //       this.jobList = response.data.map((job: any) => ({
+  //         id: job.id,
+  //         rank: job.rank,
+  //       }));
+  //     }
+  //   });
+  // }
 
   clearFilter(
     event: Event,
