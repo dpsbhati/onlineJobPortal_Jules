@@ -145,6 +145,9 @@
   Deadline cannot be before today's date.
               </span>
           </mat-error>
+           <mat-error *ngIf="jobForm.get('deadline')?.hasError('deadlineBeforePostedDate') && jobForm.get('deadline')?.touched">
+  Deadline cannot be before the posted date.
+</mat-error>
         </mat-form-field>
 
       </div>

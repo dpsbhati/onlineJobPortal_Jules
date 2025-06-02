@@ -182,7 +182,7 @@ export class CreateJobPostingComponent {
     //     Validators.required,
     //   ])
 
-    this.jobForm.get('deadline')?.setValidators([Validators.required,this.deadlineValidator()]);
+    this.jobForm.get('deadline')?.setValidators([Validators.required,this.deadlineValidator(),this.deadlineAfterPostedDateValidator('posted_date')]);
   }
 
   // onChange(event:any){
@@ -204,6 +204,23 @@ export class CreateJobPostingComponent {
     // Update the form control value correctly using patchValue or setValue
     this.jobForm.get('posted_date')?.setValue(formattedDate);
   }
+}
+deadlineAfterPostedDateValidator(postedDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const deadline = control.value;
+    if (!deadline) return null;
+ 
+    const postedDate = control.parent?.get(postedDateControlName)?.value;
+    if (!postedDate) return null;
+ 
+    const deadlineDate = new Date(deadline);
+    deadlineDate.setHours(0, 0, 0, 0);
+ 
+    const posted = new Date(postedDate);
+    posted.setHours(0, 0, 0, 0);
+ 
+    return deadlineDate < posted ? { deadlineBeforePostedDate: true } : null;
+  };
 }
 
 
