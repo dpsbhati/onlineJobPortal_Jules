@@ -47,8 +47,6 @@ export class JobPostingService {
 
       console.log('now date----->>>', now);
 
-
-      
       // Get hours and minutes
       let current24Hours = now.getHours();
       let current24Minutes = now.getMinutes();
@@ -112,6 +110,8 @@ export class JobPostingService {
     try {
       const currentDateTime = new Date();
       console.log('currentDateTime---------->', currentDateTime);
+      const todayDate = currentDateTime.toISOString().slice(0, 10); // "2025-06-02"
+      console.log('todayDate---------->', todayDate);
 
       // New functionality: Check for jobs in 'hold' or with today's date as date_published
       const allHoldJobs = await this.jobPostingRepository.find({
@@ -157,15 +157,23 @@ export class JobPostingService {
         );
       }
 
-      const jobsToClose = await this.jobPostingRepository.find({
-        where: {
-          is_deleted: false,
-          job_opening: JobOpeningStatus.OPEN,
-          deadline: LessThanOrEqual(currentDateTime),
-        },
-        relations: ['ranks'],
-      });
-      // console.log('jobsToClose---------------', jobsToClose);
+      // const jobsToClose = await this.jobPostingRepository.find({
+      //   where: {
+      //     is_deleted: false,
+      //     job_opening: JobOpeningStatus.OPEN,
+      //     deadline: LessThanOrEqual(currentDateTime),
+      //   },
+      //   relations: ['ranks'],
+      // });
+      const jobsToClose = await this.jobPostingRepository
+  .createQueryBuilder('job')
+  .leftJoinAndSelect('job.ranks', 'ranks')
+  .where('job.is_deleted = false')
+  .andWhere('job.job_opening = :open', { open: JobOpeningStatus.OPEN })
+  .andWhere('DATE(job.deadline) < CURDATE()') // ✅ only closes after full deadline day
+  .getMany();
+
+      console.log('jobsToClose---------------', jobsToClose);
 
       if (jobsToClose.length > 0) {
         const expiredJobs = [];
@@ -220,24 +228,42 @@ export class JobPostingService {
 
   async createOrUpdate(jobDto: CreateJobPostingDto, userId: string) {
     try {
-            if (jobDto.job_type_post === JobTypePost.POST_NOW) {
-              jobDto.jobpost_status = JobPostStatus.POSTED;
-            }
-      if(jobDto.job_type_post === JobTypePost.SCHEDULE_LATER){
+      if (jobDto.job_type_post === JobTypePost.POST_NOW) {
+        jobDto.jobpost_status = JobPostStatus.POSTED;
+      }
+      if (jobDto.job_type_post === JobTypePost.SCHEDULE_LATER) {
         jobDto.jobpost_status = JobPostStatus.DRAFT;
         jobDto.job_opening = JobOpeningStatus.HOLD;
         jobDto.isActive = false;
+
+         if (jobDto.posted_date) {
+    const scheduledDate = new Date(jobDto.posted_date);
+    const deadlineDate = new Date(jobDto.deadline);
+
+    // Compare only dates (year, month, day), ignoring time
+    const scheduledDateOnly = scheduledDate.toISOString().split('T')[0];
+    const deadlineDateOnly = deadlineDate.toISOString().split('T')[0];
+
+    if (deadlineDateOnly < scheduledDateOnly) {
+      return WriteResponse(
+        400,
+        false,
+        'Deadline must be greater than the posted date.'
+      );
+    }
+  }
       }
-if (jobDto.deadline) {
-  const deadlineDate = new Date(jobDto.deadline);
 
-  // Set time to 23:59:59.999 UTC
-  deadlineDate.setUTCHours(23, 59, 59, 999);
 
-  // Assign back as Date object
-  jobDto.deadline = deadlineDate;
-}
+      // if (jobDto.deadline) {
+      //   const deadlineDate = new Date(jobDto.deadline);
 
+      //   // Set time to 23:59:59.999 UTC
+      //   deadlineDate.setUTCHours(23, 59, 59, 999);
+
+      //   // Assign back as Date object
+      //   jobDto.deadline = deadlineDate;
+      // }
 
       // Determine job type based on posted_date and posted_at
       const isScheduled = !!(jobDto.posted_date && jobDto.posted_at);
@@ -253,7 +279,7 @@ if (jobDto.deadline) {
         jobDto.job_opening = JobOpeningStatus.OPEN;
         jobDto.isActive = true;
       }
-      
+
       // Fetch existing job posting (if updating)
       const jobPosting = jobDto.id
         ? await this.jobPostingRepository.findOne({
@@ -627,7 +653,8 @@ if (jobDto.deadline) {
       if (!jobPosting) {
         return WriteResponse(404, {}, 'Record not found.');
       }
-      if (jobPosting.job_type_post === JobTypePost.SCHEDULE_LATER) {
+     
+      if (jobPosting.jobpost_status === JobPostStatus.DRAFT) {
         return WriteResponse(
           400,
           false,
