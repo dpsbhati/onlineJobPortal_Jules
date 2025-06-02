@@ -23,6 +23,13 @@ import {
 } from 'ng-apexcharts';
 import { MaterialModule } from 'src/app/material.module';
 import { ApexNonAxisChartSeries } from 'ng-apexcharts';
+import { AdminService } from 'src/app/core/services/admin/admin.service';
+import { Router } from '@angular/router';
+import { HelperService } from 'src/app/core/helpers/helper.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface salesChart {
   series: ApexAxisChartSeries | any;
@@ -79,39 +86,56 @@ export class StarterComponent {
   @ViewChild('chart2') chart2: ChartComponent = Object.create(null);
   public salesChart!: Partial<salesChart> | any;
   public ourvisitorChart!: Partial<ourvisitorChart> | any;
-
+  joboverviewlist:any;
+    total: number = 0;
+     isLoading: boolean = false;
+  pageConfig: any = {
+    curPage: 1,
+    perPage: 10,
+    sortBy: 'created_at',
+    direction: 'desc',
+    whereClause: [],
+  };
   productcard: productcard[] = [
-    {
-      id: 1,
-      color: 'mat-primary',
-      title: '25',
-      subtitle: 'Total Open Jobs',
-      value: 25,
-    },
-    {
-      id: 2,
-      color: 'mat-secondary',
-      title: '05',
-      subtitle: 'Jobs Applied',
-      value: 5,
-    },
-    {
-      id: 3,
-      color: 'mat-success',
-      title: '02',
-      subtitle: 'Applications in Review',
-      value: 2,
-    },
-    {
-      id: 4,
-      color: 'mat-warn',
-      title: '01',
-      subtitle: 'Offers Received',
-      value: 1,
-    },
+    // {
+    //   id: 1,
+    //   color: 'mat-primary',
+    //   title: '25',
+    //   subtitle: 'Total Open Jobs',
+    //   value: 25,
+    // },
+    // {
+    //   id: 2,
+    //   color: 'mat-secondary',
+    //   title: '05',
+    //   subtitle: 'Jobs Applied',
+    //   value: 5,
+    // },
+    // {
+    //   id: 3,
+    //   color: 'mat-success',
+    //   title: '02',
+    //   subtitle: 'Applications in Review',
+    //   value: 2,
+    // },
+    // {
+    //   id: 4,
+    //   color: 'mat-warn',
+    //   title: '01',
+    //   subtitle: 'Offers Received',
+    //   value: 1,
+    // },
   ];
 
-  constructor() {
+  constructor(
+     private adminService: AdminService,
+        private router: Router,
+        private helperService: HelperService,
+        private authService: AuthService,
+        private loader: LoaderService,
+        private toastr: ToastrService,
+        private dialog: MatDialog
+  ) {
     // Sales Chart for Job Applicants
     this.salesChart = {
       series: [
@@ -275,5 +299,78 @@ export class StarterComponent {
         },
       ],
     };
+  }
+  ngOnInit(): void {
+    // this.isLoading = true;
+    this.onPagination();
+  }
+
+   onPagination(): void {
+    this.isLoading = true;
+    this.adminService.jobOverview(this.pageConfig).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+
+        if (res.statusCode === 200 && res.data) {
+          const data = res.data;
+
+          // Assign job overview list and total count
+          this.joboverviewlist = data.Job_Application_Overview || [];
+          this.total = res.count || 0;
+
+          // Dynamically create product cards from API response
+          this.productcard = [
+            {
+              id: 1,
+              color: 'mat-primary',
+              title: data.Total_Open_Jobs?.toString() || '0',
+              subtitle: 'Total Open Jobs',
+              value: data.Total_Open_Jobs || 0,
+            },
+            {
+              id: 2,
+              color: 'mat-secondary',
+              title: data.Jobs_Applied?.toString() || '0',
+              subtitle: 'Jobs Applied',
+              value: data.Jobs_Applied || 0,
+            },
+            {
+              id: 3,
+              color: 'mat-success',
+              title: data.Applications_in_Review_Pending?.toString() || '0',
+              subtitle: 'Applications in Review',
+              value: data.Applications_in_Review_Pending || 0,
+            },
+            {
+              id: 4,
+              color: 'mat-warn',
+              title:
+                (data.Job_Application_Overview &&
+                  data.Job_Application_Overview[0]?.Offers_Received_Shortlisted
+                    ?.toString()) ||
+                '0',
+              subtitle: 'Offers Received',
+              value:
+                data.Job_Application_Overview &&
+                data.Job_Application_Overview[0]?.Offers_Received_Shortlisted
+                  ? data.Job_Application_Overview[0].Offers_Received_Shortlisted
+                  : 0,
+            },
+          ];
+        } else {
+          // Reset data if no valid response
+          this.joboverviewlist = [];
+          this.total = 0;
+          this.productcard = [];
+        }
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.toastr.error(err?.error?.message || 'Something went wrong');
+        this.joboverviewlist = [];
+        this.total = 0;
+        this.productcard = [];
+      },
+    });
   }
 }
