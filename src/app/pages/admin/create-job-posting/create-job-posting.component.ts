@@ -397,7 +397,7 @@ onSubmit(): void {
   if (this.jobForm.valid) {
   //  this.sanitizeFormValues();
     const formValues = this.jobForm.value;
-// console.log(formValues,"FORRMMMM");
+console.log(formValues,"FORRMMMM");
     // Format dates as needed
     if (formValues.deadline) {
       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
@@ -405,7 +405,7 @@ onSubmit(): void {
 
 
     // Only keep posted_at and posted_date if job_type_post is "Schedulelater"
-    if (formValues.job_type_post !== 'Schedulelater') {
+    if (formValues.job_type_post !== 'Schedulelater' && !formValues.id) {
       formValues.posted_at = null;
       formValues.posted_date = null;
     }
@@ -772,13 +772,14 @@ postedDateValidator(): ValidatorFn {
           country_code: data.country_code || '',
           address: data.address || '',
           social_media_type: socialMediaTypes,
-          posted_date: data.posted_date ? new Date(data.posted_date) : null,
-
+          posted_date: data.posted_date ?  this.formatDateWithoutTimezoneShift(data.posted_date) : null,
         posted_at: data.posted_at || '',
           jobpost_status: data.jobpost_status || 'Draft',
           job_type_post: data.job_type_post
 
         })
+        console.log('job_type_post',data.job_type_post);
+        console.log(this.jobForm.value,'JobFormvalue')
         if (data.featured_image) {
           this.imagePreview = data.featured_image;
         } else {
