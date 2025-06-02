@@ -170,6 +170,9 @@ export class CreateJobPostingComponent {
     // })
 
    this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {this.onJobTypePostChange(value);});
+     this.jobForm.get('posted_date')?.valueChanges.subscribe(() => {
+      this.jobForm.get('deadline')?.updateValueAndValidity();
+    });
 
 // Trigger on init to apply logic based on current value:
   this.onJobTypePostChange(this.jobForm.get('job_type_post')?.value || '');
