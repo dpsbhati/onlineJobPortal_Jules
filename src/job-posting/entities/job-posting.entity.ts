@@ -52,7 +52,7 @@ export class JobPosting {
   @Column({ type: 'datetime', nullable: true })
   date_published: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @CreateDateColumn()
   deadline: Date;
 
   @Column({ type: 'text', nullable: true })

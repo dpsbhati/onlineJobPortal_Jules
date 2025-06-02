@@ -45,6 +45,9 @@ export class JobPostingService {
     try {
       const now = new Date();
 
+      console.log('now date----->>>', now);
+      
+
       // Get hours and minutes
       let current24Hours = now.getHours();
       let current24Minutes = now.getMinutes();
@@ -71,7 +74,7 @@ export class JobPostingService {
           // posted_at: LessThanOrEqual(totalTime),
         },
       });
-      console.log('allDraftJobs', allDraftJobs);
+      // console.log('allDraftJobs', allDraftJobs);
 
       const jobsToPost = allDraftJobs.filter((job) => {
         if (job.posted_date && job.posted_at) {
@@ -107,7 +110,7 @@ export class JobPostingService {
   async closeExpiredJobs() {
     try {
       const currentDateTime = new Date();
-      console.log('currentDateTime', currentDateTime);
+      console.log('currentDateTime---------->', currentDateTime);
 
       // New functionality: Check for jobs in 'hold' or with today's date as date_published
       const allHoldJobs = await this.jobPostingRepository.find({
@@ -161,7 +164,7 @@ export class JobPostingService {
         },
         relations: ['ranks'],
       });
-      console.log('jobsToClose---------------', jobsToClose);
+      // console.log('jobsToClose---------------', jobsToClose);
 
       if (jobsToClose.length > 0) {
         const expiredJobs = [];
@@ -224,6 +227,11 @@ export class JobPostingService {
         jobDto.job_opening = JobOpeningStatus.HOLD;
         jobDto.isActive = false;
       }
+if (jobDto.deadline) {
+  const dateOnly = new Date(jobDto.deadline);
+  dateOnly.setHours(0, 0, 0, 0); // Set time to 00:00:00
+  jobDto.deadline = dateOnly; // ✅ This is correct
+}
 
       // Determine job type based on posted_date and posted_at
       const isScheduled = !!(jobDto.posted_date && jobDto.posted_at);
@@ -621,13 +629,13 @@ export class JobPostingService {
         );
       }
       // Block activation if this is a scheduled job
-      if (jobPosting.posted_date !== null && jobPosting.posted_at !== null) {
-        return WriteResponse(
-          400,
-          false,
-          'Scheduled jobs cannot be manually activated.',
-        );
-      }
+      // if (jobPosting.posted_date !== null && jobPosting.posted_at !== null) {
+      //   return WriteResponse(
+      //     400,
+      //     false,
+      //     'Scheduled jobs cannot be manually activated.',
+      //   );
+      // }
       await this.jobPostingRepository.update(id, { isActive: isActive });
 
       return WriteResponse(
