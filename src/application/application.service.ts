@@ -947,9 +947,7 @@ export class ApplicationService {
       },
     ];
 
-    // const response = await this.getLast7DaysAppliedVsShortlistedDayWise();
-
-    // console.log('response', response);
+    const response = await this.getLast7DaysAppliedVsShortlistedDayWise();
 
     return WriteResponse(200, {
       ...applicationStatusRaw,
@@ -960,6 +958,7 @@ export class ApplicationService {
       Offers_Received_Shortlisted:
         applicationStatusRaw['Offers_Received_Shortlisted'] || 0,
       Applications_Rejected: applicationStatusRaw['Applications_Rejected'] || 0,
+      Last_7_Days_Overview: response.data,
     });
   }
 
@@ -1016,21 +1015,43 @@ export class ApplicationService {
     }
 
     // Convert map to array for easier consumption
+
+    // Sorting the day-wise result based on the date (in YYYY-MM-DD format)
     const dayWiseResult = Object.entries(countsMap).map(([date, counts]) => {
+      const formattedDate = new Date(date).toISOString().split('T')[0];
       const dayName = new Date(date).toLocaleDateString('en-US', {
         weekday: 'short',
       });
       return {
-        date,
+        date: formattedDate,
         day: dayName,
         ...counts,
       };
     });
 
+    const groupedResult = dayWiseResult.reduce((acc, curr) => {
+      const existingEntry = acc.find((entry) => entry.date === curr.date);
+      if (existingEntry) {
+        // If the date already exists, add the values
+        existingEntry.Applied += curr.Applied;
+        existingEntry.Shortlisted += curr.Shortlisted;
+      } else {
+        // If the date doesn't exist, add a new entry
+        acc.push({ ...curr });
+      }
+      return acc;
+    }, []);
+
+    // Sort the array by date in ascending order
+    const sortedDayWiseResult = groupedResult.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+
+    // Return the sorted result
     return WriteResponse(200, {
       startDate,
       endDate,
-      data: dayWiseResult,
+      data: sortedDayWiseResult,
     });
   }
 
