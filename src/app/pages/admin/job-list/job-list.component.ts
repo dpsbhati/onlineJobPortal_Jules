@@ -272,41 +272,88 @@ onPagination(): void {
   //     },
   //   });
   // }
-  onStatusToggleChange(element: any, checked: boolean) {
-    console.log(checked);
-    if (checked) {
-      // User is trying to activate - check deadline
-      const today = new Date();
-      console.log(today, 'Today');
-      const jobDeadline = new Date(element.deadline);
-      console.log(jobDeadline, 'jobDeadline', jobDeadline < today);
-      if (jobDeadline < today) {
-        // Deadline passed - show modal to update deadline first
-        this.selectedJobToActivate = element;
-        this.newDeadline = null; // reset date
-        this.showDeadlineModal = true;
-        // Revert toggle UI immediately until user confirms
-        element.isActive = false;
-        return;
-      }
-    }
-    // Proceed normally if deadline not crossed or deactivating
-    element.job_opening = checked ? 'Active' : 'DeActivated';
-    element.isActive = checked;
+  // onStatusToggleChange(element: any, checked: boolean) {
+  //   console.log(checked);
+  //   if (checked) {
+    
+  //     const today = new Date();
+  //     console.log(today, 'Today');
+  //     const jobDeadline = new Date(element.deadline);
+  //     console.log(jobDeadline, 'jobDeadline', jobDeadline < today);
+  //     if (jobDeadline < today) {
+   
+  //       this.selectedJobToActivate = element;
+  //       this.newDeadline = null; // reset date
+  //       this.showDeadlineModal = true;
+     
+  //       element.isActive = false;
+  //       return;
+  //     }
+  //   }
+   
+  //   element.job_opening = checked ? 'Active' : 'DeActivated';
+  //   element.isActive = checked;
 
-    this.adminService.toggleJobStatus(element.id, checked).subscribe({
-      next: (res) => {
-        this.toastr.success(res.message);
-        // this.onPagination();
-      },
-      error: (err) => {
-        // Revert UI changes on failure
+  //   this.adminService.toggleJobStatus(element.id, checked).subscribe({
+  //     next: (res) => {
+  //       this.toastr.success(res.message);
+      
+  //     },
+  //     error: (err) => {
+     
+  //       element.isActive = !checked;
+  //       element.job_opening = !checked ? 'Active' : 'DeActivated';
+  //       this.toastr.error('Failed to update status');
+  //     },
+  //   });
+  // }
+onStatusToggleChange(element: any, checked: boolean): void {
+  console.log(checked);
+
+  if (checked) {
+    const today = new Date();
+    const jobDeadline = new Date(element.deadline);
+
+    if (jobDeadline < today) {
+      // 🛑 Show modal if deadline already passed
+      this.selectedJobToActivate = element;
+      this.newDeadline = null;
+      this.showDeadlineModal = true;
+
+      // ❌ Revert UI immediately
+      element.isActive = false;
+      return;
+    }
+  }
+
+  // ✅ Temporarily apply changes in UI
+  element.job_opening = checked ? 'Active' : 'DeActivated';
+  element.isActive = checked;
+
+  // 🔁 Call API to toggle status
+  this.adminService.toggleJobStatus(element.id, checked).subscribe({
+    next: (res: any) => {
+      if (res?.statusCode === 200) {
+        this.toastr.success(res.message || 'Job status updated successfully');
+      } else {
+       
+        this.toastr.error(res.message || 'Failed to update job status');
+        
+        // 🔁 Revert UI
         element.isActive = !checked;
         element.job_opening = !checked ? 'Active' : 'DeActivated';
-        this.toastr.error('Failed to update status');
-      },
-    });
-  }
+      }
+    },
+    error: (err: any) => {
+  
+      this.toastr.error(err?.error?.message || 'Server error while updating status');
+
+      // 🔁 Revert UI
+      element.isActive = !checked;
+      element.job_opening = !checked ? 'Active' : 'DeActivated';
+    },
+  });
+}
 
   onSearch(): void {
     // Trim leading and trailing spaces from search text
