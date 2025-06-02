@@ -428,17 +428,23 @@ export class StarterComponent {
           },
         ];
 
-        // Extract job overview object safely
-        const jobOverview =
-          data.Job_Application_Overview && data.Job_Application_Overview.length > 0
-            ? data.Job_Application_Overview[0]
-            : { Applications_Rejected: 0, Offers_Received_Shortlisted: 0, Jobs_Applied: 0 };
+  
+        // const jobOverview =
+        //   data.Job_Application_Overview && data.Job_Application_Overview.length > 0
+        //     ? data.Job_Application_Overview[0]
+        //     : { Applications_Rejected: 0, Offers_Received_Shortlisted: 0, Jobs_Applied: 0 };
 
-        // Update Our Visitors chart dynamically
-        this.ourvisitorChart.series = [
+      
+        // this.ourvisitorChart.series = [
+        //   data.Jobs_Applied || 0,
+        //   jobOverview.Offers_Received_Shortlisted || 0,
+        //   jobOverview.Applications_Rejected || 0,
+        // ];
+        // this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
+         this.ourvisitorChart.series = [
           data.Jobs_Applied || 0,
-          jobOverview.Offers_Received_Shortlisted || 0,
-          jobOverview.Applications_Rejected || 0,
+          data.Offers_Received_Shortlisted || 0,
+          data.Applications_Rejected || 0,
         ];
         this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
       } else {
