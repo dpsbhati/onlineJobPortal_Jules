@@ -315,12 +315,12 @@ onStatusToggleChange(element: any, checked: boolean): void {
     const jobDeadline = new Date(element.deadline);
 
     if (jobDeadline < today) {
-      // 🛑 Show modal if deadline already passed
+    
       this.selectedJobToActivate = element;
       this.newDeadline = null;
       this.showDeadlineModal = true;
 
-      // ❌ Revert UI immediately
+     
       element.isActive = false;
       return;
     }
