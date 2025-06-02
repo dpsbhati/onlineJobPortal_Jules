@@ -250,6 +250,14 @@ onRankChange(rankValue: string): void {
     this.onPagination();
   }
 
+  // clearFilters(): void {
+  //   this.selectedRank = '';
+  //   this.selectedLocation = '';
+  //   this.keyword = '';
+  //   this.pageConfig.whereClause = [];
+  //   this.pageConfig.curPage = 1;
+  //   this.onPagination();
+  // }
   clearFilters(): void {
   this.selectedRank = '';
   this.selectedLocation = '';
@@ -261,5 +269,6 @@ onRankChange(rankValue: string): void {
   this.pageConfig.curPage = 1;
   this.onPagination();
 }
+
 
 }

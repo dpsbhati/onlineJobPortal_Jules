@@ -164,10 +164,16 @@ export class CreateJobPostingComponent {
       this.jobForm.get('social_media_type')?.enable()
       this.jobForm.get('job_type_post')?.enable()
     }
-    this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
-      const postedAtControl = this.jobForm.get('posted_at')
-      this.onJobTypePostChange(value);
-    })
+    // this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {
+    //   const postedAtControl = this.jobForm.get('posted_at')
+    //   this.onJobTypePostChange(value);
+    // })
+
+   this.jobForm.get('job_type_post')?.valueChanges.subscribe(value => {this.onJobTypePostChange(value);});
+
+// Trigger on init to apply logic based on current value:
+  this.onJobTypePostChange(this.jobForm.get('job_type_post')?.value || '');
+
     // const today = new Date().toISOString().split('T')[0]
     // this.jobForm.get('date_published')?.setValue(today)
     // this.jobForm
@@ -176,18 +182,31 @@ export class CreateJobPostingComponent {
     //     Validators.required,
     //   ])
 
-    this.jobForm.get('deadline')?.setValidators([
-  Validators.required,
-  this.deadlineValidator()
-]);
-
-// this.jobForm.get('posted_date')?.setValidators([
-//   Validators.required,
-//   this.postedDateValidator()
-// ]);
-
-
+    this.jobForm.get('deadline')?.setValidators([Validators.required,this.deadlineValidator()]);
   }
+
+  // onChange(event:any){
+  //   console.log(event,"OnChnage");
+  //   console.log(this.jobForm.value);
+  //     if (this.jobForm.value.posted_date) {
+  //     this.jobForm.va.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+  //   }
+
+  // }
+  onChange(event: any) {
+  console.log(event, "OnChange");
+  console.log(this.jobForm.value);
+
+  if (this.jobForm.value.posted_date) {
+    // Format the posted_date value
+    const formattedDate = this.formatDateWithoutTimezoneShift(this.jobForm.value.posted_date);
+
+    // Update the form control value correctly using patchValue or setValue
+    this.jobForm.get('posted_date')?.setValue(formattedDate);
+  }
+}
+
+
   addSkill(): void {
     const skill = this.newSkill.trim()
     if (!skill) {
@@ -241,24 +260,21 @@ export class CreateJobPostingComponent {
   //   postedDateControl?.updateValueAndValidity();
   // }
 
-  onJobTypePostChange(value: string): void {
+onJobTypePostChange(value: string): void {
   const postedAtControl = this.jobForm.get('posted_at');
   const postedDateControl = this.jobForm.get('posted_date');
-  const currentDate = new Date();
-
-  const formattedTime = currentDate.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-  const formattedDate = formatDate(currentDate, 'yyyy-MM-dd', 'en-US');
 
   if (value === 'Schedulelater') {
+    // Enable validators and clear current value so user must select fresh date/time
     postedAtControl?.setValidators([Validators.required]);
     postedDateControl?.setValidators([Validators.required, this.postedDateValidator()]);
-  } else {
-    postedAtControl?.setValue(formattedTime);
-    postedDateControl?.setValue(formattedDate);
+
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
+  } else if (value === 'Postnow') {
+    // Clear values and remove validators when Post now is selected
+    postedAtControl?.setValue(null);
+    postedDateControl?.setValue(null);
 
     postedAtControl?.clearValidators();
     postedDateControl?.clearValidators();
@@ -267,6 +283,8 @@ export class CreateJobPostingComponent {
   postedAtControl?.updateValueAndValidity();
   postedDateControl?.updateValueAndValidity();
 }
+
+
 formatDateToUTCMidnight(dateInput: string | Date): string {
   const date = new Date(dateInput);
 
@@ -305,59 +323,98 @@ formatDateWithCurrentUTCTime(dateInput: string | Date): string {
   return combinedDate.toISOString();
 }
 
-  onSubmit(): void {
-    console.log(this.jobForm.valid,'valid');
-    console.log(this.jobForm)
-    if (this.jobForm.valid) {
-      this.sanitizeFormValues();
-      const formValues = this.jobForm.value;
-    //    if (formValues.deadline) {
-    //   formValues.deadline = this.formatDateWithoutTimezoneShift(formValues.deadline);
-    // }
+//   onSubmit(): void {
+//     console.log(this.jobForm.valid,'valid');
+//     console.log(this.jobForm)
+//     if (this.jobForm.valid) {
+//       this.sanitizeFormValues();
+//       const formValues = this.jobForm.value;
+   
+//  if (formValues.deadline) {
+//       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
+//     }
 
-    // if (formValues.posted_date) {
-    //   formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
-    // }
- if (formValues.deadline) {
+
+   
+//      if (formValues.posted_date) {
+//       formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+//     }
+//       if (!formValues.id) {
+//         delete formValues.id;
+//       }
+
+//       formValues.skills_required = JSON.stringify(formValues.skills_required);
+//       this.loader.show();
+
+//       this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+//         next: (response: any) => {
+//           this.loader.hide();
+//           if (response.statusCode === 200) {
+//             this.toaster.success(response.message);
+//             this.router.navigate(['/job-list']);
+//           } else {
+//             console.error(response.message);
+//           }
+//         },
+//         error: (error: any) => {
+//           this.loader.hide();
+//           window.scrollTo({ top: 0, behavior: 'smooth' });
+//         }
+//       });
+
+//     } else {
+      
+//       this.jobForm.markAllAsTouched();
+//       this.loader.hide();
+//     }
+//   }
+
+onSubmit(): void {
+  if (this.jobForm.valid) {
+  //  this.sanitizeFormValues();
+    const formValues = this.jobForm.value;
+// console.log(formValues,"FORRMMMM");
+    // Format dates as needed
+    if (formValues.deadline) {
       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
     }
 
-
-    // if (formValues.posted_date) {
-    //   formValues.posted_date = this.formatDateToUTCMidnight(formValues.posted_date);
-    // }
-     if (formValues.posted_date) {
-      formValues.posted_date = this.formatDateWithoutTimezoneShift(formValues.posted_date);
+  
+    // Only keep posted_at and posted_date if job_type_post is "Schedulelater"
+    if (formValues.job_type_post !== 'Schedulelater') {
+      formValues.posted_at = null;
+      formValues.posted_date = null;
     }
-      if (!formValues.id) {
-        delete formValues.id;
-      }
 
-      formValues.skills_required = JSON.stringify(formValues.skills_required);
-      this.loader.show();
+    if (!formValues.id) {
+      delete formValues.id;
+    }
 
-      this.adminService.createOrUpdateJobPosting(formValues).subscribe({
-        next: (response: any) => {
-          this.loader.hide();
-          if (response.statusCode === 200) {
-            this.toaster.success(response.message);
-            this.router.navigate(['/job-list']);
-          } else {
-            console.error(response.message);
-          }
-        },
-        error: (error: any) => {
-          this.loader.hide();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+    formValues.skills_required = JSON.stringify(formValues.skills_required);
+console.log(formValues,"AFTER FORRMMMM");
+    this.loader.show();
+
+    this.adminService.createOrUpdateJobPosting(formValues).subscribe({
+      next: (response: any) => {
+        this.loader.hide();
+        if (response.statusCode === 200) {
+          this.toaster.success(response.message);
+          this.router.navigate(['/job-list']);
+        } else {
+          console.error(response.message);
         }
-      });
-
-    } else {
-      // Mark all fields as touched to show validation errors
-      this.jobForm.markAllAsTouched();
-      this.loader.hide();
-    }
+      },
+      error: (error: any) => {
+        this.loader.hide();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  } else {
+    this.jobForm.markAllAsTouched();
+    this.loader.hide();
   }
+}
+
   formatDateWithoutTimezoneShift(dateInput: string | Date): string {
   const date = new Date(dateInput);
 
@@ -502,8 +559,10 @@ formatSalary(controlName: string): void {
   sanitizeFormValues(): void {
     Object.keys(this.jobForm.controls).forEach(key => {
       const control = this.jobForm.get(key)
+      console.log(typeof(control?.value), key);
       if (control && typeof control.value === 'string') {
         control.setValue(control.value.trim())
+        console.log(control?.value, key);
       }
     })
   }
