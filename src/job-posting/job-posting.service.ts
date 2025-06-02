@@ -1,6 +1,13 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, LessThanOrEqual, MoreThan, Not, Repository } from 'typeorm';
+import {
+  Brackets,
+  Equal,
+  LessThanOrEqual,
+  MoreThan,
+  Not,
+  Repository,
+} from 'typeorm';
 import {
   JobOpeningStatus,
   JobPosting,
@@ -166,12 +173,12 @@ export class JobPostingService {
       //   relations: ['ranks'],
       // });
       const jobsToClose = await this.jobPostingRepository
-  .createQueryBuilder('job')
-  .leftJoinAndSelect('job.ranks', 'ranks')
-  .where('job.is_deleted = false')
-  .andWhere('job.job_opening = :open', { open: JobOpeningStatus.OPEN })
-  .andWhere('DATE(job.deadline) < CURDATE()') // ✅ only closes after full deadline day
-  .getMany();
+        .createQueryBuilder('job')
+        .leftJoinAndSelect('job.ranks', 'ranks')
+        .where('job.is_deleted = false')
+        .andWhere('job.job_opening = :open', { open: JobOpeningStatus.OPEN })
+        .andWhere('DATE(job.deadline) < CURDATE()') // ✅ only closes after full deadline day
+        .getMany();
 
       console.log('jobsToClose---------------', jobsToClose);
 
@@ -236,24 +243,23 @@ export class JobPostingService {
         jobDto.job_opening = JobOpeningStatus.HOLD;
         jobDto.isActive = false;
 
-         if (jobDto.posted_date) {
-    const scheduledDate = new Date(jobDto.posted_date);
-    const deadlineDate = new Date(jobDto.deadline);
+        if (jobDto.posted_date) {
+          const scheduledDate = new Date(jobDto.posted_date);
+          const deadlineDate = new Date(jobDto.deadline);
 
-    // Compare only dates (year, month, day), ignoring time
-    const scheduledDateOnly = scheduledDate.toISOString().split('T')[0];
-    const deadlineDateOnly = deadlineDate.toISOString().split('T')[0];
+          // Compare only dates (year, month, day), ignoring time
+          const scheduledDateOnly = scheduledDate.toISOString().split('T')[0];
+          const deadlineDateOnly = deadlineDate.toISOString().split('T')[0];
 
-    if (deadlineDateOnly < scheduledDateOnly) {
-      return WriteResponse(
-        400,
-        false,
-        'Deadline must be greater than the posted date.'
-      );
-    }
-  }
+          if (deadlineDateOnly < scheduledDateOnly) {
+            return WriteResponse(
+              400,
+              false,
+              'Deadline must be greater than the posted date.',
+            );
+          }
+        }
       }
-
 
       // if (jobDto.deadline) {
       //   const deadlineDate = new Date(jobDto.deadline);
@@ -459,7 +465,8 @@ export class JobPostingService {
       }
 
       if (rank_name) {
-        lwhereClause += ` AND ranks.rank_name LIKE '%${rank_name.value}%'`;
+        const escapedRankName = String(rank_name.value).replace(/'/g, "''");
+        lwhereClause += ` AND ranks.rank_name LIKE '%${escapedRankName}%'`;
       }
 
       if (startDate && endDate) {
@@ -488,22 +495,27 @@ export class JobPostingService {
         lwhereClause += ` AND f.salary <= ${endSalary}`;
       }
 
-      // Handle dynamic search across all fields, including salary
       const allValue = whereClause.find((p) => p.key === 'all')?.value;
 
       if (allValue) {
-        const conditions = fieldsToSearch
+        const escapedAll = String(allValue).replace(/'/g, "''");
+        const matchPattern = `%${escapedAll}%`;
+
+        // Add ranks.rank_name explicitly here, separate from fieldsToSearch
+        const allFields = [...fieldsToSearch, 'ranks.rank_name'];
+
+        const conditions = allFields
           .map((field) => {
-            const matchPattern = `${allValue}%`; // start-to-end match
-            const matchPatterns = `%${allValue}%`; // start-to-end match
             if (
               field === 'salary' ||
               field === 'start_salary' ||
               field === 'end_salary'
             ) {
               return `CAST(f.${field} AS CHAR) LIKE '${matchPattern}'`;
+            } else if (field === 'ranks.rank_name') {
+              return `ranks.rank_name LIKE '${matchPattern}'`;
             } else {
-              return `f.${field} LIKE '${matchPatterns}'`;
+              return `f.${field} LIKE '${matchPattern}'`;
             }
           })
           .join(' OR ');
@@ -564,6 +576,239 @@ export class JobPostingService {
       return WriteResponse(500, {}, 'something went wrong');
     }
   }
+  //   async paginateJobPostings(req, pagination: IPagination) {
+  //   try {
+  //     let { curPage, perPage, direction, whereClause, sortBy } = pagination;
+  //     let skip = (curPage - 1) * perPage;
+
+  //     // Defaults
+  //     sortBy = sortBy || 'created_at';
+  //     direction = direction || 'DESC';
+
+  //     const fieldsToSearch = [
+  //       'job_type', 'rank', 'vessel_type', 'title', 'short_description', 'full_description',
+  //       'country_code', 'employer', 'salary', 'start_salary', 'end_salary', 'job_type_post',
+  //       'jobpost_status', 'job_opening',
+  //     ];
+
+  //     const queryBuilder = this.jobPostingRepository.createQueryBuilder('f')
+  //       .leftJoin(
+  //         (qb) =>
+  //           qb
+  //             .select('a.job_id', 'job_id')
+  //             .addSelect('COUNT(a.id)', 'application_number')
+  //             .from('applications', 'a')
+  //             .groupBy('a.job_id'),
+  //         'app_counts',
+  //         'app_counts.job_id = f.id',
+  //       )
+  //       .addSelect('COALESCE(app_counts.application_number, 0)', 'application_number')
+  //       .leftJoinAndSelect('f.ranks', 'ranks')
+  //       .where('f.is_deleted = false');
+
+  //     // Helper to find filter by key
+  //     const findFilter = (key: string) =>
+  //       whereClause.find(p => p.key === key && p.value !== undefined && p.value !== null);
+
+  //     // Apply filters per field using QueryBuilder safely
+
+  //     // Apply filters for fieldsToSearch except 'rank' (rank handled as ranks.rank_name)
+  //     for (const field of fieldsToSearch) {
+  //       if (field === 'rank') continue;
+
+  //       const filters = whereClause.filter(p => p.key === field);
+  //       if (filters.length > 0) {
+  //         queryBuilder.andWhere(new Brackets(qb => {
+  //           filters.forEach((filter, idx) => {
+  //             qb.orWhere(`f.${field} LIKE :${field}${idx}`, { [`${field}${idx}`]: `%${filter.value}%` });
+  //           });
+  //         }));
+  //       }
+  //     }
+
+  //     // Handle isActive filter
+  //     const isActiveObj = findFilter('isActive');
+  //     if (typeof isActiveObj?.value === 'boolean') {
+  //       queryBuilder.andWhere('f.isActive = :isActive', { isActive: isActiveObj.value });
+  //     }
+
+  //     // Handle skills_required array filter
+  //     const skills_required = findFilter('skills_required');
+  //     if (skills_required && Array.isArray(skills_required.value)) {
+  //       queryBuilder.andWhere(new Brackets(qb => {
+  //         skills_required.value.forEach((skill, idx) => {
+  //           qb.orWhere(`f.skills_required LIKE :skill${idx}`, { [`skill${idx}`]: `%${skill}%` });
+  //         });
+  //       }));
+  //     }
+
+  //     // Handle rank_name filter on joined ranks table
+  //     const rank_name = findFilter('rank_name');
+  //     if (rank_name) {
+  //       queryBuilder.andWhere('ranks.rank_name LIKE :rankName', { rankName: `%${rank_name.value}%` });
+  //     }
+
+  //     // Handle date ranges
+  //     const startDateObj = findFilter('startDate');
+  //     const endDateObj = findFilter('endDate');
+  //     if (startDateObj && endDateObj) {
+  //       queryBuilder.andWhere('DATE(f.date_published) BETWEEN :startDate AND :endDate', {
+  //         startDate: startDateObj.value,
+  //         endDate: endDateObj.value,
+  //       });
+  //     } else if (startDateObj) {
+  //       queryBuilder.andWhere('DATE(f.date_published) >= :startDate', { startDate: startDateObj.value });
+  //     } else if (endDateObj) {
+  //       queryBuilder.andWhere('DATE(f.date_published) <= :endDate', { endDate: endDateObj.value });
+  //     }
+
+  //     // Salary range filters
+  //     const startSalaryObj = findFilter('start_salary');
+  //     const endSalaryObj = findFilter('end_salary');
+  //     if (startSalaryObj && endSalaryObj) {
+  //       queryBuilder.andWhere('f.salary BETWEEN :startSalary AND :endSalary', {
+  //         startSalary: startSalaryObj.value,
+  //         endSalary: endSalaryObj.value,
+  //       });
+  //     } else if (startSalaryObj) {
+  //       queryBuilder.andWhere('f.salary >= :startSalary', { startSalary: startSalaryObj.value });
+  //     } else if (endSalaryObj) {
+  //       queryBuilder.andWhere('f.salary <= :endSalary', { endSalary: endSalaryObj.value });
+  //     }
+
+  //     // Handle 'all' search filter across all fields + ranks.rank_name
+  //     const allValue = findFilter('all')?.value;
+  //     if (allValue) {
+  //       const allParam = `%${allValue}%`;
+  //       const searchFields = [...fieldsToSearch.filter(f => f !== 'rank'), 'ranks.rank_name'];
+
+  //       queryBuilder.andWhere(new Brackets(qb => {
+  //         searchFields.forEach(field => {
+  //           if (field === 'salary' || field === 'start_salary' || field === 'end_salary') {
+  //             qb.orWhere(`CAST(f.${field} AS CHAR) LIKE :allParam`);
+  //           } else if (field === 'ranks.rank_name') {
+  //             qb.orWhere(`ranks.rank_name LIKE :allParam`);
+  //           } else {
+  //             qb.orWhere(`f.${field} LIKE :allParam`);
+  //           }
+  //         });
+  //       })).setParameter('allParam', allParam);
+  //     }
+
+  //     // Pagination and sorting
+  //     queryBuilder
+  //       .orderBy(`f.${sortBy}`, direction.toUpperCase() as 'ASC' | 'DESC')
+  //       .skip(skip)
+  //       .take(perPage);
+
+  //     // Execute queries
+  //     const [entities, raw] = await Promise.all([
+  //       queryBuilder.getMany(),
+  //       queryBuilder.getRawMany(),
+  //     ]);
+
+  //     // Map application_number
+  //     const finalData = entities.map(job => {
+  //       const rawItem = raw.find(r => r.f_id === job.id);
+  //       try { job.skills_required = JSON.parse(job.skills_required); } catch {}
+  //       if (typeof job.social_media_type === 'string') {
+  //         try { job.social_media_type = JSON.parse(job.social_media_type); } catch {}
+  //       }
+  //       return {
+  //         ...job,
+  //         application_number: parseInt(rawItem?.application_number || '0'),
+  //       };
+  //     });
+
+  //     // Total count query (same filters)
+  //     const countQueryBuilder = this.jobPostingRepository.createQueryBuilder('f')
+  //       .leftJoin('f.ranks', 'ranks')
+  //       .where('f.is_deleted = false');
+
+  //     // Repeat filters on countQueryBuilder
+  //     for (const filter of whereClause) {
+  //       if (!filter.key || filter.value === undefined || filter.key === 'all') continue;
+
+  //       switch (filter.key) {
+  //         case 'isActive':
+  //           countQueryBuilder.andWhere('f.isActive = :isActive', { isActive: filter.value });
+  //           break;
+  //         case 'skills_required':
+  //           if (Array.isArray(filter.value) && filter.value.length) {
+  //             countQueryBuilder.andWhere(new Brackets(qb => {
+  //               filter.value.forEach((skill, idx) => {
+  //                 qb.orWhere(`f.skills_required LIKE :skill${idx}`, { [`skill${idx}`]: `%${skill}%` });
+  //               });
+  //             }));
+  //           }
+  //           break;
+  //         case 'rank_name':
+  //           countQueryBuilder.andWhere('ranks.rank_name LIKE :rankName', { rankName: `%${filter.value}%` });
+  //           break;
+  //         case 'startDate':
+  //         case 'endDate':
+  //         case 'start_salary':
+  //         case 'end_salary':
+  //           break; // handled later
+  //         default:
+  //           if (typeof filter.value === 'string') {
+  //             countQueryBuilder.andWhere(`f.${filter.key} LIKE :${filter.key}`, { [filter.key]: `%${filter.value}%` });
+  //           } else {
+  //             countQueryBuilder.andWhere(`f.${filter.key} = :${filter.key}`, { [filter.key]: filter.value });
+  //           }
+  //       }
+  //     }
+
+  //     // Handle date range on count query
+  //     if (findFilter('startDate') && findFilter('endDate')) {
+  //       countQueryBuilder.andWhere('DATE(f.date_published) BETWEEN :startDate AND :endDate', {
+  //         startDate: findFilter('startDate').value,
+  //         endDate: findFilter('endDate').value,
+  //       });
+  //     } else if (findFilter('startDate')) {
+  //       countQueryBuilder.andWhere('DATE(f.date_published) >= :startDate', { startDate: findFilter('startDate').value });
+  //     } else if (findFilter('endDate')) {
+  //       countQueryBuilder.andWhere('DATE(f.date_published) <= :endDate', { endDate: findFilter('endDate').value });
+  //     }
+
+  //     // Salary range on count query
+  //     if (findFilter('start_salary') && findFilter('end_salary')) {
+  //       countQueryBuilder.andWhere('f.salary BETWEEN :startSalary AND :endSalary', {
+  //         startSalary: findFilter('start_salary').value,
+  //         endSalary: findFilter('end_salary').value,
+  //       });
+  //     } else if (findFilter('start_salary')) {
+  //       countQueryBuilder.andWhere('f.salary >= :startSalary', { startSalary: findFilter('start_salary').value });
+  //     } else if (findFilter('end_salary')) {
+  //       countQueryBuilder.andWhere('f.salary <= :endSalary', { endSalary: findFilter('end_salary').value });
+  //     }
+
+  //     // 'all' filter on count query
+  //     if (allValue) {
+  //       const allParam = `%${allValue}%`;
+  //       const searchFields = [...fieldsToSearch.filter(f => f !== 'rank'), 'ranks.rank_name'];
+  //       countQueryBuilder.andWhere(new Brackets(qb => {
+  //         searchFields.forEach(field => {
+  //           if (field === 'salary' || field === 'start_salary' || field === 'end_salary') {
+  //             qb.orWhere(`CAST(f.${field} AS CHAR) LIKE :allParam`);
+  //           } else if (field === 'ranks.rank_name') {
+  //             qb.orWhere(`ranks.rank_name LIKE :allParam`);
+  //           } else {
+  //             qb.orWhere(`f.${field} LIKE :allParam`);
+  //           }
+  //         });
+  //       })).setParameter('allParam', allParam);
+  //     }
+
+  //     const totalCount = await countQueryBuilder.getCount();
+
+  //     return paginateResponse(finalData, totalCount);
+
+  //   } catch (error) {
+  //     console.error('Error fetching job postings:', error);
+  //     return WriteResponse(500, {}, 'something went wrong');
+  //   }
+  // }
 
   async findAll() {
     try {
@@ -653,7 +898,7 @@ export class JobPostingService {
       if (!jobPosting) {
         return WriteResponse(404, {}, 'Record not found.');
       }
-     
+
       if (jobPosting.jobpost_status === JobPostStatus.DRAFT) {
         return WriteResponse(
           400,
