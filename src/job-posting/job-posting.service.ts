@@ -441,7 +441,7 @@ export class JobPostingService {
 
       // ✅ Handle isActive filter separately
       const isActiveObj = whereClause.find(
-        (p: any) => p.key === 'isActive' && p.value,
+        (p: any) => p.key === 'isActive'
       );
 
       if (typeof isActiveObj?.value === 'boolean') {
