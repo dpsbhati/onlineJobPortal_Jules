@@ -428,7 +428,7 @@ onPagination(): void {
           data.Offers_Received_Shortlisted || 0,
           data.Applications_Rejected || 0,
         ];
-        this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
+        this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected '];
       } else {
         // Reset all data if API response invalid or empty
         this.productcard = [];
@@ -438,7 +438,7 @@ onPagination(): void {
           xaxis: { ...this.salesChart.xaxis, categories: [] },
         };
         this.ourvisitorChart.series = [0, 0, 0];
-        this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
+        this.ourvisitorChart.labels = [' Applied', 'Shortlisted ', 'Rejected'];
       }
     },
     error: (err: any) => {
