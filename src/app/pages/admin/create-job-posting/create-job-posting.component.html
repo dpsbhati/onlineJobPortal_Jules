@@ -133,7 +133,7 @@
         <!-- Deadline -->
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Deadline</mat-label>
-          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline">
+          <input matInput [matDatepicker]="deadlinePicker" id="deadline" formControlName="deadline"  readonly>
           <mat-datepicker-toggle matSuffix [for]="deadlinePicker"></mat-datepicker-toggle>
           <mat-datepicker #deadlinePicker></mat-datepicker>
           <mat-error *ngIf="jobForm.get('deadline')?.invalid && jobForm.get('deadline')?.touched">
@@ -321,7 +321,7 @@
           <mat-label>Job Description</mat-label>
           <textarea matInput id="short_description" formControlName="short_description" rows="6"></textarea>
           <mat-error *ngIf="jobForm.get('short_description')?.invalid && jobForm.get('short_description')?.touched">
-            <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Job description is required.</span>
+            <span *ngIf="jobForm.get('short_description')?.errors?.['required']">Job Description is required.</span>
             <span *ngIf="jobForm.get('short_description')?.errors?.['minlength']">
                Description must be at least {{
               jobForm.get('short_description')?.errors?.['minlength'].requiredLength }} characters.
@@ -332,7 +332,7 @@
               }} characters.
             </span>
             <span *ngIf="jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces']">
-              Job description must be at least {{
+              Job Description must be at least {{
               jobForm.get('short_description')?.errors?.['minLengthWithoutSpaces'].requiredLength }} characters
               excluding spaces.
             </span>
