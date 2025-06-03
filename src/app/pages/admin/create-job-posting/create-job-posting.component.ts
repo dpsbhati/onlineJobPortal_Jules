@@ -212,16 +212,16 @@ deadlineAfterPostedDateValidator(postedDateControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const deadline = control.value;
     if (!deadline) return null;
- 
+
     const postedDate = control.parent?.get(postedDateControlName)?.value;
     if (!postedDate) return null;
- 
+
     const deadlineDate = new Date(deadline);
     deadlineDate.setHours(0, 0, 0, 0);
- 
+
     const posted = new Date(postedDate);
     posted.setHours(0, 0, 0, 0);
- 
+
     return deadlineDate < posted ? { deadlineBeforePostedDate: true } : null;
   };
 }
@@ -884,6 +884,7 @@ console.log('before compressed',file)
       this.imagePreview = reader.result;
     };
     reader.readAsDataURL(file);
+    this.loader.show();
 
     // Continue with compression & upload logic as before...
     this.imageCompressionService
@@ -901,6 +902,7 @@ console.log('before compressed',file)
               (response: any) => {
                 if (response.statusCode === 200) {
                   this.jobForm.patchValue({ [controlName]: response.data.path });
+                  this.loader.hide();
                 } else {
                   this.toaster.error('Error uploading image.');
                   console.error(response.message);
