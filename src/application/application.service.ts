@@ -684,6 +684,7 @@ export class ApplicationService {
         'user.email',
         'userProfile.first_name',
         'userProfile.last_name',
+        'ranks.rank_name',
       ];
 
       // Specific field filters
@@ -754,10 +755,12 @@ export class ApplicationService {
           // Add full name concatenation match
           lwhereClause += ` AND (CONCAT(userProfile.first_name, ' ', userProfile.last_name) LIKE :full_name_search OR ${allSearchConditions})`;
 
-          parameters['full_name_search'] = `%${allValues}%`;
+          const escapedAllValues = String(allValues).replace(/'/g, "''");
+
+          parameters['full_name_search'] = `%${escapedAllValues}%`;
 
           fieldsToSearch.forEach((_, idx) => {
-            parameters[`all_search_${idx}`] = `%${allValues}%`;
+            parameters[`all_search_${idx}`] = `%${escapedAllValues}%`;
           });
         }
         // ✅ ALL JOB POST SEARCH - job fields only
