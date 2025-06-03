@@ -681,6 +681,7 @@ export class ApplicationService {
         'app.additional_info', // ✅ Fully qualified
         'app.certification_path',
         'job.title',
+        'job.vessel_type',
         'user.email',
         'userProfile.first_name',
         'userProfile.last_name',
@@ -755,12 +756,10 @@ export class ApplicationService {
           // Add full name concatenation match
           lwhereClause += ` AND (CONCAT(userProfile.first_name, ' ', userProfile.last_name) LIKE :full_name_search OR ${allSearchConditions})`;
 
-          const escapedAllValues = String(allValues).replace(/'/g, "''");
-
-          parameters['full_name_search'] = `%${escapedAllValues}%`;
+          parameters['full_name_search'] = `%${allValues}%`;
 
           fieldsToSearch.forEach((_, idx) => {
-            parameters[`all_search_${idx}`] = `%${escapedAllValues}%`;
+            parameters[`all_search_${idx}`] = `%${allValues}%`;
           });
         }
         // ✅ ALL JOB POST SEARCH - job fields only
