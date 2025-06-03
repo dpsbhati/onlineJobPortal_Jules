@@ -125,53 +125,27 @@ deleteJobMessage = '';
     return this.userRole.toLowerCase() === UserRole.ADMIN.toLowerCase();
   }
 
-  // onPagination(): void {
-  //   this.loader.show();
-  //   this.pageConfig.whereClause = this.helperService.getAllFilters(
-  //     this.filters
-  //   );
-  //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
-  //     next: (res: any) => {
-  //       if (res.statusCode === 200) {
-  //         this.jobPostingList = res.data.map((job: any) => ({
-  //           ...job,
-  //           rank: job.ranks?.rank_name || '-',
-  //         }));
-
-  //         this.total = res.count || 0;
-  //         this.loader.hide();
-  //       } else {
-  //         this.jobPostingList = [];
-  //         this.total = 0;
-  //         this.loader.hide();
-  //       }
-  //       this.isLoading = false;
-  //     },
-  //     error: (err: any) => {
-  //       this.isLoading = false;
-  //       this.loader.hide();
-  //       this.toastr.error(err?.error?.message);
-  //       this.jobPostingList = [];
-  //       this.total = 0;
-  //     },
-  //   });
-  // }
-
-//   onPagination(): void {
+  
+// onPagination(): void {
 //   this.loader.show();
-
 
 //   const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
 
-//   const fixedFilter = {
+//   const activeFilter = {
 //     key: 'job_opening',
 //     value: 'Active',
-//     operator: '=',
+//     operator: '='
+//   };
+
+//   const holdFilter = {
+//     key: 'job_opening',
+//     value: 'Hold',
+//     operator: '='
 //   };
 
 
-//   this.pageConfig.whereClause = [...dynamicFilters, fixedFilter];
+//   this.pageConfig.whereClause = [...dynamicFilters, activeFilter, holdFilter];
 
 //   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
 //     next: (res: any) => {
@@ -181,43 +155,50 @@ deleteJobMessage = '';
 //           rank: job.ranks?.rank_name || '-',
 //         }));
 //         this.total = res.count || 0;
-//         this.loader.hide();
 //       } else {
 //         this.jobPostingList = [];
 //         this.total = 0;
-//         this.loader.hide();
 //       }
+//       this.loader.hide();
 //       this.isLoading = false;
 //     },
 //     error: (err: any) => {
-//       this.isLoading = false;
 //       this.loader.hide();
+//       this.isLoading = false;
 //       this.toastr.error(err?.error?.message);
 //       this.jobPostingList = [];
 //       this.total = 0;
 //     },
 //   });
 // }
+
 onPagination(): void {
   this.loader.show();
 
   const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
-  // ✅ Add 2 separate job_opening filters
-  const activeFilter = {
-    key: 'job_opening',
-    value: 'Active',
-    operator: '='
-  };
+  const statusFilterValue = this.filters.job_opening?.trim();
 
-  const holdFilter = {
-    key: 'job_opening',
-    value: 'Hold',
-    operator: '='
-  };
+  // Initialize whereClause with dynamic filters (all except job_opening)
+  let whereClause = [...dynamicFilters.filter(f => f.key !== 'job_opening')];
 
-  // Combine all filters
-  this.pageConfig.whereClause = [...dynamicFilters, activeFilter, holdFilter];
+  // Add job_opening filter based on status filter selection
+  if (!statusFilterValue) {
+    // No status filter selected, so add both Active and Hold filters
+    whereClause.push(
+      { key: 'job_opening', value: 'Active', operator: '=' },
+      { key: 'job_opening', value: 'Hold', operator: '=' }
+    );
+  } else if (statusFilterValue.toLowerCase() === 'active') {
+    whereClause.push({ key: 'job_opening', value: 'Active', operator: '=' });
+  } else if (statusFilterValue.toLowerCase() === 'close' || statusFilterValue.toLowerCase() === 'hold') {
+    whereClause.push({ key: 'job_opening', value: 'Hold', operator: '=' });
+  } else {
+    // If other status filter, just add as is
+    whereClause.push({ key: 'job_opening', value: statusFilterValue, operator: '=' });
+  }
+
+  this.pageConfig.whereClause = whereClause;
 
   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
     next: (res: any) => {
@@ -243,7 +224,6 @@ onPagination(): void {
     },
   });
 }
-
 
 
   onPageChange(event: any): void {
