@@ -310,155 +310,7 @@ export class StarterComponent {
     this.onPagination();
   }
 
-  //  onPagination(): void {
-  //   this.isLoading = true;
-  //   this.adminService.jobOverview(this.pageConfig).subscribe({
-  //     next: (res: any) => {
-  //       this.isLoading = false;
 
-  //       if (res.statusCode === 200 && res.data) {
-  //         const data = res.data;
-
-         
-  //         this.joboverviewlist = data.Job_Application_Overview || [];
-  //         this.total = res.count || 0;
-
-      
-  //         this.productcard = [
-  //           {
-  //             id: 1,
-  //             color: 'mat-primary',
-  //             title: data.Total_Open_Jobs?.toString() || '0',
-  //             subtitle: 'Total Open Jobs',
-  //             value: data.Total_Open_Jobs || 0,
-  //           },
-  //           {
-  //             id: 2,
-  //             color: 'mat-secondary',
-  //             title: data.Jobs_Applied?.toString() || '0',
-  //             subtitle: 'Jobs Applied',
-  //             value: data.Jobs_Applied || 0,
-  //           },
-  //           {
-  //             id: 3,
-  //             color: 'mat-success',
-  //             title: data.Applications_in_Review_Pending?.toString() || '0',
-  //             subtitle: 'Applications in Review',
-  //             value: data.Applications_in_Review_Pending || 0,
-  //           },
-  //           {
-  //             id: 4,
-  //             color: 'mat-warn',
-  //             title:
-  //               (data.Job_Application_Overview &&
-  //                 data.Job_Application_Overview[0]?.Offers_Received_Shortlisted
-  //                   ?.toString()) ||
-  //               '0',
-  //             subtitle: 'Offers Received',
-  //             value:
-  //               data.Job_Application_Overview &&
-  //               data.Job_Application_Overview[0]?.Offers_Received_Shortlisted
-  //                 ? data.Job_Application_Overview[0].Offers_Received_Shortlisted
-  //                 : 0,
-  //           },
-  //         ];
-  //       } else {
-       
-  //         this.joboverviewlist = [];
-  //         this.total = 0;
-  //         this.productcard = [];
-  //       }
-  //     },
-  //     error: (err: any) => {
-  //       this.isLoading = false;
-  //       this.toastr.error(err?.error?.message || 'Something went wrong');
-  //       this.joboverviewlist = [];
-  //       this.total = 0;
-  //       this.productcard = [];
-  //     },
-  //   });
-  // }
-
-
-//   onPagination(): void {
-//   this.isLoading = true;
-//   this.adminService.jobOverview(this.pageConfig).subscribe({
-//     next: (res: any) => {
-//       this.isLoading = false;
-
-//       if (res.statusCode === 200 && res.data) {
-//         const data = res.data;
-
-
-//         this.joboverviewlist = data.Job_Application_Overview || [];
-//         this.total = res.count || 0;
-
-//         this.productcard = [
-//           {
-//             id: 1,
-//             color: 'mat-primary',
-//             title: data.Total_Open_Jobs?.toString() || '0',
-//             subtitle: 'Total Open Jobs',
-//             value: data.Total_Open_Jobs || 0,
-//           },
-//           {
-//             id: 2,
-//             color: 'mat-secondary',
-//             title: data.Jobs_Applied?.toString() || '0',
-//             subtitle: 'Jobs Applied',
-//             value: data.Jobs_Applied || 0,
-//           },
-//           {
-//             id: 3,
-//             color: 'mat-success',
-//             title: data.Applications_in_Review_Pending?.toString() || '0',
-//             subtitle: 'Applications in Review',
-//             value: data.Applications_in_Review_Pending || 0,
-//           },
-//           {
-//             id: 4,
-//             color: 'mat-warn',
-//             title:
-//               (
-//                 data.Offers_Received_Shortlisted
-//                   ?.toString()) ||
-//               '0',
-//             subtitle: 'Offers Received',
-//             value:
-             
-//               data.Offers_Received_Shortlisted
-//                 ? data.Offers_Received_Shortlisted
-//                 : 0,
-//           },
-//         ];
-
-  
-//          this.ourvisitorChart.series = [
-//           data.Jobs_Applied || 0,
-//           data.Offers_Received_Shortlisted || 0,
-//           data.Applications_Rejected || 0,
-//         ];
-//         this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
-//       } else {
-     
-//         this.joboverviewlist = [];
-//         this.total = 0;
-//         this.productcard = [];
-//         this.ourvisitorChart.series = [0, 0, 0];
-//         this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
-//       }
-//     },
-//     error: (err: any) => {
-//       this.isLoading = false;
-//       this.toastr.error(err?.error?.message || 'Something went wrong');
-//       this.joboverviewlist = [];
-//       this.total = 0;
-//       this.productcard = [];
-//       this.ourvisitorChart.series = [0, 0, 0];
-//       this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
-//     },
-//   });
-// }
 onPagination(): void {
   this.isLoading = true;
   this.adminService.jobOverview(this.pageConfig).subscribe({
@@ -468,7 +320,7 @@ onPagination(): void {
       if (res.statusCode === 200 && res.data) {
         const data = res.data;
 
-        // --- Existing productcard logic (you can keep it) ---
+        // Update product cards with counts from API
         this.productcard = [
           {
             id: 1,
@@ -494,37 +346,80 @@ onPagination(): void {
           {
             id: 4,
             color: 'mat-warn',
-            title:
-              data.Offers_Received_Shortlisted?.toString() || '0',
+            title: data.Offers_Received_Shortlisted?.toString() || '0',
             subtitle: 'Offers Received',
             value: data.Offers_Received_Shortlisted || 0,
           },
         ];
 
-        // --- Dynamic Job Application Overview Chart ---
+        // Extract last 7 days overview data
         const last7Days = data.Last_7_Days_Overview?.data || [];
 
-        // Extract days and data dynamically from API response
-        const categories = last7Days.map((item: any) => item.day); // e.g., ['Wed', 'Thu', 'Fri', ...]
+        // Prepare x-axis categories (days) and series data arrays
+        const categories = last7Days.map((item: any) => item.day); // e.g. ['Wed', 'Thu', 'Fri', ...]
         const appliedData = last7Days.map((item: any) => item.Applied || 0);
         const shortlistedData = last7Days.map((item: any) => item.Shortlisted || 0);
 
-        this.salesChart.series = [
-          {
-            name: 'Applied',
-            data: appliedData,
-            color: 'var(--mat-sys-primary)',
+        // Replace entire salesChart object to trigger proper update in ApexCharts
+        this.salesChart = {
+          series: [
+            {
+              name: 'Applied',
+              data: appliedData,
+              color: 'var(--mat-sys-primary)',
+            },
+            {
+              name: 'Shortlisted',
+              data: shortlistedData,
+              color: 'var(--mat-sys-secondary)',
+            },
+          ],
+          chart: {
+            fontFamily: 'inherit',
+            type: 'bar',
+            height: 330,
+            foreColor: '#adb0bb',
+            offsetY: 10,
+            offsetX: -15,
+            toolbar: { show: false },
           },
-          {
-            name: 'Shortlisted',
-            data: shortlistedData,
-            color: 'var(--mat-sys-secondary)',
+          grid: {
+            show: true,
+            strokeDashArray: 3,
+            borderColor: 'rgba(0,0,0,.1)',
           },
-        ];
+          plotOptions: {
+            bar: {
+              horizontal: false,
+              columnWidth: '30%',
+              endingShape: 'flat',
+              borderRadius: 4,
+            },
+          },
+          dataLabels: { enabled: false },
+          stroke: { show: true, width: 5, colors: ['transparent'] },
+          xaxis: {
+            type: 'category',
+            categories: categories,
+            axisTicks: { show: false },
+            axisBorder: { show: false },
+            labels: { style: { colors: '#a1aab2' } },
+          },
+          yaxis: { labels: { style: { colors: '#a1aab2' } } },
+          fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
+          tooltip: { theme: 'dark' },
+          legend: { show: false },
+          responsive: [
+            {
+              breakpoint: 767,
+              options: {
+                stroke: { show: false, width: 5, colors: ['transparent'] },
+              },
+            },
+          ],
+        };
 
-        this.salesChart.xaxis.categories = categories;
-
-        // --- Update the visitor chart as you already do ---
+        // Update visitor donut chart data
         this.ourvisitorChart.series = [
           data.Jobs_Applied || 0,
           data.Offers_Received_Shortlisted || 0,
@@ -532,10 +427,13 @@ onPagination(): void {
         ];
         this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
       } else {
-        // Reset if no valid response
+        // Reset all data if API response invalid or empty
         this.productcard = [];
-        this.salesChart.series = [];
-        this.salesChart.xaxis.categories = [];
+        this.salesChart = {
+          ...this.salesChart,
+          series: [],
+          xaxis: { ...this.salesChart.xaxis, categories: [] },
+        };
         this.ourvisitorChart.series = [0, 0, 0];
         this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
       }
@@ -543,9 +441,14 @@ onPagination(): void {
     error: (err: any) => {
       this.isLoading = false;
       this.toastr.error(err?.error?.message || 'Something went wrong');
+
+      // Reset on error
       this.productcard = [];
-      this.salesChart.series = [];
-      this.salesChart.xaxis.categories = [];
+      this.salesChart = {
+        ...this.salesChart,
+        series: [],
+        xaxis: { ...this.salesChart.xaxis, categories: [] },
+      };
       this.ourvisitorChart.series = [0, 0, 0];
       this.ourvisitorChart.labels = ['Jobs Applied', 'Offers Received', 'Applications Rejected'];
     },
