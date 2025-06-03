@@ -312,10 +312,13 @@ export class StarterComponent {
 
 
 onPagination(): void {
-  this.isLoading = true;
+    this.loader.show();
+  // this.isLoading = true;
+
   this.adminService.jobOverview(this.pageConfig).subscribe({
     next: (res: any) => {
-      this.isLoading = false;
+         this.loader.hide();
+      // this.isLoading = false;
 
       if (res.statusCode === 200 && res.data) {
         const data = res.data;
@@ -439,7 +442,8 @@ onPagination(): void {
       }
     },
     error: (err: any) => {
-      this.isLoading = false;
+      this.loader.hide()
+      // this.isLoading = false;
       this.toastr.error(err?.error?.message || 'Something went wrong');
 
       // Reset on error
