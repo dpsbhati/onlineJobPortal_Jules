@@ -172,32 +172,86 @@ deleteJobMessage = '';
 //   });
 // }
 
+// onPagination(): void {
+//   this.loader.show();
+
+//   const dynamicFilters = this.helperService.getAllFilters(this.filters);
+
+//   const statusFilterValue = this.filters.job_opening?.trim();
+
+  
+//   let whereClause = [...dynamicFilters.filter(f => f.key !== 'job_opening')];
+
+
+//   if (!statusFilterValue) {
+  
+//     whereClause.push(
+//       { key: 'job_opening', value: 'Active', operator: '=' },
+//       { key: 'job_opening', value: 'Hold', operator: '=' }
+//     );
+//   } else if (statusFilterValue.toLowerCase() === 'active') {
+//     whereClause.push({ key: 'job_opening', value: 'Active', operator: '=' });
+//   } else if (statusFilterValue.toLowerCase() === 'close' || statusFilterValue.toLowerCase() === 'hold') {
+//     whereClause.push({ key: 'job_opening', value: 'Hold', operator: '=' });
+//   } else {
+   
+//     whereClause.push({ key: 'job_opening', value: statusFilterValue, operator: '=' });
+//   }
+
+//   this.pageConfig.whereClause = whereClause;
+
+//   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
+//     next: (res: any) => {
+//       if (res.statusCode === 200) {
+//         this.jobPostingList = res.data.map((job: any) => ({
+//           ...job,
+//           rank: job.ranks?.rank_name || '-',
+//         }));
+//         this.total = res.count || 0;
+//       } else {
+//         this.jobPostingList = [];
+//         this.total = 0;
+//       }
+//       this.loader.hide();
+//       this.isLoading = false;
+//     },
+//     error: (err: any) => {
+//       this.loader.hide();
+//       this.isLoading = false;
+//       this.toastr.error(err?.error?.message);
+//       this.jobPostingList = [];
+//       this.total = 0;
+//     },
+//   });
+// }
 onPagination(): void {
   this.loader.show();
 
   const dynamicFilters = this.helperService.getAllFilters(this.filters);
 
-  const statusFilterValue = this.filters.job_opening?.trim();
+  const statusFilterValue = this.filters.job_opening?.trim()?.toLowerCase() || '';
 
-  // Initialize whereClause with dynamic filters (all except job_opening)
+  // Sab filters le lo but 'job_opening' filter hata do
   let whereClause = [...dynamicFilters.filter(f => f.key !== 'job_opening')];
 
-  // Add job_opening filter based on status filter selection
   if (!statusFilterValue) {
-    // No status filter selected, so add both Active and Hold filters
+    // Jab koi status select nahi, dono 'Active' aur 'Hold' add karo (aur isActive filter nahi)
     whereClause.push(
       { key: 'job_opening', value: 'Active', operator: '=' },
       { key: 'job_opening', value: 'Hold', operator: '=' }
     );
-  } else if (statusFilterValue.toLowerCase() === 'active') {
+  } else if (statusFilterValue === 'active') {
     whereClause.push({ key: 'job_opening', value: 'Active', operator: '=' });
-  } else if (statusFilterValue.toLowerCase() === 'close' || statusFilterValue.toLowerCase() === 'hold') {
+    whereClause.push({ key: 'isActive', value: true, operator: '=' });
+  } else if (statusFilterValue === 'close' || statusFilterValue === 'hold') {
     whereClause.push({ key: 'job_opening', value: 'Hold', operator: '=' });
+    whereClause.push({ key: 'isActive', value: false, operator: '=' });
   } else {
-    // If other status filter, just add as is
     whereClause.push({ key: 'job_opening', value: statusFilterValue, operator: '=' });
+    // agar kisi aur value hai to isActive filter na bhejein
   }
 
+  // Update pageConfig whereClause
   this.pageConfig.whereClause = whereClause;
 
   this.adminService.jobPostingPagination(this.pageConfig).subscribe({
