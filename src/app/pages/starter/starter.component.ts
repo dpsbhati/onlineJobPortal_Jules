@@ -86,6 +86,7 @@ export class StarterComponent {
   @ViewChild('chart2') chart2: ChartComponent = Object.create(null);
   public salesChart!: Partial<salesChart> | any;
   public ourvisitorChart!: Partial<ourvisitorChart> | any;
+  @ViewChild('salesChartRef') salesChartRef!: ChartComponent;
   joboverviewlist:any;
     total: number = 0;
      isLoading: boolean = false;
@@ -516,62 +517,76 @@ onPagination(): void {
         console.log('Applied Data:', appliedData);
         console.log('Shortlisted Data:', shortlistedData);
 
-        // ✅ Only assign chart if categories are available
-        if (categories.length > 0) {
-          this.salesChart = {
-            series: [
-              { name: 'Applied', data: appliedData, color: 'var(--mat-sys-primary)' },
-              { name: 'Shortlisted', data: shortlistedData, color: 'var(--mat-sys-secondary)' },
-            ],
-            chart: {
-              fontFamily: 'inherit',
-              type: 'bar',
-              height: 330,
-              foreColor: '#adb0bb',
-              offsetY: 10,
-              offsetX: -15,
-              toolbar: { show: false },
-            },
-            grid: {
-              show: true,
-              strokeDashArray: 3,
-              borderColor: 'rgba(0,0,0,.1)',
-            },
-            plotOptions: {
-              bar: {
-                horizontal: false,
-                columnWidth: '30%',
-                endingShape: 'flat',
-                borderRadius: 4,
-              },
-            },
-            dataLabels: { enabled: false },
-            stroke: { show: true, width: 5, colors: ['transparent'] },
-            xaxis: {
-              type: 'category',
-              categories: categories,
-              axisTicks: { show: false },
-              axisBorder: { show: false },
-              labels: { style: { colors: '#a1aab2' } },
-            },
-            yaxis: { labels: { style: { colors: '#a1aab2' } } },
-            fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
-            tooltip: { theme: 'dark' },
-            legend: { show: false },
-            responsive: [
-              {
-                breakpoint: 767,
-                options: {
-                  stroke: { show: false, width: 5, colors: ['transparent'] },
-                },
-              },
-            ],
-          };
-        } else {
+      
+        // if (categories.length > 0) {
+        //   this.salesChart = {
+        //     series: [
+        //       { name: 'Applied', data: appliedData, color: 'var(--mat-sys-primary)' },
+        //       { name: 'Shortlisted', data: shortlistedData, color: 'var(--mat-sys-secondary)' },
+        //     ],
+        //     chart: {
+        //       fontFamily: 'inherit',
+        //       type: 'bar',
+        //       height: 330,
+        //       foreColor: '#adb0bb',
+        //       offsetY: 10,
+        //       offsetX: -15,
+        //       toolbar: { show: false },
+        //     },
+        //     grid: {
+        //       show: true,
+        //       strokeDashArray: 3,
+        //       borderColor: 'rgba(0,0,0,.1)',
+        //     },
+        //     plotOptions: {
+        //       bar: {
+        //         horizontal: false,
+        //         columnWidth: '30%',
+        //         endingShape: 'flat',
+        //         borderRadius: 4,
+        //       },
+        //     },
+        //     dataLabels: { enabled: false },
+        //     stroke: { show: true, width: 5, colors: ['transparent'] },
+        //     xaxis: {
+        //       type: 'category',
+        //       categories: categories,
+        //       axisTicks: { show: false },
+        //       axisBorder: { show: false },
+        //       labels: { style: { colors: '#a1aab2' } },
+        //     },
+        //     yaxis: { labels: { style: { colors: '#a1aab2' } } },
+        //     fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
+        //     tooltip: { theme: 'dark' },
+        //     legend: { show: false },
+        //     responsive: [
+        //       {
+        //         breakpoint: 767,
+        //         options: {
+        //           stroke: { show: false, width: 5, colors: ['transparent'] },
+        //         },
+        //       },
+        //     ],
+        //   };
+        // } else {
         
-          this.salesChart = null;
+        //   this.salesChart = null;
+        // }
+if (this.salesChartRef) {
+          this.salesChartRef.updateOptions(
+            {
+              series: [
+                { name: 'Applied', data: appliedData },
+                { name: 'Shortlisted', data: shortlistedData },
+              ],
+              xaxis: {
+                categories: categories,
+              },
+            },
+            false,  // Do not redraw immediately (false = batched)
+            true    // Animate chart updates smoothly
+          );
         }
-
         // Update visitor chart
         this.ourvisitorChart.series = [
           data.Jobs_Applied || 0,
