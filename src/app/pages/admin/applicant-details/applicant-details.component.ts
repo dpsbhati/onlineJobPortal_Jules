@@ -277,10 +277,17 @@ formatPreferences(prefs: any): string {
     },
   });
 }
+  // extractFileName(cvPath: string): string {
+  //   const urlSegments = cvPath.split("\\"); // Split by the backslash
+  //   return urlSegments[urlSegments.length - 1]; // Get the last segment (filename)
+  // }
   extractFileName(cvPath: string): string {
-    const urlSegments = cvPath.split("\\"); // Split by the backslash
-    return urlSegments[urlSegments.length - 1]; // Get the last segment (filename)
+  if (!cvPath) {
+    return ''; // or any default string you'd prefer, such as 'No file'
   }
+  const urlSegments = cvPath.split("\\"); // Split by the backslash
+  return urlSegments[urlSegments.length - 1]; // Get the last segment (filename)
+}
 
   goBack(): void {
     // Get jobId from localStorage for back navigation
