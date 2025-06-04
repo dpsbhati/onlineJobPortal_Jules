@@ -148,39 +148,73 @@ export class JobPostingService {
         }
       }
 
+      // const jobsToReopen = await this.jobPostingRepository.find({
+      //   where: {
+      //     is_deleted: false,
+      //     job_opening: JobOpeningStatus.CLOSE,
+      //     deadline: MoreThan(currentDateTime),
+      //   },
+      // });
+      // for (const job of jobsToReopen) {
+      //   job.job_opening = JobOpeningStatus.OPEN;
+      //   job.isActive = true;
+      //   await this.jobPostingRepository.save(job);
+      //   this.logger.log(
+      //     `Reopened job with ID ${job.id} due to extended deadline.`,
+      //   );
+      // }
+      const now = new Date();
+
+      // Step 1: Find all CLOSED jobs (with deadlines)
       const jobsToReopen = await this.jobPostingRepository.find({
         where: {
           is_deleted: false,
           job_opening: JobOpeningStatus.CLOSE,
-          deadline: MoreThan(currentDateTime),
         },
       });
+
       for (const job of jobsToReopen) {
-        job.job_opening = JobOpeningStatus.OPEN;
-        job.isActive = true;
-        await this.jobPostingRepository.save(job);
-        this.logger.log(
-          `Reopened job with ID ${job.id} due to extended deadline.`,
-        );
+        if (job.deadline) {
+          const deadline = new Date(job.deadline);
+          const expirationTime = new Date(deadline);
+          expirationTime.setDate(deadline.getDate() + 1); // Deadline + 1 day
+          expirationTime.setHours(0, 0, 0, 0); // Set to 12:00 AM
+
+          // If current time is before expiration time, reopen the job
+          if (now < expirationTime) {
+            job.job_opening = JobOpeningStatus.OPEN;
+            job.isActive = true;
+
+            await this.jobPostingRepository.save(job);
+
+            this.logger.log(
+              `Reopened job with ID ${job.id} due to extended deadline.`,
+            );
+          }
+        }
       }
 
-      // const jobsToClose = await this.jobPostingRepository.find({
-      //   where: {
-      //     is_deleted: false,
-      //     job_opening: JobOpeningStatus.OPEN,
-      //     deadline: LessThanOrEqual(currentDateTime),
-      //   },
-      //   relations: ['ranks'],
-      // });
       const jobsToClose = await this.jobPostingRepository
         .createQueryBuilder('job')
         .leftJoinAndSelect('job.ranks', 'ranks')
         .where('job.is_deleted = false')
         .andWhere('job.job_opening = :open', { open: JobOpeningStatus.OPEN })
-        .andWhere('DATE(job.deadline) < CURDATE()') // ✅ only closes after full deadline day
+        // Close jobs jinki deadline date current date se chhoti ho
+        .andWhere('DATE(job.deadline) < CURDATE()')
         .getMany();
+      // const now = new Date();
+      // Filter jobs where deadline + 1 day <= now (i.e., job is overdue)
+      const expiredJobs = jobsToClose.filter((job) => {
+        if (job.deadline) {
+          const newdeadline = new Date(job.deadline);
+          const expirationTime = new Date(newdeadline);
+          expirationTime.setDate(newdeadline.getDate() + 1); // Add 1 day
+          expirationTime.setHours(0, 0, 0, 0); // Set to 12:00 AM next day
 
-      console.log('jobsToClose---------------', jobsToClose);
+          return now >= expirationTime;
+        }
+        return false;
+      });
 
       if (jobsToClose.length > 0) {
         const expiredJobs = [];
@@ -271,15 +305,24 @@ export class JobPostingService {
       //   jobDto.deadline = deadlineDate;
       // }
 
-      // Determine job type based on posted_date and posted_at
-      const isScheduled = !!(jobDto.posted_date && jobDto.posted_at);
+      // Combine posted_date and posted_at to Date object
+      let scheduledDateTime: Date | null = null;
+      if (jobDto.posted_date && jobDto.posted_at) {
+        scheduledDateTime = new Date(
+          `${jobDto.posted_date}T${jobDto.posted_at}:00`,
+        );
+      }
 
-      if (isScheduled) {
+      const now = new Date();
+
+      // If scheduled datetime is in the future, set draft and inactive
+      if (scheduledDateTime && scheduledDateTime > now) {
         jobDto.job_type_post = JobTypePost.SCHEDULE_LATER;
         jobDto.jobpost_status = JobPostStatus.DRAFT;
         jobDto.job_opening = JobOpeningStatus.HOLD;
         jobDto.isActive = false;
       } else {
+        // Else, if no scheduled datetime or datetime passed, mark posted and active
         jobDto.job_type_post = JobTypePost.POST_NOW;
         jobDto.jobpost_status = JobPostStatus.POSTED;
         jobDto.job_opening = JobOpeningStatus.OPEN;
@@ -440,9 +483,7 @@ export class JobPostingService {
       const endDate = endDateObj?.value;
 
       // ✅ Handle isActive filter separately
-      const isActiveObj = whereClause.find(
-        (p: any) => p.key === 'isActive'
-      );
+      const isActiveObj = whereClause.find((p: any) => p.key === 'isActive');
 
       if (typeof isActiveObj?.value === 'boolean') {
         lwhereClause += ` AND f.isActive = ${isActiveObj.value}`;
@@ -882,6 +923,54 @@ export class JobPostingService {
     return WriteResponse(200, true, 'Job posting deleted successfully.');
   }
 
+  // async toggleJobStatus(query) {
+  //   try {
+  //     let { id, isActive } = query;
+  //     isActive = isActive === 'true' ? true : false;
+
+  //     if (!id) {
+  //       return WriteResponse(400, false, 'Job posting ID is required.');
+  //     }
+
+  //     const jobPosting = await this.jobPostingRepository.findOne({
+  //       where: { id: id, is_deleted: false },
+  //     });
+
+  //     if (!jobPosting) {
+  //       return WriteResponse(404, {}, 'Record not found.');
+  //     }
+
+  //     if (jobPosting.jobpost_status === JobPostStatus.DRAFT) {
+  //       return WriteResponse(
+  //         400,
+  //         false,
+  //         'Scheduled job cannot be manually activated.',
+  //       );
+  //     }
+  //     // Block activation if this is a scheduled job
+  //     // if (jobPosting.posted_date !== null && jobPosting.posted_at !== null) {
+  //     //   return WriteResponse(
+  //     //     400,
+  //     //     false,
+  //     //     'Scheduled jobs cannot be manually activated.',
+  //     //   );
+  //     // }
+  //     await this.jobPostingRepository.update(id, { isActive: isActive });
+
+  //     return WriteResponse(
+  //       200,
+  //       true,
+  //       `The job has been successfully ${isActive ? 'activated' : 'deactivated'}.`,
+  //     );
+  //   } catch (error) {
+  //     return WriteResponse(
+  //       500,
+  //       {},
+  //       error.message || 'An unexpected error occurred.',
+  //     );
+  //   }
+  // }
+
   async toggleJobStatus(query) {
     try {
       let { id, isActive } = query;
@@ -906,15 +995,14 @@ export class JobPostingService {
           'Scheduled job cannot be manually activated.',
         );
       }
-      // Block activation if this is a scheduled job
-      // if (jobPosting.posted_date !== null && jobPosting.posted_at !== null) {
-      //   return WriteResponse(
-      //     400,
-      //     false,
-      //     'Scheduled jobs cannot be manually activated.',
-      //   );
-      // }
-      await this.jobPostingRepository.update(id, { isActive: isActive });
+
+      // Determine job_opening based on isActive
+      const updatedFields = {
+        isActive: isActive,
+        job_opening: isActive ? JobOpeningStatus.OPEN : JobOpeningStatus.HOLD,
+      };
+
+      await this.jobPostingRepository.update(id, updatedFields);
 
       return WriteResponse(
         200,
