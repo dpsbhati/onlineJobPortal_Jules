@@ -341,7 +341,7 @@ onPagination(): void {
   //   });
   // }
 onStatusToggleChange(element: any, checked: boolean): void {
-  console.log(checked);
+
 
   if (checked) {
     const today = new Date();

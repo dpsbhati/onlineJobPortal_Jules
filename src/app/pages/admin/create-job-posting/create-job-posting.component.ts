@@ -197,8 +197,7 @@ export class CreateJobPostingComponent {
 
   // }
   onChange(event: any) {
-  console.log(event, "OnChange");
-  console.log(this.jobForm.value);
+ 
 
   if (this.jobForm.value.posted_date) {
     // Format the posted_date value
@@ -397,7 +396,7 @@ onSubmit(): void {
   if (this.jobForm.valid) {
   //  this.sanitizeFormValues();
     const formValues = this.jobForm.value;
-console.log(formValues,"FORRMMMM");
+
     // Format dates as needed
     if (formValues.deadline) {
       formValues.deadline = this.formatDateWithCurrentUTCTime(formValues.deadline);
@@ -415,7 +414,7 @@ console.log(formValues,"FORRMMMM");
     }
 
     formValues.skills_required = JSON.stringify(formValues.skills_required);
-console.log(formValues,"AFTER FORRMMMM");
+
     this.loader.show();
 
     this.adminService.createOrUpdateJobPosting(formValues).subscribe({
@@ -713,8 +712,7 @@ postedDateValidator(): ValidatorFn {
       //   }
       // }
 
-      console.log('👉 Will patch:');
-      console.log('posted_date (Date obj):', data.posted_date);
+    
 
         let socialMediaTypes: string[] = [];
         if (data.social_media_type) {
@@ -778,8 +776,7 @@ postedDateValidator(): ValidatorFn {
           job_type_post: data.job_type_post
 
         })
-        console.log('job_type_post',data.job_type_post);
-        console.log(this.jobForm.value,'JobFormvalue')
+     
         if (data.featured_image) {
           this.imagePreview = data.featured_image;
         } else {
@@ -857,7 +854,7 @@ onFileSelected(event: Event, controlName: string): void {
     const allowedExtensions = ['jpg', 'jpeg', 'png']; // Removed 'gif'
     const maxSizeMB = 5;
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
-    console.log(maxSizeBytes, file.size);
+ 
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
 
     if (!allowedExtensions.includes(fileExtension)) {
@@ -877,7 +874,7 @@ onFileSelected(event: Event, controlName: string): void {
     }
 
     control?.setErrors(null); // Clear error if valid
-console.log('before compressed',file)
+
     // Create image preview
     const reader = new FileReader();
     reader.onload = () => {
@@ -894,7 +891,7 @@ console.log('before compressed',file)
           .then(res => res.blob())
           .then(compressedFileBlob => {
             const compressedFile = new File([compressedFileBlob], file.name, { type: file.type });
-            console.log('after compressed',compressedFile)
+          
             const folderName = 'job-postings';
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             const userId = user.id;
