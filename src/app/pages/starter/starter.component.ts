@@ -474,6 +474,53 @@ export class StarterComponent {
   //   });
   // }
 
+ onApplyFilter(): void {
+  // Show the loader to indicate the data is being fetched
+  this.loader.show();
+
+  // Extract selected start and end dates from the form
+  const startDate = this.campaignOne.value.start;
+  const endDate = this.campaignOne.value.end;
+
+  // Format the dates to include only the date part (yyyy-MM-dd)
+  const formattedStartDate = startDate ? startDate.toISOString().slice(0, 10) : '';
+  const formattedEndDate = endDate ? endDate.toISOString().slice(0, 10) : '';
+
+  // Reset the whereClause before applying new filters
+  this.pageConfig.whereClause = [];
+
+  // Add formatted date range filter to the whereClause for filtering
+  if (formattedStartDate && formattedEndDate) {
+    this.pageConfig.whereClause.push(
+      { key: 'startDate', operator: '=', value: formattedStartDate },
+      { key: 'endDate', operator: '=', value: formattedEndDate }
+    );
+  }
+
+  // Trigger the pagination and filtering logic
+  this.onPagination();
+}
+
+
+ resetPagination() {
+    this.pageConfig = {
+      curPage: 1,
+      perPage: 10,
+      sortBy: 'created_at',
+      direction: 'desc',
+      whereClause: [], // Clear filters here
+    };
+  }
+  onClearFilter(): void {
+    // Reset the whereClause
+    this.resetPagination();
+
+    // Trigger normal pagination (no filters)
+    this.onPagination();
+  }
+
+
+
   onPagination(): void {
     this.loader.show();
 
