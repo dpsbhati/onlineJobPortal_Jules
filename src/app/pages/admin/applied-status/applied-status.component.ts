@@ -130,4 +130,17 @@ export class AppliedStatusComponent {
   navigate() {
     this.router.navigate([`/user-details/${this.id}`]);
   }
+
+
+  getStatus(jobOpening: string): string {
+    switch (jobOpening) {
+      case 'Close':
+      case 'Archived':
+        return 'Expired'; // Show 'Expired' for "Close" or "Archived" jobs
+      default:
+        return 'Application Submitted'; // Default message for other cases
+    }
+  }
+
+  
 }
