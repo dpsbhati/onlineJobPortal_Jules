@@ -1,4 +1,53 @@
 <div class="row">
+  <div class="col-lg-12">
+    <mat-card class="cardWithShadow">
+      <mat-card-content style="padding-bottom: 0 !important; padding-top: 18px !important;">
+        <div class="row w-100 justify-content-end">
+          <div class="col-xl-10 col-lg-8 col-md-12 text-end">
+            <div class="row align-items-center justify-content-end">
+              <div class="col-xl-1 col-lg-1 col-md-12">
+                <h4 class="mb-20">Filters</h4>
+              </div>
+              <div class="col-lg-5">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Select Date Range</mat-label>
+                  <mat-date-range-input
+                    [rangePicker]="campaignOnePicker"
+                    [comparisonStart]="campaignOne.value.start"
+                    [comparisonEnd]="campaignOne.value.end"
+                  >
+                    <input
+                      matStartDate
+                      placeholder="Start date"
+                      formControlName="start"
+                    />
+                    <input
+                      matEndDate
+                      placeholder="End date"
+                      formControlName="end"
+                    />
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="campaignOnePicker"
+                  ></mat-datepicker-toggle>
+                  <mat-date-range-picker
+                    #campaignOnePicker
+                  ></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <div class="col-xl-1 col-lg-1 col-md-3 text-end">
+                <button mat-button color="primary" class="mb-20">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+<div class="row">
   @for(productcard of productcard; track productcard.title) {
   <div class="col-lg-3 col-sm-6">
     <mat-card class="cardWithShadow">
@@ -38,7 +87,8 @@
           </div>
         </div>
 
-        <apx-chart   #salesChartRef
+        <apx-chart
+          #salesChartRef
           [series]="salesChart.series"
           [dataLabels]="salesChart.dataLabels"
           [chart]="salesChart.chart"

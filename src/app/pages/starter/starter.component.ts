@@ -30,6 +30,14 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import {provideNativeDateAdapter} from '@angular/material/core';
 
 export interface salesChart {
   series: ApexAxisChartSeries | any;
@@ -66,9 +74,14 @@ export interface ourvisitorChart {
   dataLabels: ApexDataLabels | any;
   plotOptions: ApexPlotOptions | any;
 }
+const today = new Date();
+const month = today.getMonth();
+const year = today.getFullYear();
 @Component({
   selector: 'app-starter',
   templateUrl: './starter.component.html',
+  providers: [provideNativeDateAdapter()],
+
   imports: [
     MaterialModule,
     MatPaginatorModule,
@@ -77,6 +90,8 @@ export interface ourvisitorChart {
     NgApexchartsModule,
     TablerIconsModule,
     MatInputModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
   ],
   styleUrls: ['./starter.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -87,9 +102,9 @@ export class StarterComponent {
   public salesChart!: Partial<salesChart> | any;
   public ourvisitorChart!: Partial<ourvisitorChart> | any;
   @ViewChild('salesChartRef') salesChartRef!: ChartComponent;
-  joboverviewlist:any;
-    total: number = 0;
-     isLoading: boolean = false;
+  joboverviewlist: any;
+  total: number = 0;
+  isLoading: boolean = false;
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -129,13 +144,13 @@ export class StarterComponent {
   ];
 
   constructor(
-     private adminService: AdminService,
-        private router: Router,
-        private helperService: HelperService,
-        private authService: AuthService,
-        private loader: LoaderService,
-        private toastr: ToastrService,
-        private dialog: MatDialog
+    private adminService: AdminService,
+    private router: Router,
+    private helperService: HelperService,
+    private authService: AuthService,
+    private loader: LoaderService,
+    private toastr: ToastrService,
+    private dialog: MatDialog
   ) {
     // Sales Chart for Job Applicants
     this.salesChart = {
@@ -152,9 +167,9 @@ export class StarterComponent {
       //   },
       // ],
       series: [
-    { name: 'Applied', data: [], color: 'var(--mat-sys-primary)' },
-    { name: 'Shortlisted', data: [], color: 'var(--mat-sys-secondary)' },
-  ],
+        { name: 'Applied', data: [], color: 'var(--mat-sys-primary)' },
+        { name: 'Shortlisted', data: [], color: 'var(--mat-sys-secondary)' },
+      ],
       chart: {
         fontFamily: 'inherit',
         type: 'bar',
@@ -190,7 +205,7 @@ export class StarterComponent {
       xaxis: {
         type: 'category',
         // categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-         categories: [],
+        categories: [],
         axisTicks: {
           show: false,
         },
@@ -279,8 +294,8 @@ export class StarterComponent {
         // '#eceff180',
         // '#725AF2',
         'var(--mat-sys-primary)', // Applied
-  'var(--mat-sys-secondary)', // Shortlisted
-  'var(--mat-sys-body)', // Rejected -> this should match your .text-body class
+        'var(--mat-sys-secondary)', // Shortlisted
+        'var(--mat-sys-body)', // Rejected -> this should match your .text-body class
       ],
       tooltip: {
         show: true,
@@ -314,304 +329,300 @@ export class StarterComponent {
     this.onPagination();
   }
 
-
-// onPagination(): void {
-//     this.loader.show();
-
-
-//   this.adminService.jobOverview(this.pageConfig).subscribe({
-//     next: (res: any) => {
-//          this.loader.hide();
-     
-
-//       if (res.statusCode === 200 && res.data) {
-//         const data = res.data;
-
-   
-//         this.productcard = [
-//           {
-//             id: 1,
-//             color: 'mat-primary',
-//             title: data.Total_Open_Jobs?.toString() || '0',
-//             subtitle: 'Total Open Jobs',
-//             value: data.Total_Open_Jobs || 0,
-//           },
-//           {
-//             id: 2,
-//             color: 'mat-secondary',
-//             title: data.Jobs_Applied?.toString() || '0',
-//             subtitle: 'Jobs Applied',
-//             value: data.Jobs_Applied || 0,
-//           },
-//           {
-//             id: 3,
-//             color: 'mat-success',
-//             title: data.Applications_in_Review_Pending?.toString() || '0',
-//             subtitle: 'Applications in Review',
-//             value: data.Applications_in_Review_Pending || 0,
-//           },
-//           {
-//             id: 4,
-//             color: 'mat-warn',
-//             title: data.Offers_Received_Shortlisted?.toString() || '0',
-//             subtitle: 'Offers Received',
-//             value: data.Offers_Received_Shortlisted || 0,
-//           },
-//         ];
-
-       
-//         const last7Days = data.Last_7_Days_Overview?.data || [];
-
-        
-//         const categories = last7Days.map((item: any) => item.day);
-//         const appliedData = last7Days.map((item: any) => item.Applied || 0);
-//         const shortlistedData = last7Days.map((item: any) => item.Shortlisted || 0);
-
-        
-//         this.salesChart = {
-//           series: [
-//             {
-//               name: 'Applied',
-//               data: appliedData,
-//               color: 'var(--mat-sys-primary)',
-//             },
-//             {
-//               name: 'Shortlisted',
-//               data: shortlistedData,
-//               color: 'var(--mat-sys-secondary)',
-//             },
-//           ],
-//           chart: {
-//             fontFamily: 'inherit',
-//             type: 'bar',
-//             height: 330,
-//             foreColor: '#adb0bb',
-//             offsetY: 10,
-//             offsetX: -15,
-//             toolbar: { show: false },
-//           },
-//           grid: {
-//             show: true,
-//             strokeDashArray: 3,
-//             borderColor: 'rgba(0,0,0,.1)',
-//           },
-//           plotOptions: {
-//             bar: {
-//               horizontal: false,
-//               columnWidth: '30%',
-//               endingShape: 'flat',
-//               borderRadius: 4,
-//             },
-//           },
-//           dataLabels: { enabled: false },
-//           stroke: { show: true, width: 5, colors: ['transparent'] },
-//           xaxis: {
-//             type: 'category',
-//             categories: categories,
-//             axisTicks: { show: false },
-//             axisBorder: { show: false },
-//             labels: { style: { colors: '#a1aab2' } },
-//           },
-//           yaxis: { labels: { style: { colors: '#a1aab2' } } },
-//           fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
-//           tooltip: { theme: 'dark' },
-//           legend: { show: false },
-//           responsive: [
-//             {
-//               breakpoint: 767,
-//               options: {
-//                 stroke: { show: false, width: 5, colors: ['transparent'] },
-//               },
-//             },
-//           ],
-//         };
-
-//         // Update visitor donut chart data
-//         this.ourvisitorChart.series = [
-//           data.Jobs_Applied || 0,
-//           data.Offers_Received_Shortlisted || 0,
-//           data.Applications_Rejected || 0,
-//         ];
-//         this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected '];
-//       } else {
-      
-//         this.productcard = [];
-//         this.salesChart = {
-//           ...this.salesChart,
-//           series: [],
-//           xaxis: { ...this.salesChart.xaxis, categories: [] },
-//         };
-//         this.ourvisitorChart.series = [0, 0, 0];
-//         this.ourvisitorChart.labels = [' Applied', 'Shortlisted ', 'Rejected'];
-//       }
-//     },
-//     error: (err: any) => {
-//       this.loader.hide()
-   
-//       this.toastr.error(err?.error?.message || 'Something went wrong');
-
-    
-//       this.productcard = [];
-//       this.salesChart = {
-//         ...this.salesChart,
-//         series: [],
-//         xaxis: { ...this.salesChart.xaxis, categories: [] },
-//       };
-//       this.ourvisitorChart.series = [0, 0, 0];
-//       this.ourvisitorChart.labels = ['Applied', 'Received', ' Rejected'];
-//     },
-//   });
-// }
-
-onPagination(): void {
-  this.loader.show();
-
-  this.adminService.jobOverview(this.pageConfig).subscribe({
-    next: (res: any) => {
-      this.loader.hide();
-
-      if (res.statusCode === 200 && res.data) {
-        const data = res.data;
-
-        // Update product cards
-        this.productcard = [
-          {
-            id: 1,
-            color: 'mat-primary',
-            title: data.Total_Open_Jobs?.toString() || '0',
-            subtitle: 'Total Open Jobs',
-            value: data.Total_Open_Jobs || 0,
-          },
-          {
-            id: 2,
-            color: 'mat-secondary',
-            title: data.Jobs_Applied?.toString() || '0',
-            subtitle: 'Jobs Applied',
-            value: data.Jobs_Applied || 0,
-          },
-          {
-            id: 3,
-            color: 'mat-success',
-            title: data.Applications_in_Review_Pending?.toString() || '0',
-            subtitle: 'Applications in Review',
-            value: data.Applications_in_Review_Pending || 0,
-          },
-          {
-            id: 4,
-            color: 'mat-warn',
-            title: data.Offers_Received_Shortlisted?.toString() || '0',
-            subtitle: 'Offers Received',
-            value: data.Offers_Received_Shortlisted || 0,
-          },
-        ];
-
-        // Extract last 7 days overview
-        const last7Days = data.Last_7_Days_Overview?.data || [];
-
-        const categories = last7Days.map((item: any) => item.day);
-        const appliedData = last7Days.map((item: any) => item.Applied || 0);
-        const shortlistedData = last7Days.map((item: any) => item.Shortlisted || 0);
-
-        // 🔍 Debug Logs
-        console.log('Chart Categories:', categories);
-        console.log('Applied Data:', appliedData);
-        console.log('Shortlisted Data:', shortlistedData);
-
-      
-        // if (categories.length > 0) {
-        //   this.salesChart = {
-        //     series: [
-        //       { name: 'Applied', data: appliedData, color: 'var(--mat-sys-primary)' },
-        //       { name: 'Shortlisted', data: shortlistedData, color: 'var(--mat-sys-secondary)' },
-        //     ],
-        //     chart: {
-        //       fontFamily: 'inherit',
-        //       type: 'bar',
-        //       height: 330,
-        //       foreColor: '#adb0bb',
-        //       offsetY: 10,
-        //       offsetX: -15,
-        //       toolbar: { show: false },
-        //     },
-        //     grid: {
-        //       show: true,
-        //       strokeDashArray: 3,
-        //       borderColor: 'rgba(0,0,0,.1)',
-        //     },
-        //     plotOptions: {
-        //       bar: {
-        //         horizontal: false,
-        //         columnWidth: '30%',
-        //         endingShape: 'flat',
-        //         borderRadius: 4,
-        //       },
-        //     },
-        //     dataLabels: { enabled: false },
-        //     stroke: { show: true, width: 5, colors: ['transparent'] },
-        //     xaxis: {
-        //       type: 'category',
-        //       categories: categories,
-        //       axisTicks: { show: false },
-        //       axisBorder: { show: false },
-        //       labels: { style: { colors: '#a1aab2' } },
-        //     },
-        //     yaxis: { labels: { style: { colors: '#a1aab2' } } },
-        //     fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
-        //     tooltip: { theme: 'dark' },
-        //     legend: { show: false },
-        //     responsive: [
-        //       {
-        //         breakpoint: 767,
-        //         options: {
-        //           stroke: { show: false, width: 5, colors: ['transparent'] },
-        //         },
-        //       },
-        //     ],
-        //   };
-        // } else {
-        
-        //   this.salesChart = null;
-        // }
-if (this.salesChartRef) {
-          this.salesChartRef.updateOptions(
-            {
-              series: [
-                { name: 'Applied', data: appliedData },
-                { name: 'Shortlisted', data: shortlistedData },
-              ],
-              xaxis: {
-                categories: categories,
-              },
-            },
-            false,  // Do not redraw immediately (false = batched)
-            true    // Animate chart updates smoothly
-          );
-        }
-        // Update visitor chart
-        this.ourvisitorChart.series = [
-          data.Jobs_Applied || 0,
-          data.Offers_Received_Shortlisted || 0,
-          data.Applications_Rejected || 0,
-        ];
-        this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected'];
-      } else {
-        this.resetChartData();
-      }
-    },
-    error: (err: any) => {
-      this.loader.hide();
-      this.toastr.error(err?.error?.message || 'Something went wrong');
-      this.resetChartData();
-    },
+  campaignOne = new FormGroup({
+    start: new FormControl(new Date(year, month, 13)),
+    end: new FormControl(new Date(year, month, 16)),
   });
-}
+  // onPagination(): void {
+  //     this.loader.show();
 
-// 👇 Helper method to reset all charts
-resetChartData() {
-  this.productcard = [];
-  this.salesChart = null;
-  this.ourvisitorChart.series = [0, 0, 0];
-  this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected'];
-}
+  //   this.adminService.jobOverview(this.pageConfig).subscribe({
+  //     next: (res: any) => {
+  //          this.loader.hide();
 
+  //       if (res.statusCode === 200 && res.data) {
+  //         const data = res.data;
+
+  //         this.productcard = [
+  //           {
+  //             id: 1,
+  //             color: 'mat-primary',
+  //             title: data.Total_Open_Jobs?.toString() || '0',
+  //             subtitle: 'Total Open Jobs',
+  //             value: data.Total_Open_Jobs || 0,
+  //           },
+  //           {
+  //             id: 2,
+  //             color: 'mat-secondary',
+  //             title: data.Jobs_Applied?.toString() || '0',
+  //             subtitle: 'Jobs Applied',
+  //             value: data.Jobs_Applied || 0,
+  //           },
+  //           {
+  //             id: 3,
+  //             color: 'mat-success',
+  //             title: data.Applications_in_Review_Pending?.toString() || '0',
+  //             subtitle: 'Applications in Review',
+  //             value: data.Applications_in_Review_Pending || 0,
+  //           },
+  //           {
+  //             id: 4,
+  //             color: 'mat-warn',
+  //             title: data.Offers_Received_Shortlisted?.toString() || '0',
+  //             subtitle: 'Offers Received',
+  //             value: data.Offers_Received_Shortlisted || 0,
+  //           },
+  //         ];
+
+  //         const last7Days = data.Last_7_Days_Overview?.data || [];
+
+  //         const categories = last7Days.map((item: any) => item.day);
+  //         const appliedData = last7Days.map((item: any) => item.Applied || 0);
+  //         const shortlistedData = last7Days.map((item: any) => item.Shortlisted || 0);
+
+  //         this.salesChart = {
+  //           series: [
+  //             {
+  //               name: 'Applied',
+  //               data: appliedData,
+  //               color: 'var(--mat-sys-primary)',
+  //             },
+  //             {
+  //               name: 'Shortlisted',
+  //               data: shortlistedData,
+  //               color: 'var(--mat-sys-secondary)',
+  //             },
+  //           ],
+  //           chart: {
+  //             fontFamily: 'inherit',
+  //             type: 'bar',
+  //             height: 330,
+  //             foreColor: '#adb0bb',
+  //             offsetY: 10,
+  //             offsetX: -15,
+  //             toolbar: { show: false },
+  //           },
+  //           grid: {
+  //             show: true,
+  //             strokeDashArray: 3,
+  //             borderColor: 'rgba(0,0,0,.1)',
+  //           },
+  //           plotOptions: {
+  //             bar: {
+  //               horizontal: false,
+  //               columnWidth: '30%',
+  //               endingShape: 'flat',
+  //               borderRadius: 4,
+  //             },
+  //           },
+  //           dataLabels: { enabled: false },
+  //           stroke: { show: true, width: 5, colors: ['transparent'] },
+  //           xaxis: {
+  //             type: 'category',
+  //             categories: categories,
+  //             axisTicks: { show: false },
+  //             axisBorder: { show: false },
+  //             labels: { style: { colors: '#a1aab2' } },
+  //           },
+  //           yaxis: { labels: { style: { colors: '#a1aab2' } } },
+  //           fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
+  //           tooltip: { theme: 'dark' },
+  //           legend: { show: false },
+  //           responsive: [
+  //             {
+  //               breakpoint: 767,
+  //               options: {
+  //                 stroke: { show: false, width: 5, colors: ['transparent'] },
+  //               },
+  //             },
+  //           ],
+  //         };
+
+  //         // Update visitor donut chart data
+  //         this.ourvisitorChart.series = [
+  //           data.Jobs_Applied || 0,
+  //           data.Offers_Received_Shortlisted || 0,
+  //           data.Applications_Rejected || 0,
+  //         ];
+  //         this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected '];
+  //       } else {
+
+  //         this.productcard = [];
+  //         this.salesChart = {
+  //           ...this.salesChart,
+  //           series: [],
+  //           xaxis: { ...this.salesChart.xaxis, categories: [] },
+  //         };
+  //         this.ourvisitorChart.series = [0, 0, 0];
+  //         this.ourvisitorChart.labels = [' Applied', 'Shortlisted ', 'Rejected'];
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       this.loader.hide()
+
+  //       this.toastr.error(err?.error?.message || 'Something went wrong');
+
+  //       this.productcard = [];
+  //       this.salesChart = {
+  //         ...this.salesChart,
+  //         series: [],
+  //         xaxis: { ...this.salesChart.xaxis, categories: [] },
+  //       };
+  //       this.ourvisitorChart.series = [0, 0, 0];
+  //       this.ourvisitorChart.labels = ['Applied', 'Received', ' Rejected'];
+  //     },
+  //   });
+  // }
+
+  onPagination(): void {
+    this.loader.show();
+
+    this.adminService.jobOverview(this.pageConfig).subscribe({
+      next: (res: any) => {
+        this.loader.hide();
+
+        if (res.statusCode === 200 && res.data) {
+          const data = res.data;
+
+          // Update product cards
+          this.productcard = [
+            {
+              id: 1,
+              color: 'mat-primary',
+              title: data.Total_Open_Jobs?.toString() || '0',
+              subtitle: 'Total Open Jobs',
+              value: data.Total_Open_Jobs || 0,
+            },
+            {
+              id: 2,
+              color: 'mat-secondary',
+              title: data.Jobs_Applied?.toString() || '0',
+              subtitle: 'Jobs Applied',
+              value: data.Jobs_Applied || 0,
+            },
+            {
+              id: 3,
+              color: 'mat-success',
+              title: data.Applications_in_Review_Pending?.toString() || '0',
+              subtitle: 'Applications in Review',
+              value: data.Applications_in_Review_Pending || 0,
+            },
+            {
+              id: 4,
+              color: 'mat-warn',
+              title: data.Offers_Received_Shortlisted?.toString() || '0',
+              subtitle: 'Offers Received',
+              value: data.Offers_Received_Shortlisted || 0,
+            },
+          ];
+
+          // Extract last 7 days overview
+          const last7Days = data.Last_7_Days_Overview?.data || [];
+
+          const categories = last7Days.map((item: any) => item.day);
+          const appliedData = last7Days.map((item: any) => item.Applied || 0);
+          const shortlistedData = last7Days.map(
+            (item: any) => item.Shortlisted || 0
+          );
+
+          // 🔍 Debug Logs
+          console.log('Chart Categories:', categories);
+          console.log('Applied Data:', appliedData);
+          console.log('Shortlisted Data:', shortlistedData);
+
+          // if (categories.length > 0) {
+          //   this.salesChart = {
+          //     series: [
+          //       { name: 'Applied', data: appliedData, color: 'var(--mat-sys-primary)' },
+          //       { name: 'Shortlisted', data: shortlistedData, color: 'var(--mat-sys-secondary)' },
+          //     ],
+          //     chart: {
+          //       fontFamily: 'inherit',
+          //       type: 'bar',
+          //       height: 330,
+          //       foreColor: '#adb0bb',
+          //       offsetY: 10,
+          //       offsetX: -15,
+          //       toolbar: { show: false },
+          //     },
+          //     grid: {
+          //       show: true,
+          //       strokeDashArray: 3,
+          //       borderColor: 'rgba(0,0,0,.1)',
+          //     },
+          //     plotOptions: {
+          //       bar: {
+          //         horizontal: false,
+          //         columnWidth: '30%',
+          //         endingShape: 'flat',
+          //         borderRadius: 4,
+          //       },
+          //     },
+          //     dataLabels: { enabled: false },
+          //     stroke: { show: true, width: 5, colors: ['transparent'] },
+          //     xaxis: {
+          //       type: 'category',
+          //       categories: categories,
+          //       axisTicks: { show: false },
+          //       axisBorder: { show: false },
+          //       labels: { style: { colors: '#a1aab2' } },
+          //     },
+          //     yaxis: { labels: { style: { colors: '#a1aab2' } } },
+          //     fill: { opacity: 1, colors: ['#1B84FF', '#43CED7'] },
+          //     tooltip: { theme: 'dark' },
+          //     legend: { show: false },
+          //     responsive: [
+          //       {
+          //         breakpoint: 767,
+          //         options: {
+          //           stroke: { show: false, width: 5, colors: ['transparent'] },
+          //         },
+          //       },
+          //     ],
+          //   };
+          // } else {
+
+          //   this.salesChart = null;
+          // }
+          if (this.salesChartRef) {
+            this.salesChartRef.updateOptions(
+              {
+                series: [
+                  { name: 'Applied', data: appliedData },
+                  { name: 'Shortlisted', data: shortlistedData },
+                ],
+                xaxis: {
+                  categories: categories,
+                },
+              },
+              false, // Do not redraw immediately (false = batched)
+              true // Animate chart updates smoothly
+            );
+          }
+          // Update visitor chart
+          this.ourvisitorChart.series = [
+            data.Jobs_Applied || 0,
+            data.Offers_Received_Shortlisted || 0,
+            data.Applications_Rejected || 0,
+          ];
+          this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected'];
+        } else {
+          this.resetChartData();
+        }
+      },
+      error: (err: any) => {
+        this.loader.hide();
+        this.toastr.error(err?.error?.message || 'Something went wrong');
+        this.resetChartData();
+      },
+    });
+  }
+
+  // 👇 Helper method to reset all charts
+  resetChartData() {
+    this.productcard = [];
+    this.salesChart = null;
+    this.ourvisitorChart.series = [0, 0, 0];
+    this.ourvisitorChart.labels = ['Applied', 'Shortlisted', 'Rejected'];
+  }
 }
