@@ -12,27 +12,25 @@
         <label>Current Status:</label>
       
 
-         <!-- <span class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted" [ngClass]="{
-        'bg-light-secondary text-secondary': jobDetails.status.toLowerCase() === 'hired',
-        'bg-light-warning text-warning': jobDetails.status.toLowerCase() === 'pending',
-        'bg-light-error-cancel text-error-cancel':
-       jobDetails.status.toLowerCase() === 'rejected' || toLowerCaseSafe(jobDetails.status) === 'cancelled',
-        'bg-light-shortlisted  text-success-shortlisted': jobDetails.status.toLowerCase() === 'shortlisted',
-        'bg-light-success-1 text-success ': jobDetails.status?.toLowerCase() === 'approved',
-  'bg-light-primary text-primary': jobDetails.status?.toLowerCase() === 'processed',
-            'bg-light  bg-light-error': toLowerCaseSafe(jobDetails.status) === 'endorsed',
-            'bg-light-success bg-light ': toLowerCaseSafe(jobDetails.status) === 'deployed',
-      }"> {{ jobDetails.status||'-' }}
-            </span> -->
-             <span
+       
+             <!-- <span
       class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
       [ngClass]="{
-        'bg-light-error-cancel text-error-cancel': getStatus(jobDetails.job.job_opening) === 'Expired',
-        'bg-light-shortlisted  text-success-shortlisted': getStatus(jobDetails.job.job_opening) === 'Application Submitted'
+        'bg-light-error-cancel text-error-cancel': getStatus(jobDetails?.job?.job_opening) === 'Expired',
+        'bg-light-shortlisted  text-success-shortlisted': getStatus(jobDetails?.job?.job_opening) === 'Application Submitted'
       }"
     >
-      {{ getStatus(jobDetails.job.job_opening) }}
-    </span>
+      {{ getStatus(jobDetails?.job?.job_opening) }}
+    </span> -->
+    <span
+  *ngIf="jobDetails"
+  class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
+  [ngClass]="{
+    'bg-light-error-cancel text-error-cancel': getStatus(jobDetails?.job?.job_opening) === 'Expired',
+    'bg-light-shortlisted text-success-shortlisted': getStatus(jobDetails?.job?.job_opening) === 'Application Submitted'
+  }">
+  {{ getStatus(jobDetails?.job?.job_opening) }}
+</span>
       </div>
     </div>
   </mat-card-content>
@@ -98,7 +96,12 @@
   <div class="col-lg-3"><strong>Required Skills</strong></div>
   <div class="col-lg-8">
     <div class="d-flex flex-wrap gap-6">
-      <ng-container *ngIf="formattedSkills!.length > 0; else noSkills">
+      <!-- <ng-container *ngIf="formattedSkills!.length > 0; else noSkills">
+        <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
+          {{ skill }}
+        </button>
+      </ng-container> -->
+      <ng-container *ngIf="formattedSkills && formattedSkills.length > 0; else noSkills">
         <button mat-stroked-button color="primary" *ngFor="let skill of formattedSkills">
           {{ skill }}
         </button>

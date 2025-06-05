@@ -76,20 +76,32 @@ export class AppliedStatusComponent {
     return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
   }
 
-  formatSkills(skills: string): string[] {
-    try {
-      if (!skills) return [];
-      // Parse the JSON string and remove any special characters
-      const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
-      return parsedSkills.map((skill: string) =>
-        skill.replace(/["\[\]]/g, '').trim()
-      );
-    } catch (error) {
-      console.error('Error parsing skills:', error);
-      return [];
-    }
+  // formatSkills(skills: string): string[] {
+  //   try {
+  //     if (!skills) return [];
+  
+  //     const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
+  //     return parsedSkills.map((skill: string) =>
+  //       skill.replace(/["\[\]]/g, '').trim()
+  //     );
+  //   } catch (error) {
+  //     console.error('Error parsing skills:', error);
+  //     return [];
+  //   }
+  // }
+formatSkills(skills: string): string[] {
+  try {
+    if (!skills) return [];
+    // Parse the JSON string and remove any special characters
+    const parsedSkills = JSON.parse(skills.replace(/\\/g, ''));
+    return parsedSkills.map((skill: string) =>
+      skill.replace(/["\[\]]/g, '').trim()
+    );
+  } catch (error) {
+    console.error('Error parsing skills:', error);
+    return [];
   }
-
+}
   loadJobDetails(id: string): void {
     this.loader.show();
     this.adminService.allApplicantDetails(id).subscribe({
