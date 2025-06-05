@@ -73,6 +73,7 @@ export interface ourvisitorChart {
   stroke: any;
   dataLabels: ApexDataLabels | any;
   plotOptions: ApexPlotOptions | any;
+
 }
 const today = new Date();
 const month = today.getMonth();
@@ -92,7 +93,8 @@ const year = today.getFullYear();
     MatInputModule,
     MatDatepickerModule,
     MatFormFieldModule,
-    
+     ReactiveFormsModule,
+
   ],
   styleUrls: ['./starter.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -106,6 +108,7 @@ export class StarterComponent {
   joboverviewlist: any;
   total: number = 0;
   isLoading: boolean = false;
+   campaignOne: FormGroup;
   pageConfig: any = {
     curPage: 1,
     perPage: 10,
@@ -113,6 +116,7 @@ export class StarterComponent {
     direction: 'desc',
     whereClause: [],
   };
+
   productcard: productcard[] = [
     // {
     //   id: 1,
@@ -153,6 +157,10 @@ export class StarterComponent {
     private toastr: ToastrService,
     private dialog: MatDialog
   ) {
+     this.campaignOne = new FormGroup({
+      start: new FormControl(null),
+      end: new FormControl(null),
+    });
     // Sales Chart for Job Applicants
     this.salesChart = {
       // series: [
@@ -329,10 +337,7 @@ export class StarterComponent {
     // this.isLoading = true;
     this.onPagination();
   }
-  campaignOne = new FormGroup({
-    start: new FormControl(new Date()),
-    end: new FormControl(new Date()),
-  });
+
 
   // onPagination(): void {
   //     this.loader.show();

@@ -13,16 +13,19 @@
                   <mat-label>Select Date Range</mat-label>
                   <mat-date-range-input
                     [rangePicker]="campaignOnePicker"
+                      [formGroup]="campaignOne"
 
                   >
                     <input
                       matStartDate
                       placeholder="Start date"
+                      formControlName="start"
 
                     />
                     <input
                       matEndDate
                       placeholder="End date"
+                      formControlName="end"
                     />
                   </mat-date-range-input>
                   <mat-datepicker-toggle
