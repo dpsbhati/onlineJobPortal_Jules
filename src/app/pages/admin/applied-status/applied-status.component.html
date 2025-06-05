@@ -26,7 +26,7 @@
   *ngIf="jobDetails"
   class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
   [ngClass]="{
-    'bg-light-error-cancel text-error-cancel': getStatus(jobDetails?.job?.job_opening) === 'Expired',
+    'bg-light-error-cancel text-error-cancel': getStatus(jobDetails?.job?.job_opening) === 'Job Expired',
     'bg-light-shortlisted text-success-shortlisted': getStatus(jobDetails?.job?.job_opening) === 'Application Submitted'
   }">
   {{ getStatus(jobDetails?.job?.job_opening) }}
