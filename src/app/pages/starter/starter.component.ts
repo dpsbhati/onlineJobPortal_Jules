@@ -482,29 +482,47 @@ export class StarterComponent {
 onApplyFilter(): void {
   // Show the loader to indicate the data is being fetched
   this.loader.show();
-console.log(this.campaignOne.value,'date');
+  console.log(this.campaignOne.value, 'date');
+
   // Extract selected start and end dates from the form
   const startDate = this.campaignOne.value.start;
   const endDate = this.campaignOne.value.end;
 
-  // Format the dates to include only the date part (yyyy-MM-dd)
-  const formattedStartDate = startDate ? startDate.toISOString().slice(0, 10) : '';
-  const formattedEndDate = endDate ? endDate.toISOString().slice(0, 10) : '';
+  if (startDate && endDate) {
+    // Adjust the time zone by setting the date to midnight on the selected date (local time)
+    const adjustedStartDate = this.adjustDateToLocalTime(startDate);
+    const adjustedEndDate = this.adjustDateToLocalTime(endDate);
 
-  // Reset the whereClause before applying new filters
-  this.pageConfig.whereClause = [];
+    // Format the dates to include only the date part (yyyy-MM-dd)
+    const formattedStartDate = adjustedStartDate.toISOString().slice(0, 10);
+    const formattedEndDate = adjustedEndDate.toISOString().slice(0, 10);
 
-  // Add formatted date range filter to the whereClause for filtering
-  if (formattedStartDate && formattedEndDate) {
-    this.pageConfig.whereClause.push(
-      { key: 'startDate', operator: '=', value: formattedStartDate },
-      { key: 'endDate', operator: '=', value: formattedEndDate }
-    );
+    // Reset the whereClause before applying new filters
+    this.pageConfig.whereClause = [];
+
+    // Add formatted date range filter to the whereClause for filtering
+    if (formattedStartDate && formattedEndDate) {
+      this.pageConfig.whereClause.push(
+        { key: 'startDate', operator: '=', value: formattedStartDate },
+        { key: 'endDate', operator: '=', value: formattedEndDate }
+      );
+    }
+
+    // Trigger the pagination and filtering logic
+    this.onPagination();
+  } else {
+    this.toastr.error('Please select a valid date range');
+    this.loader.hide();
   }
-
-  // Trigger the pagination and filtering logic
-  this.onPagination();
 }
+
+// Adjust date to local timezone, setting the time to midnight
+adjustDateToLocalTime(date: Date): Date {
+  const adjustedDate = new Date(date);
+  adjustedDate.setMinutes(adjustedDate.getMinutes() - adjustedDate.getTimezoneOffset());
+  return adjustedDate;
+}
+
 
 
 
@@ -520,6 +538,7 @@ console.log(this.campaignOne.value,'date');
   onClearFilter(): void {
     // Reset the whereClause
     this.resetPagination();
+     this.campaignOne.reset();
 
     // Trigger normal pagination (no filters)
     this.onPagination();
