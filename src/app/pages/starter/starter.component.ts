@@ -92,6 +92,7 @@ const year = today.getFullYear();
     MatInputModule,
     MatDatepickerModule,
     MatFormFieldModule,
+    
   ],
   styleUrls: ['./starter.component.scss'],
   encapsulation: ViewEncapsulation.None,
@@ -328,11 +329,11 @@ export class StarterComponent {
     // this.isLoading = true;
     this.onPagination();
   }
-
   campaignOne = new FormGroup({
-    start: new FormControl(new Date(year, month, 13)),
-    end: new FormControl(new Date(year, month, 16)),
+    start: new FormControl(new Date()),
+    end: new FormControl(new Date()),
   });
+
   // onPagination(): void {
   //     this.loader.show();
 
@@ -473,11 +474,10 @@ export class StarterComponent {
   //     },
   //   });
   // }
-
- onApplyFilter(): void {
+onApplyFilter(): void {
   // Show the loader to indicate the data is being fetched
   this.loader.show();
-
+console.log(this.campaignOne.value,'date');
   // Extract selected start and end dates from the form
   const startDate = this.campaignOne.value.start;
   const endDate = this.campaignOne.value.end;
@@ -500,6 +500,7 @@ export class StarterComponent {
   // Trigger the pagination and filtering logic
   this.onPagination();
 }
+
 
 
  resetPagination() {
