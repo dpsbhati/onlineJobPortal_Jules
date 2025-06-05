@@ -82,11 +82,11 @@
     <span
       class="status rounded-pill f-w-500 p-x-10 p-y-2 f-s-12 ng-star-inserted"
       [ngClass]="{
-        'bg-light-error-cancel text-error-cancel': getStatus(element.job.job_opening) === 'Expired',
-        'bg-light-shortlisted  text-success-shortlisted': getStatus(element.job.job_opening) === 'Application Submitted'
+        'bg-light-error-cancel text-error-cancel': getStatus(element.job?.job_opening) === 'Expired',
+        'bg-light-shortlisted  text-success-shortlisted': getStatus(element.job?.job_opening) === 'Application Submitted'
       }"
     >
-      {{ getStatus(element.job.job_opening) }}
+      {{ getStatus(element.job?.job_opening) }}
     </span>
   </td>
 </ng-container>
