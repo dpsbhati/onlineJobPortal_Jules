@@ -13,6 +13,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { MaritalStatus } from '../dto/create-user-profile.dto';
 
 export enum Gender {
   MALE = 'MALE',
@@ -51,6 +52,43 @@ export class UserProfile {
 
   @Column()
   location: string;
+
+  @Column()
+  home_address: string;
+
+
+  @Column()
+  residence_number: number;
+
+  @Column()
+  birth_place: string;
+
+  @Column()
+  father_full_name: string;
+
+  @Column({ type: 'date' })
+  father_dob: string;
+
+  @Column()
+  mother_full_name: string;
+
+  @Column({ type: 'date' })
+  mother_dob: string;
+
+ @Column({ type: 'float', nullable: true })
+  height: number; // Stored as FLOAT in the database
+
+  @Column({ type: 'float', nullable: true })
+  weight: number; // Stored as FLOAT in the database
+
+  @Column()
+  sss_number: string;
+
+  @Column()
+  phil_health_number: string;
+
+  @Column()
+  pagibig_number: string;
 
   @Column()
   additional_contact_info: string;
@@ -116,10 +154,16 @@ export class UserProfile {
   first_name: string;
 
   @Column({ type: 'varchar' })
+  middle_name: string;
+
+  @Column({ type: 'varchar' })
   last_name: string;
 
   @Column({ type: 'enum', enum: Gender, default: Gender.MALE })
   gender: Gender;
+
+  @Column({ enum: MaritalStatus })
+marital_status: MaritalStatus;
 
   @Column()
   key_skills: string;

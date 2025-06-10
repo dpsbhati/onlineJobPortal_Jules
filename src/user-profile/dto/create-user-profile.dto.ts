@@ -52,6 +52,13 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
   }
 }
 
+export enum MaritalStatus {
+  Single = 'Single',
+  Married = 'Married',
+  Divorced = 'Divorced',
+  Widowed = 'Widowed',
+}
+
 class AdditionalContactInfo {
   @ApiProperty()
   contact_type: string;
@@ -74,6 +81,54 @@ export class CreateUserProfileDto {
 
   @ApiProperty()
   location: string;
+
+  @ApiProperty()
+  home_address: string;
+
+ 
+  @ApiProperty({ description: 'Residence number of the user' })
+  residence_number: number;
+
+  
+  @ApiProperty({ description: 'Birth place of the user' })
+  birth_place: string;
+
+  
+  @ApiProperty({ description: 'Father full name' })
+  father_full_name: string;
+
+  
+  @ApiProperty({ description: 'Father date of birth' })
+  father_dob: string;
+
+  
+  @ApiProperty({ description: 'Mother full name' })
+  mother_full_name: string;
+
+  
+  @ApiProperty({ description: 'Mother date of birth' })
+  mother_dob: string;
+
+  
+  @ApiProperty({ description: 'Height of the user (in cm)' })
+  height: number;
+
+  
+  @ApiProperty({ description: 'Weight of the user (in kg)' })
+  weight: number;
+
+  
+  @ApiProperty({ description: 'SSS number' })
+  sss_number: string;
+
+ 
+  @ApiProperty({ description: 'PhilHealth number' })
+  phil_health_number: string;
+
+  
+  @ApiProperty({ description: 'Pag-IBIG number' })
+  pagibig_number: string;
+
 
   @ApiProperty({ type: [AdditionalContactInfo] })
   additional_contact_info: AdditionalContactInfo[];
@@ -148,6 +203,20 @@ export class CreateUserProfileDto {
   @MaxLength(50, { message: 'first_name cannot exceed 50 characters' })
   @Transform(({ value }) => value?.trim()) // Trim whitespace
   first_name: string;
+
+  @ApiProperty({ description: 'Middle  name of the user' })
+  @IsNotEmpty({ message: 'middle_name cannot be empty' })
+  @IsString({ message: 'middle_name must be a valid string' })
+  @Validate(IsNotWhitespace, {
+    message: 'first_name cannot contain only whitespace',
+  })
+  @MaxLength(50, { message: 'first_name cannot exceed 50 characters' })
+  @Transform(({ value }) => value?.trim()) // Trim whitespace
+  middle_name: string;
+
+  @ApiProperty({ enum: MaritalStatus })
+@IsEnum(MaritalStatus)
+marital_status: MaritalStatus;
 
   @ApiProperty({ description: 'Last name of the user' })
   @IsNotEmpty({ message: 'last_name cannot be empty' })
