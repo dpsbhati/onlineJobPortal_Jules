@@ -90,6 +90,9 @@ export class UserProfile {
   @Column()
   pagibig_number: string;
 
+    @Column()
+  contact_person_in_emergency: string;
+
   @Column()
   additional_contact_info: string;
 

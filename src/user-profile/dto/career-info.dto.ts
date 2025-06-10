@@ -25,6 +25,9 @@ export class EducationDto {
 
   @ApiProperty()
   education_institute?: string;
+
+  @ApiProperty()
+  issue_place?: string;
 }
 export class CourseDto {
   @ApiProperty()

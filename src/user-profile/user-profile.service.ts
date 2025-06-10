@@ -55,6 +55,7 @@ export class UserProfileService {
         ),
         project_info: toJson(createUserProfileDto.project_info),
         language_spoken_info: toJson(createUserProfileDto.language_spoken_info),
+        contact_person_in_emergency: toJson(createUserProfileDto.contact_person_in_emergency),
         language_written_info: toJson(
           createUserProfileDto.language_written_info,
         ),

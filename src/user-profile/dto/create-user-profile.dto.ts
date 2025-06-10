@@ -36,6 +36,7 @@ import {
   PreferencesDto,
   VacancySourceDto,
 } from './additional-info.dto';
+import { ContactPersonDTO } from './contact-person-in-case-of-emergency.dto';
 
 /**
  * Custom Validator: Ensures strings are not just whitespace
@@ -165,6 +166,9 @@ export class CreateUserProfileDto {
 
   @ApiProperty({ type: [LanguageSpokenDto] })
   language_spoken_info: LanguageSpokenDto[];
+
+  @ApiProperty({ type: [ContactPersonDTO] })
+  contact_person_in_emergency: ContactPersonDTO[];
 
   @ApiProperty({ type: [LanguageWrittenDto] })
   language_written_info: LanguageWrittenDto[];
