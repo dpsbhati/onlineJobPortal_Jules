@@ -80,6 +80,54 @@ marital_status: MaritalStatus;
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  home_address?: string;
+
+   @IsString()
+  
+  @ApiPropertyOptional({ description: 'Residence number of the user' })
+  residence_number: number;
+
+
+  @ApiPropertyOptional({ description: 'Birth place of the user' })
+  birth_place: string;
+
+
+  @ApiPropertyOptional({ description: 'Father full name' })
+  father_full_name: string;
+
+
+  @ApiPropertyOptional({ description: 'Father date of birth' })
+  father_dob: string;
+
+
+  @ApiPropertyOptional({ description: 'Mother full name' })
+  mother_full_name: string;
+
+
+  @ApiPropertyOptional({ description: 'Mother date of birth' })
+  mother_dob: string;
+
+  
+  @ApiPropertyOptional({ description: 'Height of the user (in cm)' })
+  height: number;
+
+  
+  @ApiPropertyOptional({ description: 'Weight of the user (in kg)' })
+  weight: number;
+
+  
+  @ApiPropertyOptional({ description: 'SSS number' })
+  sss_number: string;
+
+  
+  @ApiPropertyOptional({ description: 'PhilHealth number' })
+  phil_health_number: string;
+
+  @IsString()
+  @ApiPropertyOptional({ description: 'Pag-IBIG number' })
+  pagibig_number: string;
+
+  @ApiPropertyOptional()
   preferred_job_role?: string;
 
   @ApiPropertyOptional()

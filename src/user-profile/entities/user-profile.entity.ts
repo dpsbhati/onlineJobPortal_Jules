@@ -54,6 +54,43 @@ export class UserProfile {
   location: string;
 
   @Column()
+  home_address: string;
+
+
+  @Column()
+  residence_number: number;
+
+  @Column()
+  birth_place: string;
+
+  @Column()
+  father_full_name: string;
+
+  @Column({ type: 'date' })
+  father_dob: string;
+
+  @Column()
+  mother_full_name: string;
+
+  @Column({ type: 'date' })
+  mother_dob: string;
+
+ @Column({ type: 'float', nullable: true })
+  height: number; // Stored as FLOAT in the database
+
+  @Column({ type: 'float', nullable: true })
+  weight: number; // Stored as FLOAT in the database
+
+  @Column()
+  sss_number: string;
+
+  @Column()
+  phil_health_number: string;
+
+  @Column()
+  pagibig_number: string;
+
+  @Column()
   additional_contact_info: string;
 
   @Column()

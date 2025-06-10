@@ -82,6 +82,54 @@ export class CreateUserProfileDto {
   @ApiProperty()
   location: string;
 
+  @ApiProperty()
+  home_address: string;
+
+ 
+  @ApiProperty({ description: 'Residence number of the user' })
+  residence_number: number;
+
+  
+  @ApiProperty({ description: 'Birth place of the user' })
+  birth_place: string;
+
+  
+  @ApiProperty({ description: 'Father full name' })
+  father_full_name: string;
+
+  
+  @ApiProperty({ description: 'Father date of birth' })
+  father_dob: string;
+
+  
+  @ApiProperty({ description: 'Mother full name' })
+  mother_full_name: string;
+
+  
+  @ApiProperty({ description: 'Mother date of birth' })
+  mother_dob: string;
+
+  
+  @ApiProperty({ description: 'Height of the user (in cm)' })
+  height: number;
+
+  
+  @ApiProperty({ description: 'Weight of the user (in kg)' })
+  weight: number;
+
+  
+  @ApiProperty({ description: 'SSS number' })
+  sss_number: string;
+
+ 
+  @ApiProperty({ description: 'PhilHealth number' })
+  phil_health_number: string;
+
+  
+  @ApiProperty({ description: 'Pag-IBIG number' })
+  pagibig_number: string;
+
+
   @ApiProperty({ type: [AdditionalContactInfo] })
   additional_contact_info: AdditionalContactInfo[];
 
