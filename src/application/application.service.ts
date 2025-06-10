@@ -39,8 +39,6 @@ export class ApplicationService {
 
   async applyForJob(createApplicationDto: CreateApplicationDto, req: any) {
     try {
-      console.log('req user======>>>>>', req.user);
-
       const { job_id, user_id } = createApplicationDto;
 
       // Check if the user has already applied for this job
