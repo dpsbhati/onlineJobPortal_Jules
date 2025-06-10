@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { Gender, PreferredJobShift } from '../entities/user-profile.entity';
+import { MaritalStatus } from './create-user-profile.dto';
 
 export class UpdateUserProfileDto {
   @ApiPropertyOptional()
@@ -12,6 +13,15 @@ export class UpdateUserProfileDto {
   @IsOptional()
   @IsString()
   first_name?: string;
+
+  @ApiPropertyOptional({ enum: MaritalStatus })
+@IsEnum(MaritalStatus)
+marital_status: MaritalStatus;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  middle_name?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

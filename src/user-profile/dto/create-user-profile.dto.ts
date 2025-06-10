@@ -52,6 +52,13 @@ export class IsNotWhitespace implements ValidatorConstraintInterface {
   }
 }
 
+export enum MaritalStatus {
+  Single = 'Single',
+  Married = 'Married',
+  Divorced = 'Divorced',
+  Widowed = 'Widowed',
+}
+
 class AdditionalContactInfo {
   @ApiProperty()
   contact_type: string;
@@ -148,6 +155,20 @@ export class CreateUserProfileDto {
   @MaxLength(50, { message: 'first_name cannot exceed 50 characters' })
   @Transform(({ value }) => value?.trim()) // Trim whitespace
   first_name: string;
+
+  @ApiProperty({ description: 'Middle  name of the user' })
+  @IsNotEmpty({ message: 'middle_name cannot be empty' })
+  @IsString({ message: 'middle_name must be a valid string' })
+  @Validate(IsNotWhitespace, {
+    message: 'first_name cannot contain only whitespace',
+  })
+  @MaxLength(50, { message: 'first_name cannot exceed 50 characters' })
+  @Transform(({ value }) => value?.trim()) // Trim whitespace
+  middle_name: string;
+
+  @ApiProperty({ enum: MaritalStatus })
+@IsEnum(MaritalStatus)
+marital_status: MaritalStatus;
 
   @ApiProperty({ description: 'Last name of the user' })
   @IsNotEmpty({ message: 'last_name cannot be empty' })

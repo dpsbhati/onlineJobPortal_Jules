@@ -13,6 +13,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
+import { MaritalStatus } from '../dto/create-user-profile.dto';
 
 export enum Gender {
   MALE = 'MALE',
@@ -116,10 +117,16 @@ export class UserProfile {
   first_name: string;
 
   @Column({ type: 'varchar' })
+  middle_name: string;
+
+  @Column({ type: 'varchar' })
   last_name: string;
 
   @Column({ type: 'enum', enum: Gender, default: Gender.MALE })
   gender: Gender;
+
+  @Column({ enum: MaritalStatus })
+marital_status: MaritalStatus;
 
   @Column()
   key_skills: string;
