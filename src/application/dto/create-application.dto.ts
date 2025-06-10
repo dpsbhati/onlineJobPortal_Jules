@@ -42,13 +42,16 @@ export class CreateApplicationDto {
   @IsNotEmpty({ message: 'user_id is required.' })
   user_id: string;
 
+  @ApiProperty()
+  source_of_job: string;
+
   @ApiPropertyOptional({
     description: 'Additional information provided by the applicant (optional).',
     example: 'Looking for a flexible work schedule.',
   })
   additional_info?: string;
 }
-export class UpdateApplicationStatusDto{
+export class UpdateApplicationStatusDto {
   @ApiProperty({
     description: 'The unique identifier of the application.',
   })
@@ -57,7 +60,8 @@ export class UpdateApplicationStatusDto{
   id?: string;
 
   @ApiProperty({
-    description: 'The status of the application (accepted, rejected, or pending).',
+    description:
+      'The status of the application (accepted, rejected, or pending).',
   })
   @IsString({ message: 'status must be a valid string.' })
   @IsNotEmpty({ message: 'status is required.' })
