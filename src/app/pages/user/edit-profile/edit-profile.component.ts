@@ -96,6 +96,8 @@ export class EditProfileComponent implements OnInit {
   secondForm: FormGroup;
   thirdForm: FormGroup;
   fourthForm: FormGroup;
+  fiveFrom: FormGroup;
+  sixFrom: FormGroup;
   fileError: string | null = null;
   fileUploaded: File | null = null;
   uploadedFileName: string | null = null;
@@ -103,6 +105,7 @@ export class EditProfileComponent implements OnInit {
   currencyList = currency;
   languageList = languages;
   uniqueRanks: any[] = [];
+ showTextarea: boolean = true; // Initialize to true if you want the textarea visible by default for 'Yes'
 
   constructor(
     private fb: FormBuilder,

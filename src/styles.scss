@@ -176,3 +176,7 @@ body {
 .text-error-cancel {
     color: var(--mat-sys-error) !important;
 }
+.icon-size .mat-mdc-icon-button img,
+.icon-size .mat-mdc-icon-button svg {
+  width: 20px;
+}
