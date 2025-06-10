@@ -43,6 +43,13 @@ export class JobDetailsComponent {
   submitted = false;
   jobId: any;
   user: any;
+   vacancySources = [
+    'Company Website',
+    'HR',
+    'Job Portal (LinkedIn)',
+    'Placement Agency',
+    'Friend',
+  ];
   private wbesocketSubscription: Subscription;
 
   constructor(
