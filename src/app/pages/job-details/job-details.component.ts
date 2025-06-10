@@ -70,6 +70,9 @@ export class JobDetailsComponent {
       additional_info: new FormControl('', [
         Validators.maxLength(500),
       ]),
+        source_of_job: new FormControl('', [
+        // Validators.maxLength(500),
+      ]),
     });
   }
 
