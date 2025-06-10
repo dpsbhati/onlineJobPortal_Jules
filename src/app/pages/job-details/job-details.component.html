@@ -267,14 +267,14 @@
               Additional Information cannot exceed 500 characters.
             </mat-error>
           </mat-form-field>
-           <!-- <h3>
+           <h3  class="additional-info-heading">
               How did you come to know about this vacancy?
-            </h3> -->
-               <!-- <div formGroupName="vacancy_source_info" class="row">
+            </h3>
+               <div class="row">
               <div class="col-lg-8">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Source</mat-label>
-                  <mat-select formControlName="vacancy_source">
+                  <mat-select formControlName="source_of_job">
                     <mat-option
                       *ngFor="let source of vacancySources"
                       [value]="source"
@@ -284,11 +284,11 @@
                   <mat-error
                     *ngIf="
                       userDetailsForm
-                        .get('vacancy_source_info.vacancy_source')
+                        .get('source_of_job')
                         ?.hasError('required') &&
-                      (userDetailsForm.get('vacancy_source_info.vacancy_source')
+                      (userDetailsForm.get('source_of_job')
                         ?.touched ||
-                        userDetailsForm.get('vacancy_source_info.vacancy_source')
+                        userDetailsForm.get('source_of_job')
                           ?.dirty)
                     "
                   >
@@ -296,7 +296,7 @@
                   </mat-error>
                 </mat-form-field>
               </div>
-            </div> -->
+            </div>
 
           <div class="dialog-actions">
             <button
