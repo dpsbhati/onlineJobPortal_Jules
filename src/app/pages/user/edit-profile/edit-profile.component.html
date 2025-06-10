@@ -15,7 +15,7 @@
             <ng-template matStepLabel>Basic Information</ng-template>
             <div class="row">
               <!-- Profile Image -->
-              <div class="col-lg-4">
+              <div class="col-lg-3">
                 <button
                   mat-stroked-button
                   type="button"
@@ -41,32 +41,8 @@
                   />
                 </div>
               </div>
-
-              <!-- First Name -->
-              <div class="col-lg-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>First Name</mat-label>
-                  <input
-                    matInput
-                    placeholder="Enter first name"
-                    formControlName="first_name"
-                    (keypress)="restrictNumeric($event)"
-                  />
-                  <mat-error
-                    *ngIf="form.get('first_name')?.errors?.['required']"
-                  >
-                    First name is required
-                  </mat-error>
-                  <mat-error
-                    *ngIf="form.get('first_name')?.errors?.['pattern']"
-                  >
-                    First name can only contain letters and spaces
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-              <!-- Last Name -->
-              <div class="col-lg-4">
+ <!-- Last Name -->
+              <div class="col-lg-3">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Last Name</mat-label>
                   <input
@@ -84,6 +60,50 @@
                   </mat-error>
                 </mat-form-field>
               </div>
+              <!-- First Name -->
+              <div class="col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Given Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter first name"
+                    formControlName="first_name"
+                    (keypress)="restrictNumeric($event)"
+                  />
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['required']"
+                  >
+                    Given name is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['pattern']"
+                  >
+                    Given name can only contain letters and spaces
+                  </mat-error>
+                </mat-form-field>
+              </div>
+      <div class="col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Middle Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter first name"
+                    formControlName="first_name"
+                    (keypress)="restrictNumeric($event)"
+                  />
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['required']"
+                  >
+                    Middle name is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="form.get('first_name')?.errors?.['pattern']"
+                  >
+                    Middle name can only contain letters and spaces
+                  </mat-error>
+                </mat-form-field>
+              </div>
+             
 
               <!-- Email -->
               <div class="col-lg-4">
@@ -222,7 +242,213 @@
                   </mat-error>
                 </mat-form-field>
               </div>
+ <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Martial Status</mat-label>
+                  <mat-select >
+                    <mat-option value="married"
+                   
+                    > Married
 
+                    </mat-option>
+                     <mat-option value="unmarried"
+                   
+                    > Unmarried
+                    
+                    </mat-option>
+                  </mat-select>
+                  <!-- <mat-error *ngIf="form.get('rank_id')?.hasError('required')">
+                    Martial status is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+
+               <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Home Address</mat-label>
+                  <input
+                    matInput
+                    placeholder="Start typing an address..."
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Residence No.</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter residence no"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+<div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Birth Place</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter birth place"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Father 's Full Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter father's name"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+               <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Father's Birth Date</mat-label>
+                 <input
+                        matInput
+                        readonly
+                      
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                      ></mat-datepicker-toggle>
+                      <!-- <mat-datepicker #weFrom></mat-datepicker>
+                      <mat-error
+                        *ngIf="
+                          item
+                            .get('work_experience_from')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_from')?.touched ||
+                            item.get('work_experience_from')?.dirty)
+                        "
+                      >
+                        From Date is required
+                      </mat-error> -->
+                
+                </mat-form-field>
+              </div>
+                 <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Mother's Full Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter mother's name"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+  <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Mother's Birth Date</mat-label>
+                 <input
+                        matInput
+                        readonly
+                      
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                      ></mat-datepicker-toggle>
+                      <!-- <mat-datepicker #weFrom></mat-datepicker>
+                      <mat-error
+                        *ngIf="
+                          item
+                            .get('work_experience_from')
+                            ?.hasError('required') &&
+                          (item.get('work_experience_from')?.touched ||
+                            item.get('work_experience_from')?.dirty)
+                        "
+                      >
+                        From Date is required
+                      </mat-error> -->
+                
+                </mat-form-field>
+              </div>
+
+               <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Height (cm) </mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter Height (cm)"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+               <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Weight (kg) </mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter Weight (Kg)"
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>SSS No. </mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter SSS No "
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Philhealth No. </mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter Philhealth No "
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
+              
+              <div class="col-lg-4" *ngIf="isApplicant()">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Pagibig No. </mat-label>
+                  <input
+                    matInput
+                    placeholder="Enter Pagibig No "
+                  
+                  />
+                  <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
+                    Location is required
+                  </mat-error> -->
+                </mat-form-field>
+              </div>
               <!-- Additional Contact Info (Repeater UI) -->
               <div
                 class="col-lg-12 mt-4"
