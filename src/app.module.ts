@@ -19,6 +19,7 @@ import { ConfigService } from './config.service';
 import { ConfigModule } from './config.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RanksModule } from './ranks/ranks.module';
+import { TrainingTypeModule } from './training-type/training-type.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { RanksModule } from './ranks/ranks.module';
     CoursesAndCertificationModule,
     NotificationsModule,
     RanksModule,
+    TrainingTypeModule,
   ],
   providers: [JobScheduler],
 })
