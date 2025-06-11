@@ -231,9 +231,7 @@
       travel_documents_info: this.fb.array([]), // For Travel Documents
     });
   }
-  toggleAddNewItem() {
-    this.isAddingNewItem = true;
-  }
+  
 
    addTravelDocument() {
     const travelDocumentsArray = this.secondForm.get('travel_documents_info') as FormArray;
@@ -945,6 +943,26 @@
       }
     });
   }
+  toggleAddNewItem() {
+    this.isAddingNewItem = true; // Show the input field
+  }
+ 
+  addNewTravelType(newTravelType: string) {
+    if (newTravelType.trim()) {
+      // Create a new travel type object
+      const newTravelTypeObject = {
+        id: this.traveltypeList.length + 1, // Generating ID for the new item
+        name: newTravelType.trim(),
+      };
+ 
+      // Add the new item to the list
+      this.traveltypeList.push(newTravelTypeObject);
+ 
+      // Reset the newTravelType input
+      this.newTravelType = '';
+    }
+  }
+ 
 
     adultValidator(control: any) {
       const val = control.value;
