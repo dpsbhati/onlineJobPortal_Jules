@@ -206,7 +206,7 @@
           null,
           this.isApplicant() ? [Validators.required] : null
         ),
-        additional_contact_info: this.fb.array([]),  
+        additional_contact_info: this.fb.array([]),
         emergency_contact_info: this.fb.array([])
 
       });
@@ -227,15 +227,18 @@
 
     Third() {
       this.thirdForm = this.fb.group({
+         language_spoken_info: this.fb.array([]),
+        language_written_info: this.fb.array([]),
         other_experience_info: this.fb.array([]),
         project_info: this.fb.array([]),
+       
       });
     }
 
     fourth() {
       this.fourthForm = this.fb.group({
-        language_spoken_info: this.fb.array([]),
-        language_written_info: this.fb.array([]),
+        // language_spoken_info: this.fb.array([]),
+        // language_written_info: this.fb.array([]),
         notice_period_info: this.fb.group({
           notice_period_months: [0, Validators.min(0)],
           commence_work_date: [null],
@@ -536,7 +539,7 @@
             } else if (!data.project_info || data.project_info?.length === 0) {
               this.addProjects();
             }
-            const langSpokenArray = this.fourthForm.get(
+            const langSpokenArray = this.thirdForm.get(
               'language_spoken_info'
             ) as FormArray;
             while (langSpokenArray?.length !== 0) {
@@ -560,7 +563,7 @@
             ) {
               this.addLangSpoken();
             }
-            const langWrittenArray = this.fourthForm.get(
+            const langWrittenArray = this.thirdForm.get(
               'language_written_info'
             ) as FormArray;
             while (langWrittenArray?.length !== 0) {
@@ -733,7 +736,7 @@
     }
 
     addLangSpoken() {
-      (this.fourthForm.get('language_spoken_info') as FormArray).push(
+      (this.thirdForm.get('language_spoken_info') as FormArray).push(
         this.fb.group({
           language: new FormControl(null, [Validators.required]),
           proficiency: new FormControl(null, [Validators.required]),
@@ -742,15 +745,15 @@
     }
 
     getlanguageSpoken() {
-      return (this.fourthForm.get('language_spoken_info') as FormArray).controls;
+      return (this.thirdForm.get('language_spoken_info') as FormArray).controls;
     }
 
     getlanguageWritten() {
-      return (this.fourthForm.get('language_written_info') as FormArray).controls;
+      return (this.thirdForm.get('language_written_info') as FormArray).controls;
     }
 
     addLangWritten() {
-      (this.fourthForm.get('language_written_info') as FormArray).push(
+      (this.thirdForm.get('language_written_info') as FormArray).push(
         this.fb.group({
           language: new FormControl(null, [Validators.required]),
           proficiency: new FormControl(null, [Validators.required]),
@@ -759,11 +762,11 @@
     }
 
     removeLangSpoken(index: number) {
-      (this.fourthForm.get('language_spoken_info') as FormArray).removeAt(index);
+      (this.thirdForm.get('language_spoken_info') as FormArray).removeAt(index);
     }
 
     removeLangWritten(index: number) {
-      (this.fourthForm.get('language_written_info') as FormArray).removeAt(index);
+      (this.thirdForm.get('language_written_info') as FormArray).removeAt(index);
     }
 
     removeContact(index: number) {
