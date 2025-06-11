@@ -1293,7 +1293,7 @@
             </div>
             <div class="d-none">
               <!-- Other Experience Section -->
-              <div formArrayName="other_experience_info">
+              <!-- <div formArrayName="other_experience_info">
                 <h4 class="mat-headline-6 m-t-24 m-b-20">Other Experience</h4>
                 <div class="row" *ngFor="let item of getOtherExp(); let i = index" [formGroupName]="i">
                   <div class="col-lg-4">
@@ -1308,17 +1308,7 @@
                       " />
                       <mat-datepicker-toggle matSuffix [for]="otherFromPicker"></mat-datepicker-toggle>
                       <mat-datepicker #otherFromPicker></mat-datepicker>
-                      <!-- <mat-error
-                      *ngIf="
-                        item
-                          .get('other_experience_from')
-                          ?.hasError('required') &&
-                        (item.get('other_experience_from')?.touched ||
-                          item.get('other_experience_to')?.dirty)
-                      "
-                    >
-                      From Date is required
-                    </mat-error> -->
+
                     </mat-form-field>
                   </div>
 
@@ -1334,15 +1324,7 @@
                       " />
                       <mat-datepicker-toggle matSuffix [for]="otherToPicker"></mat-datepicker-toggle>
                       <mat-datepicker #otherToPicker></mat-datepicker>
-                      <!-- <mat-error
-                      *ngIf="
-                        item.get('other_experience_to')?.hasError('required') &&
-                        (item.get('other_experience_to')?.touched ||
-                          item.get('other_experience_to')?.dirty)
-                      "
-                    >
-                      To Date is required
-                    </mat-error> -->
+
                       <mat-error *ngIf="
                         item
                           .get('other_experience_to')
@@ -1359,17 +1341,7 @@
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Description</mat-label>
                       <textarea matInput rows="3" formControlName="other_experience_description"></textarea>
-                      <!-- <mat-error
-                      *ngIf="
-                        item
-                          .get('other_experience_description')
-                          ?.hasError('required') &&
-                        (item.get('other_experience_description')?.touched ||
-                          item.get('other_experience_description')?.dirty)
-                      "
-                    >
-                      Description is required
-                    </mat-error> -->
+
                     </mat-form-field>
                   </div>
 
@@ -1383,10 +1355,10 @@
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <hr />
               <!-- Projects Section -->
-              <h4 class="mat-headline-6 m-t-24 m-b-20">Projects</h4>
+              <!-- <h4 class="mat-headline-6 m-t-24 m-b-20">Projects</h4>
               <div formArrayName="project_info">
                 <div class="row" *ngFor="let item of getProjects(); let i = index" [formGroupName]="i">
                   <div class="col-lg-4">
@@ -1422,15 +1394,7 @@
                       " />
                       <mat-datepicker-toggle matSuffix [for]="projToPicker"></mat-datepicker-toggle>
                       <mat-datepicker #projToPicker></mat-datepicker>
-                      <!-- <mat-error
-                      *ngIf="
-                        item.get('project_to')?.hasError('required') &&
-                        (item.get('project_to')?.touched ||
-                          item.get('project_to')?.dirty)
-                      "
-                    >
-                      To Date is required
-                    </mat-error> -->
+
                       <mat-error *ngIf="
                         item.get('project_to')?.hasError('invalidDateRange') &&
                         (item.get('project_to')?.touched ||
@@ -1479,7 +1443,7 @@
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
             </div>
           </form>
