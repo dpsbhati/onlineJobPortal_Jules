@@ -138,7 +138,7 @@
       // this.fourth();
       // this.fiveFrom();
       this.sixth();
-        this.seventh(); 
+        this.seventh();
       this.allrankslist();
     }
 
@@ -221,8 +221,8 @@
     second() {
     this.secondForm = this.fb.group({
       travel_documents_info: this.fb.array([]), // For Travel Documents
-      work_experience_info: this.fb.array([]),
-      education_info: this.fb.array([]),
+      // work_experience_info: this.fb.array([]),
+      // education_info: this.fb.array([]),
       course_info: this.fb.array([]),
       certification_info: this.fb.array([]),
       // cv_path: new FormControl(null),
@@ -261,6 +261,7 @@
          language_spoken_info: this.fb.array([]),
         language_written_info: this.fb.array([]),
           highest_education_level: new FormControl(null, [Validators.required]),
+          education_info: this.fb.array([]),
          cv_path: new FormControl(null),
       cv_name: new FormControl(null, [Validators.required]),
         other_experience_info: this.fb.array([]),
@@ -397,45 +398,8 @@
             ) {
               this.addContact();
             }
-            const workExpArray = this.secondForm.get(
-              'work_experience_info'
-            ) as FormArray;
-            while (workExpArray?.length !== 0) {
-              workExpArray.removeAt(0);
-            }
-            if (
-              data.work_experience_info &&
-              data.work_experience_info?.length > 0
-            ) {
-              data.work_experience_info.forEach((item: any) => {
-                workExpArray.push(
-                  this.fb.group({
-                    work_experience_from: [
-                      item.work_experience_from || null,
-                      Validators.required,
-                    ],
-                    work_experience_to: [
-                      item.work_experience_to || null,
-                      Validators.required,
-                    ],
-                    work_experience_title: [
-                      item.work_experience_title || null,
-                      Validators.required,
-                    ],
-                    work_experience_employer: [
-                      item.work_experience_employer || null,
-                      Validators.required,
-                    ],
-                  })
-                );
-              });
-            } else if (
-              !data.work_experience_info ||
-              data.work_experience_info?.length === 0
-            ) {
-              this.addWorkExp();
-            }
-            const educationArray = this.secondForm.get(
+
+            const educationArray = this.thirdForm.get(
               'education_info'
             ) as FormArray;
             while (educationArray?.length !== 0) {
@@ -707,11 +671,11 @@
     }
 
     getEducation() {
-      return (this.secondForm.get('education_info') as FormArray).controls;
+      return (this.thirdForm.get('education_info') as FormArray).controls;
     }
 
     addEducation() {
-      (this.secondForm.get('education_info') as FormArray).push(
+      (this.thirdForm.get('education_info') as FormArray).push(
         this.fb.group({
           education_from: new FormControl(null, [Validators.required]),
           education_to: new FormControl(null, [Validators.required]),
@@ -824,7 +788,7 @@
     }
 
     removeEducation(index: number) {
-      (this.secondForm.get('education_info') as FormArray).removeAt(index);
+      (this.thirdForm.get('education_info') as FormArray).removeAt(index);
     }
 
     removeCourse(index: number) {
