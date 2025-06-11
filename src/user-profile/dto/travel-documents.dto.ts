@@ -1,6 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class TravelDocumentsDTO {
+
+  id?: string;
+
+  @ApiProperty()
+  travel_document_type_id?: string;
+
   @ApiProperty()
   document_name?: string;
 

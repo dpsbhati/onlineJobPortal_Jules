@@ -3,6 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class TrainingCertificateDTO {
 
   id?: string;
+  
   @ApiProperty()
   traning_type_id?: string;
 
