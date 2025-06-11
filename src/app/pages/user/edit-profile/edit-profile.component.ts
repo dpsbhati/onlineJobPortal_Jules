@@ -97,8 +97,9 @@
     thirdForm: FormGroup;
     fourthForm: FormGroup;
     fiveFrom: FormGroup;
-    sixFrom: FormGroup;
+    // sixFrom: FormGroup;
     sixthForm: FormGroup;
+    seventhForm:FormGroup;
     fileError: string | null = null;
     fileUploaded: File | null = null;
     uploadedFileName: string | null = null;
@@ -137,6 +138,7 @@
       // this.fourth();
       // this.fiveFrom();
       this.sixth();
+        this.seventh(); 
       this.allrankslist();
     }
 
@@ -295,6 +297,17 @@
         }),
       });
     }
+      seventh() {
+    this.seventhForm = this.fb.group({
+      disease_suffered: new FormControl(false),
+      accident_suffered: new FormControl(false),
+      psychiatric_treatment: new FormControl(false),
+      addiction: new FormControl(false),
+      deported_or_convicted: new FormControl(false),
+      other_experience_info: this.fb.array([]), // For Other Experience
+      project_info: this.fb.array([]), // For Projects
+    });
+  }
 
     mobileNumberValidator(control: AbstractControl): ValidationErrors | null {
       const value = control.value;
@@ -317,6 +330,7 @@
         ...this.secondForm.value,
         ...this.thirdForm.value,
         ...this.sixthForm.value,
+         ...this.seventhForm.value,
       };
       this.userService.SaveUserProfile(payload).subscribe({
         next: (response: any) => {
