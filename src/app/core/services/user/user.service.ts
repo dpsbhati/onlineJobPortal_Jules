@@ -57,4 +57,12 @@ export class UserService {
     return this.genericService.Get('applications/get-all');
   }
 
+ getalltraveldocuments() {
+    return this.genericService.Get('travel-documents-type/getall');
+  }
+
+   gettrainingList() {
+    return this.genericService.Get('training-type/get-list');
+  }
+  
 }
