@@ -5,7 +5,7 @@ export class ContactPersonDTO {
   name?: string;
 
   @ApiProperty()
-  address?: Date;
+  address?: string;
 
   @ApiProperty()
   contact_number?: string;
