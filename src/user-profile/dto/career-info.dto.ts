@@ -25,6 +25,9 @@ export class EducationDto {
 
   @ApiProperty()
   education_institute?: string;
+
+  @ApiProperty()
+  issue_place?: string;
 }
 export class CourseDto {
   @ApiProperty()
@@ -51,4 +54,30 @@ export class CertificationDto {
 
   @ApiProperty()
   certification_issuer?: string;
+}
+export class SeaServiceDto {
+  @ApiProperty()
+  vessel_name?: string;
+ 
+  @ApiProperty()
+  flag?: string;
+
+  @ApiProperty()
+  rank_id?: string;
+
+  @ApiProperty()
+  sign_on_date?: Date;
+
+  @ApiProperty()
+  sign_off_date?: Date;
+
+  @ApiProperty()
+  principal_manning_agency?: string;
+
+  @ApiProperty()
+  telephone?: number;
+
+  @ApiProperty()
+  reason_for_signing_off?: string;
+
 }

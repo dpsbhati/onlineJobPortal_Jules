@@ -90,6 +90,9 @@ export class UserProfile {
   @Column()
   pagibig_number: string;
 
+    @Column()
+  contact_person_in_emergency: string;
+
   @Column()
   additional_contact_info: string;
 
@@ -107,6 +110,9 @@ export class UserProfile {
 
   @Column()
   course_info: string;
+
+  @Column()
+  carrier_info: string;
 
   @Column()
   certification_info: string;
@@ -128,6 +134,9 @@ export class UserProfile {
 
   @Column()
   language_written_info: string;
+
+  @Column()
+  legal_dependent: string;
 
   @Column()
   notice_period_info: string;
