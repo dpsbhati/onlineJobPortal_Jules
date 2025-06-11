@@ -6,6 +6,8 @@ import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
 import * as moment from 'moment';
 import { TravelDocument } from './entities/travel-documents.entity';
+import { TrainingCertificateDTO } from './dto/training-certificate.dto';
+import { TrainingCertificate } from './entities/training-certificate.entity';
 
 @Injectable()
 export class UserProfileService {
@@ -14,6 +16,8 @@ export class UserProfileService {
     private readonly userProfileRepository: Repository<UserProfile>,
     @InjectRepository(TravelDocument)
     private readonly travelDocumentsRepository: Repository<TravelDocument>,
+    @InjectRepository(TrainingCertificate)
+    private readonly trainingCertificateRepo: Repository<TrainingCertificate>,
   ) {}
   async create(
     createUserProfileDto: CreateUserProfileDto,
@@ -94,6 +98,24 @@ export class UserProfileService {
           
           // Insert into `travel_documents` table
           await this.travelDocumentsRepository.save(travelDocumentPayload);
+        })
+      );
+    }
+
+    // Check if `training_certificates` is provided in DTO
+    if (createUserProfileDto.training_certificate && createUserProfileDto.training_certificate.length > 0) {
+      // Loop through each certificate and insert into the `training_certificates` table
+      await Promise.all(
+        createUserProfileDto.training_certificate.map(async (certificate) => {
+          const trainingCertificatePayload = {
+            ...certificate, // assuming `certificate` contains the properties of the training certificate
+            user_id, // Link the training certificate to the user's profile
+            created_by: user_id,
+            updated_by: user_id,
+          };
+          
+          // Insert into `training_certificates` table
+          await this.trainingCertificateRepo.save(trainingCertificatePayload);
         })
       );
     }
@@ -229,4 +251,37 @@ export class UserProfileService {
       );
     }
   }
+
+    async createTrainingCertificate(trainingCertificateDTO: TrainingCertificateDTO) {
+      try {
+      
+        if (trainingCertificateDTO.id) {
+         
+          await this.trainingCertificateRepo.update(
+            trainingCertificateDTO.id,
+            trainingCertificateDTO,
+          );
+          return WriteResponse(
+            200,
+            trainingCertificateDTO,
+            'Training Certificate updated successfully.',
+          );
+        } else {
+         
+          if (trainingCertificateDTO.id === null) {
+            delete trainingCertificateDTO.id;
+          }
+          const trainingType =
+            await this.trainingCertificateRepo.save(trainingCertificateDTO);
+          return WriteResponse(
+            200,
+            trainingType,
+            'Training Certificate created successfully.',
+          );
+        }
+      } catch (error) {
+        console.error(error);
+        return WriteResponse(500, false, 'Internal Server Error');
+      }
+    }
 }

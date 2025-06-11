@@ -40,6 +40,7 @@ import {
 import { ContactPersonDTO } from './contact-person-in-case-of-emergency.dto';
 import { LegalDependentDTO } from './legal-dependent.dto';
 import { TravelDocumentsDTO } from './travel-documents.dto';
+import { TrainingCertificateDTO } from './training-certificate.dto';
 
 /**
  * Custom Validator: Ensures strings are not just whitespace
@@ -157,6 +158,9 @@ export class CreateUserProfileDto {
 
   @ApiProperty({ type: [TravelDocumentsDTO] })
   travel_documents: TravelDocumentsDTO[];
+
+  @ApiProperty({ type: [TrainingCertificateDTO] })
+  training_certificate: TrainingCertificateDTO[];
 
   // @ApiProperty({ type: [CourseDto] })
   // course_info: CourseDto[];

@@ -19,6 +19,7 @@ import {
 import { UserProfileService } from './user-profile.service';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { TrainingCertificateDTO } from './dto/training-certificate.dto';
 
 @ApiTags('User Profile')
 @Controller('user-profile')
@@ -61,4 +62,12 @@ export class UserProfileController {
   async remove(@Param('id') id: string) {
     return this.userProfileService.remove(id);
   }
+
+  @Post('training-certificate-create-update')
+   @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+  createTrainingCertificate(@Body() trainingCertificateDTO: TrainingCertificateDTO) {
+    return this.userProfileService.createTrainingCertificate(trainingCertificateDTO);
+  }
+
 }
