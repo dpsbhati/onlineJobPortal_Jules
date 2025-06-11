@@ -112,6 +112,9 @@ export class UserProfile {
   course_info: string;
 
   @Column()
+  carrier_info: string;
+
+  @Column()
   certification_info: string;
 
   @Column()
@@ -131,6 +134,9 @@ export class UserProfile {
 
   @Column()
   language_written_info: string;
+
+  @Column()
+  legal_dependent: string;
 
   @Column()
   notice_period_info: string;

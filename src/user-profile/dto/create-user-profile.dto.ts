@@ -23,6 +23,7 @@ import {
   CertificationDto,
   CourseDto,
   EducationDto,
+  SeaServiceDto,
   WorkExperienceDto,
 } from './career-info.dto';
 import { OtherExperienceInfoDto, ProjectInfoDto } from './other-experience.dto';
@@ -37,6 +38,8 @@ import {
   VacancySourceDto,
 } from './additional-info.dto';
 import { ContactPersonDTO } from './contact-person-in-case-of-emergency.dto';
+import { LegalDependentDTO } from './legal-dependent.dto';
+import { TravelDocumentsDTO } from './travel-documents.dto';
 
 /**
  * Custom Validator: Ensures strings are not just whitespace
@@ -137,8 +140,8 @@ export class CreateUserProfileDto {
   @ApiProperty()
   profile_image_path: string;
 
-  @ApiProperty({ type: [WorkExperienceDto] })
-  work_experience_info: WorkExperienceDto[];
+  // @ApiProperty({ type: [WorkExperienceDto] })
+  // work_experience_info: WorkExperienceDto[];
 
   @ApiProperty()
   highest_education_level?: string;
@@ -146,11 +149,20 @@ export class CreateUserProfileDto {
   @ApiProperty({ type: [EducationDto] })
   education_info: EducationDto[];
 
-  @ApiProperty({ type: [CourseDto] })
-  course_info: CourseDto[];
+  @ApiProperty({ type: [SeaServiceDto] })
+  carrier_info: SeaServiceDto[];
 
-  @ApiProperty({ type: [CertificationDto] })
-  certification_info: CertificationDto[];
+  @ApiProperty({ type: [LegalDependentDTO] })
+  legal_dependent: LegalDependentDTO[];
+
+  @ApiProperty({ type: [TravelDocumentsDTO] })
+  travel_documents: TravelDocumentsDTO[];
+
+  // @ApiProperty({ type: [CourseDto] })
+  // course_info: CourseDto[];
+
+  // @ApiProperty({ type: [CertificationDto] })
+  // certification_info: CertificationDto[];
 
   @ApiProperty()
   cv_path: string;

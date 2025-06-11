@@ -5,12 +5,15 @@ import { UserProfile } from './entities/user-profile.entity';
 import { CreateUserProfileDto } from './dto/create-user-profile.dto';
 import { WriteResponse } from 'src/shared/response';
 import * as moment from 'moment';
+import { TravelDocument } from './entities/travel-documents.entity';
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectRepository(UserProfile)
     private readonly userProfileRepository: Repository<UserProfile>,
+    @InjectRepository(TravelDocument)
+    private readonly travelDocumentsRepository: Repository<TravelDocument>,
   ) {}
   async create(
     createUserProfileDto: CreateUserProfileDto,
@@ -46,10 +49,11 @@ export class UserProfileService {
         additional_contact_info: toJson(
           createUserProfileDto.additional_contact_info,
         ),
-        work_experience_info: toJson(createUserProfileDto.work_experience_info),
+        // work_experience_info: toJson(createUserProfileDto.work_experience_info),
         education_info: toJson(createUserProfileDto.education_info),
-        course_info: toJson(createUserProfileDto.course_info),
-        certification_info: toJson(createUserProfileDto.certification_info),
+        // course_info: toJson(createUserProfileDto.course_info),
+        // certification_info: toJson(createUserProfileDto.certification_info),
+        carrier_info: toJson(createUserProfileDto.carrier_info),
         other_experience_info: toJson(
           createUserProfileDto.other_experience_info,
         ),
@@ -58,6 +62,9 @@ export class UserProfileService {
         contact_person_in_emergency: toJson(createUserProfileDto.contact_person_in_emergency),
         language_written_info: toJson(
           createUserProfileDto.language_written_info,
+        ),
+        legal_dependent: toJson(
+          createUserProfileDto.legal_dependent,
         ),
         notice_period_info: toJson(createUserProfileDto.notice_period_info),
         current_salary_info: toJson(createUserProfileDto.current_salary_info),
@@ -72,6 +79,26 @@ export class UserProfileService {
       const newProfile = this.userProfileRepository.create(profilePayload);
 
       await this.userProfileRepository.update({ user_id }, newProfile);
+
+ // Check if `travel_documents` is provided in DTO
+    if (createUserProfileDto.travel_documents && createUserProfileDto.travel_documents.length > 0) {
+      // Loop through each document and insert into the `travel_documents` table
+      await Promise.all(
+        createUserProfileDto.travel_documents.map(async (doc) => {
+          const travelDocumentPayload = {
+            ...doc, // assuming `doc` contains the properties of the travel document
+            user_id, // Link the travel document to the user's profile
+            created_by: user_id,
+            updated_by: user_id,
+          };
+          
+          // Insert into `travel_documents` table
+          await this.travelDocumentsRepository.save(travelDocumentPayload);
+        })
+      );
+    }
+
+
 
       return WriteResponse(
         200,

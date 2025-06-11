@@ -5,10 +5,10 @@ export class LegalDependentDTO {
   full_name?: string;
 
   @ApiProperty()
-  gender?: Date;
+  gender?: string;
 
   @ApiProperty()
-  date_of_birth?: string;
+  date_of_birth?: Date;
 
   @ApiProperty()
   relationship?: string;

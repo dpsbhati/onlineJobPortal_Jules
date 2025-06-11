@@ -1,11 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class TravelDocumentsDTO {
+export class TrainingCertificateDTO {
   @ApiProperty()
-  document_name?: string;
+  traning_type_id?: string;
 
-      @ApiProperty()
+    @ApiProperty()
   user_id?: string;
+
+
+  @ApiProperty()
+  certificate_type?: string;
 
   @ApiProperty()
   document_number?: string;
