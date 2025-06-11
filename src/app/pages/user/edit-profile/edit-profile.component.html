@@ -484,9 +484,7 @@
                 </h4>
                 <div class="row align-items-center">
                   <div class="col-lg-3">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Travel Type</mat-label>
-                      <mat-select>
+                      <!-- <mat-select>
                         <mat-option value="Male"> Passport
 
                         </mat-option>
@@ -496,7 +494,26 @@
                         <mat-option value="Female"> Other
 
                         </mat-option>
-                      </mat-select>
+                      </mat-select> -->
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Travel Type</mat-label>
+                    
+                       <mat-select formControlName="travel_type">
+                <mat-option *ngFor="let travelType of traveltypeList" [value]="travelType.id">
+                  {{ travelType.name }}
+                </mat-option>
+                <!-- <mat-option *ngIf="isAddingNewItem" [disabled]="true">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Type to add new item</mat-label>
+        <input matInput [(ngModel)]="newTravelType" (keydown.enter)="addNewTravelType()" placeholder="Enter new travel type">
+      </mat-form-field>
+    </mat-option>
+
+    <mat-option *ngIf="!isAddingNewItem" (click)="toggleAddNewItem()">
+      Add New Item
+    </mat-option> -->
+
+              </mat-select>
                     </mat-form-field>
                   </div>
                   <div class="col-lg-3">

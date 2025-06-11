@@ -59,6 +59,8 @@
     styleUrls: ['./edit-profile.component.scss'],
   })
   export class EditProfileComponent implements OnInit {
+   
+  
     proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
     departmentsList = [
       'Admin',
@@ -107,8 +109,10 @@
     currencyList = currency;
     languageList = languages;
     uniqueRanks: any[] = [];
+    traveltypeList:any[]=[];
   showTextarea: boolean = true; // Initialize to true if you want the textarea visible by default for 'Yes'
-
+ isAddingNewItem = false; // To control if the "add new item" input should be shown
+  newTravelType = ''; // To store the value of the new travel type being added
     constructor(
       private fb: FormBuilder,
       private userService: UserService,
@@ -140,6 +144,7 @@
       this.sixth();
         this.seventh();
       this.allrankslist();
+      this.TravelTypeList();
     }
 
     firstForm() {
@@ -222,6 +227,9 @@
     this.secondForm = this.fb.group({
       travel_documents_info: this.fb.array([]), // For Travel Documents
     });
+  }
+  toggleAddNewItem() {
+    this.isAddingNewItem = true;
   }
 
    addTravelDocument() {
@@ -913,6 +921,15 @@
       if (response.statusCode === 200) {
         // Poora object rakhna hai taaki id aur rank_name dono milein
         this.uniqueRanks = response.data.filter((rank: any) => rank.is_deleted === 0);
+      }
+    });
+  }
+   TravelTypeList() {
+    this.userService.getalltraveldocuments().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        // Poora object rakhna hai taaki id aur rank_name dono milein
+        this.traveltypeList = response.data;
+        console.log(this.traveltypeList);
       }
     });
   }

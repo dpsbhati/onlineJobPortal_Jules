@@ -61,7 +61,7 @@ export class UserService {
     return this.genericService.Get('travel-documents-type/getall');
   }
 
-   gettrainingList() {
+   getTrainingTypeList() {
     return this.genericService.Get('training-type/get-list');
   }
   
