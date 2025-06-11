@@ -28,4 +28,5 @@ export class CreateTravelDocumentsTypeDto {
       @IsBoolean()
       @IsOptional()
       is_deleted?: boolean;
+  static id: any;
 }
