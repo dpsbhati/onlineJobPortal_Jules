@@ -661,11 +661,11 @@
                   <mat-option value="Other">Other</mat-option>
                 </mat-select>
                 <mat-error *ngIf="
-                      secondForm
+                      thirdForm
                         .get('highest_education_level')
                         ?.hasError('required') &&
-                      (secondForm.get('highest_education_level')?.touched ||
-                        secondForm.get('highest_education_level')?.dirty)
+                      (thirdForm.get('highest_education_level')?.touched ||
+                        thirdForm.get('highest_education_level')?.dirty)
                     ">
                   Highest Education Level is required
                 </mat-error>
