@@ -1,7 +1,7 @@
 // training-type.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { TrainingType } from './entities/training-type.entity';
 import { CreateTrainingTypeDto } from './dto/create-training-type.dto';
 import { WriteResponse } from 'src/shared/response';
@@ -13,39 +13,50 @@ export class TrainingTypeService {
     private readonly trainingTypeRepository: Repository<TrainingType>, // This injects the repository
   ) {}
 
-  // Create
   async create(trainingTypeDto: CreateTrainingTypeDto) {
     try {
-      // Check if 'id' exists, indicating an update operation
+      const existingByName = await this.trainingTypeRepository.findOne({
+        where: {
+          name: trainingTypeDto.name,
+          is_deleted: false,
+        },
+      });
       if (trainingTypeDto.id) {
-        // Retrieve the entity by its id
         const existingTrainingType = await this.trainingTypeRepository.findOne({
-          where: { id: trainingTypeDto.id, is_deleted: false }, // Find by 'id' only
+          where: { id: trainingTypeDto.id, is_deleted: false },
         });
-
         if (!existingTrainingType) {
-          throw new Error('Training type not found');
+          return WriteResponse(404, false, 'Training Type not found.');
         }
-
-        // Update the entity with the new data
-        const updatedTrainingType = await this.trainingTypeRepository.update(
-          existingTrainingType.id,
+        if (existingByName && existingByName.id !== trainingTypeDto.id) {
+          return WriteResponse(
+            400,
+            false,
+            'Training Type name already exists.',
+          );
+        }
+        await this.trainingTypeRepository.update(
+          trainingTypeDto.id,
           trainingTypeDto,
         );
-
         return WriteResponse(
           200,
           trainingTypeDto,
           'Training Type updated successfully.',
         );
       } else {
-        // If no 'id' exists, it's a new entity creation
+        if (existingByName) {
+          return WriteResponse(
+            400,
+            false,
+            'Training Type name already exists.',
+          );
+        }
         if (trainingTypeDto.id === null) {
           delete trainingTypeDto.id;
         }
         const trainingType =
           await this.trainingTypeRepository.save(trainingTypeDto);
-
         return WriteResponse(
           200,
           trainingType,
@@ -54,7 +65,7 @@ export class TrainingTypeService {
       }
     } catch (error) {
       console.error(error);
-      return WriteResponse(500, false, 'Internal Server Error'); // Return a generic error response
+      return WriteResponse(500, false, 'Internal Server Error');
     }
   }
 
