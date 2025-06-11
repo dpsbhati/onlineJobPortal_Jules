@@ -206,9 +206,12 @@
           null,
           this.isApplicant() ? [Validators.required] : null
         ),
-        additional_contact_info: this.fb.array([]),
+        additional_contact_info: this.fb.array([]),  
+        emergency_contact_info: this.fb.array([])
+
       });
     }
+
 
     second() {
       this.secondForm = this.fb.group({
@@ -621,6 +624,23 @@
         })
       );
     }
+   emergencyContacts() {
+  return (this.form.get('emergency_contact_info') as FormArray).controls;
+}
+
+   addEmergencyContact() {
+      (this.form.get('additional_contact_info') as FormArray).push(
+        this.fb.group({
+          name: new FormControl(null, [Validators.required]),
+          address: new FormControl(null, [Validators.required]),
+           contact_no: new FormControl(null, [Validators.required]),
+           relationship: new FormControl(null, [Validators.required]),
+        })
+      );
+    }
+// removeEmergencyContact(index: number) {
+//   this.emergencyContacts().removeAt(index);
+// }
 
     getworkExp() {
       return (this.secondForm.get('work_experience_info') as FormArray).controls;
