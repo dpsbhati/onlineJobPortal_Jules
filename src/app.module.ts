@@ -20,6 +20,7 @@ import { ConfigModule } from './config.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RanksModule } from './ranks/ranks.module';
 import { TrainingTypeModule } from './training-type/training-type.module';
+import { TravelDocumentsTypeModule } from './travel_documents_type/travel_documents_type.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { TrainingTypeModule } from './training-type/training-type.module';
     NotificationsModule,
     RanksModule,
     TrainingTypeModule,
+    TravelDocumentsTypeModule,
   ],
   providers: [JobScheduler],
 })
