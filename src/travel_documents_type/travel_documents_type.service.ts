@@ -88,25 +88,35 @@ export class TravelDocumentsTypeService {
   }
 
   async findOne(id: string) {
-    let data = await this.traveleRepository.findOne({
-      where: { id: id, is_deleted: false },
-    });
-    if (data) {
-      return WriteResponse(200, data, 'Data found successfully');
-    } else {
-      return WriteResponse(400, false, 'Data not found!');
+    try {
+      let data = await this.traveleRepository.findOne({
+        where: { id: id, is_deleted: false },
+      });
+      if (data) {
+        return WriteResponse(200, data, 'Data found successfully');
+      } else {
+        return WriteResponse(400, false, 'Data not found!');
+      }
+    } catch (error) {
+      console.log(error);
+      return WriteResponse(500, false, `Something went wrong.`);
     }
   }
 
   async remove(id: string) {
-    var data = await this.traveleRepository.findOne({
-      where: { id: id, is_deleted: false },
-    });
-    if (data) {
-      await this.traveleRepository.update(data.id, { is_deleted: true });
-      return WriteResponse(200, true, 'Data deleted successfully');
-    } else {
-      return WriteResponse(404, false, 'Data not found!');
+    try {
+      const data = await this.traveleRepository.findOne({
+        where: { id: id, is_deleted: false },
+      });
+      if (data) {
+        await this.traveleRepository.update(data.id, { is_deleted: true });
+        return WriteResponse(200, true, 'Data deleted successfully');
+      } else {
+        return WriteResponse(404, false, 'Data not found!');
+      }
+    } catch (error) {
+      console.log(error);
+      return WriteResponse(500, false, `Something went wrong.`);
     }
   }
 }
