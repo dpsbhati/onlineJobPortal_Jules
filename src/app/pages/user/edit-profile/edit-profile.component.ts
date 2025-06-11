@@ -214,24 +214,53 @@
 
 
     second() {
-      this.secondForm = this.fb.group({
-        work_experience_info: this.fb.array([]),
-        education_info: this.fb.array([]),
-        course_info: this.fb.array([]),
-        certification_info: this.fb.array([]),
-        cv_path: new FormControl(null),
-        cv_name: new FormControl(null, [Validators.required]),
-        highest_education_level: new FormControl(null, [Validators.required]),
-      });
-    }
+    this.secondForm = this.fb.group({
+      travel_documents_info: this.fb.array([]), // For Travel Documents
+      work_experience_info: this.fb.array([]),
+      education_info: this.fb.array([]),
+      course_info: this.fb.array([]),
+      certification_info: this.fb.array([]),
+      // cv_path: new FormControl(null),
+      // cv_name: new FormControl(null, [Validators.required]),
+      // highest_education_level: new FormControl(null, [Validators.required]),
+    });
+  }
+
+   addTravelDocument() {
+    const travelDocumentsArray = this.secondForm.get('travel_documents_info') as FormArray;
+    travelDocumentsArray.push(
+      this.fb.group({
+        travel_type: new FormControl(null, [Validators.required]),
+        document_number: new FormControl(null, [Validators.required]),
+        issue_place: new FormControl(null, [Validators.required]),
+        issue_date: new FormControl(null, [Validators.required]),
+      })
+    );
+  }
+
+  // Get the travel documents form controls
+  getTravelDocuments() {
+    return (this.secondForm.get('travel_documents_info') as FormArray).controls;
+  }
+
+  // Method to remove a travel document
+  removeTravelDocument(index: number) {
+    const travelDocumentsArray = this.secondForm.get('travel_documents_info') as FormArray;
+    travelDocumentsArray.removeAt(index);
+  }
+
+
 
     Third() {
       this.thirdForm = this.fb.group({
          language_spoken_info: this.fb.array([]),
         language_written_info: this.fb.array([]),
+          highest_education_level: new FormControl(null, [Validators.required]),
+         cv_path: new FormControl(null),
+      cv_name: new FormControl(null, [Validators.required]),
         other_experience_info: this.fb.array([]),
         project_info: this.fb.array([]),
-       
+
       });
     }
 
