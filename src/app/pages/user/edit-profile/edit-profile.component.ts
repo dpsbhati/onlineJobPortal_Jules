@@ -98,6 +98,7 @@
     fourthForm: FormGroup;
     fiveFrom: FormGroup;
     sixFrom: FormGroup;
+    sixthForm: FormGroup;
     fileError: string | null = null;
     fileUploaded: File | null = null;
     uploadedFileName: string | null = null;
@@ -133,7 +134,8 @@
       this.firstForm();
       this.second();
       this.Third();
-      this.fourth();
+      // this.fourth();
+      this.sixth();
       this.allrankslist();
     }
 
@@ -264,8 +266,8 @@
       });
     }
 
-    fourth() {
-      this.fourthForm = this.fb.group({
+    sixth() {
+      this.sixthForm = this.fb.group({
         // language_spoken_info: this.fb.array([]),
         // language_written_info: this.fb.array([]),
         notice_period_info: this.fb.group({
@@ -313,7 +315,7 @@
         ...this.form.value,
         ...this.secondForm.value,
         ...this.thirdForm.value,
-        ...this.fourthForm.value,
+        ...this.sixthForm.value,
       };
       this.userService.SaveUserProfile(payload).subscribe({
         next: (response: any) => {
@@ -354,7 +356,7 @@
             this.form.patchValue(response.data);
             this.secondForm.patchValue(response.data);
             this.thirdForm.patchValue(response.data);
-            this.fourthForm.patchValue(response.data);
+            this.sixthForm.patchValue(response.data);
             this.userId = data.id || userId;
             if (data.profile_image_path) {
               this.imagePreview = data.profile_image_path;

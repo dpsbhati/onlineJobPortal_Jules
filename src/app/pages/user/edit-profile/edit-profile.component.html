@@ -810,8 +810,8 @@
           </div>
         </mat-step>
         <!-- Training Certificates -->
-        <mat-step [stepControl]="fiveFrom">
-          <form class="m-t-24" [formGroup]="fiveFrom">
+        <mat-step [stepControl]="fourthForm">
+          <form class="m-t-24" [formGroup]="fourthForm">
             <ng-template matStepLabel> Training Certificates</ng-template>
             <div class="row">
               <!--   Contact Person In Case Of Emergenc -->
@@ -1287,8 +1287,8 @@
           </form>
         </mat-step>
         <!-- Additional Information -->
-        <mat-step [stepControl]="fourthForm" label="Additional Information" *ngIf="isApplicant()">
-          <form [formGroup]="fourthForm">
+        <mat-step [stepControl]="sixthForm" label="Additional Information" *ngIf="isApplicant()">
+          <form [formGroup]="sixthForm">
 
 
             <!-- Notice Period and Availability -->
@@ -1301,12 +1301,12 @@
                   <mat-label>Notice Period (months)</mat-label>
                   <input matInput type="number" formControlName="notice_period_months" min="0" />
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('notice_period_info.notice_period_months')
                         ?.hasError('required') &&
-                      (fourthForm.get('notice_period_info.notice_period_months')
+                      (sixthForm.get('notice_period_info.notice_period_months')
                         ?.touched ||
-                        fourthForm.get(
+                        sixthForm.get(
                           'notice_period_info.notice_period_months'
                         )?.dirty)
                     ">
@@ -1321,12 +1321,12 @@
                   <mat-datepicker-toggle matSuffix [for]="availDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #availDatePicker></mat-datepicker>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('notice_period_info.commence_work_date')
                         ?.hasError('required') &&
-                      (fourthForm.get('notice_period_info.commence_work_date')
+                      (sixthForm.get('notice_period_info.commence_work_date')
                         ?.touched ||
-                        fourthForm.get('notice_period_info.commence_work_date')
+                        sixthForm.get('notice_period_info.commence_work_date')
                           ?.dirty)
                     ">
                     Commencement Date is required
@@ -1345,11 +1345,11 @@
                   <mat-label>Amount</mat-label>
                   <input matInput type="text" formControlName="amount" />
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('current_salary_info.amount')
                         ?.hasError('required') &&
-                      (fourthForm.get('current_salary_info.amount')?.touched ||
-                        fourthForm.get('current_salary_info.amount')?.dirty)
+                      (sixthForm.get('current_salary_info.amount')?.touched ||
+                        sixthForm.get('current_salary_info.amount')?.dirty)
                     ">
                     Amount is required
                   </mat-error>
@@ -1363,12 +1363,12 @@
                       }})</mat-option>
                   </mat-select>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('current_salary_info.currency')
                         ?.hasError('required') &&
-                      (fourthForm.get('current_salary_info.currency')
+                      (sixthForm.get('current_salary_info.currency')
                         ?.touched ||
-                        fourthForm.get('current_salary_info.currency')?.dirty)
+                        sixthForm.get('current_salary_info.currency')?.dirty)
                     ">
                     Currency is required
                   </mat-error>
@@ -1386,11 +1386,11 @@
                   <mat-label>Amount</mat-label>
                   <input matInput type="text" formControlName="amount" />
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('expected_salary_info.amount')
                         ?.hasError('required') &&
-                      (fourthForm.get('expected_salary_info.amount')?.touched ||
-                        fourthForm.get('expected_salary_info.amount')?.dirty)
+                      (sixthForm.get('expected_salary_info.amount')?.touched ||
+                        sixthForm.get('expected_salary_info.amount')?.dirty)
                     ">
                     Amount is required
                   </mat-error>
@@ -1404,12 +1404,12 @@
                       }})</mat-option>
                   </mat-select>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('expected_salary_info.currency')
                         ?.hasError('required') &&
-                      (fourthForm.get('expected_salary_info.currency')
+                      (sixthForm.get('expected_salary_info.currency')
                         ?.touched ||
-                        fourthForm.get('expected_salary_info.currency')?.dirty)
+                        sixthForm.get('expected_salary_info.currency')?.dirty)
                     ">
                     Currency is required
                   </mat-error>
@@ -1427,11 +1427,11 @@
                     <mat-option *ngFor="let dept of departmentsList" [value]="dept">{{ dept }}</mat-option>
                   </mat-select>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('preferences_info.department')
                         ?.hasError('required') &&
-                      (fourthForm.get('preferences_info.department')?.touched ||
-                        fourthForm.get('preferences_info.department')?.dirty)
+                      (sixthForm.get('preferences_info.department')?.touched ||
+                        sixthForm.get('preferences_info.department')?.dirty)
                     ">
                     Department selection is required
                   </mat-error>
@@ -1446,11 +1446,11 @@
                     </mat-option>
                   </mat-select>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('preferences_info.location')
                         ?.hasError('required') &&
-                      (fourthForm.get('preferences_info.location')?.touched ||
-                        fourthForm.get('preferences_info.location')?.dirty)
+                      (sixthForm.get('preferences_info.location')?.touched ||
+                        sixthForm.get('preferences_info.location')?.dirty)
                     ">
                     Location selection is required
                   </mat-error>
@@ -1466,12 +1466,12 @@
                   <mat-label>Any Additional Information</mat-label>
                   <textarea matInput rows="4" formControlName="additional_info"></textarea>
                   <mat-error *ngIf="
-                      fourthForm
+                      sixthForm
                         .get('additional_info.additional_info')
                         ?.hasError('required') &&
-                      (fourthForm.get('additional_info.additional_info')
+                      (sixthForm.get('additional_info.additional_info')
                         ?.touched ||
-                        fourthForm.get('additional_info.additional_info')
+                        sixthForm.get('additional_info.additional_info')
                           ?.dirty)
                     ">
                     Additional information is required
