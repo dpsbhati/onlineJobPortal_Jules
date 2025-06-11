@@ -15,20 +15,20 @@ export class TravelDocumentsTypeService {
     try {
       const existingByName = await this.traveleRepository.findOne({
         where: {
-          name: CreateTravelDocumentsTypeDto.name,
+          name: createTravelDocumentsTypeDto.name,
           is_deleted: false,
         },
       });
-      if (CreateTravelDocumentsTypeDto.id) {
+      if (createTravelDocumentsTypeDto.id) {
         const existingTrainingType = await this.traveleRepository.findOne({
-          where: { id: CreateTravelDocumentsTypeDto.id, is_deleted: false },
+          where: { id: createTravelDocumentsTypeDto.id, is_deleted: false },
         });
         if (!existingTrainingType) {
           return WriteResponse(404, false, 'Training Type not found.');
         }
         if (
           existingByName &&
-          existingByName.id !== CreateTravelDocumentsTypeDto.id
+          existingByName.id !== createTravelDocumentsTypeDto.id
         ) {
           return WriteResponse(
             400,
@@ -37,12 +37,12 @@ export class TravelDocumentsTypeService {
           );
         }
         await this.traveleRepository.update(
-          CreateTravelDocumentsTypeDto.id,
-          CreateTravelDocumentsTypeDto,
+          createTravelDocumentsTypeDto.id,
+          createTravelDocumentsTypeDto,
         );
         return WriteResponse(
           200,
-          CreateTravelDocumentsTypeDto,
+          createTravelDocumentsTypeDto,
           'Training Type updated successfully.',
         );
       } else {
@@ -53,11 +53,11 @@ export class TravelDocumentsTypeService {
             'Training Type name already exists.',
           );
         }
-        if (CreateTravelDocumentsTypeDto.id === null) {
-          delete CreateTravelDocumentsTypeDto.id;
+        if (createTravelDocumentsTypeDto.id === null) {
+          delete createTravelDocumentsTypeDto.id;
         }
         const trainingType = await this.traveleRepository.save(
-          CreateTravelDocumentsTypeDto,
+          createTravelDocumentsTypeDto,
         );
         return WriteResponse(
           200,
