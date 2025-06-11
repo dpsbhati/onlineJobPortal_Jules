@@ -17,10 +17,10 @@ export class TrainingType {
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
 
-  @Column({ type: 'char', length: 50, nullable: true })
+  @Column({ type: 'char', length: 36, nullable: true })
   created_by: string;
 
-  @Column({ type: 'char', length: 50, nullable: true })
+  @Column({ type: 'char', length: 36, nullable: true })
   updated_by: string;
 
   @Column({ type: 'tinyint', default: 0 })
