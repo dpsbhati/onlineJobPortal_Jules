@@ -840,7 +840,7 @@
                   <div class="col-lg-3">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Training Type</mat-label>
-                      <mat-select>
+                      <!-- <mat-select>
                         <mat-option value="Male"> Basic Training
 
                         </mat-option>
@@ -850,7 +850,13 @@
                         <mat-option value="Female">Add New
 
                         </mat-option>
-                      </mat-select>
+                      </mat-select> -->
+                        <mat-select formControlName="trainingType">
+    <mat-option *ngFor="let training of trainingtypeList" [value]="training.id">
+      {{ training.name }}
+    </mat-option>
+    <mat-option value="addNew">Add New</mat-option>
+  </mat-select>
                     </mat-form-field>
                   </div>
                   <div class="col-lg-3">

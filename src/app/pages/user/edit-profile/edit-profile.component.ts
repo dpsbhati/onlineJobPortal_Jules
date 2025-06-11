@@ -110,6 +110,8 @@
     languageList = languages;
     uniqueRanks: any[] = [];
     traveltypeList:any[]=[];
+    trainingtypeList:any[]=[];
+    
   showTextarea: boolean = true; // Initialize to true if you want the textarea visible by default for 'Yes'
  isAddingNewItem = false; // To control if the "add new item" input should be shown
   newTravelType = ''; // To store the value of the new travel type being added
@@ -145,6 +147,7 @@
         this.seventh();
       this.allrankslist();
       this.TravelTypeList();
+      this.TrainingTypeList();
     }
 
     firstForm() {
@@ -919,7 +922,7 @@
   allrankslist() {
     this.adminService.getallranks().subscribe((response: any) => {
       if (response.statusCode === 200) {
-        // Poora object rakhna hai taaki id aur rank_name dono milein
+       
         this.uniqueRanks = response.data.filter((rank: any) => rank.is_deleted === 0);
       }
     });
@@ -927,13 +930,21 @@
    TravelTypeList() {
     this.userService.getalltraveldocuments().subscribe((response: any) => {
       if (response.statusCode === 200) {
-        // Poora object rakhna hai taaki id aur rank_name dono milein
+       
         this.traveltypeList = response.data;
-        console.log(this.traveltypeList);
+        console.log(this.trainingtypeList);
       }
     });
   }
-
+ TrainingTypeList() {
+    this.userService.getTrainingTypeList().subscribe((response: any) => {
+      if (response.statusCode === 200) {
+        // Poora object rakhna hai taaki id aur rank_name dono milein
+        this.trainingtypeList = response.data;
+        console.log(this.trainingtypeList);
+      }
+    });
+  }
 
     adultValidator(control: any) {
       const val = control.value;
