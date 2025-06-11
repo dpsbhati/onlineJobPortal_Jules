@@ -257,8 +257,8 @@
           education_info: this.fb.array([]),
          cv_path: new FormControl(null),
       cv_name: new FormControl(null, [Validators.required]),
-        other_experience_info: this.fb.array([]),
-        project_info: this.fb.array([]),
+        // other_experience_info: this.fb.array([]),
+        // project_info: this.fb.array([]),
 
       });
     }
@@ -298,8 +298,8 @@
       psychiatric_treatment: new FormControl(false),
       addiction: new FormControl(false),
       deported_or_convicted: new FormControl(false),
-      other_experience_info: this.fb.array([]), // For Other Experience
-      project_info: this.fb.array([]), // For Projects
+      // other_experience_info: this.fb.array([]),
+      // project_info: this.fb.array([]), // For Projects
     });
   }
 
@@ -486,62 +486,62 @@
             // ) {
             //   this.addCertificate();
             // }
-            const otherExpArray = this.thirdForm.get(
-              'other_experience_info'
-            ) as FormArray;
-            while (otherExpArray?.length !== 0) {
-              otherExpArray.removeAt(0);
-            }
-            if (
-              data.other_experience_info &&
-              data.other_experience_info?.length > 0
-            ) {
-              data.other_experience_info.forEach((item: any) => {
-                otherExpArray.push(
-                  this.fb.group({
-                    other_experience_from: [
-                      item.other_experience_from || null,
-                    ],
-                    other_experience_to: [item.other_experience_to || null],
-                    other_experience_description: [
-                      item.other_experience_description || null,
-                    ],
-                  })
-                );
-              });
-            } else if (
-              !data.other_experience_info ||
-              data.other_experience_info?.length === 0
-            ) {
-              this.addOtherExp();
-            }
-            const projectsArray = this.thirdForm.get('project_info') as FormArray;
-            while (projectsArray?.length !== 0) {
-              projectsArray.removeAt(0);
-            }
-            if (data.project_info && data.project_info?.length > 0) {
-              data.project_info.forEach((item: any) => {
-                projectsArray.push(
-                  this.fb.group({
-                    project_from: [
-                      item.project_from || null,
-                      Validators.required,
-                    ],
-                    project_to: [item.project_to || null],
-                    project_name: [
-                      item.project_name || null,
-                      Validators.required,
-                    ],
-                    project_role: [
-                      item.project_role || null,
-                      Validators.required,
-                    ],
-                  })
-                );
-              });
-            } else if (!data.project_info || data.project_info?.length === 0) {
-              this.addProjects();
-            }
+            // const otherExpArray = this.thirdForm.get(
+            //   'other_experience_info'
+            // ) as FormArray;
+            // while (otherExpArray?.length !== 0) {
+            //   otherExpArray.removeAt(0);
+            // }
+            // if (
+            //   data.other_experience_info &&
+            //   data.other_experience_info?.length > 0
+            // ) {
+            //   data.other_experience_info.forEach((item: any) => {
+            //     otherExpArray.push(
+            //       this.fb.group({
+            //         other_experience_from: [
+            //           item.other_experience_from || null,
+            //         ],
+            //         other_experience_to: [item.other_experience_to || null],
+            //         other_experience_description: [
+            //           item.other_experience_description || null,
+            //         ],
+            //       })
+            //     );
+            //   });
+            // } else if (
+            //   !data.other_experience_info ||
+            //   data.other_experience_info?.length === 0
+            // ) {
+            //   this.addOtherExp();
+            // }
+            // const projectsArray = this.thirdForm.get('project_info') as FormArray;
+            // while (projectsArray?.length !== 0) {
+            //   projectsArray.removeAt(0);
+            // }
+            // if (data.project_info && data.project_info?.length > 0) {
+            //   data.project_info.forEach((item: any) => {
+            //     projectsArray.push(
+            //       this.fb.group({
+            //         project_from: [
+            //           item.project_from || null,
+            //           Validators.required,
+            //         ],
+            //         project_to: [item.project_to || null],
+            //         project_name: [
+            //           item.project_name || null,
+            //           Validators.required,
+            //         ],
+            //         project_role: [
+            //           item.project_role || null,
+            //           Validators.required,
+            //         ],
+            //       })
+            //     );
+            //   });
+            // } else if (!data.project_info || data.project_info?.length === 0) {
+            //   this.addProjects();
+            // }
             const langSpokenArray = this.thirdForm.get(
               'language_spoken_info'
             ) as FormArray;
@@ -678,24 +678,24 @@
       );
     }
 
-    getOtherExp() {
-      return (this.thirdForm.get('other_experience_info') as FormArray).controls;
-    }
+    // getOtherExp() {
+    //   return (this.thirdForm.get('other_experience_info') as FormArray).controls;
+    // }
 
-    addOtherExp() {
-      (this.thirdForm.get('other_experience_info') as FormArray).push(
-        this.fb.group({
-          other_experience_from: new FormControl(null),
-          other_experience_to: new FormControl(null),
-          other_experience_description: new FormControl(null, [
-          ]),
-        })
-      );
-    }
+    // addOtherExp() {
+    //   (this.thirdForm.get('other_experience_info') as FormArray).push(
+    //     this.fb.group({
+    //       other_experience_from: new FormControl(null),
+    //       other_experience_to: new FormControl(null),
+    //       other_experience_description: new FormControl(null, [
+    //       ]),
+    //     })
+    //   );
+    // }
 
-    getProjects() {
-      return (this.thirdForm.get('project_info') as FormArray).controls;
-    }
+    // getProjects() {
+    //   return (this.thirdForm.get('project_info') as FormArray).controls;
+    // }
 
     addProjects() {
       (this.thirdForm.get('project_info') as FormArray).push(
@@ -792,13 +792,13 @@
       (this.secondForm.get('certification_info') as FormArray).removeAt(index);
     }
 
-    removeOtherExp(index: number) {
-      (this.thirdForm.get('other_experience_info') as FormArray).removeAt(index);
-    }
+    // removeOtherExp(index: number) {
+    //   (this.thirdForm.get('other_experience_info') as FormArray).removeAt(index);
+    // }
 
-    removeProjects(index: number) {
-      (this.thirdForm.get('project_info') as FormArray).removeAt(index);
-    }
+    // removeProjects(index: number) {
+    //   (this.thirdForm.get('project_info') as FormArray).removeAt(index);
+    // }
 
     onFileSelected(event: Event, controlName: string): void {
       const file = (event.target as HTMLInputElement).files?.[0];
