@@ -221,13 +221,6 @@
     second() {
     this.secondForm = this.fb.group({
       travel_documents_info: this.fb.array([]), // For Travel Documents
-      // work_experience_info: this.fb.array([]),
-      // education_info: this.fb.array([]),
-      course_info: this.fb.array([]),
-      certification_info: this.fb.array([]),
-      // cv_path: new FormControl(null),
-      // cv_name: new FormControl(null, [Validators.required]),
-      // highest_education_level: new FormControl(null, [Validators.required]),
     });
   }
 
@@ -434,65 +427,65 @@
             ) {
               this.addEducation();
             }
-            const courseArray = this.secondForm.get('course_info') as FormArray;
-            while (courseArray?.length !== 0) {
-              courseArray.removeAt(0);
-            }
-            if (data.course_info && data.course_info?.length > 0) {
-              data.course_info.forEach((item: any) => {
-                courseArray.push(
-                  this.fb.group({
-                    course_from: [item.course_from || null, Validators.required],
-                    course_to: [item.course_to || null, Validators.required],
-                    course_title: [
-                      item.course_title || null,
-                      Validators.required,
-                    ],
-                    course_provider: [
-                      item.course_provider || null,
-                      Validators.required,
-                    ],
-                  })
-                );
-              });
-            } else if (!data.course_info || data.course_info?.length === 0) {
-              this.addCourse();
-            }
-            const certificateArray = this.secondForm.get(
-              'certification_info'
-            ) as FormArray;
-            while (certificateArray?.length !== 0) {
-              certificateArray.removeAt(0);
-            }
-            if (data.certification_info && data.certification_info?.length > 0) {
-              data.certification_info.forEach((item: any) => {
-                certificateArray.push(
-                  this.fb.group({
-                    certification_from: [
-                      item.certification_from || null,
-                      Validators.required,
-                    ],
-                    certification_to: [
-                      item.certification_to || null,
-                      Validators.required,
-                    ],
-                    certification_title: [
-                      item.certification_title || null,
-                      Validators.required,
-                    ],
-                    certification_issuer: [
-                      item.certification_issuer || null,
-                      Validators.required,
-                    ],
-                  })
-                );
-              });
-            } else if (
-              !data.certification_info ||
-              data.certification_info?.length === 0
-            ) {
-              this.addCertificate();
-            }
+            // const courseArray = this.secondForm.get('course_info') as FormArray;
+            // while (courseArray?.length !== 0) {
+            //   courseArray.removeAt(0);
+            // }
+            // if (data.course_info && data.course_info?.length > 0) {
+            //   data.course_info.forEach((item: any) => {
+            //     courseArray.push(
+            //       this.fb.group({
+            //         course_from: [item.course_from || null, Validators.required],
+            //         course_to: [item.course_to || null, Validators.required],
+            //         course_title: [
+            //           item.course_title || null,
+            //           Validators.required,
+            //         ],
+            //         course_provider: [
+            //           item.course_provider || null,
+            //           Validators.required,
+            //         ],
+            //       })
+            //     );
+            //   });
+            // } else if (!data.course_info || data.course_info?.length === 0) {
+            //   this.addCourse();
+            // }
+            // const certificateArray = this.secondForm.get(
+            //   'certification_info'
+            // ) as FormArray;
+            // while (certificateArray?.length !== 0) {
+            //   certificateArray.removeAt(0);
+            // }
+            // if (data.certification_info && data.certification_info?.length > 0) {
+            //   data.certification_info.forEach((item: any) => {
+            //     certificateArray.push(
+            //       this.fb.group({
+            //         certification_from: [
+            //           item.certification_from || null,
+            //           Validators.required,
+            //         ],
+            //         certification_to: [
+            //           item.certification_to || null,
+            //           Validators.required,
+            //         ],
+            //         certification_title: [
+            //           item.certification_title || null,
+            //           Validators.required,
+            //         ],
+            //         certification_issuer: [
+            //           item.certification_issuer || null,
+            //           Validators.required,
+            //         ],
+            //       })
+            //     );
+            //   });
+            // } else if (
+            //   !data.certification_info ||
+            //   data.certification_info?.length === 0
+            // ) {
+            //   this.addCertificate();
+            // }
             const otherExpArray = this.thirdForm.get(
               'other_experience_info'
             ) as FormArray;
@@ -655,20 +648,20 @@
 //   this.emergencyContacts().removeAt(index);
 // }
 
-    getworkExp() {
-      return (this.secondForm.get('work_experience_info') as FormArray).controls;
-    }
+    // getworkExp() {
+    //   return (this.secondForm.get('work_experience_info') as FormArray).controls;
+    // }
 
-    addWorkExp() {
-      (this.secondForm.get('work_experience_info') as FormArray).push(
-        this.fb.group({
-          work_experience_from: new FormControl(null, [Validators.required]),
-          work_experience_to: new FormControl(null, [Validators.required]),
-          work_experience_title: new FormControl(null, [Validators.required]),
-          work_experience_employer: new FormControl(null, [Validators.required]),
-        })
-      );
-    }
+    // addWorkExp() {
+    //   (this.secondForm.get('work_experience_info') as FormArray).push(
+    //     this.fb.group({
+    //       work_experience_from: new FormControl(null, [Validators.required]),
+    //       work_experience_to: new FormControl(null, [Validators.required]),
+    //       work_experience_title: new FormControl(null, [Validators.required]),
+    //       work_experience_employer: new FormControl(null, [Validators.required]),
+    //     })
+    //   );
+    // }
 
     getEducation() {
       return (this.thirdForm.get('education_info') as FormArray).controls;
@@ -715,20 +708,20 @@
       );
     }
 
-    getCourse() {
-      return (this.secondForm.get('course_info') as FormArray).controls;
-    }
+    // getCourse() {
+    //   return (this.secondForm.get('course_info') as FormArray).controls;
+    // }
 
-    addCourse() {
-      (this.secondForm.get('course_info') as FormArray).push(
-        this.fb.group({
-          course_from: new FormControl(null, [Validators.required]),
-          course_to: new FormControl(null, [Validators.required]),
-          course_title: new FormControl(null, [Validators.required]),
-          course_provider: new FormControl(null, [Validators.required]),
-        })
-      );
-    }
+    // addCourse() {
+    //   (this.secondForm.get('course_info') as FormArray).push(
+    //     this.fb.group({
+    //       course_from: new FormControl(null, [Validators.required]),
+    //       course_to: new FormControl(null, [Validators.required]),
+    //       course_title: new FormControl(null, [Validators.required]),
+    //       course_provider: new FormControl(null, [Validators.required]),
+    //     })
+    //   );
+    // }
 
     getCetificate() {
       return (this.secondForm.get('certification_info') as FormArray).controls;
@@ -783,17 +776,17 @@
       (this.form.get('additional_contact_info') as FormArray).removeAt(index);
     }
 
-    removeWorkExp(index: number) {
-      (this.secondForm.get('work_experience_info') as FormArray).removeAt(index);
-    }
+    // removeWorkExp(index: number) {
+    //   (this.secondForm.get('work_experience_info') as FormArray).removeAt(index);
+    // }
 
     removeEducation(index: number) {
       (this.thirdForm.get('education_info') as FormArray).removeAt(index);
     }
 
-    removeCourse(index: number) {
-      (this.secondForm.get('course_info') as FormArray).removeAt(index);
-    }
+    // removeCourse(index: number) {
+    //   (this.secondForm.get('course_info') as FormArray).removeAt(index);
+    // }
 
     removeCertificate(index: number) {
       (this.secondForm.get('certification_info') as FormArray).removeAt(index);
