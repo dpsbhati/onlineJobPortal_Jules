@@ -71,14 +71,20 @@
               <div class="col-lg-4 m-b-20">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Middle Name</mat-label>
-                  <input matInput placeholder="Enter first name" formControlName="first_name"
+                  <input matInput placeholder="Enter first name" formControlName="middle_name"
                     (keypress)="restrictNumeric($event)" />
-                  <mat-error *ngIf="form.get('first_name')?.errors?.['required']">
+                  <!-- <mat-error *ngIf="form.get('first_name')?.errors?.['required']">
                     Middle name is required
                   </mat-error>
                   <mat-error *ngIf="form.get('first_name')?.errors?.['pattern']">
                     Middle name can only contain letters and spaces
-                  </mat-error>
+                  </mat-error> -->
+                  <mat-error *ngIf="form.get('middle_name')?.errors?.['required']">
+    Middle name is required
+  </mat-error>
+  <mat-error *ngIf="form.get('middle_name')?.errors?.['pattern']">
+    Middle name can only contain letters and spaces
+  </mat-error>
                 </mat-form-field>
               </div>
 
@@ -193,9 +199,9 @@
                 </mat-form-field>
               </div>
               <div class="col-lg-4" *ngIf="isApplicant()">
-                <mat-form-field appearance="outline" class="w-100">
+                <mat-form-field appearance="outline" class="w-100" >
                   <mat-label>Martial Status</mat-label>
-                  <mat-select>
+                  <mat-select formControlName="marital_status">
                     <mat-option value="Single"> Single </mat-option>
                     <mat-option value="Married"> Married </mat-option>
                     <mat-option value="Divorced"> Divorced </mat-option>
@@ -210,7 +216,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Home Address</mat-label>
-                  <input matInput placeholder="Start typing an address..." />
+                  <input matInput formControlName="home_address"  placeholder="Start typing an address..." />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -219,7 +225,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Residence No.</mat-label>
-                  <input matInput placeholder="Enter residence no" />
+                  <input matInput formControlName="residence_no" placeholder="Enter residence no" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -228,7 +234,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Birth Place</mat-label>
-                  <input matInput placeholder="Enter birth place" />
+                  <input matInput formControlName="birth_place" placeholder="Enter birth place" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -238,7 +244,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Father 's Full Name</mat-label>
-                  <input matInput placeholder="Enter father's name" />
+                  <input matInput  formControlName="father_full_name" placeholder="Enter father's name" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -247,7 +253,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Father's Birth Date</mat-label>
-                  <input matInput [matDatepicker]="picker" />
+                  <input matInput [matDatepicker]="picker"   formControlName="father_birth_date"/>
                   <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -255,7 +261,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Mother's Full Name</mat-label>
-                  <input matInput placeholder="Enter mother's name" />
+                  <input matInput formControlName="mother_full_name" placeholder="Enter mother's name" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -264,7 +270,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Mother's Birth Date</mat-label>
-                  <input matInput [matDatepicker]="picker" />
+                  <input matInput  [matDatepicker]="picker" formControlName="mother_birth_date"/>
                   <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
@@ -274,7 +280,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Height (cm) </mat-label>
-                  <input matInput placeholder="Enter Height (cm)" />
+                  <input matInput  formControlName="height" placeholder="Enter Height (cm)" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -283,7 +289,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Weight (kg) </mat-label>
-                  <input matInput placeholder="Enter Weight (Kg)" />
+                  <input matInput  placeholder="Enter Weight (Kg)"  formControlName="weight" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -292,7 +298,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>SSS No. </mat-label>
-                  <input matInput placeholder="Enter SSS No " />
+                  <input matInput formControlName="sss_no" placeholder="Enter SSS No " />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -302,7 +308,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Philhealth No. </mat-label>
-                  <input matInput placeholder="Enter Philhealth No " />
+                  <input matInput  formControlName="philhealth_no" placeholder="Enter Philhealth No " />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
@@ -312,7 +318,7 @@
               <div class="col-lg-4" *ngIf="isApplicant()">
                 <mat-form-field appearance="outline" class="w-100">
                   <mat-label>Pagibig No. </mat-label>
-                  <input matInput placeholder="Enter Pagibig No " />
+                  <input matInput placeholder="Enter Pagibig No "  formControlName="pagibig_no" />
                   <!-- <mat-error *ngIf="form.get('location')?.errors?.['required']">
                     Location is required
                   </mat-error> -->
