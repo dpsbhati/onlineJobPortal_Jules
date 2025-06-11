@@ -1,5 +1,6 @@
-import { Column, Generated, PrimaryColumn } from "typeorm";
+import { Column, Entity, Generated, PrimaryColumn } from "typeorm";
 
+@Entity({name:'travel_documents_type'})
 export class TravelDocumentsType {
       @PrimaryColumn({type:'uuid'})
       @Generated('uuid')
