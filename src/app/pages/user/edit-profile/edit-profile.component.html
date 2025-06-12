@@ -488,7 +488,7 @@
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Travel Type</mat-label>
                     
-                       <mat-select formControlName="travel_type">
+                       <mat-select formControlName="travel_document_type_id">
                 <mat-option *ngFor="let travelType of traveltypeList" [value]="travelType.id">
                   {{ travelType.name }}
                 </mat-option>
@@ -524,7 +524,7 @@
                   <div class="col-lg-3">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Document Number</mat-label>
-                      <input matInput placeholder="Enter Document Number here" />
+                      <input matInput placeholder="Enter Document Number here" formControlName="document_name" />
                     </mat-form-field>
                   </div>
 
@@ -532,14 +532,22 @@
                   <div class="col-lg-3">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Issue Place </mat-label>
-                      <input matInput placeholder="Enter Issue Place here" />
+                      <input matInput placeholder="Enter Issue Place here" formControlName="issue_place" />
                     </mat-form-field>
                   </div>
                   <div class="col-lg-2">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Issue Date </mat-label>
-                      <input matInput [matDatepicker]="picker" />
+                      <input matInput [matDatepicker]="picker" formControlName="issue_date"/>
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                   <div class="col-lg-2">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Expiry Date </mat-label>
+                      <input matInput [matDatepicker]="picker" formControlName="exp_date"/>
+                      <mat-datepicker-toggle matIconSuffix [for]="picker" ></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                   </div>
@@ -881,7 +889,7 @@
                   <div class="col-lg-2">
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Issue Date </mat-label>
-                      <input matInput [matDatepicker]="picker" />
+                      <input matInput [matDatepicker]="picker" formControlName="issue_date" />
                       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                       <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
