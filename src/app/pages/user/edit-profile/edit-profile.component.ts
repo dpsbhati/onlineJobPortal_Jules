@@ -59,8 +59,8 @@
     styleUrls: ['./edit-profile.component.scss'],
   })
   export class EditProfileComponent implements OnInit {
-   
-  
+
+
     proficiencyOptions = ['None', 'Basic', 'Proficient', 'Fluent'];
     departmentsList = [
       'Admin',
@@ -111,7 +111,7 @@
     uniqueRanks: any[] = [];
     traveltypeList:any[]=[];
     trainingtypeList:any[]=[];
-    
+
   showTextarea: boolean = true; // Initialize to true if you want the textarea visible by default for 'Yes'
  isAddingNewItem = false; // To control if the "add new item" input should be shown
   newTravelType = ''; // To store the value of the new travel type being added
@@ -141,8 +141,8 @@
       this.firstForm();
       this.second();
       this.Third();
-      // this.fourth();
-      // this.fiveFrom();
+      this.fourth();
+      this.five();
       this.sixth();
         this.seventh();
       this.allrankslist();
@@ -231,28 +231,32 @@ legal_dependent:this.fb.array([])
       travel_documents_info: this.fb.array([]), // For Travel Documents
     });
   }
-  
 
-   addTravelDocument() {
-    const travelDocumentsArray = this.secondForm.get('travel_documents_info') as FormArray;
+
+    addTravelDocument() {
+    const travelDocumentsArray = this.secondForm.get(
+      'travel_documents_info'
+    ) as FormArray;
     travelDocumentsArray.push(
       this.fb.group({
         travel_type: new FormControl(null, [Validators.required]),
         document_number: new FormControl(null, [Validators.required]),
         issue_place: new FormControl(null, [Validators.required]),
         issue_date: new FormControl(null, [Validators.required]),
+        exp_date: new FormControl(null, [Validators.required]),
       })
     );
   }
-
   // Get the travel documents form controls
-  getTravelDocuments() {
+   getTravelDocuments() {
     return (this.secondForm.get('travel_documents_info') as FormArray).controls;
   }
 
   // Method to remove a travel document
-  removeTravelDocument(index: number) {
-    const travelDocumentsArray = this.secondForm.get('travel_documents_info') as FormArray;
+   removeTravelDocument(index: number) {
+    const travelDocumentsArray = this.secondForm.get(
+      'travel_documents_info'
+    ) as FormArray;
     travelDocumentsArray.removeAt(index);
   }
 
@@ -271,6 +275,18 @@ legal_dependent:this.fb.array([])
 
       });
     }
+     fourth() {
+    this.fourthForm = this.fb.group({
+      training_certificates: this.fb.array([]),
+    });
+  }
+
+  five() {
+    this.fiveFrom = this.fb.group({
+      vessel_info: this.fb.array([]),
+    });
+  }
+
 
     sixth() {
       this.sixthForm = this.fb.group({
@@ -328,10 +344,24 @@ legal_dependent:this.fb.array([])
       // return;
       // }
       this.loader.show();
+       const travelDocuments = this.secondForm.value.travel_documents_info.map(
+      (doc: any) => ({
+        travel_document_type_id: doc.travel_type,
+        document_name: doc.document_number,
+        user_id: this.userId, // Set user_id as needed
+        document_number: doc.document_number,
+        issue_place: doc.issue_place,
+        issue_date: doc.issue_date,
+        exp_date: doc.exp_date,
+      })
+    );
       const payload = {
         ...this.form.value,
         ...this.secondForm.value,
+           travel_documents: travelDocuments,
         ...this.thirdForm.value,
+         ...this.fourthForm.value,
+      ...this.fiveFrom.value,
         ...this.sixthForm.value,
          ...this.seventhForm.value,
       };
@@ -416,7 +446,7 @@ legal_dependent:this.fb.array([])
               })
             );
           });
-          
+
         } else if (data.contact_person_in_emergency?.length === 0 || data.contact_person_in_emergency == null) {
           this.addEmergencyContact();
         }
@@ -473,7 +503,7 @@ legal_dependent:this.fb.array([])
             ) {
               this.addEducation();
             }
-           
+
             const langSpokenArray = this.thirdForm.get(
               'language_spoken_info'
             ) as FormArray;
@@ -865,7 +895,7 @@ legalDependents() {
   allrankslist() {
     this.adminService.getallranks().subscribe((response: any) => {
       if (response.statusCode === 200) {
-       
+
         this.uniqueRanks = response.data.filter((rank: any) => rank.is_deleted === 0);
       }
     });
@@ -873,7 +903,7 @@ legalDependents() {
    TravelTypeList() {
     this.userService.getalltraveldocuments().subscribe((response: any) => {
       if (response.statusCode === 200) {
-       
+
         this.traveltypeList = response.data;
         console.log(this.trainingtypeList);
       }
@@ -891,7 +921,7 @@ legalDependents() {
   toggleAddNewItem() {
     this.isAddingNewItem = true; // Show the input field
   }
- 
+
   addNewTravelType(newTravelType: string) {
     if (newTravelType.trim()) {
       // Create a new travel type object
@@ -899,15 +929,15 @@ legalDependents() {
         id: this.traveltypeList.length + 1, // Generating ID for the new item
         name: newTravelType.trim(),
       };
- 
+
       // Add the new item to the list
       this.traveltypeList.push(newTravelTypeObject);
- 
+
       // Reset the newTravelType input
       this.newTravelType = '';
     }
   }
- 
+
 
     adultValidator(control: any) {
       const val = control.value;

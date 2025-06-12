@@ -484,12 +484,13 @@
                 </h4>
                 <div class="row align-items-center">
                   <div class="col-lg-3">
-                  
+
                     <mat-form-field appearance="outline" class="w-100">
                       <mat-label>Travel Type</mat-label>
-                    
+
                        <mat-select formControlName="travel_document_type_id">
-                <mat-option *ngFor="let travelType of traveltypeList" [value]="travelType.id">
+                <mat-option   *ngFor="let travelType of traveltypeList"
+                  [value]="travelType.id">
                   {{ travelType.name }}
                 </mat-option>
                     <mat-form-field class="example-full-width">
@@ -500,7 +501,7 @@
                         #input
                       />
                     </mat-form-field>
- 
+
                     <button
                       mat-raised-button
                       (click)="addNewTravelType(input.value)"
@@ -553,10 +554,10 @@
                   </div>
                   <div class="col-lg-1">
                     <div class="d-flex">
-                      <button mat-icon-button color="primary" type="button">
+                      <button mat-icon-button color="primary" type="button"    (click)="addTravelDocument()">
                         <mat-icon>add</mat-icon>
                       </button>
-                      <button mat-icon-button color="primary" class="m-b-20" type="button">
+                      <button mat-icon-button color="primary" class="m-b-20" type="button"   (click)="removeTravelDocument(0)">
                         <mat-icon>remove</mat-icon>
                       </button>
                     </div>
@@ -568,7 +569,7 @@
               <button mat-flat-button class="bg-error text-white" matStepperPrevious>
                 Back
               </button>
-              <button mat-flat-button matStepperNext [disabled]="form.invalid" *ngIf="isApplicant()" type="button">
+              <button mat-flat-button matStepperNext [disabled]="secondForm.invalid" *ngIf="isApplicant()" type="button">
                 Next
               </button>
 
