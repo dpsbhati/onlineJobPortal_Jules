@@ -41,6 +41,7 @@ import { ContactPersonDTO } from './contact-person-in-case-of-emergency.dto';
 import { LegalDependentDTO } from './legal-dependent.dto';
 import { TravelDocumentsDTO } from './travel-documents.dto';
 import { TrainingCertificateDTO } from './training-certificate.dto';
+import { UserMedicalQuestionDto } from './user_medical_questionnaire.dto';
 
 /**
  * Custom Validator: Ensures strings are not just whitespace
@@ -161,6 +162,9 @@ export class CreateUserProfileDto {
 
   @ApiProperty({ type: [TrainingCertificateDTO] })
   training_certificate: TrainingCertificateDTO[];
+
+  @ApiProperty({ type: UserMedicalQuestionDto })
+  user_medical_questionnaire: UserMedicalQuestionDto;
 
   // @ApiProperty({ type: [CourseDto] })
   // course_info: CourseDto[];

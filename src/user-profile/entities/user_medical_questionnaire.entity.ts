@@ -1,39 +1,32 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Generated,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Generated, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('travel_documents')
-export class TrainingCertificate {
+@Entity({ name: 'user_medical_questionnaire' })
+export class UserMedicalQuestion {
+
   @PrimaryColumn({ type: 'uuid' })
   @Generated('uuid')
   id: string;
-  @Column()
-  traning_type_id?: string;
 
   @Column()
-  user_id?: string;
+  user_id: string;
 
   @Column()
-  certificate_type?: string;
+  disease_unfit_service:string;
 
   @Column()
-  document_number?: string;
+  accident_disability:string;
 
   @Column()
-  issue_place?: string;
+  psychiatric_treatment:string;
 
   @Column()
-  issue_date?: Date;
+  alcohol_drug_addiction:string; 
 
   @Column()
-  exp_date?: Date;
+  blacklisted_illegal_activities:string;
 
+  @Column()
+  reason: string;
 
    @CreateDateColumn()
     created_at: Date;

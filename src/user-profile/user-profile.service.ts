@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { TravelDocument } from './entities/travel-documents.entity';
 import { TrainingCertificateDTO } from './dto/training-certificate.dto';
 import { TrainingCertificate } from './entities/training-certificate.entity';
+import { UserMedicalQuestion } from './entities/user_medical_questionnaire.entity';
 
 @Injectable()
 export class UserProfileService {
@@ -18,6 +19,8 @@ export class UserProfileService {
     private readonly travelDocumentsRepository: Repository<TravelDocument>,
     @InjectRepository(TrainingCertificate)
     private readonly trainingCertificateRepo: Repository<TrainingCertificate>,
+    @InjectRepository(UserMedicalQuestion)
+    private readonly userMedicalQuestionRepo: Repository<UserMedicalQuestion>,
   ) {}
   async create(
     createUserProfileDto: CreateUserProfileDto,
@@ -119,6 +122,20 @@ export class UserProfileService {
         })
       );
     }
+    // Check if `user_medical_questionnaire` is provided in DTO
+    if (createUserProfileDto.user_medical_questionnaire) {
+      const medicalQuestionnairePayload = {
+        ...createUserProfileDto.user_medical_questionnaire,
+        user_id,  // Link the questionnaire to the user's profile
+        created_by: user_id,
+        updated_by: user_id,
+      };
+
+      // Insert into `user_medical_questionnaire` table
+      await this.userMedicalQuestionRepo.save(medicalQuestionnairePayload);
+    }
+
+
 
 
 
