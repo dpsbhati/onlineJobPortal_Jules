@@ -196,17 +196,17 @@
 
           marital_status: new FormControl(null),
   home_address: new FormControl(null),
-  residence_no: new FormControl(null),
+  residence_number: new FormControl(null),
   birth_place: new FormControl(null),
   father_full_name: new FormControl(null),
-  father_birth_date: new FormControl(null),
+  father_dob: new FormControl(null),
   mother_full_name: new FormControl(null),
   mother_birth_date: new FormControl(null),
   height: new FormControl(null),
   weight: new FormControl(null),
-  sss_no: new FormControl(null),
-  philhealth_no: new FormControl(null),
-  pagibig_no: new FormControl(null),
+  sss_number: new FormControl(null),
+  phil_health_number: new FormControl(null),
+  pagibig_number: new FormControl(null),
         location: new FormControl(
           null,
           this.isApplicant() ? [Validators.required] : null
@@ -220,8 +220,8 @@
           this.isApplicant() ? [Validators.required] : null
         ),
         additional_contact_info: this.fb.array([]),
-        emergency_contact_info: this.fb.array([])
-
+        contact_person_in_emergency: this.fb.array([]),
+legal_dependent:this.fb.array([])
       });
     }
 
@@ -401,6 +401,43 @@
               this.addContact();
             }
 
+
+
+
+            const emergencyContactsFormArray = this.form.get('contact_person_in_emergency') as FormArray;
+        if (data.contact_person_in_emergency?.length > 0) {
+          data.contact_person_in_emergency.forEach((contact: any) => {
+            emergencyContactsFormArray.push(
+              this.fb.group({
+                name: [contact.name || null],
+                address: [contact.address || null],
+                contact_number: [contact.contact_number || null],
+                relationship: [contact.relationship || null],
+              })
+            );
+          });
+          
+        } else if (data.contact_person_in_emergency?.length === 0 || data.contact_person_in_emergency == null) {
+          this.addEmergencyContact();
+        }
+
+
+
+        const legalDependentsFormArray = this.form.get('legal_dependent') as FormArray;
+        if (data.legal_dependent?.length > 0) {
+          data.legal_dependent.forEach((dependent: any) => {
+            legalDependentsFormArray.push(
+              this.fb.group({
+                full_name: [dependent.full_name || null],
+                gender: [dependent.gender || null],
+                relationship: [dependent.relationship || null],
+                date_of_birth: [dependent.date_of_birth || null],
+              })
+            );
+          });
+        } else if (data.legal_dependent?.length === 0 || data.legal_dependent == null) {
+          this.addLegalDependent();
+        }
             const educationArray = this.thirdForm.get(
               'education_info'
             ) as FormArray;
@@ -436,121 +473,7 @@
             ) {
               this.addEducation();
             }
-            // const courseArray = this.secondForm.get('course_info') as FormArray;
-            // while (courseArray?.length !== 0) {
-            //   courseArray.removeAt(0);
-            // }
-            // if (data.course_info && data.course_info?.length > 0) {
-            //   data.course_info.forEach((item: any) => {
-            //     courseArray.push(
-            //       this.fb.group({
-            //         course_from: [item.course_from || null, Validators.required],
-            //         course_to: [item.course_to || null, Validators.required],
-            //         course_title: [
-            //           item.course_title || null,
-            //           Validators.required,
-            //         ],
-            //         course_provider: [
-            //           item.course_provider || null,
-            //           Validators.required,
-            //         ],
-            //       })
-            //     );
-            //   });
-            // } else if (!data.course_info || data.course_info?.length === 0) {
-            //   this.addCourse();
-            // }
-            // const certificateArray = this.secondForm.get(
-            //   'certification_info'
-            // ) as FormArray;
-            // while (certificateArray?.length !== 0) {
-            //   certificateArray.removeAt(0);
-            // }
-            // if (data.certification_info && data.certification_info?.length > 0) {
-            //   data.certification_info.forEach((item: any) => {
-            //     certificateArray.push(
-            //       this.fb.group({
-            //         certification_from: [
-            //           item.certification_from || null,
-            //           Validators.required,
-            //         ],
-            //         certification_to: [
-            //           item.certification_to || null,
-            //           Validators.required,
-            //         ],
-            //         certification_title: [
-            //           item.certification_title || null,
-            //           Validators.required,
-            //         ],
-            //         certification_issuer: [
-            //           item.certification_issuer || null,
-            //           Validators.required,
-            //         ],
-            //       })
-            //     );
-            //   });
-            // } else if (
-            //   !data.certification_info ||
-            //   data.certification_info?.length === 0
-            // ) {
-            //   this.addCertificate();
-            // }
-            // const otherExpArray = this.thirdForm.get(
-            //   'other_experience_info'
-            // ) as FormArray;
-            // while (otherExpArray?.length !== 0) {
-            //   otherExpArray.removeAt(0);
-            // }
-            // if (
-            //   data.other_experience_info &&
-            //   data.other_experience_info?.length > 0
-            // ) {
-            //   data.other_experience_info.forEach((item: any) => {
-            //     otherExpArray.push(
-            //       this.fb.group({
-            //         other_experience_from: [
-            //           item.other_experience_from || null,
-            //         ],
-            //         other_experience_to: [item.other_experience_to || null],
-            //         other_experience_description: [
-            //           item.other_experience_description || null,
-            //         ],
-            //       })
-            //     );
-            //   });
-            // } else if (
-            //   !data.other_experience_info ||
-            //   data.other_experience_info?.length === 0
-            // ) {
-            //   this.addOtherExp();
-            // }
-            // const projectsArray = this.thirdForm.get('project_info') as FormArray;
-            // while (projectsArray?.length !== 0) {
-            //   projectsArray.removeAt(0);
-            // }
-            // if (data.project_info && data.project_info?.length > 0) {
-            //   data.project_info.forEach((item: any) => {
-            //     projectsArray.push(
-            //       this.fb.group({
-            //         project_from: [
-            //           item.project_from || null,
-            //           Validators.required,
-            //         ],
-            //         project_to: [item.project_to || null],
-            //         project_name: [
-            //           item.project_name || null,
-            //           Validators.required,
-            //         ],
-            //         project_role: [
-            //           item.project_role || null,
-            //           Validators.required,
-            //         ],
-            //       })
-            //     );
-            //   });
-            // } else if (!data.project_info || data.project_info?.length === 0) {
-            //   this.addProjects();
-            // }
+           
             const langSpokenArray = this.thirdForm.get(
               'language_spoken_info'
             ) as FormArray;
@@ -639,20 +562,42 @@
         })
       );
     }
-   emergencyContacts() {
-  return (this.form.get('emergency_contact_info') as FormArray).controls;
+  addEmergencyContact() {
+  (this.form.get('contact_person_in_emergency') as FormArray).push(
+    this.fb.group({
+      name: new FormControl(null, [Validators.required]),
+      address: new FormControl(null, [Validators.required]),
+      contact_number: new FormControl(null, [Validators.required]),
+      relationship: new FormControl(null, [Validators.required]),
+    })
+  );
 }
 
-   addEmergencyContact() {
-      (this.form.get('additional_contact_info') as FormArray).push(
-        this.fb.group({
-          name: new FormControl(null, [Validators.required]),
-          address: new FormControl(null, [Validators.required]),
-           contact_no: new FormControl(null, [Validators.required]),
-           relationship: new FormControl(null, [Validators.required]),
-        })
-      );
-    }
+removeEmergencyContact(index: number) {
+  (this.form.get('contact_person_in_emergency') as FormArray).removeAt(index);
+}
+
+emergencyContacts() {
+  return (this.form.get('contact_person_in_emergency') as FormArray).controls;
+}
+addLegalDependent() {
+  (this.form.get('legal_dependent') as FormArray).push(
+    this.fb.group({
+      full_name: new FormControl(null, [Validators.required]),
+      gender: new FormControl(null, [Validators.required]),
+      relationship: new FormControl(null, [Validators.required]),
+      date_of_birth: new FormControl(null, [Validators.required]),
+    })
+  );
+}
+
+removeLegalDependent(index: number) {
+  (this.form.get('legal_dependent') as FormArray).removeAt(index);
+}
+
+legalDependents() {
+  return (this.form.get('legal_dependent') as FormArray).controls;
+}
 // removeEmergencyContact(index: number) {
 //   this.emergencyContacts().removeAt(index);
 // }
