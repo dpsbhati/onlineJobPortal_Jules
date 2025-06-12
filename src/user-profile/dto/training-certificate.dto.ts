@@ -5,7 +5,7 @@ export class TrainingCertificateDTO {
   id?: string;
   
   @ApiProperty()
-  traning_type_id?: string;
+  training_type_id?: string;
 
     @ApiProperty()
   user_id?: string;

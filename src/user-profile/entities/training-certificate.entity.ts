@@ -14,7 +14,7 @@ export class TrainingCertificate {
   @Generated('uuid')
   id: string;
   @Column()
-  traning_type_id?: string;
+  training_type_id?: string;
 
   @Column()
   user_id?: string;
