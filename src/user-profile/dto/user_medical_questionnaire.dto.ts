@@ -7,20 +7,20 @@ id: string;
   @ApiProperty() 
   user_id: string;
 
-  @ApiProperty() 
-  disease_unfit_service: string;
+  @ApiProperty({default: false}) 
+  disease_unfit_service: boolean;
 
-  @ApiProperty() 
-  accident_disability: string;
+  @ApiProperty({default: false}) 
+  accident_disability: boolean;
 
-  @ApiProperty() 
-  psychiatric_treatment: string;
+  @ApiProperty({default: false}) 
+  psychiatric_treatment: boolean;
 
-  @ApiProperty() 
-  alcohol_drug_addiction: string;
+  @ApiProperty({default: false}) 
+  alcohol_drug_addiction: boolean;
 
-  @ApiProperty() 
-  blacklisted_illegal_activities: string;
+  @ApiProperty({default: false}) 
+  blacklisted_illegal_activities: boolean;
 
   @ApiProperty() 
   reason: string;

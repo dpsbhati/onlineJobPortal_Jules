@@ -11,19 +11,19 @@ export class UserMedicalQuestion {
   user_id: string;
 
   @Column()
-  disease_unfit_service:string;
+  disease_unfit_service:boolean;
 
   @Column()
-  accident_disability:string;
+  accident_disability:boolean;
 
   @Column()
-  psychiatric_treatment:string;
+  psychiatric_treatment:boolean;
 
   @Column()
-  alcohol_drug_addiction:string; 
+  alcohol_drug_addiction:boolean; 
 
   @Column()
-  blacklisted_illegal_activities:string;
+  blacklisted_illegal_activities:boolean;
 
   @Column()
   reason: string;
