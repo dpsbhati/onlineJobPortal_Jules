@@ -394,175 +394,355 @@ legal_dependent:this.fb.array([])
       return this.userRole.toLowerCase() === UserRole.APPLICANT.toLowerCase();
     }
 
-    loadUserData(userId: string): void {
-      this.loader.show();
-      this.userService.getUserById(userId).subscribe({
-        next: (response: any) => {
-          this.loader.hide();
-          if (response.statusCode === 200 && response.data) {
-            const data = response.data;
-            this.form.patchValue(response.data);
-            this.secondForm.patchValue(response.data);
-            this.thirdForm.patchValue(response.data);
-            this.sixthForm.patchValue(response.data);
-            this.userId = data.id || userId;
-            if (data.profile_image_path) {
-              this.imagePreview = data.profile_image_path;
-            }
-            if (data.cv_name) {
-              this.uploadedFileName = data.cv_name;
-            }
-            const contactsFormArray = this.form.get(
-              'additional_contact_info'
-            ) as FormArray;
-            if (data.additional_contact_info?.length > 0) {
-              data.additional_contact_info.forEach((contact: any) => {
-                contactsFormArray.push(
-                  this.fb.group({
-                    contact_type: [contact.contact_type || null],
-                    value: [contact.value || null],
-                  })
-                );
-              });
-            } else if (
-              data.additional_contact_info?.length == 0 ||
-              data.additional_contact_info == null
-            ) {
-              this.addContact();
-            }
+    // loadUserData(userId: string): void {
+    //   this.loader.show();
+    //   this.userService.getUserById(userId).subscribe({
+    //     next: (response: any) => {
+    //       this.loader.hide();
+    //       if (response.statusCode === 200 && response.data) {
+    //         const data = response.data;
+    //         this.form.patchValue(response.data);
+    //         this.secondForm.patchValue(response.data);
+    //         this.thirdForm.patchValue(response.data);
+    //         this.sixthForm.patchValue(response.data);
+    //         this.userId = data.id || userId;
+    //         if (data.profile_image_path) {
+    //           this.imagePreview = data.profile_image_path;
+    //         }
+    //         if (data.cv_name) {
+    //           this.uploadedFileName = data.cv_name;
+    //         }
+    //         const contactsFormArray = this.form.get(
+    //           'additional_contact_info'
+    //         ) as FormArray;
+    //         if (data.additional_contact_info?.length > 0) {
+    //           data.additional_contact_info.forEach((contact: any) => {
+    //             contactsFormArray.push(
+    //               this.fb.group({
+    //                 contact_type: [contact.contact_type || null],
+    //                 value: [contact.value || null],
+    //               })
+    //             );
+    //           });
+    //         } else if (
+    //           data.additional_contact_info?.length == 0 ||
+    //           data.additional_contact_info == null
+    //         ) {
+    //           this.addContact();
+    //         }
 
 
 
 
-            const emergencyContactsFormArray = this.form.get('contact_person_in_emergency') as FormArray;
-        if (data.contact_person_in_emergency?.length > 0) {
-          data.contact_person_in_emergency.forEach((contact: any) => {
-            emergencyContactsFormArray.push(
-              this.fb.group({
-                name: [contact.name || null],
-                address: [contact.address || null],
-                contact_number: [contact.contact_number || null],
-                relationship: [contact.relationship || null],
-              })
-            );
-          });
+    //         const emergencyContactsFormArray = this.form.get('contact_person_in_emergency') as FormArray;
+    //     if (data.contact_person_in_emergency?.length > 0) {
+    //       data.contact_person_in_emergency.forEach((contact: any) => {
+    //         emergencyContactsFormArray.push(
+    //           this.fb.group({
+    //             name: [contact.name || null],
+    //             address: [contact.address || null],
+    //             contact_number: [contact.contact_number || null],
+    //             relationship: [contact.relationship || null],
+    //           })
+    //         );
+    //       });
 
-        } else if (data.contact_person_in_emergency?.length === 0 || data.contact_person_in_emergency == null) {
-          this.addEmergencyContact();
+    //     } else if (data.contact_person_in_emergency?.length === 0 || data.contact_person_in_emergency == null) {
+    //       this.addEmergencyContact();
+    //     }
+
+
+
+    //     const legalDependentsFormArray = this.form.get('legal_dependent') as FormArray;
+    //     if (data.legal_dependent?.length > 0) {
+    //       data.legal_dependent.forEach((dependent: any) => {
+    //         legalDependentsFormArray.push(
+    //           this.fb.group({
+    //             full_name: [dependent.full_name || null],
+    //             gender: [dependent.gender || null],
+    //             relationship: [dependent.relationship || null],
+    //             date_of_birth: [dependent.date_of_birth || null],
+    //           })
+    //         );
+    //       });
+    //     } else if (data.legal_dependent?.length === 0 || data.legal_dependent == null) {
+    //       this.addLegalDependent();
+    //     }
+    //         const educationArray = this.thirdForm.get(
+    //           'education_info'
+    //         ) as FormArray;
+    //         while (educationArray?.length !== 0) {
+    //           educationArray.removeAt(0);
+    //         }
+    //         if (data.education_info && data.education_info?.length > 0) {
+    //           data.education_info.forEach((item: any) => {
+    //             educationArray.push(
+    //               this.fb.group({
+    //                 education_from: [
+    //                   item.education_from || null,
+    //                   Validators.required,
+    //                 ],
+    //                 education_to: [
+    //                   item.education_to || null,
+    //                   Validators.required,
+    //                 ],
+    //                 education_title: [
+    //                   item.education_title || null,
+    //                   Validators.required,
+    //                 ],
+    //                 education_institute: [
+    //                   item.education_institute || null,
+    //                   Validators.required,
+    //                 ],
+    //               })
+    //             );
+    //           });
+    //         } else if (
+    //           !data.education_info ||
+    //           data.education_info?.length === 0
+    //         ) {
+    //           this.addEducation();
+    //         }
+
+    //         const langSpokenArray = this.thirdForm.get(
+    //           'language_spoken_info'
+    //         ) as FormArray;
+    //         while (langSpokenArray?.length !== 0) {
+    //           langSpokenArray.removeAt(0);
+    //         }
+    //         if (
+    //           data.language_spoken_info &&
+    //           data.language_spoken_info?.length > 0
+    //         ) {
+    //           data.language_spoken_info.forEach((item: any) => {
+    //             langSpokenArray.push(
+    //               this.fb.group({
+    //                 language: [item.language || null, Validators.required],
+    //                 proficiency: [item.proficiency || null, Validators.required],
+    //               })
+    //             );
+    //           });
+    //         } else if (
+    //           !data.language_spoken_info ||
+    //           data.language_spoken_info?.length === 0
+    //         ) {
+    //           this.addLangSpoken();
+    //         }
+    //         const langWrittenArray = this.thirdForm.get(
+    //           'language_written_info'
+    //         ) as FormArray;
+    //         while (langWrittenArray?.length !== 0) {
+    //           langWrittenArray.removeAt(0);
+    //         }
+    //         if (
+    //           data.language_written_info &&
+    //           data.language_written_info?.length > 0
+    //         ) {
+    //           data.language_written_info.forEach((item: any) => {
+    //             langWrittenArray.push(
+    //               this.fb.group({
+    //                 language: [item.language || null, Validators.required],
+    //                 proficiency: [item.proficiency || null, Validators.required],
+    //               })
+    //             );
+    //           });
+    //         } else if (
+    //           !data.language_written_info ||
+    //           data.language_written_info?.length === 0
+    //         ) {
+    //           this.addLangWritten();
+    //         }
+    //       }
+    //     },
+    //     error: (error: any) => {
+    //       this.loader.hide();
+    //       this.toaster.error(
+    //         error.error?.message ||
+    //           'An error occurred while fetching user profile data'
+    //       );
+    //     },
+    //   });
+    // }
+loadUserData(userId: string): void {
+  this.loader.show();
+  this.userService.getUserById(userId).subscribe({
+    next: (response: any) => {
+      this.loader.hide();
+      if (response.statusCode === 200 && response.data) {
+        const data = response.data;
+         this.sixthForm.patchValue(response.data);
+
+        // Patch basic form values (skip arrays for now)
+        this.form.patchValue({
+          first_name: data.first_name,
+          last_name: data.last_name,
+          middle_name: data.middle_name,
+          email: data.user.email,
+          dob: data.dob,
+          mobile: data.mobile,
+          nationalities: data.nationalities,
+          country: data.country,
+          rank_id: data.rank_id,
+          marital_status: data.marital_status,
+          home_address: data.home_address,
+          residence_number: data.residence_number,
+          birth_place: data.birth_place,
+          father_full_name: data.father_full_name,
+          father_dob: data.father_dob,
+          mother_full_name: data.mother_full_name,
+          mother_birth_date: data.mother_birth_date,
+          height: data.height,
+          weight: data.weight,
+          sss_number: data.sss_number,
+          phil_health_number: data.phil_health_number,
+          pagibig_number: data.pagibig_number,
+          location: data.location,
+          dial_code: data.dial_code,
+          profile_image_path: data.profile_image_path
+        });
+
+        // Now manually patch the FormArrays like additional_contact_info, etc.
+        this.patchFormArrays(data);
+
+        // Set user ID and profile data
+        this.userId = data.id || userId;
+        if (data.profile_image_path) {
+          this.imagePreview = data.profile_image_path;
         }
-
-
-
-        const legalDependentsFormArray = this.form.get('legal_dependent') as FormArray;
-        if (data.legal_dependent?.length > 0) {
-          data.legal_dependent.forEach((dependent: any) => {
-            legalDependentsFormArray.push(
-              this.fb.group({
-                full_name: [dependent.full_name || null],
-                gender: [dependent.gender || null],
-                relationship: [dependent.relationship || null],
-                date_of_birth: [dependent.date_of_birth || null],
-              })
-            );
-          });
-        } else if (data.legal_dependent?.length === 0 || data.legal_dependent == null) {
-          this.addLegalDependent();
+        if (data.cv_name) {
+          this.uploadedFileName = data.cv_name;
         }
-            const educationArray = this.thirdForm.get(
-              'education_info'
-            ) as FormArray;
-            while (educationArray?.length !== 0) {
-              educationArray.removeAt(0);
-            }
-            if (data.education_info && data.education_info?.length > 0) {
-              data.education_info.forEach((item: any) => {
-                educationArray.push(
-                  this.fb.group({
-                    education_from: [
-                      item.education_from || null,
-                      Validators.required,
-                    ],
-                    education_to: [
-                      item.education_to || null,
-                      Validators.required,
-                    ],
-                    education_title: [
-                      item.education_title || null,
-                      Validators.required,
-                    ],
-                    education_institute: [
-                      item.education_institute || null,
-                      Validators.required,
-                    ],
-                  })
-                );
-              });
-            } else if (
-              !data.education_info ||
-              data.education_info?.length === 0
-            ) {
-              this.addEducation();
-            }
+      }
+    },
+    error: (error: any) => {
+      this.loader.hide();
+      this.toaster.error(error.error?.message || 'An error occurred while fetching user profile data');
+    },
+  });
+}
 
-            const langSpokenArray = this.thirdForm.get(
-              'language_spoken_info'
-            ) as FormArray;
-            while (langSpokenArray?.length !== 0) {
-              langSpokenArray.removeAt(0);
-            }
-            if (
-              data.language_spoken_info &&
-              data.language_spoken_info?.length > 0
-            ) {
-              data.language_spoken_info.forEach((item: any) => {
-                langSpokenArray.push(
-                  this.fb.group({
-                    language: [item.language || null, Validators.required],
-                    proficiency: [item.proficiency || null, Validators.required],
-                  })
-                );
-              });
-            } else if (
-              !data.language_spoken_info ||
-              data.language_spoken_info?.length === 0
-            ) {
-              this.addLangSpoken();
-            }
-            const langWrittenArray = this.thirdForm.get(
-              'language_written_info'
-            ) as FormArray;
-            while (langWrittenArray?.length !== 0) {
-              langWrittenArray.removeAt(0);
-            }
-            if (
-              data.language_written_info &&
-              data.language_written_info?.length > 0
-            ) {
-              data.language_written_info.forEach((item: any) => {
-                langWrittenArray.push(
-                  this.fb.group({
-                    language: [item.language || null, Validators.required],
-                    proficiency: [item.proficiency || null, Validators.required],
-                  })
-                );
-              });
-            } else if (
-              !data.language_written_info ||
-              data.language_written_info?.length === 0
-            ) {
-              this.addLangWritten();
-            }
-          }
-        },
-        error: (error: any) => {
-          this.loader.hide();
-          this.toaster.error(
-            error.error?.message ||
-              'An error occurred while fetching user profile data'
-          );
-        },
-      });
+// Helper function to manually patch FormArrays
+patchFormArrays(data: any): void {
+  // Handle additional_contact_info FormArray
+  const contactsFormArray = this.form.get('additional_contact_info') as FormArray;
+  if (data.additional_contact_info && data.additional_contact_info.length > 0) {
+    data.additional_contact_info.forEach((contact: any) => {
+      contactsFormArray.push(
+        this.fb.group({
+          contact_type: [contact.contact_type || null],
+          value: [contact.value || null],
+        })
+      );
+    });
+  } else {
+    this.addContact(); // If no contact info exists, add a new empty form group
+  }
+
+  // Handle emergency contacts FormArray
+    const emergencyContactsFormArray = this.form.get('contact_person_in_emergency') as FormArray;
+  if (data.contact_person_in_emergency) {
+    let emergencyContacts = [];
+    try {
+      emergencyContacts = JSON.parse(data.contact_person_in_emergency); // Parse stringified JSON
+    } catch (e) {
+      console.error("Error parsing emergency contact data:", e);
     }
+
+    if (emergencyContacts.length > 0) {
+      emergencyContacts.forEach((contact: any) => {
+        emergencyContactsFormArray.push(
+          this.fb.group({
+            name: [contact.name || null],
+            address: [contact.address || null],
+            contact_number: [contact.contact_number || null],
+            relationship: [contact.relationship || null],
+          })
+        );
+      });
+    } else {
+      this.addEmergencyContact(); // If no emergency contacts exist, add a new empty form group
+    }
+  } else {
+    this.addEmergencyContact(); // If no emergency contacts data exists, add an empty form group
+  }
+
+   const legalDependentsFormArray = this.form.get('legal_dependent') as FormArray;
+  if (data.legal_dependent) {
+    let legalDependents = [];
+    try {
+      legalDependents = JSON.parse(data.legal_dependent); // Parse stringified JSON for legal dependents
+    } catch (e) {
+      console.error("Error parsing legal dependent data:", e);
+    }
+
+    if (legalDependents.length > 0) {
+      legalDependents.forEach((dependent: any) => {
+        legalDependentsFormArray.push(
+          this.fb.group({
+            full_name: [dependent.full_name || null],
+            gender: [dependent.gender || null],
+            relationship: [dependent.relationship || null],
+            date_of_birth: [dependent.date_of_birth || null],
+          })
+        );
+      });
+    } else {
+      this.addLegalDependent(); // If no legal dependents exist, add a new empty form group
+    }
+  } else {
+    this.addLegalDependent(); // If no legal dependents data exists, add an empty form group
+  }
+
+
+  // Handle education info FormArray
+  const educationArray = this.thirdForm.get('education_info') as FormArray;
+  if (data.education_info && data.education_info.length > 0) {
+    data.education_info.forEach((item: any) => {
+      educationArray.push(
+        this.fb.group({
+          education_from: [item.education_from || null, Validators.required],
+          education_to: [item.education_to || null, Validators.required],
+          education_title: [item.education_title || null, Validators.required],
+          education_institute: [item.education_institute || null, Validators.required],
+        })
+      );
+    });
+  } else {
+    this.addEducation(); // If no education info exists, add a new empty form group
+  }
+
+  // Handle language spoken info FormArray
+  const langSpokenArray = this.thirdForm.get('language_spoken_info') as FormArray;
+  if (data.language_spoken_info && data.language_spoken_info.length > 0) {
+    data.language_spoken_info.forEach((item: any) => {
+      langSpokenArray.push(
+        this.fb.group({
+          language: [item.language || null, Validators.required],
+          proficiency: [item.proficiency || null, Validators.required],
+        })
+      );
+    });
+  } else {
+    this.addLangSpoken(); // If no language spoken info exists, add a new empty form group
+  }
+
+  // Handle language written info FormArray
+  const langWrittenArray = this.thirdForm.get('language_written_info') as FormArray;
+  if (data.language_written_info && data.language_written_info.length > 0) {
+    data.language_written_info.forEach((item: any) => {
+      langWrittenArray.push(
+        this.fb.group({
+          language: [item.language || null, Validators.required],
+          proficiency: [item.proficiency || null, Validators.required],
+        })
+      );
+    });
+  } else {
+    this.addLangWritten(); // If no language written info exists, add a new empty form group
+  }
+}
+
+
 
     navigate() {
       this.router.navigate(['job-list']);
